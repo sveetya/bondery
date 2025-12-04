@@ -1,0 +1,10 @@
+{
+  "SingleContactPage": {
+    "Title": "Contact Details",
+    "Description": "View and manage details of your contact."
+  },
+  "NotFoundPage": {
+    "Title": "Page Not Found",
+    "Description": "The page you are looking for does not exist."
+  }
+}
