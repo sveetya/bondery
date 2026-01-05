@@ -6,5 +6,14 @@
   "NotFoundPage": {
     "Title": "Page Not Found",
     "Description": "The page you are looking for does not exist."
+  },
+  "LoginPage": {
+    "Title": "Bondee",
+    "Description": "We'll log you in or create a new account if you don't have one yet.",
+    "ContinueWithGithub": "Continue with GitHub",
+    "TermsText": "By continuing, you agree to our <termsLink>Terms of Service</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
+    "AuthenticationError": "Authentication Error",
+    "UnexpectedError": "Unexpected Error",
+    "UnexpectedErrorMessage": "An unexpected error occurred"
   }
 }

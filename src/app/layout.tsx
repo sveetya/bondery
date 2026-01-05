@@ -8,6 +8,12 @@ import {
   MantineProvider,
   mantineHtmlProps,
 } from "@mantine/core";
+import "dayjs/locale/ru";
+import {
+  DatesProvider,
+  MonthPickerInput,
+  DatePickerInput,
+} from "@mantine/dates";
 
 export const metadata: Metadata = {
   title: "Bondee",
@@ -22,13 +28,18 @@ export default function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript
+          nonce="8IBTHwOdqNKAWeKl7plt8g=="
+          defaultColorScheme="auto"
+        />
       </head>
       <body>
-        <MantineProvider>
+        <MantineProvider defaultColorScheme="auto">
           <NextIntlClientProvider>
-            <Notifications />
-            {children}
+            <DatesProvider settings={{}}>
+              <Notifications autoClose={5000} position="top-center" />
+              {children}
+            </DatesProvider>
           </NextIntlClientProvider>
         </MantineProvider>
       </body>
