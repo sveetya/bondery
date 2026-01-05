@@ -9,46 +9,34 @@ import {
   Group,
   TextInput,
   Paper,
-  Loader,
-  Center,
 } from "@mantine/core";
-import {
-  IconTopologyFull,
-  IconSearch,
-  IconPlus,
-} from "@tabler/icons-react";
+import { IconTopologyFull, IconSearch, IconPlus } from "@tabler/icons-react";
 import { useState, useDeferredValue } from "react";
-import ContactsTable from "@/components/ContactsTable";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useDebouncedCallback } from "@mantine/hooks";
+import ContactsTable, { ColumnConfig } from "@/components/ContactsTable";
 import { ColumnVisibilityMenu } from "./components/ColumnVisibilityMenu";
 import { SortMenu, SortOrder } from "./components/SortMenu";
-import { ColumnConfig } from "./components/SortableColumnItem";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-}
+import type { Contact } from "@/lib/mockData";
 
 interface RelationshipsClientProps {
   initialContacts: Contact[];
   totalCount: number;
 }
 
-export function RelationshipsClient({ initialContacts, totalCount }: RelationshipsClientProps) {
-  const [contacts] = useState<Contact[]>(initialContacts);
-  const [searchQuery, setSearchQuery] = useState("");
+export function RelationshipsClient({
+  initialContacts,
+  totalCount,
+}: RelationshipsClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Get initial state from URL params
+  const initialSearch = searchParams.get("q") || "";
+  const initialSort = (searchParams.get("sort") as SortOrder) || "nameAsc";
+
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [columns, setColumns] = useState<ColumnConfig[]>([
     { key: "avatar", label: "Avatar", visible: true },
@@ -59,42 +47,34 @@ export function RelationshipsClient({ initialContacts, totalCount }: Relationshi
     { key: "lastInteraction", label: "Last Interaction", visible: true },
     { key: "social", label: "Social Media", visible: true },
   ]);
-  const [sortOrder, setSortOrder] = useState<SortOrder>("nameAsc");
 
   // Defer the columns update to prevent UI freezing when toggling visibility
   const deferredColumns = useDeferredValue(columns);
   const visibleColumns = deferredColumns.filter((c) => c.visible);
 
-  const filteredContacts = contacts
-    .filter((contact) =>
-      `${contact.firstName} ${contact.lastName}`
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      switch (sortOrder) {
-        case "nameAsc":
-          return a.firstName.localeCompare(b.firstName);
-        case "nameDesc":
-          return b.firstName.localeCompare(a.firstName);
-        case "surnameAsc":
-          return a.lastName.localeCompare(b.lastName);
-        case "surnameDesc":
-          return b.lastName.localeCompare(a.lastName);
-        case "interactionAsc":
-          return a.lastInteraction.getTime() - b.lastInteraction.getTime();
-        case "interactionDesc":
-          return b.lastInteraction.getTime() - a.lastInteraction.getTime();
-        default:
-          return 0;
-      }
-    });
+  // Handle search with debounce
+  const handleSearch = useDebouncedCallback((query: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set("q", query);
+    } else {
+      params.delete("q");
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+  }, 300);
+
+  // Handle sort
+  const handleSort = (order: SortOrder) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", order);
+    router.replace(`${pathname}?${params.toString()}`);
+  };
 
   const handleSelectAll = () => {
-    if (selectedIds.size === filteredContacts.length) {
+    if (selectedIds.size === initialContacts.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredContacts.map((c) => c.id)));
+      setSelectedIds(new Set(initialContacts.map((c) => c.id)));
     }
   };
 
@@ -109,9 +89,9 @@ export function RelationshipsClient({ initialContacts, totalCount }: Relationshi
   };
 
   const allSelected =
-    filteredContacts.length > 0 && selectedIds.size === filteredContacts.length;
+    initialContacts.length > 0 && selectedIds.size === initialContacts.length;
   const someSelected =
-    selectedIds.size > 0 && selectedIds.size < filteredContacts.length;
+    selectedIds.size > 0 && selectedIds.size < initialContacts.length;
 
   return (
     <Container size="xl">
@@ -136,16 +116,16 @@ export function RelationshipsClient({ initialContacts, totalCount }: Relationshi
               <TextInput
                 placeholder="Search by name..."
                 leftSection={<IconSearch size={16} />}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.currentTarget.value)}
+                defaultValue={initialSearch}
+                onChange={(e) => handleSearch(e.currentTarget.value)}
                 style={{ flex: 1 }}
               />
               <ColumnVisibilityMenu columns={columns} setColumns={setColumns} />
-              <SortMenu sortOrder={sortOrder} setSortOrder={setSortOrder} />
+              <SortMenu sortOrder={initialSort} setSortOrder={handleSort} />
             </Group>
 
             <ContactsTable
-              contacts={filteredContacts}
+              contacts={initialContacts}
               selectedIds={selectedIds}
               visibleColumns={visibleColumns}
               onSelectAll={handleSelectAll}

@@ -26,7 +26,8 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SortableColumnItem, ColumnConfig } from "./SortableColumnItem";
+import { SortableColumnItem } from "./SortableColumnItem";
+import { ColumnConfig } from "@/components/ContactsTable";
 
 interface ColumnVisibilityMenuProps {
   columns: ColumnConfig[];
@@ -83,7 +84,9 @@ export function ColumnVisibilityMenu({
         <Button
           variant="light"
           leftSection={<IconEye size={16} />}
-          className={opened ? "button-scale-effect-active" : "button-scale-effect"}
+          className={
+            opened ? "button-scale-effect-active" : "button-scale-effect"
+          }
         >
           Visible columns
         </Button>

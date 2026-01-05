@@ -41,7 +41,9 @@ export function SortMenu({ sortOrder, setSortOrder }: SortMenuProps) {
         <Button
           variant="light"
           leftSection={<IconArrowsSort size={16} />}
-          className={opened ? "button-scale-effect-active" : "button-scale-effect"}
+          className={
+            opened ? "button-scale-effect-active" : "button-scale-effect"
+          }
         >
           Sort
         </Button>

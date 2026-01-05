@@ -66,40 +66,7 @@ const MapComponent = dynamic(() => import("@/app/(app)/app/map/MapComponent"), {
   ssr: false,
 });
 
-interface Contact {
-  id: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  notes?: string;
-  birthday?: Date;
-  notifyBirthday?: boolean;
-  importantDates?: Array<{
-    date: Date;
-    name: string;
-    notify: boolean;
-  }>;
-  avatar?: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  website?: string;
-  signal?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
-}
+import type { Contact } from "@/lib/mockData";
 
 export default function PersonPage() {
   const searchParams = useSearchParams();
@@ -208,8 +175,8 @@ export default function PersonPage() {
       }
 
       // Set birthday
-      if (contact.birthday) {
-        setBirthday(new Date(contact.birthday));
+      if (contact.birthdate) {
+        setBirthday(new Date(contact.birthdate));
       } else {
         setBirthday(null);
       }
@@ -1231,7 +1198,7 @@ export default function PersonPage() {
                         setContact({
                           ...contact,
                           notifyBirthday: false,
-                          birthday: undefined,
+                          birthdate: undefined,
                         });
                         notifications.show({
                           title: "Success",
@@ -1249,7 +1216,7 @@ export default function PersonPage() {
                   if (contact && personId && date) {
                     setSavingField("birthday");
                     setTimeout(() => {
-                      setContact({ ...contact, birthday: date });
+                      setContact({ ...contact, birthdate: date });
                       notifications.show({
                         title: "Success",
                         message: "Birthday updated successfully",

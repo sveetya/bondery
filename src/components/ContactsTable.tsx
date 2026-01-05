@@ -1,13 +1,16 @@
-"use client";
-
 import {
   Table,
+  TableThead,
+  TableTbody,
+  TableTr,
+  TableTh,
+  TableTd,
   Checkbox,
   Avatar,
   Group,
-  ActionIcon,
   Text,
   Anchor,
+  ActionIcon,
 } from "@mantine/core";
 import {
   IconBrandLinkedin,
@@ -17,33 +20,87 @@ import {
   IconPhone,
   IconMail,
 } from "@tabler/icons-react";
-import Link from "next/link";
+import { useFormatter } from "next-intl";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatar?: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
+interface SocialLink {
+  icon: React.ReactNode;
+  href?: string;
+  color: string;
+  label: string;
+  disabled?: boolean;
 }
 
-type ColumnKey =
+function ContactSocialIcons({ contact }: { contact: Contact }) {
+  const socials: SocialLink[] = [
+    {
+      icon: <IconPhone size={18} />,
+      href: contact.phone ? `tel:${contact.phone}` : undefined,
+      color: "blue",
+      label: "Phone",
+      disabled: !contact.phone,
+    },
+    {
+      icon: <IconMail size={18} />,
+      href: contact.email ? `mailto:${contact.email}` : undefined,
+      color: "red",
+      label: "Email",
+      disabled: !contact.email,
+    },
+    {
+      icon: <IconBrandLinkedin size={18} />,
+      href: contact.linkedin,
+      color: "blue",
+      label: "LinkedIn",
+      disabled: !contact.linkedin,
+    },
+    {
+      icon: <IconBrandInstagram size={18} />,
+      href: contact.instagram,
+      color: "pink",
+      label: "Instagram",
+      disabled: !contact.instagram,
+    },
+    {
+      icon: <IconBrandWhatsapp size={18} />,
+      href: contact.whatsapp,
+      color: "green",
+      label: "WhatsApp",
+      disabled: !contact.whatsapp,
+    },
+    {
+      icon: <IconBrandFacebook size={18} />,
+      href: contact.facebook,
+      color: "blue",
+      label: "Facebook",
+      disabled: !contact.facebook,
+    },
+  ];
+  return (
+    <Group gap="xs">
+      {socials.map((s) => (
+        <ActionIcon
+          key={s.label}
+          variant="light"
+          color={s.color}
+          component="a"
+          href={s.href}
+          target={s.href && s.href.startsWith("http") ? "_blank" : undefined}
+          disabled={s.disabled}
+          aria-label={s.label}
+        >
+          {s.icon}
+        </ActionIcon>
+      ))}
+    </Group>
+  );
+}
+
+import Link from "next/link";
+import type { Contact } from "@/lib/mockData";
+
+// Contact type now imported from @/lib/mockData
+
+export type ColumnKey =
   | "avatar"
   | "name"
   | "title"
@@ -52,7 +109,7 @@ type ColumnKey =
   | "lastInteraction"
   | "social";
 
-interface ColumnConfig {
+export interface ColumnConfig {
   key: ColumnKey;
   label: string;
   visible: boolean;
@@ -71,62 +128,65 @@ interface ContactsTableProps {
 
 export default function ContactsTable({
   contacts,
-  selectedIds = new Set(),
+  selectedIds,
   visibleColumns,
   onSelectAll,
   onSelectOne,
-  allSelected = false,
-  someSelected = false,
-  showSelection = true,
+  allSelected,
+  someSelected,
+  showSelection,
 }: ContactsTableProps) {
+  const format = useFormatter();
   return (
     <Table striped highlightOnHover>
-      <Table.Thead>
-        <Table.Tr>
+      <TableThead>
+        <TableTr>
           {showSelection && (
-            <Table.Th style={{ width: 40 }}>
+            <TableTh style={{ width: 40 }}>
               <Checkbox
                 checked={allSelected}
                 indeterminate={someSelected}
                 onChange={onSelectAll}
+                aria-label="Select all rows"
               />
-            </Table.Th>
+            </TableTh>
           )}
           {visibleColumns.map((col) => (
-            <Table.Th
+            <TableTh
               key={col.key}
               style={col.key === "avatar" ? { width: 60 } : undefined}
             >
               {col.label}
-            </Table.Th>
+            </TableTh>
           ))}
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
+        </TableTr>
+      </TableThead>
+      <TableTbody>
         {contacts.length === 0 ? (
-          <Table.Tr>
-            <Table.Td colSpan={visibleColumns.length + (showSelection ? 1 : 0)}>
+          <TableTr>
+            <TableTd colSpan={visibleColumns.length + (showSelection ? 1 : 0)}>
               <Text ta="center" c="dimmed">
                 No contacts found
               </Text>
-            </Table.Td>
-          </Table.Tr>
+            </TableTd>
+          </TableTr>
         ) : (
           contacts.map((contact) => (
-            <Table.Tr key={contact.id}>
+            <TableTr key={contact.id}>
               {showSelection && (
-                <Table.Td>
+                <TableTd>
                   <Checkbox
-                    checked={selectedIds.has(contact.id)}
+                    checked={selectedIds?.has(contact.id)}
                     onChange={() => onSelectOne?.(contact.id)}
+                    aria-label={`Select ${contact.firstName} ${contact.lastName}`}
                   />
-                </Table.Td>
+                </TableTd>
               )}
               {visibleColumns.map((col) => {
                 switch (col.key) {
                   case "avatar":
                     return (
-                      <Table.Td key={col.key}>
+                      <TableTd key={col.key}>
                         <Avatar
                           src={contact.avatar || undefined}
                           color={contact.avatarColor}
@@ -141,11 +201,11 @@ export default function ContactsTable({
                             </>
                           )}
                         </Avatar>
-                      </Table.Td>
+                      </TableTd>
                     );
                   case "name":
                     return (
-                      <Table.Td key={col.key}>
+                      <TableTd key={col.key}>
                         <Anchor
                           component={Link}
                           href={`/app/person?person_id=${contact.id}`}
@@ -154,105 +214,42 @@ export default function ContactsTable({
                         >
                           {contact.firstName} {contact.lastName}
                         </Anchor>
-                      </Table.Td>
+                      </TableTd>
                     );
                   case "title":
                     return (
-                      <Table.Td key={col.key}>{contact.title || "-"}</Table.Td>
+                      <TableTd key={col.key}>{contact.title || "-"}</TableTd>
                     );
                   case "place":
                     return (
-                      <Table.Td key={col.key}>{contact.place || "-"}</Table.Td>
+                      <TableTd key={col.key}>{contact.place || "-"}</TableTd>
                     );
                   case "shortNote":
                     return (
-                      <Table.Td key={col.key}>{contact.description}</Table.Td>
+                      <TableTd key={col.key}>{contact.description}</TableTd>
                     );
                   case "lastInteraction":
                     return (
-                      <Table.Td key={col.key}>
-                        {contact.lastInteraction.toLocaleDateString()}
-                      </Table.Td>
+                      <TableTd key={col.key}>
+                        {format.dateTime(new Date(contact.lastInteraction), {
+                          dateStyle: "short",
+                        })}
+                      </TableTd>
                     );
                   case "social":
                     return (
-                      <Table.Td key={col.key}>
-                        <Group gap="xs">
-                          <ActionIcon
-                            variant="light"
-                            color="blue"
-                            component="a"
-                            href={
-                              contact.phone ? `tel:${contact.phone}` : undefined
-                            }
-                            disabled={!contact.phone}
-                          >
-                            <IconPhone size={18} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="light"
-                            color="red"
-                            component="a"
-                            href={
-                              contact.email
-                                ? `mailto:${contact.email}`
-                                : undefined
-                            }
-                            disabled={!contact.email}
-                          >
-                            <IconMail size={18} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="light"
-                            color="blue"
-                            component="a"
-                            href={contact.linkedin}
-                            target="_blank"
-                            disabled={!contact.linkedin}
-                          >
-                            <IconBrandLinkedin size={18} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="light"
-                            color="pink"
-                            component="a"
-                            href={contact.instagram}
-                            target="_blank"
-                            disabled={!contact.instagram}
-                          >
-                            <IconBrandInstagram size={18} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="light"
-                            color="green"
-                            component="a"
-                            href={contact.whatsapp}
-                            target="_blank"
-                            disabled={!contact.whatsapp}
-                          >
-                            <IconBrandWhatsapp size={18} />
-                          </ActionIcon>
-                          <ActionIcon
-                            variant="light"
-                            color="blue"
-                            component="a"
-                            href={contact.facebook}
-                            target="_blank"
-                            disabled={!contact.facebook}
-                          >
-                            <IconBrandFacebook size={18} />
-                          </ActionIcon>
-                        </Group>
-                      </Table.Td>
+                      <TableTd key={col.key}>
+                        <ContactSocialIcons contact={contact} />
+                      </TableTd>
                     );
                   default:
                     return null;
                 }
               })}
-            </Table.Tr>
+            </TableTr>
           ))
         )}
-      </Table.Tbody>
+      </TableTbody>
     </Table>
   );
 }

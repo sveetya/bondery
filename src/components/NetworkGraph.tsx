@@ -3,28 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
-}
+import type { Contact } from "@/lib/mockData";
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string;

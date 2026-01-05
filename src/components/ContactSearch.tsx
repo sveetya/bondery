@@ -11,29 +11,7 @@ import {
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import { useState, useEffect } from "react";
-
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
-}
+import type { Contact } from "@/lib/mockData";
 
 interface ContactSearchProps {
   contacts: Contact[];

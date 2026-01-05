@@ -9,28 +9,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
-}
+import type { Contact } from "@/lib/mockData";
 
 interface MapComponentProps {
   contacts: Contact[];

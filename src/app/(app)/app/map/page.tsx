@@ -15,28 +15,7 @@ import dynamic from "next/dynamic";
 import ContactSearch from "@/components/ContactSearch";
 import ContactsTable from "@/components/ContactsTable";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-  position?: {
-    lat: number;
-    lng: number;
-  };
-}
+import type { Contact } from "@/lib/mockData";
 
 // Dynamic import for the map component to avoid SSR issues
 const MapComponent = dynamic(() => import("./MapComponent"), { ssr: false });

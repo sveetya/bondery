@@ -4,19 +4,17 @@ import { Box, Group, Checkbox } from "@mantine/core";
 import { IconGripVertical } from "@tabler/icons-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-export interface ColumnConfig {
-  key: string;
-  label: string;
-  visible: boolean;
-}
+import { ColumnConfig } from "@/components/ContactsTable";
 
 interface SortableColumnItemProps {
   column: ColumnConfig;
   onToggle: () => void;
 }
 
-export function SortableColumnItem({ column, onToggle }: SortableColumnItemProps) {
+export function SortableColumnItem({
+  column,
+  onToggle,
+}: SortableColumnItemProps) {
   const {
     attributes,
     listeners,

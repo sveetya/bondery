@@ -66,6 +66,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = "en-UK";
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
@@ -76,7 +77,7 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider defaultColorScheme="auto" theme={theme}>
-          <NextIntlClientProvider>
+          <NextIntlClientProvider locale={locale}>
             <DatesProvider settings={{}}>
               <Notifications autoClose={5000} position="top-center" />
               {children}

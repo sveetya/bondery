@@ -15,24 +15,7 @@ import * as d3 from "d3";
 import ContactSearch from "@/components/ContactSearch";
 import ContactsTable from "@/components/ContactsTable";
 
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  title?: string;
-  place?: string;
-  description: string;
-  avatarColor: string;
-  lastInteraction: Date;
-  connections?: string[];
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  instagram?: string;
-  whatsapp?: string;
-  facebook?: string;
-  myself?: boolean;
-}
+import type { Contact } from "@/lib/mockData";
 
 interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
@@ -97,11 +80,11 @@ export default function NetworkPage() {
         if (connectedIds.has(d.id)) return 0.7; // Subtle highlight for connected
         return 0.3; // Dimmed for others
       });
-    
+
     // Highlight connections to/from selected node
     svg.selectAll("line").attr("opacity", (d: any) => {
-      const sourceId = typeof d.source === 'object' ? d.source.id : d.source;
-      const targetId = typeof d.target === 'object' ? d.target.id : d.target;
+      const sourceId = typeof d.source === "object" ? d.source.id : d.source;
+      const targetId = typeof d.target === "object" ? d.target.id : d.target;
       if (sourceId === contactId || targetId === contactId) return 0.6; // Highlight connections
       return 0.1; // Dim other connections
     });
@@ -445,14 +428,17 @@ export default function NetworkPage() {
             <Stack gap="md">
               <Group justify="space-between">
                 <Text size="sm" c="dimmed">
-                  Selected contact and their connections: <b>{1 + (selectedContact.connections?.length || 0)}</b>
+                  Selected contact and their connections:{" "}
+                  <b>{1 + (selectedContact.connections?.length || 0)}</b>
                 </Text>
               </Group>
 
               <ContactsTable
                 contacts={[
                   selectedContact,
-                  ...contacts.filter((c) => selectedContact.connections?.includes(c.id)),
+                  ...contacts.filter((c) =>
+                    selectedContact.connections?.includes(c.id)
+                  ),
                 ]}
                 visibleColumns={[
                   { key: "avatar", label: "Avatar", visible: true },
