@@ -54,12 +54,11 @@ export default function MapComponent({
     mapRef.current = map;
 
     // Add OpenFreeMap using MapLibre GL
-    // @ts-ignore - maplibreGL is added to L by the plugin
-    L.maplibreGL({
+    const mapLayer = L.maplibreGL({
       style: "https://tiles.openfreemap.org/styles/liberty",
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    } as any);
+    
+    mapLayer.addTo(map);
 
     // Create marker cluster group
     const markers = L.markerClusterGroup({
