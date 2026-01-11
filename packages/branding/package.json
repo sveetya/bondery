@@ -1,0 +1,55 @@
+{
+  "name": "@bondee/branding",
+  "version": "0.0.1",
+  "description": "Bondee branding assets and icons",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    },
+    "./icons": {
+      "import": "./src/react/index.ts",
+      "require": "./src/react/index.ts"
+    },
+    "./theme": {
+      "import": "./src/theme.ts",
+      "require": "./src/theme.ts"
+    },
+    "./styles": {
+      "style": "./src/styles.css",
+      "import": "./src/styles.css",
+      "require": "./src/styles.css"
+    },
+    "./src/styles.css": {
+      "style": "./src/styles.css",
+      "import": "./src/styles.css",
+      "require": "./src/styles.css"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "echo 'No build step'",
+    "generate-icons": "tsx scripts/generate-react-icons.ts",
+    "prebuild": "npm run generate-icons"
+  },
+  "devDependencies": {
+    "@svgr/core": "^8.1.0",
+    "@svgr/plugin-jsx": "^8.1.0",
+    "@svgr/plugin-prettier": "^8.1.0",
+    "@types/node": "^20",
+    "tsx": "^4.19.2",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "@mantine/core": "^8.3.11"
+  },
+  "keywords": [
+    "branding",
+    "icons",
+    "assets"
+  ]
+}
