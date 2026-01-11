@@ -1,5 +1,6 @@
 import { AppShell, AppShellMain, AppShellNavbar } from "@mantine/core";
 import { NavigationSidebarContent } from "@/components/NavigationSidebar";
+import { LocaleProvider } from "@/components/UserLocaleProvider";
 import { getBaseUrl } from "@/lib/config";
 import { getAuthHeaders } from "@/lib/authHeaders";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -48,6 +49,37 @@ async function getUserData() {
 }
 
 /**
+ * Fetches user locale settings from the API.
+ * Returns the user's preferred language and timezone.
+ */
+async function getUserSettings() {
+  try {
+    const baseUrl = getBaseUrl();
+    const headers = await getAuthHeaders();
+
+    const response = await fetch(`${baseUrl}/api/settings`, {
+      cache: "no-store",
+      headers,
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return {
+        locale: result?.data?.language || "en",
+        timezone: result?.data?.timezone || "UTC",
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching user settings:", error);
+  }
+
+  return {
+    locale: "en",
+    timezone: "UTC",
+  };
+}
+
+/**
  * Force dynamic rendering for all authenticated routes
  * These routes require headers() for authentication checks
  */
@@ -63,20 +95,35 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     redirect("/login");
   }
 
-  const { userName, avatarUrl } = await getUserData();
+  // Fetch user data and settings in parallel
+  const [{ userName, avatarUrl }, { locale, timezone }] = await Promise.all([
+    getUserData(),
+    getUserSettings(),
+  ]);
+
+  // Load translation messages for the user's preferred locale
+  let messages;
+  try {
+    messages = (await import(`@bondee/translations/${locale}`)).default;
+  } catch (error) {
+    console.error(`Failed to load messages for locale ${locale}:`, error);
+    messages = (await import(`@bondee/translations/en`)).default;
+  }
 
   return (
-    <AppShell
-      padding="md"
-      navbar={{
-        width: 280,
-        breakpoint: "sm",
-      }}
-    >
-      <AppShellNavbar p="md">
-        <NavigationSidebarContent userName={userName} avatarUrl={avatarUrl} />
-      </AppShellNavbar>
-      <AppShellMain>{children}</AppShellMain>
-    </AppShell>
+    <LocaleProvider locale={locale} timezone={timezone} messages={messages}>
+      <AppShell
+        padding="md"
+        navbar={{
+          width: 280,
+          breakpoint: "sm",
+        }}
+      >
+        <AppShellNavbar p="md">
+          <NavigationSidebarContent userName={userName} avatarUrl={avatarUrl} />
+        </AppShellNavbar>
+        <AppShellMain>{children}</AppShellMain>
+      </AppShell>
+    </LocaleProvider>
   );
 }
