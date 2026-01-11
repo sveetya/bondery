@@ -20,7 +20,7 @@
         "apps/web/.env.production.local"
       ],
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "public/**"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
