@@ -18,7 +18,7 @@ export default async function AppGroupLayout({ children }: { children: React.Rea
   const timezone = "UTC";
 
   // Get translation messages for the locale
-  const messages = translations[locale] || translations.en;
+  const messages = translations[locale as keyof typeof translations] || translations.en;
 
   return (
     <LocaleProvider locale={locale} timezone={timezone} messages={messages}>

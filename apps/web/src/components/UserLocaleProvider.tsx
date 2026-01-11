@@ -6,7 +6,7 @@ interface LocaleProviderProps {
   children: ReactNode;
   locale: string;
   timezone: string;
-  messages: Record<string, unknown>;
+  messages: any;
 }
 
 /**

@@ -107,7 +107,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   ]);
 
   // Get translation messages for the user's preferred locale
-  const messages = translations[locale] || translations.en;
+  const messages = translations[locale as keyof typeof translations] || translations.en;
 
   return (
     <LocaleProvider locale={locale} timezone={timezone} messages={messages}>
