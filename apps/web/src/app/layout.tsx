@@ -9,6 +9,12 @@ import { ColorSchemeScript, MantineProvider, mantineHtmlProps } from "@mantine/c
 import "dayjs/locale/en";
 import { DatesProvider } from "@mantine/dates";
 
+/**
+ * Force dynamic rendering for the root layout
+ * This is necessary because we fetch user settings which uses cookies()
+ */
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Bondee",
   description: "Build bonds that last forever.",
