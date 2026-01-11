@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@mantine/core";
 import { config } from "../config";
-import BondeeIconWhite from "jsx:@bondee/branding/src/icon-white.svg";
+import { BondeeIconWhite } from "@bondee/branding";
 
 interface InstagramButtonProps {
   username: string;
@@ -34,7 +34,7 @@ const InstagramButton: React.FC<InstagramButtonProps> = ({ username }) => {
     lastName?: string;
   } | null => {
     const nameElement = document.querySelector(
-      ".x1lliihq.x1plvlek.xryxfnj.x1n2onr6.xyejjpt.x15dsfln.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.x1i0vuye.xvs91rp.xo1l8bm.x5n08af.x10wh9bi.xpm28yp.x8viiok.x1o7cslx"
+      ".x1lliihq.x1plvlek.xryxfnj.x1n2onr6.xyejjpt.x15dsfln.x193iq5w.xeuugli.x1fj9vlw.x13faqbe.x1vvkbs.x1s928wv.xhkezso.x1gmr53x.x1cpjm7i.x1fgarty.x1943h6x.x1i0vuye.xvs91rp.xo1l8bm.x5n08af.x10wh9bi.xpm28yp.x8viiok.x1o7cslx",
     );
 
     if (!nameElement || !nameElement.textContent) {
@@ -69,7 +69,7 @@ const InstagramButton: React.FC<InstagramButtonProps> = ({ username }) => {
 
   const extractProfilePhotoUrl = (): string | null => {
     const img = document.querySelector(
-      `img[alt="${username}'s profile picture"]`
+      `img[alt="${username}'s profile picture"]`,
     ) as HTMLImageElement;
     if (img && img.src) {
       return img.src;
@@ -104,10 +104,7 @@ const InstagramButton: React.FC<InstagramButtonProps> = ({ username }) => {
       });
 
       // Single redirect with all data
-      window.open(
-        `${config.appUrl}/api/redirect?${params.toString()}`,
-        "_blank"
-      );
+      window.open(`${config.appUrl}/api/redirect?${params.toString()}`, "_blank");
     } catch (error) {
       console.error("Error opening in Bondee:", error);
     } finally {

@@ -15,11 +15,9 @@
     "lint": "eslint src"
   },
   "devDependencies": {
-    "@bondee/icon-generator": "*",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
     "@parcel/config-webextension": "^2.16.3",
-    "@parcel/transformer-svg-jsx": "^2.16.3",
     "@types/chrome": "^0.0.268",
     "@types/node": "^20",
     "cross-env": "^10.1.0",

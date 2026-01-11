@@ -1,11 +1,11 @@
-import sharp from 'sharp';
-import { existsSync, mkdirSync } from 'fs';
-import { join, dirname } from 'path';
+import sharp from "sharp";
+import { existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
 
 export interface IconConfig {
   name: string;
   size: number;
-  format: 'png' | 'ico';
+  format: "png" | "ico";
   outDir: string;
 }
 
@@ -25,10 +25,10 @@ export interface GenerateIconsOptions {
 export async function generateIcons(options: GenerateIconsOptions): Promise<void> {
   const { svgPath, icons, baseDir } = options;
 
-  console.log('🎨 Generating PNG icons from SVG...');
+  console.log("🎨 Generating PNG icons from SVG...");
 
   if (!existsSync(svgPath)) {
-    console.error('❌ SVG icon not found at:', svgPath);
+    console.error("❌ SVG icon not found at:", svgPath);
     process.exit(1);
   }
 
@@ -46,9 +46,9 @@ export async function generateIcons(options: GenerateIconsOptions): Promise<void
       console.log(`✅ Generated ${icon.name} at ${icon.outDir}`);
     }
 
-    console.log('✨ All icons generated successfully!');
+    console.log("✨ All icons generated successfully!");
   } catch (error) {
-    console.error('❌ Error generating icons:', error);
+    console.error("❌ Error generating icons:", error);
     process.exit(1);
   }
 }
