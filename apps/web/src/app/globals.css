@@ -1,4 +1,8 @@
 @import "tailwindcss";
+
+/* Scan branding package for Tailwind classes */
+@source "@bondee/branding/**/*.{ts,tsx}";
+
 @import "@mantine/core/styles.css";
 @import "@mantine/notifications/styles.css";
 @import "@mantine/dates/styles.css";

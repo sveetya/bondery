@@ -1,4 +1,4 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, MantineTheme } from "@mantine/core";
 
 export const bondeeTheme = createTheme({
   cursorType: "pointer",
@@ -36,7 +36,7 @@ export const bondeeTheme = createTheme({
     },
     Checkbox: {
       defaultProps: {
-        classNames: {
+        className: {
           card: "button-scale-effect",
         },
       },
@@ -48,7 +48,12 @@ export const bondeeTheme = createTheme({
     },
     NavLink: {
       defaultProps: {
-        className: "button-scale-effect rounded-sm",
+        className: "button-scale-effect",
+      },
+      styles: {
+        root: {
+          borderRadius: "var(--mantine-radius-xs)",
+        },
       },
     },
   },

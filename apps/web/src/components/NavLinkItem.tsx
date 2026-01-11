@@ -12,12 +12,7 @@ export interface NavLinkItemProps {
   active: boolean;
 }
 
-export function NavLinkItem({
-  href,
-  label,
-  icon: Icon,
-  active,
-}: NavLinkItemProps) {
+export function NavLinkItem({ href, label, icon: Icon, active }: NavLinkItemProps) {
   const { hovered, ref } = useHover();
 
   return (
