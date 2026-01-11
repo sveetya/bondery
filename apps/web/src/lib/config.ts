@@ -27,13 +27,7 @@ export const LIMITS = {
  */
 export const AVATAR_UPLOAD = {
   /** Allowed MIME types for avatar uploads */
-  allowedMimeTypes: [
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "image/gif",
-    "image/webp",
-  ] as const,
+  allowedMimeTypes: ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"] as const,
   /** Maximum file size in bytes (5MB) */
   maxFileSize: 5 * 1024 * 1024,
   /** Maximum file size in MB for display */
@@ -42,18 +36,10 @@ export const AVATAR_UPLOAD = {
 
 /**
  * Get the base URL based on the current environment
- * - Development: Uses NEXT_PUBLIC_APP_URL
- * - Production: Uses NEXT_PUBLIC_VERCEL_URL with https://
  */
 export function getBaseUrl(): string {
-  const isDev = process.env.NODE_ENV === "development";
-
-  if (isDev) {
-    return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  }
-
-  const vercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
-  return vercelUrl ? `https://${vercelUrl}` : "";
+  const url = process.env.NEXT_PUBLIC_APP_URL;
+  return `${url}`;
 }
 
 // Doherty treshold, used for max function reply time
