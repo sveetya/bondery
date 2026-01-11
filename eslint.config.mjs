@@ -27,7 +27,7 @@ export default [
       "**/next-env.d.ts",
     ],
   },
-  ...compat.extends("airbnb", "prettier"),
+  ...compat.extends("turbo", "airbnb", "prettier"),
   {
     languageOptions: {
       globals: {

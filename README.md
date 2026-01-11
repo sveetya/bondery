@@ -33,6 +33,36 @@ npm install
 
 This will install all dependencies for all packages in the monorepo using npm workspaces.
 
+3. Set up environment variables:
+
+**Chrome Extension:**
+```bash
+cd apps/chrome-extension
+cp .env.example .env.production.local
+cp .env.example .env.development.local
+# Edit both files and set APP_URL
+```
+
+**Web App:**
+```bash
+cd apps/web
+cp .env.example .env.production.local
+cp .env.example .env.development.local
+# Edit both files and fill in all required values
+```
+
+Required environment variables:
+- **Chrome Extension**: `APP_URL`
+- **Web App**: 
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `SUPABASE_SECRET_KEY`
+  - `GITHUB_CLIENT_ID`
+  - `GITHUB_CLIENT_SECRET`
+  - `LINKEDIN_CLIENT_ID`
+  - `LINKEDIN_CLIENT_SECRET`
+  - `NEXT_PUBLIC_APP_URL`
+
 ## 🛠️ Development
 
 ### Run All Apps in Development Mode
@@ -114,23 +144,55 @@ npm run start --filter=web
 
 ## 🔧 Environment Variables
 
+Environment variables are validated automatically before building. Each app requires specific environment variables to be set in `.env.[environment].local` files.
+
+### Setup Instructions
+
+1. **Copy the example files**:
+   ```bash
+   # For web app
+   cp apps/web/.env.production.example apps/web/.env.production.local
+   cp apps/web/.env.development.example apps/web/.env.development.local
+   
+   # For chrome extension
+   cp apps/chrome-extension/.env.production.example apps/chrome-extension/.env.production.local
+   cp apps/chrome-extension/.env.development.example apps/chrome-extension/.env.development.local
+   ```
+
+2. **Fill in your values** in the newly created `.env.[environment].local` files
+
 ### Web App (`apps/web`)
 
-Create a `.env.local` file in the `apps/web` directory with the following structure:
+**Required Environment Variables:**
 
 ```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+## Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_publishable_key_here
+SUPABASE_SECRET_KEY=your_secret_key_here
 
-# Optional: For server-side operations
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+## OAuth Configuration (used by Supabase)
+### GitHub
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
 
-# Application URL
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+### LinkedIn
+LINKEDIN_CLIENT_ID=your_linkedin_client_id
+LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
 
-# Optional: For production
-# NEXT_PUBLIC_APP_URL=https://your-production-domain.com
+## App Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3000  # Development
+# NEXT_PUBLIC_APP_URL=https://your-app-url.vercel.app  # Production
+```
+
+### Chrome Extension (`apps/chrome-extension`)
+
+**Required Environment Variables:**
+
+```env
+## App Configuration
+APP_URL=http://localhost:3000  # Development
+# APP_URL=https://your-app-url.vercel.app  # Production
 ```
 
 ### Getting Supabase Credentials
@@ -140,8 +202,30 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 3. Navigate to Settings > API
 4. Copy:
    - **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon/public key** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **service_role key** → `SUPABASE_SERVICE_ROLE_KEY` (keep this secret!)
+   - **anon/public key** → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - **service_role key** → `SUPABASE_SECRET_KEY` (keep this secret!)
+
+### Getting OAuth Credentials
+
+#### GitHub OAuth
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Create a new OAuth App
+3. Set Authorization callback URL to: `https://your-project.supabase.co/auth/v1/callback`
+4. Copy Client ID and Client Secret
+
+#### LinkedIn OAuth
+1. Go to [LinkedIn Developers](https://www.linkedin.com/developers/apps)
+2. Create a new app
+3. Add OAuth 2.0 redirect URLs
+4. Copy Client ID and Client Secret
+
+### Environment Validation
+
+Environment variables are automatically validated before building:
+- **Development**: Validates `.env.development.local`
+- **Production**: Validates `.env.production.local`
+
+If any required variables are missing, the build will fail with a clear error message indicating which variables need to be set.
 
 ## 📁 Project Structure
 

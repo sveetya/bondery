@@ -3,6 +3,22 @@
   "ui": "tui",
   "tasks": {
     "build": {
+      "env": [
+        "APP_URL",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SUPABASE_SECRET_KEY",
+        "GITHUB_CLIENT_ID",
+        "GITHUB_CLIENT_SECRET",
+        "LINKEDIN_CLIENT_ID",
+        "LINKEDIN_CLIENT_SECRET",
+        "NEXT_PUBLIC_APP_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "apps/chrome-extension/.env.production.local",
+        "apps/web/.env.production.local"
+      ],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
@@ -14,7 +30,23 @@
     },
     "dev": {
       "persistent": true,
-      "cache": false
+      "cache": false,
+      "env": [
+        "APP_URL",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "SUPABASE_SECRET_KEY",
+        "GITHUB_CLIENT_ID",
+        "GITHUB_CLIENT_SECRET",
+        "LINKEDIN_CLIENT_ID",
+        "LINKEDIN_CLIENT_SECRET",
+        "NEXT_PUBLIC_APP_URL"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "apps/chrome-extension/.env.development.local",
+        "apps/web/.env.development.local"
+      ]
     },
     "start": {
       "persistent": true,

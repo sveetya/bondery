@@ -34,8 +34,7 @@ You can also trigger a release manually from the GitHub Actions tab:
 ## Environment Variables
 
 The workflow uses these environment variables:
-- `PROD_APP_URL`: Production app URL (defaults to `https://bondee-five.vercel.app`)
-- `DEV_APP_URL`: Development app URL (defaults to `http://localhost:3000`)
+- `APP_URL`: Production app URL
 
 To override these, add them as repository secrets in GitHub Settings → Secrets and variables → Actions.
 

@@ -5,14 +5,18 @@
   "description": "Bondee - browser extension",
   "source": "src/manifest.json",
   "scripts": {
+    "check-env": "tsx scripts/check-env.ts",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "generate-manifest": "tsx scripts/generate-manifest.ts",
-    "prebuild": "npm run generate-icons && cross-env NODE_ENV=production npm run generate-manifest",
-    "predev": "npm run generate-icons && cross-env NODE_ENV=development npm run generate-manifest",
+    "prebuild": "cross-env NODE_ENV=production npm run check-env && npm run generate-icons && cross-env NODE_ENV=production npm run generate-manifest",
+    "predev": "cross-env NODE_ENV=development npm run check-env && npm run generate-icons && cross-env NODE_ENV=development npm run generate-manifest",
     "dev": "parcel watch --cache-dir .parcel-cache",
     "build": "parcel build --cache-dir .parcel-cache",
     "check-types": "tsc --noEmit",
     "lint": "eslint src"
+  },
+  "dependencies": {
+    "@bondee/helpers": "*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
@@ -25,6 +29,7 @@
     "eslint": "^9",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-config-turbo": "^2.7.3",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",

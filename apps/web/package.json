@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "check-env": "tsx scripts/check-env.ts",
     "generate-icons": "tsx scripts/generate-icons.ts",
-    "predev": "npm run generate-icons",
-    "prebuild": "npm run generate-icons",
+    "predev": "cross-env NODE_ENV=development npm run check-env && npm run generate-icons",
+    "prebuild": "cross-env NODE_ENV=production npm run check-env && npm run generate-icons",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,6 +15,7 @@
   },
   "dependencies": {
     "@bondee/branding": "*",
+    "@bondee/helpers": "*",
     "@bondee/translations": "*",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

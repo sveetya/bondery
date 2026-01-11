@@ -1,15 +1,28 @@
-import { writeFileSync } from "fs";
+import { writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
 import dotenv from "dotenv";
 
-// Load environment variables from root .env
-dotenv.config({ path: resolve(__dirname, "../../../.env") });
+/**
+ * Load environment variables for manifest generation.
+ * Note: Parcel will automatically load .env files for the actual build,
+ * but this script runs in prebuild (before Parcel), so we need manual loading.
+ */
+const NODE_ENV = process.env.NODE_ENV || "development";
+const envFile = `.env.${NODE_ENV}.local`;
 
-const DEV_URL = process.env.DEV_APP_URL!;
-const PROD_URL = process.env.PROD_APP_URL!;
+// Load from root directory (try both .env and .env.[NODE_ENV])
 
-// Determine which URL to use based on NODE_ENV
-const APP_URL = process.env.NODE_ENV === "production" ? PROD_URL : DEV_URL;
+const localEnvPath = resolve(__dirname, "..", envFile);
+
+if (existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath });
+} else {
+  console.error(`❌ Error: ${envFile} not found in chrome-extension folder.`);
+  process.exit(1);
+}
+
+// Get APP_URL from environment
+const APP_URL = process.env.APP_URL;
 
 // Extract origin from URL for host permissions
 const getOrigin = (url: string) => {
@@ -43,8 +56,13 @@ const manifest = {
 
 // Write manifest.json
 const manifestPath = resolve(__dirname, "../src/manifest.json");
+
+if (!APP_URL) {
+  console.error(`❌ Error: APP_URL is not defined in ${envFile}`);
+  console.error(`   Please create ${envFile} with APP_URL variable`);
+  process.exit(1);
+}
+
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 
-console.log(
-  `✅ Generated manifest.json with host permission: ${getOrigin(APP_URL)}`
-);
+console.log(`✅ Generated manifest.json with host permission: ${getOrigin(APP_URL)}`);
