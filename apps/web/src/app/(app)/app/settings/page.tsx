@@ -4,18 +4,19 @@ import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { ProfileCard } from "./components/ProfileCard";
 import { DataManagementCard } from "./components/DataManagementCard";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getBaseUrl } from "@/lib/config";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getAuthHeaders } from "@/lib/authHeaders";
 
 export default async function SettingsPage() {
   const baseUrl = getBaseUrl();
 
-  const headersList = await headers();
+  const headers = await getAuthHeaders();
 
   const response = await fetch(`${baseUrl}/api/settings`, {
     cache: "no-store",
-    headers: headersList,
+    headers,
   });
 
   if (!response.ok) {

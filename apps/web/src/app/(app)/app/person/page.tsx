@@ -2,19 +2,16 @@
 import { getBaseUrl } from "@/lib/config";
 import type { Contact } from "@/lib/mockData";
 import PersonClient from "./PersonClient";
-import { headers } from "next/headers";
+import { getAuthHeaders } from "@/lib/authHeaders";
 
 async function getPersonData(personId: string) {
-  const headersList = await headers();
+  const headers = await getAuthHeaders();
 
   // Fetch individual contact via API
-  const contactResponse = await fetch(
-    `${getBaseUrl()}/api/contacts/${personId}`,
-    {
-      cache: "no-store",
-      headers: headersList,
-    }
-  );
+  const contactResponse = await fetch(`${getBaseUrl()}/api/contacts/${personId}`, {
+    cache: "no-store",
+    headers,
+  });
 
   if (!contactResponse.ok) {
     return null;
@@ -24,9 +21,7 @@ async function getPersonData(personId: string) {
   const contact = {
     ...contactData.contact,
     lastInteraction: new Date(contactData.contact.lastInteraction),
-    createdAt: contactData.contact.createdAt
-      ? new Date(contactData.contact.createdAt)
-      : undefined,
+    createdAt: contactData.contact.createdAt ? new Date(contactData.contact.createdAt) : undefined,
   };
 
   // Fetch connected contacts if they exist
@@ -35,8 +30,8 @@ async function getPersonData(personId: string) {
     const connectionPromises = contact.connections.map((id: string) =>
       fetch(`${getBaseUrl()}/api/contacts/${id}`, {
         cache: "no-store",
-        headers: headersList,
-      }).then((res) => res.json())
+        headers,
+      }).then((res) => res.json()),
     );
 
     const connectionsData = await Promise.all(connectionPromises);
@@ -45,9 +40,7 @@ async function getPersonData(personId: string) {
       .map((data) => ({
         ...data.contact,
         lastInteraction: new Date(data.contact.lastInteraction),
-        createdAt: data.contact.createdAt
-          ? new Date(data.contact.createdAt)
-          : undefined,
+        createdAt: data.contact.createdAt ? new Date(data.contact.createdAt) : undefined,
       }));
   }
 

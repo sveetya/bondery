@@ -1,7 +1,7 @@
 import { RelationshipsClient } from "./RelationshipsClient";
 import { getBaseUrl } from "@/lib/config";
 import type { Contact } from "@/lib/mockData";
-import { headers } from "next/headers";
+import { getAuthHeaders } from "@/lib/authHeaders";
 
 type SortOrder =
   | "nameAsc"
@@ -13,16 +13,14 @@ type SortOrder =
 
 async function getContacts(query?: string, sort?: SortOrder) {
   try {
-    const headersList = await headers();
+    const headers = await getAuthHeaders();
     const res = await fetch(`${getBaseUrl()}/api/contacts`, {
       cache: "no-store",
-      headers: headersList,
+      headers,
     });
 
     if (!res.ok) {
-      throw new Error(
-        `Failed to fetch contacts: ${res.status} ${res.statusText}`
-      );
+      throw new Error(`Failed to fetch contacts: ${res.status} ${res.statusText}`);
     }
 
     const data = await res.json();
@@ -38,9 +36,7 @@ async function getContacts(query?: string, sort?: SortOrder) {
     if (query) {
       const lowerQuery = query.toLowerCase();
       contacts = contacts.filter((contact: Contact) =>
-        `${contact.firstName} ${contact.lastName}`
-          .toLowerCase()
-          .includes(lowerQuery)
+        `${contact.firstName} ${contact.lastName}`.toLowerCase().includes(lowerQuery),
       );
     }
 
@@ -66,9 +62,7 @@ async function getContacts(query?: string, sort?: SortOrder) {
       });
     } else {
       // Default sort
-      contacts.sort((a: Contact, b: Contact) =>
-        a.firstName.localeCompare(b.firstName)
-      );
+      contacts.sort((a: Contact, b: Contact) => a.firstName.localeCompare(b.firstName));
     }
 
     return { contacts, totalCount: contacts.length };
@@ -77,7 +71,7 @@ async function getContacts(query?: string, sort?: SortOrder) {
     throw new Error(
       error instanceof Error
         ? error.message
-        : "An unexpected error occurred while fetching contacts"
+        : "An unexpected error occurred while fetching contacts",
     );
   }
 }
@@ -94,8 +88,7 @@ function calculateStats(contacts: Contact[]) {
   const thisMonthInteractions = contacts.filter((contact) => {
     const interactionDate = contact.lastInteraction;
     return (
-      interactionDate.getMonth() === currentMonth &&
-      interactionDate.getFullYear() === currentYear
+      interactionDate.getMonth() === currentMonth && interactionDate.getFullYear() === currentYear
     );
   }).length;
 
@@ -124,11 +117,5 @@ export default async function RelationshipsPage({
   const { contacts, totalCount } = await getContacts(query, sort);
   const stats = calculateStats(contacts);
 
-  return (
-    <RelationshipsClient
-      initialContacts={contacts}
-      totalCount={totalCount}
-      stats={stats}
-    />
-  );
+  return <RelationshipsClient initialContacts={contacts} totalCount={totalCount} stats={stats} />;
 }

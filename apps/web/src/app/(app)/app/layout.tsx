@@ -1,18 +1,18 @@
 import { AppShell, AppShellMain, AppShellNavbar } from "@mantine/core";
 import { NavigationSidebarContent } from "@/components/NavigationSidebar";
 import { getBaseUrl } from "@/lib/config";
-import { headers } from "next/headers";
+import { getAuthHeaders } from "@/lib/authHeaders";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 async function getUserData() {
   try {
     const baseUrl = getBaseUrl();
-    const headersList = await headers();
+    const headers = await getAuthHeaders();
 
     const response = await fetch(`${baseUrl}/api/account`, {
       cache: "no-store",
-      headers: headersList,
+      headers,
     });
 
     if (!response.ok) {
