@@ -48,6 +48,12 @@
         "apps/web/.env.development.local"
       ]
     },
+    "@bondee/branding#build": {
+      "outputs": []
+    },
+    "@bondee/helpers#build": {
+      "outputs": []
+    },
     "start": {
       "persistent": true,
       "cache": false

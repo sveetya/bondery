@@ -70,14 +70,12 @@ export function checkEnvVariables(config: EnvCheckConfig): void {
   const envFile = `.env.${environment}.local`;
   const envFilePath = resolve(appPath, envFile);
 
-  console.log(
-    `\n${colors.blue}🔍 Checking environment variables...${colors.reset}`
-  );
+  console.log(`\n${colors.blue}🔍 Checking environment variables...${colors.reset}`);
   console.log(`   Environment: ${colors.green}${environment}${colors.reset}`);
 
   // Check if env file exists (optional for CI/CD environments like Vercel)
   const fileExists = existsSync(envFilePath);
-  
+
   if (fileExists) {
     console.log(`   Source: ${colors.green}${envFile}${colors.reset}\n`);
   } else {
@@ -101,26 +99,24 @@ export function checkEnvVariables(config: EnvCheckConfig): void {
 
   // Report results
   if (missing.length > 0) {
-    console.error(
-      `${colors.red}❌ Missing required environment variables:${colors.reset}\n`
-    );
+    console.error(`${colors.red}❌ Missing required environment variables:${colors.reset}\n`);
     missing.forEach((varName) => {
       console.error(`   ${colors.red}✗${colors.reset} ${varName}`);
     });
-    
+
     if (fileExists) {
       console.error(
-        `\n${colors.yellow}Please add these variables to ${envFile} or set them in your environment${colors.reset}`
+        `\n${colors.yellow}Please add these variables to ${envFile} or set them in your environment${colors.reset}`,
       );
     } else {
       console.error(
-        `\n${colors.yellow}Please set these variables in your CI/CD environment (e.g., Vercel dashboard)${colors.reset}`
+        `\n${colors.yellow}Please set these variables in your CI/CD environment (e.g., Vercel dashboard)${colors.reset}`,
       );
     }
     process.exit(1);
   }
 
   console.log(
-    `${colors.green}✅ All ${requiredVars.length} required environment variables are set${colors.reset}\n`
+    `${colors.green}✅ All ${requiredVars.length} required environment variables are set${colors.reset}\n`,
   );
 }
