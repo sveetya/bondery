@@ -23,11 +23,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Create production environment file
+        run: |
+          echo "APP_URL=${{ vars.APP_URL }}" > apps/chrome-extension/.env.production.local
+
       - name: Build Chrome Extension
         run: npm run build --filter=chrome-extension
         env:
           NODE_ENV: production
-          APP_URL: ${{ secrets.APP_URL }}
 
       - name: Create zip archive
         run: |
