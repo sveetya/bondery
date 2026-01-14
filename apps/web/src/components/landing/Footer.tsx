@@ -1,7 +1,7 @@
 "use client";
 
 import { BonderyIcon } from "@bondery/branding";
-import { Anchor, Box, Container, Divider, Flex, Grid, Text } from "@mantine/core";
+import { Anchor, Box, Divider, Flex, Paper, Text } from "@mantine/core";
 import { IconBrandGithubFilled, IconBrandLinkedinFilled } from "@tabler/icons-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -19,7 +19,7 @@ type LinkGroupItem = {
 
 const LinkGroup = ({ title, links }: LinkGroupItem) => (
   <Box>
-    <Text fw="bold" mb="sm">
+    <Text fw="bold" mb="xs">
       {title}
     </Text>
     {links.map((link) => (
@@ -40,24 +40,20 @@ const LinkGroup = ({ title, links }: LinkGroupItem) => (
 
 export function Footer() {
   return (
-    <Container
-      component="footer"
-      fluid
-      style={{
-        backgroundColor: "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))",
-        borderTop: "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5))",
-      }}
-    >
-      <Container
-        size="xl"
-        px={0}
-        py={{
-          base: "xl",
-          sm: "calc(var(--mantine-spacing-xl) * 2)",
+    <Box component="footer" mb={"xl"}>
+      <Paper
+        maw={1440}
+        mx={{ base: "xs", md: "xl" }}
+        shadow="md"
+        radius="md"
+        withBorder
+        p={"xl"}
+        style={{
+          backgroundColor: "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))",
         }}
       >
-        <Grid gutter="xl" mb="xl">
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+        <Flex gap={{ base: "lg" }} mb="xl" wrap="wrap" px="md">
+          <Box style={{ minWidth: "200px" }}>
             <LinkGroup
               title="About app"
               links={[
@@ -65,8 +61,8 @@ export function Footer() {
                 { title: "Pricing", href: "#pricing" },
               ]}
             />
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+          </Box>
+          <Box style={{ minWidth: "200px" }}>
             <LinkGroup
               title="About us"
               links={[
@@ -74,8 +70,8 @@ export function Footer() {
                 { title: "Terms of Service", href: "#terms" },
               ]}
             />
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
+          </Box>
+          <Box style={{ minWidth: "200px" }}>
             <LinkGroup
               title="Connect with us"
               links={[
@@ -99,32 +95,23 @@ export function Footer() {
                 },
               ]}
             />
-          </Grid.Col>
-        </Grid>
+          </Box>
+        </Flex>
         <Divider my="xl" />
-        <Grid align="center">
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
-              <Flex align="center" gap="xs">
-                <BonderyIcon width={28} height={28} />
-                <Text fw={700} size="md">
-                  Bondery
-                </Text>
-              </Flex>
-            </Link>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Text size="xs" c="dimmed" ta="center">
-              © {new Date().getFullYear()} Bondery. All rights reserved.
-            </Text>
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, sm: 4 }}>
-            <Text size="xs" c="dimmed" ta="right">
-              Made with 💜 for meaningful connections
-            </Text>
-          </Grid.Col>
-        </Grid>
-      </Container>
-    </Container>
+        <Flex justify="space-between" align="center" px="md">
+          <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+            <Flex align="center" gap="xs">
+              <BonderyIcon width={28} height={28} />
+              <Text fw={700} size="md" c="white">
+                Bondery
+              </Text>
+            </Flex>
+          </Link>
+          <Text size="xs" c="dimmed" ta="right">
+            Made with 💜 for meaningful connections
+          </Text>
+        </Flex>
+      </Paper>
+    </Box>
   );
 }
