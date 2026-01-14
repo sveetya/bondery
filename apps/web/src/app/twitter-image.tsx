@@ -12,20 +12,18 @@ export const contentType = "image/png";
 
 export default async function Image() {
   return new ImageResponse(
-    (
-      <div
-        style={{
-          background: "white",
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <BonderyLogotypeBlack width={600} height={600} />
-      </div>
-    ),
+    <div
+      style={{
+        background: "white",
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <BonderyLogotypeBlack width={600} height={600} />
+    </div>,
     {
       ...size,
     },
