@@ -1,5 +1,5 @@
 
-![github.png](./packages/branding/src/assets/platforms/github_social_preview.png)
+![github.png](/packages/branding/src/platforms/github_social_preview.png)
 
 # <h1 align="center">Bondery</h1>
 ## 🟣 What's Bondery?
