@@ -38,9 +38,8 @@
     "scripts"
   ],
   "scripts": {
-    "build": "echo 'No build step'",
-    "generate-react-icons": "tsx scripts/generate-react-icons.ts",
-    "prebuild": "npm run generate-react-icons"
+    "build": "npm run generate-react-icons",
+    "generate-react-icons": "tsx scripts/generate-react-icons.ts"
   },
   "dependencies": {
     "sharp": "^0.33.5"
