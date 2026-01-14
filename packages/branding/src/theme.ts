@@ -1,9 +1,11 @@
-import { createTheme, MantineTheme } from "@mantine/core";
+import { Card, createTheme, MantineTheme } from "@mantine/core";
 
 export const bonderyTheme = createTheme({
   cursorType: "pointer",
   primaryColor: "branding-primary",
   defaultRadius: "md",
+  fontFamily: "Lexend, sans-serif",
+
   colors: {
     "branding-primary": [
       "#faedff",
@@ -41,9 +43,18 @@ export const bonderyTheme = createTheme({
         },
       },
     },
+    Card: {
+      defaultProps: {
+        radius: "var(--mantine-radius-default)",
+        shadodow: "sm",
+      },
+    },
+
     Paper: {
       defaultProps: {
         radius: "md",
+        withBorder: true,
+        shadow: "sm",
       },
     },
     NavLink: {
