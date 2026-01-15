@@ -31,6 +31,7 @@ export default async function RootLayout({
   return (
     <html lang="en" {...mantineHtmlProps} className={lexend.variable}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <ColorSchemeScript nonce="8IBTHwOdqNKAWeKl7plt8g==" defaultColorScheme="auto" />
       </head>
       <body>
