@@ -57,6 +57,11 @@ export const bonderyTheme = createTheme({
         shadow: "sm",
       },
     },
+    ActionIcon: {
+      defaultProps: {
+        className: "button-scale-effect",
+      },
+    },
     NavLink: {
       defaultProps: {
         className: "button-scale-effect",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Container, Stack, Title } from "@mantine/core";
+import { Button, Card, Container, Stack, Title, VisuallyHidden } from "@mantine/core";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import Link from "next/link";
 
@@ -15,29 +15,40 @@ export function CallToAction() {
       }}
       fluid
     >
-      <Container size="lg">
-        <Card
-          mih={400}
-          p="xl"
-          bg="var(--mantine-primary-color-filled)"
-          className="flex justify-center items-center"
-        >
-          <Stack align="center" justify="center" h="100%" flex={1} p="xl" className="gap-y-12!">
-            <Title order={2} ta="center" fw={"bold"} className="text-3xl!" c={"white"} maw="80%">
-              Ready to organize your network? Start building meaningful connections today.
-            </Title>
-            <Button
-              component={Link}
-              href="/login"
-              size="lg"
-              rightSection={<IconArrowUpRight />}
-              variant="white"
-            >
-              Start building connections
-            </Button>
-          </Stack>
-        </Card>
-      </Container>
+      <Card
+        mih={400}
+        p="xl"
+        bg="var(--mantine-primary-color-filled)"
+        className="flex justify-center items-center max-w-6xl"
+        mx={"auto"}
+      >
+        <Stack align="center" justify="center" h="100%" flex={1} p="xl" className="gap-y-12!">
+          <Title
+            order={2}
+            ta="center"
+            fw={"bold"}
+            className="text-3xl! inline"
+            c={"white"}
+            maw="80%"
+          >
+            Ready to organize your network?{" "}
+            <Container hiddenFrom="md" component={"span"}>
+              <br />
+              <br />
+            </Container>
+            Start building meaningful connections today.
+          </Title>
+          <Button
+            component={Link}
+            href="/login"
+            size="lg"
+            rightSection={<IconArrowUpRight />}
+            variant="white"
+          >
+            Start for free
+          </Button>
+        </Stack>
+      </Card>
     </Container>
   );
 }

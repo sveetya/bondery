@@ -97,7 +97,13 @@ export function Footer() {
           </Box>
         </Flex>
         <Divider my="xl" />
-        <Flex justify="space-between" align="center" px="md">
+        <Flex
+          justify="space-between"
+          align={{ base: "flex-start", md: "center" }}
+          px="md"
+          direction={{ base: "column", md: "row" }}
+          gap={{ base: "md" }}
+        >
           <Logo iconSize={28} textSize="md" />
           <Text size="xs" c="dimmed" ta="right">
             Made with 💜 for meaningful connections
