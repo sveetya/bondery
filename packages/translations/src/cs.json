@@ -1,4 +1,9 @@
 {
+  "ContactPage": {
+    "Title": "Kontaktujte nás",
+    "Description": "Máte-li jakékoli dotazy, neváhejte nás kontaktovat.",
+    "EmailText": "Kontaktujte nás na team@usebondery.com"
+  },
   "SingleContactPage": {
     "Title": "Detaily kontaktu",
     "Description": "Zobrazit a spravovat detaily vašeho kontaktu."

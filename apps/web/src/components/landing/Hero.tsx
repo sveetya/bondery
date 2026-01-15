@@ -3,6 +3,7 @@
 import { Box, Button, Container, Grid, Group, Stack, Text, Title } from "@mantine/core";
 import { IconTopologyStar } from "@tabler/icons-react";
 import Link from "next/link";
+import { ROUTES } from "@/lib/config";
 import { AnimatedPeople } from "@/components/landing/AnimatedPeople";
 
 export function Hero() {
@@ -32,7 +33,7 @@ export function Hero() {
               <Group mt="md">
                 <Button
                   component={Link}
-                  href="/login"
+                  href={ROUTES.LOGIN}
                   size="lg"
                   leftSection={<IconTopologyStar size={20} />}
                 >

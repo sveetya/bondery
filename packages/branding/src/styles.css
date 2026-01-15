@@ -1,7 +1,7 @@
 :root {
   /* Transition timing */
   --transition-time: 200ms;
-  --transition-ease: ease;
+  --transition-ease: ease-in-out;
   --transition-ease-out: ease-out;
   --transition-time-quick: 100ms;
 
@@ -53,8 +53,10 @@
   transition: all var(--transition-time) var(--transition-ease);
 }
 
-.card-scale-effect:hover {
+.card-scale-effect {
   transition: transform var(--transition-time) var(--transition-ease);
+}
+.card-scale-effect:hover {
   transform: scale(var(--scale-grow));
 }
 

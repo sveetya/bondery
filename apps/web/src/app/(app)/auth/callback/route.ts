@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { ROUTES } from "@/lib/config";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
           setAll(cookiesToSet) {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
+                cookieStore.set(name, value, options),
               );
             } catch {
               // The `setAll` method was called from a Server Component.
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
             }
           },
         },
-      }
+      },
     );
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -40,5 +41,5 @@ export async function GET(request: Request) {
   }
 
   // If there's an error, redirect to login
-  return NextResponse.redirect(`${origin}/login`);
+  return NextResponse.redirect(`${origin}${ROUTES.LOGIN}`);
 }

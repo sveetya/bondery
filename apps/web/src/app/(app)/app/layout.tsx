@@ -5,6 +5,7 @@ import { getBaseUrl } from "@/lib/config";
 import { getAuthHeaders } from "@/lib/authHeaders";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { ROUTES } from "@/lib/config";
 import * as translations from "@bondery/translations";
 
 /**
@@ -97,7 +98,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect(ROUTES.LOGIN);
   }
 
   // Fetch user data and settings in parallel

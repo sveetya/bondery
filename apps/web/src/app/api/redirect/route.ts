@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { validateImageUpload } from "@/lib/imageValidation";
+import { ROUTES } from "@/lib/config";
 
 interface ProfileData {
   instagram?: string;
@@ -227,7 +228,7 @@ export async function GET(request: NextRequest) {
       // Redirect to login with return URL
       const returnUrl = `/api/redirect?${searchParams.toString()}`;
       return NextResponse.redirect(
-        new URL(`/login?returnUrl=${encodeURIComponent(returnUrl)}`, request.url),
+        new URL(`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(returnUrl)}`, request.url),
       );
     }
 

@@ -73,3 +73,19 @@ export const INTEGRATION_PROVIDERS = [
  * Status page URL
  */
 export const STATUS_URL = "https://bondery.openstatus.dev/";
+
+/**
+ * Social media links
+ */
+export const SOCIAL_LINKS = {
+  github: "https://github.com/Marilok/bondery",
+  linkedin: "https://www.linkedin.com/company/bondery",
+  email: "team@usebondery.com",
+} as const;
+
+/**
+ * Routes used across the app
+ */
+export const ROUTES = {
+  LOGIN: "/login",
+} as const;

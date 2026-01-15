@@ -1,4 +1,4 @@
-import { getBaseUrl } from "@/lib/config";
+import { getBaseUrl, ROUTES } from "@/lib/config";
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -11,7 +11,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/login`,
+      url: `${baseUrl}${ROUTES.LOGIN}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.8,

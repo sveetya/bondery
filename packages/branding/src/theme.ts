@@ -1,4 +1,4 @@
-import { Card, createTheme, MantineTheme } from "@mantine/core";
+import { Avatar, Card, createTheme, MantineTheme, Title } from "@mantine/core";
 
 export const bonderyTheme = createTheme({
   cursorType: "pointer",
@@ -60,6 +60,16 @@ export const bonderyTheme = createTheme({
     ActionIcon: {
       defaultProps: {
         className: "button-scale-effect",
+      },
+    },
+    Title: {
+      defaultProps: {
+        c: "white",
+      },
+    },
+    Avatar: {
+      defaultProps: {
+        radius: "md",
       },
     },
     NavLink: {

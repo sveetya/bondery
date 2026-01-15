@@ -5,6 +5,7 @@ import { IconLogout } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
 import { useTranslations } from "next-intl";
+import { ROUTES } from "@/lib/config";
 
 export function LogoutSection() {
   const router = useRouter();
@@ -31,7 +32,7 @@ export function LogoutSection() {
         throw new Error(data.error || "Failed to sign out");
       }
 
-      router.push("/login");
+      router.push(ROUTES.LOGIN);
     } catch (error) {
       notifications.show({
         title: t("UpdateError"),

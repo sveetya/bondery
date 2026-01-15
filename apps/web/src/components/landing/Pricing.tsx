@@ -23,6 +23,7 @@ import {
   IconTopologyStar,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { ROUTES } from "@/lib/config";
 import type { ReactNode } from "react";
 
 const Icon = ({ children }: { children: ReactNode }) => (
@@ -131,7 +132,7 @@ export function Pricing() {
           <Box>
             <Button
               component={Link}
-              href="/login"
+              href={ROUTES.LOGIN}
               size="lg"
               fullWidth
               variant="primary"

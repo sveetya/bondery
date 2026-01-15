@@ -17,10 +17,11 @@ import { IconBrandGithub, IconTopologyStar, IconMenu2, IconX } from "@tabler/ico
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
+import { SOCIAL_LINKS, ROUTES } from "@/lib/config";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/#pricing" },
 ];
 
 export function Header() {
@@ -58,7 +59,7 @@ export function Header() {
             {/* GitHub Stars */}
             <Button
               component={Link}
-              href="https://github.com/Marilok/bondery"
+              href={SOCIAL_LINKS.github}
               target="_blank"
               variant="default"
               leftSection={<IconBrandGithub size={20} />}
@@ -70,7 +71,7 @@ export function Header() {
             {/* CTA Button */}
             <Button
               component={Link}
-              href="/login"
+              href={ROUTES.LOGIN}
               size="md"
               leftSection={<IconTopologyStar size={20} />}
             >
@@ -122,7 +123,7 @@ export function Header() {
                 {/* GitHub Stars */}
                 <Button
                   component={Link}
-                  href="https://github.com/Marilok/bondery"
+                  href={SOCIAL_LINKS.github}
                   target="_blank"
                   variant="default"
                   leftSection={<IconBrandGithub size={20} />}
@@ -135,7 +136,7 @@ export function Header() {
                 {/* CTA Button */}
                 <Button
                   component={Link}
-                  href="/login"
+                  href={ROUTES.LOGIN}
                   size="md"
                   leftSection={<IconTopologyStar size={20} />}
                   fullWidth

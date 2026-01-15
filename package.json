@@ -8,7 +8,9 @@
     "packages/*"
   ],
   "scripts": {
+    "predev": "turbo telemetry disable",
     "dev": "turbo dev",
+    "prebuild": "turbo telemetry disable",
     "build": "turbo build",
     "start": "turbo start",
     "lint": "turbo lint",

@@ -1,4 +1,9 @@
 {
+  "ContactPage": {
+    "Title": "Contact us",
+    "Description": "If you have any questions, please feel free to contact us.",
+    "EmailText": "team@usebondery.com"
+  },
   "SingleContactPage": {
     "Title": "Contact Details",
     "Description": "View and manage details of your contact."

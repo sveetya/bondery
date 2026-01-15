@@ -1,9 +1,10 @@
 "use client";
 
-import { Anchor, Box, Divider, Flex, Paper, Text } from "@mantine/core";
+import { Anchor, Box, Divider, Flex, Paper, Text, Title } from "@mantine/core";
 import { IconBrandGithubFilled, IconBrandLinkedinFilled } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/Logo";
+import { SOCIAL_LINKS } from "@/lib/config";
 
 type LinkItem = {
   title: ReactNode;
@@ -18,9 +19,9 @@ type LinkGroupItem = {
 
 const LinkGroup = ({ title, links }: LinkGroupItem) => (
   <Box>
-    <Text fw="bold" mb="xs">
+    <Title fw="bold" mb="xs" order={2}>
       {title}
-    </Text>
+    </Title>
     {links.map((link) => (
       <Anchor
         c="dimmed"
@@ -65,6 +66,7 @@ export function Footer() {
             <LinkGroup
               title="About us"
               links={[
+                { title: "Contact us", href: "/contact" },
                 { title: "Privacy Policy", href: "#privacy" },
                 { title: "Terms of Service", href: "#terms" },
               ]}
@@ -80,7 +82,7 @@ export function Footer() {
                       <IconBrandGithubFilled size={16} /> GitHub
                     </Flex>
                   ),
-                  href: "https://github.com/Marilok/bondery",
+                  href: SOCIAL_LINKS.github,
                   target: "_blank",
                 },
                 {
@@ -89,7 +91,7 @@ export function Footer() {
                       <IconBrandLinkedinFilled size={16} /> LinkedIn
                     </Flex>
                   ),
-                  href: "https://www.linkedin.com/company/bondery",
+                  href: SOCIAL_LINKS.linkedin,
                   target: "_blank",
                 },
               ]}
