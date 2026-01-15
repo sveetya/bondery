@@ -37,12 +37,15 @@ export function Header() {
   return (
     <Box component="header" className="sticky top-6 z-50" mb={{ base: "lg", md: "0" }}>
       <Paper maw={1440} mx={{ base: "xs", md: "xl" }} shadow="md" py={"md"} px={"xs"}>
-        <Flex justify="space-between" align="center" h="100%" px="md">
-          {/* Logo */}
-          <Logo iconSize={32} textSize="lg" />
+        {/* Desktop Layout */}
+        <Flex align="center" px="md" visibleFrom="sm">
+          {/* Logo - Left */}
+          <Box style={{ flex: 1 }}>
+            <Logo size={32} />
+          </Box>
 
-          {/* Navigation Links */}
-          <Group gap="xl" visibleFrom="sm">
+          {/* Navigation Links - Center */}
+          <Group gap="xl" style={{ flex: "0 0 auto" }}>
             {navLinks.map((link) => (
               <Anchor key={link.label} href={link.href} c="white">
                 {link.label}
@@ -51,7 +54,7 @@ export function Header() {
           </Group>
 
           {/* Right section - Desktop */}
-          <Flex align="center" gap="md" visibleFrom="sm">
+          <Flex align="center" gap="md" justify="flex-end" style={{ flex: 1 }}>
             {/* GitHub Stars */}
             <Button
               component={Link}
@@ -74,9 +77,12 @@ export function Header() {
               Go to app
             </Button>
           </Flex>
+        </Flex>
 
-          {/* Burger menu - Mobile */}
-          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" color="white" />
+        {/* Mobile Layout */}
+        <Flex justify="space-between" align="center" px="md" hiddenFrom="sm">
+          <Logo size={32} />
+          <Burger opened={drawerOpened} onClick={toggleDrawer} color="white" />
         </Flex>
       </Paper>
 

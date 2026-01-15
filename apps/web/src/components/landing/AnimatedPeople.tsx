@@ -52,8 +52,10 @@ export function AnimatedPeople() {
     return () => clearInterval(interval);
   }, []);
 
-  const randomRotateY = () => {
-    return Math.floor(Math.random() * 21) - 10;
+  const getRotation = (index: number, isActive: boolean) => {
+    if (isActive) return 0;
+    const rotations = [-8, 3, -11, 7, -4, 9, -6];
+    return rotations[index % rotations.length];
   };
 
   return (
@@ -69,13 +71,13 @@ export function AnimatedPeople() {
                     opacity: 0,
                     scale: 0.9,
                     z: -100,
-                    rotate: randomRotateY(),
+                    rotate: getRotation(index, false),
                   }}
                   animate={{
                     opacity: isActive(index) ? 1 : 0.7,
                     scale: isActive(index) ? 1 : 0.95,
                     z: isActive(index) ? 0 : -100,
-                    rotate: isActive(index) ? 0 : randomRotateY(),
+                    rotate: getRotation(index, isActive(index)),
                     zIndex: isActive(index) ? 40 : people.length + 2 - index,
                     y: isActive(index) ? [0, -80, 0] : 0,
                   }}
@@ -83,7 +85,7 @@ export function AnimatedPeople() {
                     opacity: 0,
                     scale: 0.9,
                     z: 100,
-                    rotate: randomRotateY(),
+                    rotate: getRotation(index, false),
                   }}
                   transition={{
                     duration: 0.4,
@@ -106,7 +108,7 @@ export function AnimatedPeople() {
             </AnimatePresence>
           </div>
         </div>
-        <div className="flex flex-col justify-between py-4 md:pl-6 lg:pl-10">
+        <div className="flex flex-col justify-between py-4 md:pl-6 lg:pl-2">
           <motion.div
             key={active}
             initial={{
