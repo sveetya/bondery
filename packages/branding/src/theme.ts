@@ -64,7 +64,7 @@ export const bonderyTheme = createTheme({
     },
     Title: {
       defaultProps: {
-        c: "white",
+        c: "var(--mantine-color-default-color)",
       },
     },
     Avatar: {
