@@ -1,0 +1,1677 @@
+openapi: 3.0.3
+info:
+  title: Bondery API
+  description: |
+    REST API for the Bondery application -- a contact and relationship management platform.
+
+    ## Authentication
+
+    This API uses cookie-based authentication with Supabase. After authenticating through the webapp,
+    your session cookie is included in subsequent requests.
+
+    All endpoints (except `GET /status` and `GET /api/redirect`) require authentication.
+
+    The API also accepts `Authorization: Bearer <token>` headers.
+  version: 1.0.0
+  contact:
+    name: Bondery Support
+    url: https://usebondery.com
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+
+servers:
+  - url: http://localhost:3001
+    description: Local development server
+  - url: https://api.usebondery.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Server health check
+  - name: Contacts
+    description: Contact management (CRUD, photos, vCard)
+  - name: Groups
+    description: Group management and membership
+  - name: Events
+    description: Timeline events (meetings, calls, notes)
+  - name: Relationships
+    description: Relationships between contacts
+  - name: ImportantEvents
+    description: Birthdays, anniversaries, and other recurring dates
+  - name: Account
+    description: User account management
+  - name: Settings
+    description: User preferences and settings
+  - name: Import
+    description: LinkedIn and Instagram data import
+  - name: Redirect
+    description: Browser extension integration
+  - name: Feedback
+    description: User feedback
+  - name: Reminders
+    description: Internal reminder dispatch
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+paths:
+  # --- Health ---
+  /status:
+    get:
+      summary: Health check
+      operationId: getHealth
+      tags: [Health]
+      security: []
+      responses:
+        "200":
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  # --- Contacts ---
+  /api/contacts:
+    get:
+      summary: List contacts
+      operationId: listContacts
+      tags: [Contacts]
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer }
+        - name: offset
+          in: query
+          schema: { type: integer }
+        - name: q
+          in: query
+          description: Search query
+          schema: { type: string }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [nameAsc, nameDesc, surnameAsc, surnameDesc, interactionAsc, interactionDesc]
+      responses:
+        "200":
+          description: List of contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contacts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Contact"
+                  totalCount:
+                    type: integer
+                  stats:
+                    type: object
+                    properties:
+                      totalContacts: { type: integer }
+                      recentlyAdded: { type: integer }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: Create contact
+      operationId: createContact
+      tags: [Contacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContactInput"
+      responses:
+        "201":
+          description: Contact created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete contacts (bulk)
+      operationId: deleteContacts
+      tags: [Contacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string, format: uuid }
+                  minItems: 1
+      responses:
+        "200":
+          description: Contacts deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/contacts/{id}:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+
+    get:
+      summary: Get contact
+      operationId: getContact
+      tags: [Contacts]
+      responses:
+        "200":
+          description: Contact details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contact:
+                    $ref: "#/components/schemas/Contact"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: Update contact
+      operationId: updateContact
+      tags: [Contacts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContactInput"
+      responses:
+        "200":
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/contacts/{id}/photo:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+
+    post:
+      summary: Upload contact photo
+      operationId: uploadContactPhoto
+      tags: [Contacts]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file (JPEG, PNG, GIF, WebP, max 5 MB)
+      responses:
+        "200":
+          description: Photo uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  avatarUrl: { type: string, format: uri }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    delete:
+      summary: Delete contact photo
+      operationId: deleteContactPhoto
+      tags: [Contacts]
+      responses:
+        "200":
+          description: Photo deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/contacts/{id}/vcard:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+    get:
+      summary: Export vCard
+      operationId: exportVCard
+      tags: [Contacts]
+      responses:
+        "200":
+          description: vCard file
+          content:
+            text/vcard:
+              schema:
+                type: string
+          headers:
+            Content-Disposition:
+              schema: { type: string }
+              description: 'attachment; filename="FirstName_LastName.vcf"'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/contacts/important-events/upcoming:
+    get:
+      summary: Get upcoming reminders
+      operationId: getUpcomingReminders
+      tags: [ImportantEvents]
+      responses:
+        "200":
+          description: Upcoming reminders across all contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reminders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UpcomingReminder"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Relationships ---
+  /api/contacts/{id}/relationships:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+
+    get:
+      summary: List relationships
+      operationId: listRelationships
+      tags: [Relationships]
+      responses:
+        "200":
+          description: Relationships for contact
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relationships:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ContactRelationship"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    post:
+      summary: Create relationship
+      operationId: createRelationship
+      tags: [Relationships]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [relatedPersonId, relationshipType]
+              properties:
+                relatedPersonId: { type: string, format: uuid }
+                relationshipType:
+                  $ref: "#/components/schemas/RelationshipType"
+      responses:
+        "201":
+          description: Relationship created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relationship:
+                    $ref: "#/components/schemas/ContactRelationship"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          description: Duplicate relationship
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /api/contacts/{id}/relationships/{relationshipId}:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+      - name: relationshipId
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+
+    patch:
+      summary: Update relationship
+      operationId: updateRelationship
+      tags: [Relationships]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [relatedPersonId, relationshipType]
+              properties:
+                relatedPersonId: { type: string, format: uuid }
+                relationshipType:
+                  $ref: "#/components/schemas/RelationshipType"
+      responses:
+        "200":
+          description: Relationship updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  relationship:
+                    $ref: "#/components/schemas/ContactRelationship"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete relationship
+      operationId: deleteRelationship
+      tags: [Relationships]
+      responses:
+        "200":
+          description: Relationship deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Important Events ---
+  /api/contacts/{id}/important-events:
+    parameters:
+      - $ref: "#/components/parameters/ContactId"
+
+    get:
+      summary: List important events
+      operationId: listImportantEvents
+      tags: [ImportantEvents]
+      responses:
+        "200":
+          description: Important events for contact
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ImportantEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    put:
+      summary: Replace important events
+      description: Full replacement of all important events for a contact
+      operationId: replaceImportantEvents
+      tags: [ImportantEvents]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+                    required: [eventType, eventDate]
+                    properties:
+                      eventType:
+                        $ref: "#/components/schemas/ImportantEventType"
+                      eventDate:
+                        type: string
+                        format: date
+                      note:
+                        type: string
+                        nullable: true
+                      notifyDaysBefore:
+                        type: integer
+                        nullable: true
+                        enum: [1, 3, 7, null]
+      responses:
+        "200":
+          description: Events replaced
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ImportantEvent"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Groups ---
+  /api/groups:
+    get:
+      summary: List groups
+      operationId: listGroups
+      tags: [Groups]
+      parameters:
+        - name: previewLimit
+          in: query
+          description: Max contact previews per group
+          schema: { type: integer }
+      responses:
+        "200":
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GroupWithCount"
+                  totalCount:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    post:
+      summary: Create group
+      operationId: createGroup
+      tags: [Groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGroupInput"
+      responses:
+        "201":
+          description: Group created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete groups (bulk)
+      operationId: deleteGroups
+      tags: [Groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items: { type: string, format: uuid }
+                  minItems: 1
+      responses:
+        "200":
+          description: Groups deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/groups/{id}:
+    parameters:
+      - $ref: "#/components/parameters/GroupId"
+
+    get:
+      summary: Get group
+      operationId: getGroup
+      tags: [Groups]
+      responses:
+        "200":
+          description: Group details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: "#/components/schemas/Group"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    patch:
+      summary: Update group
+      operationId: updateGroup
+      tags: [Groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGroupInput"
+      responses:
+        "200":
+          description: Group updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete group
+      operationId: deleteGroup
+      tags: [Groups]
+      responses:
+        "200":
+          description: Group deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /api/groups/{id}/contacts:
+    parameters:
+      - $ref: "#/components/parameters/GroupId"
+
+    get:
+      summary: Get group contacts
+      operationId: getGroupContacts
+      tags: [Groups]
+      responses:
+        "200":
+          description: Group with contacts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: "#/components/schemas/Group"
+                  contacts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Contact"
+                  totalCount:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+    post:
+      summary: Add contacts to group
+      operationId: addGroupContacts
+      tags: [Groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [personIds]
+              properties:
+                personIds:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Contacts added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Remove contacts from group
+      operationId: removeGroupContacts
+      tags: [Groups]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [personIds]
+              properties:
+                personIds:
+                  type: array
+                  items: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Contacts removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Events ---
+  /api/events:
+    get:
+      summary: List events
+      operationId: listEvents
+      tags: [Events]
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Event"
+                  totalCount:
+                    type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    post:
+      summary: Create event
+      operationId: createEvent
+      tags: [Events]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventInput"
+      responses:
+        "201":
+          description: Event created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: string, format: uuid }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/events/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+
+    patch:
+      summary: Update event
+      operationId: updateEvent
+      tags: [Events]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEventInput"
+      responses:
+        "200":
+          description: Event updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete event
+      operationId: deleteEvent
+      tags: [Events]
+      responses:
+        "200":
+          description: Event deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Account ---
+  /api/account:
+    patch:
+      summary: Update account
+      operationId: updateAccount
+      tags: [Account]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                middlename: { type: string }
+                surname: { type: string }
+      responses:
+        "200":
+          description: Account updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data: { type: object }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete account
+      description: Permanently deletes account and all associated data
+      operationId: deleteAccount
+      tags: [Account]
+      responses:
+        "200":
+          description: Account deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/account/photo:
+    post:
+      summary: Upload profile photo
+      operationId: uploadProfilePhoto
+      tags: [Account]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file (JPEG, PNG, GIF, WebP, max 5 MB)
+      responses:
+        "200":
+          description: Photo uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      avatarUrl: { type: string, format: uri }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    delete:
+      summary: Delete profile photo
+      operationId: deleteProfilePhoto
+      tags: [Account]
+      responses:
+        "200":
+          description: Photo deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Settings ---
+  /api/settings:
+    get:
+      summary: Get settings
+      operationId: getSettings
+      tags: [Settings]
+      responses:
+        "200":
+          description: User settings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    $ref: "#/components/schemas/UserSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+    patch:
+      summary: Update settings
+      operationId: updateSettings
+      tags: [Settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                middlename: { type: string }
+                surname: { type: string }
+                timezone: { type: string, example: "Europe/Prague" }
+                reminder_send_hour: { type: string, example: "08:00" }
+                language: { type: string, enum: [en, cs] }
+                color_scheme: { type: string, enum: [light, dark, auto] }
+      responses:
+        "200":
+          description: Settings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    $ref: "#/components/schemas/UserSettings"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Redirect ---
+  /api/redirect:
+    get:
+      summary: Browser redirect
+      description: Create or find a contact from extension data and redirect to webapp
+      operationId: redirectGet
+      tags: [Redirect]
+      security: []
+      parameters:
+        - { name: instagram, in: query, schema: { type: string } }
+        - { name: linkedin, in: query, schema: { type: string } }
+        - { name: facebook, in: query, schema: { type: string } }
+        - { name: firstName, in: query, schema: { type: string } }
+        - { name: middleName, in: query, schema: { type: string } }
+        - { name: lastName, in: query, schema: { type: string } }
+        - { name: profileImageUrl, in: query, schema: { type: string, format: uri } }
+        - { name: title, in: query, schema: { type: string } }
+        - { name: place, in: query, schema: { type: string } }
+      responses:
+        "302":
+          description: Redirect to contact page or login
+          headers:
+            Location:
+              schema: { type: string }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+    post:
+      summary: Create or find contact (API)
+      operationId: redirectPost
+      tags: [Redirect]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedirectRequest"
+      responses:
+        "200":
+          description: Contact created or found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedirectResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Feedback ---
+  /api/feedback:
+    post:
+      summary: Submit feedback
+      operationId: submitFeedback
+      tags: [Feedback]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [npsScore, npsReason, generalFeedback]
+              properties:
+                npsScore:
+                  type: integer
+                  minimum: 0
+                  maximum: 10
+                npsReason:
+                  type: string
+                generalFeedback:
+                  type: string
+      responses:
+        "200":
+          description: Feedback submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Import: LinkedIn ---
+  /api/contacts/import/linkedin/parse:
+    post:
+      summary: Parse LinkedIn export
+      operationId: parseLinkedInExport
+      tags: [Import]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: LinkedIn data export (ZIP or CSV)
+      responses:
+        "200":
+          description: Parsed contacts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LinkedInParseResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/contacts/import/linkedin/commit:
+    post:
+      summary: Commit LinkedIn import
+      operationId: commitLinkedInImport
+      tags: [Import]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contacts]
+              properties:
+                contacts:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/LinkedInPreparedContact"
+      responses:
+        "200":
+          description: Import results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportCommitResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Import: Instagram ---
+  /api/contacts/import/instagram/parse:
+    post:
+      summary: Parse Instagram export
+      operationId: parseInstagramExport
+      tags: [Import]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Instagram data export (ZIP)
+                strategy:
+                  $ref: "#/components/schemas/InstagramImportStrategy"
+      responses:
+        "200":
+          description: Parsed contacts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InstagramParseResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /api/contacts/import/instagram/commit:
+    post:
+      summary: Commit Instagram import
+      operationId: commitInstagramImport
+      tags: [Import]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contacts]
+              properties:
+                contacts:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/InstagramPreparedContact"
+      responses:
+        "200":
+          description: Import results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportCommitResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  # --- Reminders ---
+  /api/reminders/daily-digest:
+    post:
+      summary: Send reminder digests
+      description: Internal endpoint called by the Supabase cron job
+      operationId: sendReminderDigests
+      tags: [Reminders]
+      security:
+        - reminderSecret: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetDate, users]
+              properties:
+                targetDate:
+                  type: string
+                  format: date
+                users:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/ReminderDigestUser"
+      responses:
+        "200":
+          description: Digest sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  targetDate: { type: string, format: date }
+                  sentUsers: { type: integer }
+                  failedUsers: { type: integer }
+                  failures:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId: { type: string }
+                        error: { type: string }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+# ---------------------------------------------------------------------------
+# Components
+# ---------------------------------------------------------------------------
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: Supabase session cookie
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Supabase access token
+    reminderSecret:
+      type: apiKey
+      in: header
+      name: x-reminder-job-secret
+      description: Shared secret for internal cron calls
+
+  parameters:
+    ContactId:
+      name: id
+      in: path
+      required: true
+      description: Contact UUID
+      schema: { type: string, format: uuid }
+    GroupId:
+      name: id
+      in: path
+      required: true
+      description: Group UUID
+      schema: { type: string, format: uuid }
+
+  schemas:
+    # --- Common ---
+    ApiError:
+      type: object
+      properties:
+        error: { type: string }
+        description: { type: string }
+
+    MessageResponse:
+      type: object
+      properties:
+        message: { type: string }
+
+    SuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+
+    # --- Contact ---
+    Contact:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        firstName: { type: string }
+        middleName: { type: string, nullable: true }
+        lastName: { type: string, nullable: true }
+        title: { type: string, nullable: true }
+        place: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        notes: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+        avatar: { type: string, format: uri, nullable: true }
+        lastInteraction: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        connections: { type: array, items: { type: string }, nullable: true }
+        phones:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/PhoneEntry"
+        emails:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/EmailEntry"
+        socialMedia:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/SocialMediaEntry"
+        gender: { type: string, nullable: true }
+        language: { type: string, nullable: true }
+        timezone: { type: string, nullable: true }
+        nickname: { type: string, nullable: true }
+        pgpPublicKey: { type: string, nullable: true }
+        latitude: { type: number, nullable: true }
+        longitude: { type: number, nullable: true }
+        myself: { type: boolean, nullable: true }
+        position:
+          nullable: true
+          type: object
+          properties:
+            company: { type: string }
+            role: { type: string }
+
+    ContactPreview:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        firstName: { type: string }
+        lastName: { type: string, nullable: true }
+        avatar: { type: string, format: uri, nullable: true }
+        avatarColor: { type: string, nullable: true }
+
+    PhoneEntry:
+      type: object
+      properties:
+        prefix: { type: string, example: "+1" }
+        value: { type: string, example: "5551234567" }
+        type: { type: string, enum: [home, work] }
+        preferred: { type: boolean }
+
+    EmailEntry:
+      type: object
+      properties:
+        value: { type: string, format: email }
+        type: { type: string, enum: [home, work] }
+        preferred: { type: boolean }
+
+    SocialMediaEntry:
+      type: object
+      properties:
+        platform:
+          type: string
+          enum: [linkedin, instagram, whatsapp, facebook, website, signal]
+        handle: { type: string }
+        connectedAt: { type: string, format: date-time, nullable: true }
+
+    CreateContactInput:
+      type: object
+      required: [firstName]
+      properties:
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string }
+        linkedin: { type: string }
+
+    UpdateContactInput:
+      type: object
+      description: All fields optional
+      properties:
+        firstName: { type: string }
+        middleName: { type: string, nullable: true }
+        lastName: { type: string, nullable: true }
+        title: { type: string, nullable: true }
+        place: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        notes: { type: string, nullable: true }
+        avatarColor: { type: string, nullable: true }
+        phones:
+          type: array
+          items:
+            $ref: "#/components/schemas/PhoneEntry"
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/EmailEntry"
+        socialMedia:
+          type: object
+          description: "Keys are platform names, values are handles (null to remove)"
+          additionalProperties:
+            type: string
+            nullable: true
+        gender: { type: string, nullable: true }
+        language: { type: string, nullable: true }
+        timezone: { type: string, nullable: true }
+        nickname: { type: string, nullable: true }
+        latitude: { type: number, nullable: true }
+        longitude: { type: number, nullable: true }
+        position:
+          nullable: true
+          type: object
+          properties:
+            company: { type: string }
+            role: { type: string }
+
+    # --- Relationships ---
+    RelationshipType:
+      type: string
+      enum: [parent, child, spouse, partner, sibling, friend, colleague, neighbor, guardian, dependent, other]
+
+    ContactRelationship:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        sourcePersonId: { type: string, format: uuid }
+        targetPersonId: { type: string, format: uuid }
+        relationshipType:
+          $ref: "#/components/schemas/RelationshipType"
+        sourcePerson:
+          $ref: "#/components/schemas/ContactPreview"
+        targetPerson:
+          $ref: "#/components/schemas/ContactPreview"
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    # --- Important Events ---
+    ImportantEventType:
+      type: string
+      enum: [birthday, anniversary, nameday, graduation, other]
+
+    ImportantEvent:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        personId: { type: string, format: uuid }
+        eventType:
+          $ref: "#/components/schemas/ImportantEventType"
+        eventDate: { type: string, format: date }
+        note: { type: string, nullable: true }
+        notifyOn: { type: string, format: date, nullable: true }
+        notifyDaysBefore:
+          type: integer
+          nullable: true
+          enum: [1, 3, 7, null]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    UpcomingReminder:
+      type: object
+      properties:
+        event:
+          $ref: "#/components/schemas/ImportantEvent"
+        person:
+          $ref: "#/components/schemas/ContactPreview"
+
+    # --- Groups ---
+    Group:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        label: { type: string }
+        emoji: { type: string }
+        color: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    GroupWithCount:
+      allOf:
+        - $ref: "#/components/schemas/Group"
+        - type: object
+          properties:
+            contactCount: { type: integer }
+            previewContacts:
+              type: array
+              items:
+                $ref: "#/components/schemas/ContactPreview"
+
+    CreateGroupInput:
+      type: object
+      required: [label]
+      properties:
+        label: { type: string, minLength: 1 }
+        emoji: { type: string }
+        color: { type: string }
+
+    UpdateGroupInput:
+      type: object
+      properties:
+        label: { type: string }
+        emoji: { type: string }
+        color: { type: string }
+
+    # --- Events ---
+    EventType:
+      type: string
+      enum:
+        - Call
+        - Coffee
+        - Email
+        - Meal
+        - Meeting
+        - Networking event
+        - Note
+        - Other
+        - Party/Social
+        - Text/Messaging
+        - Competition/Hackathon
+        - Custom
+
+    Event:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        type:
+          $ref: "#/components/schemas/EventType"
+        title: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        date: { type: string, format: date-time }
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactPreview"
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateEventInput:
+      type: object
+      required: [type, date]
+      properties:
+        type: { type: string }
+        title: { type: string }
+        description: { type: string }
+        date: { type: string, format: date-time }
+        participantIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    UpdateEventInput:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        description: { type: string }
+        date: { type: string, format: date-time }
+        participantIds:
+          type: array
+          items: { type: string, format: uuid }
+
+    # --- User Settings ---
+    UserSettings:
+      type: object
+      properties:
+        user_id: { type: string, format: uuid }
+        name: { type: string, nullable: true }
+        middlename: { type: string, nullable: true }
+        surname: { type: string, nullable: true }
+        timezone: { type: string, nullable: true }
+        reminder_send_hour: { type: string }
+        language: { type: string, enum: [en, cs] }
+        color_scheme: { type: string, enum: [light, dark, auto] }
+        avatar_url: { type: string, format: uri, nullable: true }
+        email: { type: string, format: email }
+        providers:
+          type: array
+          items: { type: string }
+
+    # --- Redirect ---
+    RedirectRequest:
+      type: object
+      properties:
+        instagram: { type: string }
+        linkedin: { type: string }
+        facebook: { type: string }
+        firstName: { type: string }
+        middleName: { type: string }
+        lastName: { type: string }
+        profileImageUrl: { type: string, format: uri }
+        title: { type: string }
+        place: { type: string }
+
+    RedirectResponse:
+      type: object
+      properties:
+        contactId: { type: string, format: uuid }
+        existed: { type: boolean }
+
+    # --- Import: LinkedIn ---
+    LinkedInPreparedContact:
+      type: object
+      properties:
+        tempId: { type: string }
+        firstName: { type: string }
+        middleName: { type: string, nullable: true }
+        lastName: { type: string }
+        linkedinUrl: { type: string }
+        linkedinUsername: { type: string }
+        alreadyExists: { type: boolean }
+        email: { type: string, nullable: true }
+        company: { type: string, nullable: true }
+        position: { type: string, nullable: true }
+        connectedAt: { type: string, format: date-time, nullable: true }
+        connectedOnRaw: { type: string, nullable: true }
+        isValid: { type: boolean }
+        issues:
+          type: array
+          items: { type: string }
+
+    LinkedInParseResponse:
+      type: object
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/LinkedInPreparedContact"
+        totalCount: { type: integer }
+        validCount: { type: integer }
+        invalidCount: { type: integer }
+
+    # --- Import: Instagram ---
+    InstagramImportStrategy:
+      type: string
+      enum: [close_friends, following, followers, following_and_followers, mutual_following]
+
+    InstagramPreparedContact:
+      type: object
+      properties:
+        tempId: { type: string }
+        firstName: { type: string }
+        middleName: { type: string, nullable: true }
+        lastName: { type: string }
+        instagramUrl: { type: string }
+        instagramUsername: { type: string }
+        alreadyExists: { type: boolean }
+        likelyPerson: { type: boolean }
+        connectedAt: { type: string, format: date-time, nullable: true }
+        connectedOnRaw: { type: number, nullable: true }
+        isValid: { type: boolean }
+        issues:
+          type: array
+          items: { type: string }
+
+    InstagramParseResponse:
+      type: object
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/InstagramPreparedContact"
+        totalCount: { type: integer }
+        validCount: { type: integer }
+        invalidCount: { type: integer }
+
+    ImportCommitResponse:
+      type: object
+      properties:
+        importedCount: { type: integer }
+        updatedCount: { type: integer }
+        skippedCount: { type: integer }
+
+    # --- Reminders ---
+    ReminderDigestUser:
+      type: object
+      properties:
+        userId: { type: string, format: uuid }
+        email: { type: string, format: email }
+        name: { type: string }
+        language: { type: string, enum: [en, cs] }
+        timezone: { type: string }
+        reminders:
+          type: array
+          items:
+            type: object
+            properties:
+              personId: { type: string, format: uuid }
+              personFirstName: { type: string }
+              personLastName: { type: string }
+              eventType:
+                $ref: "#/components/schemas/ImportantEventType"
+              eventDate: { type: string, format: date }
+              daysUntil: { type: integer }
+              note: { type: string, nullable: true }
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+          example:
+            error: Unauthorized
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ApiError"
+
+security:
+  - cookieAuth: []
+  - bearerAuth: []
