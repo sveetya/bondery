@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "@mantine/core";
-import { config } from "../config";
+import { config } from "../../config";
 import { BonderyIconWhite } from "@bondery/branding";
-import { sanitizeName } from "../utils/nameHelpers";
+import { sanitizeName } from "../../utils/nameHelpers";
 import { API_ROUTES } from "@bondery/helpers";
 
 interface InstagramButtonProps {

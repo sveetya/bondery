@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file. On more information about the format, see [Instructions for changelog](.github/instructions/changelog.instructions.md).
 
+## [Unreleased]
+
+### 🔄 Changed
+
+- Migrated Chrome extension bundler from Parcel to WXT (Vite-based). The extension now uses `wxt.config.ts` for manifest configuration and WXT entrypoints in the `entrypoints/` directory.
+
+### ✨ Added
+
+- Facebook content script is now included in the extension build (previously implemented but not deployed).
+
 ## [0.0.1] - 15.02.2026
 
 ### ✨ Added

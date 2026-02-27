@@ -24,6 +24,8 @@ export default [
       "**/out/**",
       "**/build/**",
       "**/.parcel-cache/**",
+      "**/.output/**",
+      "**/.wxt/**",
       "**/next-env.d.ts",
     ],
   },
