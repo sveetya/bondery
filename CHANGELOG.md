@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file. On more information about the format, see [Instructions for changelog](.github/instructions/changelog.instructions.md).
 
+## [Unreleased]
+
+### 🔄 Changed
+
+- Migrated Chrome extension bundler from Parcel to [WXT](https://wxt.dev/) (Vite-based). Content scripts are now defined as WXT entrypoints under `src/entrypoints/`. Build output moves from `dist/` to `dist/chrome-mv3/`.
+
+### 📦 Dependencies
+
+- Removed `parcel`, `@parcel/config-webextension`, `dotenv-cli`.
+- Added `wxt`, `@wxt-dev/module-react`.
+
 ## [0.0.1] - 15.02.2026
 
 ### ✨ Added

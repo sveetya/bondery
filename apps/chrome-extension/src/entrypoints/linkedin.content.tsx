@@ -1,12 +1,13 @@
+import { defineContentScript } from "wxt/utils/define-content-script";
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import LinkedInButton from "./LinkedInButton";
+import LinkedInButton from "../linkedin/LinkedInButton";
 import { MantineWrapper } from "../shared/MantineWrapper";
 
 // Extract LinkedIn username from URL
 function getLinkedInUsername(): string | null {
   const pathname = window.location.pathname;
-  const match = pathname.match(/^\/in\/([^\/]+)\/?$/);
+  const match = pathname.match(/^\/in\/([^/]+)\/?$/);
 
   if (match && match[1]) {
     return match[1];
@@ -110,36 +111,32 @@ function setupObserver() {
   return observer;
 }
 
-// Initialize
-function init() {
-  // Safety check: only run on LinkedIn
-  if (!window.location.hostname.includes("linkedin.com")) {
-    return;
-  }
-
-  console.log("Bondery Extension: Initializing LinkedIn integration");
-
-  injectBonderyButton();
-  setupObserver();
-
-  setTimeout(() => {
-    injectBonderyButton();
-  }, 2000);
-
-  // Listen for URL changes
-  let lastUrl = window.location.href;
-  setInterval(() => {
-    if (window.location.href !== lastUrl) {
-      lastUrl = window.location.href;
-      setTimeout(() => {
-        injectBonderyButton();
-      }, 1000);
+export default defineContentScript({
+  matches: ["https://www.linkedin.com/*"],
+  main() {
+    // Safety check: only run on LinkedIn
+    if (!window.location.hostname.includes("linkedin.com")) {
+      return;
     }
-  }, 500);
-}
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
-}
+    console.log("Bondery Extension: Initializing LinkedIn integration");
+
+    injectBonderyButton();
+    setupObserver();
+
+    setTimeout(() => {
+      injectBonderyButton();
+    }, 2000);
+
+    // Listen for URL changes
+    let lastUrl = window.location.href;
+    setInterval(() => {
+      if (window.location.href !== lastUrl) {
+        lastUrl = window.location.href;
+        setTimeout(() => {
+          injectBonderyButton();
+        }, 1000);
+      }
+    }, 500);
+  },
+});
