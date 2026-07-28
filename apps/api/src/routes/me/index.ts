@@ -69,7 +69,7 @@ export const meRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(apiSuccessResponseSchema, "Account deleted"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    withDomainRoute(async (ctx) => deleteAccount(ctx)),
+    withDomainRoute(async (ctx, { request }) => deleteAccount(ctx, request)),
   );
 
   /**

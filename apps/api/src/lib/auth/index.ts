@@ -25,6 +25,10 @@ import { generateId } from "@bondery/helpers/ids";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import { resolveRuntimeTrustedOrigins } from "../platform/trusted-origins.js";
 import { provisionNewUser, resolveDefaultLocale } from "./provision-new-user.js";
+import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
+import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
+
+const betterAuthSecrets = resolveBetterAuthSecrets();
 
 function resolveWebappUrl(): string {
   return (process.env.BONDERY_PUBLIC_WEBAPP_URL ?? "").replace(/\/+$/, "");
@@ -96,7 +100,7 @@ const crossSubdomainCookieDomain = resolveCookieDomain(process.env.BONDERY_PUBLI
 export const auth = betterAuth({
   baseURL: resolveBetterAuthIssuerUrl(),
   basePath: BETTER_AUTH_BASE_PATH,
-  secret: process.env.BONDERY_PRIVATE_BETTER_AUTH_SECRET,
+  secrets: betterAuthSecrets,
   onAPIError: {
     errorURL: resolveAuthErrorPageUrl() || undefined,
   },
@@ -184,6 +188,22 @@ export const auth = betterAuth({
             locale: resolveDefaultLocale(new Headers()),
             name: user.name,
             userId: user.id,
+          });
+        },
+      },
+      delete: {
+        before: async (user) => {
+          await runUserDeleteBefore({
+            email: user.email,
+            id: user.id,
+            name: user.name,
+          });
+        },
+        after: async (user) => {
+          await runUserDeleteAfter({
+            email: user.email,
+            id: user.id,
+            name: user.name,
           });
         },
       },

@@ -1,13 +1,16 @@
-import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
+import { prisma } from "@bondery/db";
+import type { FastifyRequest } from "fastify";
+import type { DomainContext, DomainError } from "../../domains/_shared/context.js";
 import {
   deleteContactAvatarAndClearFlag,
   uploadContactAvatarAndSetFlag,
 } from "../../lib/contacts/avatar-storage.js";
+import { auth } from "../../lib/auth/index.js";
+import { toFetchHeaders } from "../../lib/auth/request-headers.js";
+import { deleteUserWithTeardown } from "../../lib/auth/teardown-user.js";
 import { createAdminClient, resolveContactAvatarUrl } from "../../lib/data/supabase.js";
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
-
-const LINKEDIN_LOGOS_BUCKET = "linkedin_logos";
 
 export async function updateAccountMetadata(
   ctx: DomainContext,
@@ -29,25 +32,39 @@ export async function updateAccountMetadata(
   return { data: data.user, success: true as const };
 }
 
-export async function deleteAccount(ctx: DomainContext): Promise<{ success: true }> {
+export async function deleteAccount(
+  ctx: DomainContext,
+  request: FastifyRequest,
+): Promise<{ success: true }> {
   const { user, log } = ctx;
-  const adminClient = createAdminClient();
+  const headers = toFetchHeaders(request);
 
-  const { data: avatarFiles } = await adminClient.storage.from("avatars").list(user.id);
-  if (avatarFiles && avatarFiles.length > 0) {
-    const avatarPaths = avatarFiles.map((file) => `${user.id}/${file.name}`);
-    await adminClient.storage.from("avatars").remove(avatarPaths);
+  const profile = await prisma.user.findUnique({
+    select: { email: true, id: true, name: true },
+    where: { id: user.id },
+  });
+
+  const deletionUser = {
+    email: profile?.email ?? user.email,
+    id: user.id,
+    name: profile?.name ?? null,
+  };
+
+  try {
+    const session = await auth.api.getSession({ headers });
+    if (session?.user) {
+      await auth.api.deleteUser({ headers });
+      log?.info({ userId: user.id }, "Account deleted via Better Auth");
+      return { success: true };
+    }
+  } catch (error) {
+    throw internal("account_failed_to_delete_account", error);
   }
 
-  const { data: logoFiles } = await adminClient.storage.from(LINKEDIN_LOGOS_BUCKET).list(user.id);
-  if (logoFiles && logoFiles.length > 0) {
-    const logoPaths = logoFiles.map((file) => `${user.id}/${file.name}`);
-    await adminClient.storage.from(LINKEDIN_LOGOS_BUCKET).remove(logoPaths);
-  }
-
-  const { error } = await adminClient.auth.admin.deleteUser(user.id);
-  if (error) {
-    throw internal("account_failed_to_delete_account");
+  try {
+    await deleteUserWithTeardown(deletionUser, log);
+  } catch (error) {
+    throw internal("account_failed_to_delete_account", error);
   }
 
   log?.info({ userId: user.id }, "Account deleted");

@@ -229,7 +229,7 @@ model OauthRefreshToken {
   sessionId               String?   @map("session_id") @db.Uuid
   session                 Session?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
   userId                  String    @map("user_id") @db.Uuid
-  user                    User      @relation(fields: [userId], references: [id])
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   referenceId             String?   @map("reference_id")
   authorizationCodeId     String?   @map("authorization_code_id")
   resources               String[]

@@ -13,6 +13,8 @@ export function loadTestEnv(): void {
   process.env.BONDERY_PRIVATE_EMAIL_ADDRESS ??= "dummy@localhost";
   process.env.BONDERY_PRIVATE_EMAIL_PORT ??= "587";
   process.env.BONDERY_PRIVATE_API_KEY_PEPPER ??= "dummy-pepper";
+  process.env.BONDERY_PRIVATE_BETTER_AUTH_SECRETS ??=
+    "1:dummy-better-auth-secret-for-integration-tests-32";
   process.env.BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK ??=
     '{"kty":"EC","x":"-ztnrq2xtqWzVslfvYg9Ehds97TWbhD6pFWcYJJKFLA","y":"foLtmAT7OJud7d9ltwZuF9podzkTEhyD56tiDRZFSZQ","crv":"P-256","d":"_bKhwEFYFXeOH3IOBLtT0PS7NSDkWP6xbrqWtj37u2A","alg":"ES256","kid":"test","use":"sig"}';
 }

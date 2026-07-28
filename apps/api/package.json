@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.12",
+    "@better-auth/api-key": "^1.7.0-rc.2",
     "@bondery/emails": "*",
     "@bondery/helpers": "*",
     "@bondery/schemas": "*",
