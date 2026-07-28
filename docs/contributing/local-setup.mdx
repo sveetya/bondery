@@ -1,0 +1,375 @@
+---
+title: "Local development setup"
+icon: Terminal
+---
+
+This guide walks you through setting up the full Bondery development environment. Follow the dependency chain: **Postgres → migrations → API → apps**.
+
+**Environment variables:** edit root `.env.local` once, then sync — see [Environment configuration](environment.mdx).
+
+```bash
+npm install
+npm run setup:dev
+# edit .env.local (OAuth / optional integrations)
+# start Postgres (see below)
+npm run db:migrate:deploy -w @bondery/db
+npm run env
+npm run provision-oauth-clients:dev -w api
+npm run dev
+```
+
+## Prerequisites
+
+| Tool | Version | Notes |
+|---|---|---|
+| [Node.js](https://nodejs.org/) | ≥ 20 | LTS recommended |
+| [npm](https://www.npmjs.com/) | ≥ 11 | Bundled with Node.js |
+| [Docker](https://www.docker.com/) | latest | Local Postgres and Redis |
+
+For mobile development you also need Expo tooling (installed via root `npm install`) and a native toolchain: **iOS** — Xcode + Simulator or a physical device; **Android** — Android Studio + emulator or USB debugging.
+
+<Steps>
+<Step>
+
+## Clone and install
+
+```bash
+git clone https://github.com/usebondery/bondery.git
+cd bondery
+npm install
+npm run setup:dev
+```
+
+This installs dependencies for all apps and packages in the monorepo, then creates root `.env.local` from the example.
+
+---
+
+</Step>
+<Step>
+
+## Postgres database
+
+The local Postgres instance is the foundation everything else connects to. Start it before running migrations or the API.
+
+### Environment variables
+
+Set `DATABASE_URL` and `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (see [`.env.local.example`](../../.env.local.example)). OAuth client ids/secrets for Better Auth live under `BONDERY_PRIVATE_AUTH_*`. After editing, run `npm run env` to sync app env files.
+
+> **No OAuth credentials yet?** The stack will still start — email-based flows may be limited, but you can develop against the API. Social login buttons need GitHub/LinkedIn app credentials.
+
+### Start Postgres
+
+```bash
+cd deploy/bondery
+cp .env.example .env   # if you have not already
+# Set BONDERY_PRIVATE_POSTGRES_PASSWORD to match root .env.local
+docker compose -f docker-compose.dev-db.yml up -d
+```
+
+This starts PostGIS on host port **54322** with database name `bondery`.
+
+### Apply migrations
+
+From the repo root:
+
+```bash
+npm run db:migrate:deploy -w @bondery/db
+npm run env
+npm run provision-oauth-clients:dev -w api
+```
+
+| Command | Description |
+|---|---|
+| `npm run db:migrate:deploy -w @bondery/db` | Apply pending migrations (normal local setup, CI, self-host) |
+| `npm run db:migrate:dev -w @bondery/db` | Author new migrations interactively (requires shadow DB with PostGIS) |
+| `npm run db:studio -w @bondery/db` | Open Prisma Studio against `DATABASE_URL` |
+| `npm run db:functions -w @bondery/db` | Apply raw SQL functions (self-host first boot) |
+| `npm run provision-oauth-clients:dev -w api` | Upsert first-party OAuth clients after migrations |
+
+For a full auth walkthrough, see [Authentication](./auth.mdx).
+
+For a fresh local DB, re-run `npm run db:migrate:deploy -w @bondery/db` (or `prisma migrate reset` inside `packages/db` when you intentionally want to wipe data — then re-run provisioning).
+
+### Mobile sync (Postgres changelog)
+
+Mobile offline sync uses **custom pull/bootstrap** endpoints on the API (`GET /api/sync/bootstrap`, `GET /api/sync/pull`) backed by `sync_change_log`. No separate sync service is required beyond Postgres + API.
+
+---
+
+</Step>
+<Step>
+
+## API server (`apps/api`)
+
+### Environment variables
+
+Prefer root `.env.local` + `npm run env` (see [Environment configuration](environment.mdx)). That writes `apps/api/.env.development.local`.
+
+Required secrets include `BONDERY_PRIVATE_BETTER_AUTH_SECRET` (≥32 characters) and `BONDERY_PRIVATE_API_KEY_PEPPER` — see [API keys](#api-keys-long-lived-integration-tokens) below.
+
+For mobile sync, set CORS for Expo web if needed:
+
+```text
+BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS=http://localhost:26634
+```
+
+#### Redis
+
+Redis powers **rate limiting**, **mobile sync wake** (pub/sub), and **WebSocket ticket** storage in the API.
+
+| Mode | `BONDERY_PRIVATE_REDIS_URL` | When to use |
+|------|---------------------|-------------|
+| **Local Docker (default)** | `redis://127.0.0.1:26636` | Normal local API work |
+| **In-memory** | empty / unset | Quick feature work without Redis |
+
+From the repo root (Docker must be running):
+
+```bash
+npm run start -w redis
+```
+
+Wire the API in `apps/api/.env.development.local`:
+
+```text
+BONDERY_PRIVATE_REDIS_URL="redis://127.0.0.1:26636"
+```
+
+In **production**, `BONDERY_PRIVATE_REDIS_URL` is **required**. See [Self-hosting](../deploy/get-started.mdx).
+
+#### API keys (long-lived integration tokens)
+
+| Variable | Purpose |
+|---|---|
+| `BONDERY_PRIVATE_API_KEY_PEPPER` | Server secret mixed into API key hashes before storage. Use a random value **at least 32 characters** (e.g. `openssl rand -hex 32`). |
+
+Validated API keys resolve directly to a `userId` in application code — no JWT minting step. See [API authentication](../api/authentication.mdx).
+
+Keep `BONDERY_PRIVATE_API_KEY_PEPPER` stable. If you change it after creating keys, existing keys stop working — create new keys after rotating the pepper.
+
+### Start
+
+```bash
+cd apps/api
+npm run dev
+```
+
+The API server starts on **port 26631** with hot reload enabled.
+
+---
+
+</Step>
+<Step>
+
+## Web application (`apps/webapp`)
+
+### Environment variables
+
+Filled by `npm run env` into `apps/webapp/.env.development.local` — see [Environment configuration](environment.mdx).
+
+The webapp is itself a confidential OAuth client of the API's authorization server. See [Authentication](./auth.mdx) for env vars, bootstrap commands, and troubleshooting.
+
+### Start
+
+```bash
+cd apps/webapp
+npm run dev
+```
+
+The webapp starts on **port 26632**. Open [http://localhost:26632](http://localhost:26632) in your browser.
+
+---
+
+</Step>
+<Step>
+
+## Marketing website (`apps/website`)
+
+Uses `BONDERY_PUBLIC_WEBAPP_URL` / `BONDERY_PUBLIC_WEBSITE_URL` from env sync.
+
+### Start
+
+```bash
+cd apps/website
+npm run dev
+```
+
+The website starts on **port 26630**. Open [http://localhost:26630](http://localhost:26630) in your browser.
+
+---
+
+</Step>
+<Step>
+
+## Chrome extension (`apps/chrome-extension`)
+
+### Environment variables
+
+Filled by `npm run env`. See [Authentication](./auth.mdx) for `BONDERY_PUBLIC_OAUTH_CLIENT_ID`, `BONDERY_INFRA_CHROME_EXTENSION_ID`, and provisioning steps.
+
+See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md) when you see redirect URI mismatch errors (common after `prisma migrate reset` or on a new machine).
+
+### Start
+
+```bash
+cd apps/chrome-extension
+npx wxt prepare   # only needed once after install
+npx wxt            # or: npm run dev
+```
+
+Open `chrome://extensions` in Chrome, enable **Developer mode**, click **Load unpacked**, and select the generated `dist/chrome-mv3-dev` folder.
+
+---
+
+</Step>
+<Step>
+
+## Mobile application (`apps/mobile`)
+
+Run the mobile app against your local API and Postgres stack. Requires Postgres migrations and a running API first.
+
+### Environment variables
+
+Filled by `npm run env` into `apps/mobile/.env.local` (`BONDERY_PUBLIC_*`). Expo loads those into `app.config.ts` `extra`.
+
+#### Physical device on the same Wi‑Fi
+
+In root `.env.local`, replace `127.0.0.1` / `localhost` with your machine's LAN IP (e.g. `192.168.1.42`) for `BONDERY_PUBLIC_API_URL`, then `npm run env`. The phone cannot reach your laptop's loopback interface.
+
+Ensure the API is reachable on the LAN and your firewall allows inbound connections on port `26631`.
+
+#### Physical device over Tailscale (recommended)
+
+Tailscale gives your dev machine a stable `100.x.x.x` address on your tailnet — works off Wi‑Fi and avoids public tunnel interstitials.
+
+1. Install Tailscale on your dev machine and phone; sign in to the same tailnet.
+2. On the dev machine, run `tailscale ip -4` and note the address (e.g. `100.64.0.5`).
+3. For phone testing only, temporarily set in root `.env.local`:
+
+   ```bash
+   BONDERY_PUBLIC_API_URL=http://100.64.0.5:26631
+   ```
+
+4. Run `npm run env` and restart the API.
+5. Revert `BONDERY_PUBLIC_API_URL` to `http://localhost:26631` when you return to laptop web dev.
+
+Start Metro with LAN binding so the phone can load the JS bundle over Tailscale:
+
+```bash
+cd apps/mobile
+npx expo start --host lan
+```
+
+Register `http://<tailscale-ip>:26631/auth/callback/github` in your GitHub OAuth app when testing social login on a physical device.
+
+**WSL2:** Ensure the API listens on `0.0.0.0` (not only `127.0.0.1`). Tailscale on the Windows host routes to WSL forwarded ports when using WSL2 networking.
+
+#### Android emulator note
+
+On Android emulators, `127.0.0.1` and `localhost` in env vars are **automatically rewritten** to `10.0.2.2` (the host loopback from the emulator).
+
+### Start
+
+**Option A — API + mobile from repo root:**
+
+```bash
+npm run mobile
+```
+
+**Option B — mobile only** (with Postgres and API already running):
+
+```bash
+cd apps/mobile
+npm run dev
+```
+
+Then press `i` for iOS Simulator, `a` for Android emulator, or scan the QR code with Expo Go / a dev client.
+
+#### Native dev builds
+
+For SQLite sync and background tasks, use a development build instead of Expo Go:
+
+```bash
+cd apps/mobile
+npm run dev:prebuild    # regenerates android/ and ios/ — only when native deps change
+npm run android:dev     # USB device or emulator
+npm run ios             # iOS Simulator or device
+```
+
+### Verify sync
+
+1. Sign in with GitHub or LinkedIn (same providers as the webapp).
+2. Wait for the initial sync banner to clear — contacts should match your account.
+3. Toggle airplane mode, edit a contact, then reconnect — changes should drain from the outbox and appear on web.
+
+If sync requests return **426**, protocol or SQLite schema versions are mismatched — rebuild the app after pulling API/mobile changes.
+
+If bootstrap or pull return **401**, confirm the mobile session token matches your local API and Better Auth configuration.
+
+See also [Sync architecture (mobile)](sync-architecture.mdx) and [apps/mobile/README.md](../../apps/mobile).
+
+</Step>
+</Steps>
+
+---
+
+## Running everything at once
+
+> **Before using these commands**, complete environment setup for each app in the steps above.
+
+From the repo root:
+
+```bash
+# 1. Infrastructure
+cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
+cd ../..
+npm run start -w redis
+
+# 2. App dev
+npm run dev:webapp-api
+
+# Or: api + webapp + website + chrome-extension
+npm run dev:extension
+
+# Or: api + mobile
+npm run mobile
+```
+
+These scripts are defined in the root `package.json` and orchestrated by Turborepo (`turbo watch`).
+
+### Production builds
+
+```bash
+npx turbo build --filter=api
+npx turbo build --filter=webapp
+npx turbo build --filter=website
+npx turbo build --filter=chrome-extension
+```
+
+Shortcuts: `npm run build`, `npm run build:api`, `build:webapp`, `build:website`.
+
+### Local dev watch
+
+```bash
+npm run dev                    # turbo watch dev — all apps with a dev script
+npm run dev:webapp-api         # webapp + api (usual local stack)
+npm run dev:emails             # React Email preview only (port 26639)
+npm run compile:packages       # one-shot package compile
+```
+
+Lint the whole repo from the root: `npm run lint` (Biome).
+
+---
+
+## Quick reference
+
+Port registry: [architecture.md](architecture.mdx#apps) (`npm run check-dev-ports` in CI).
+
+| App | Source | Dev port | Start command (from app folder) |
+|---|---|---|---|
+| Postgres | [`deploy/bondery`](../../deploy/bondery/docker-compose.dev-db.yml) | 54322 | `docker compose -f docker-compose.dev-db.yml up -d` |
+| `api` | [`apps/api`](https://github.com/usebondery/bondery/tree/main/apps/api) | 26631 | `npm run dev` |
+| `webapp` | [`apps/webapp`](https://github.com/usebondery/bondery/tree/main/apps/webapp) | 26632 | `npm run dev` |
+| `website` | [`apps/website`](https://github.com/usebondery/bondery/tree/main/apps/website) | 26630 | `npm run dev` |
+| `mobile` | [`apps/mobile`](https://github.com/usebondery/bondery/tree/main/apps/mobile) | 26634 (Expo Metro) | `npm run dev` |
+| `chrome-extension` | [`apps/chrome-extension`](https://github.com/usebondery/bondery/tree/main/apps/chrome-extension) | 26633 (WXT HMR) | `npx wxt` |
+| `@bondery/emails` preview | [`packages/emails`](https://github.com/usebondery/bondery/tree/main/packages/emails) | 26639 | `npm run preview` |

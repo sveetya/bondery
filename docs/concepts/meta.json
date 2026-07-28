@@ -1,0 +1,16 @@
+{
+  "title": "Core concepts",
+  "icon": "Layers",
+  "pages": [
+    "people",
+    "myself",
+    "groups",
+    "relationships",
+    "interactions",
+    "reminders",
+    "tags",
+    "map",
+    "merge",
+    "chat"
+  ]
+}

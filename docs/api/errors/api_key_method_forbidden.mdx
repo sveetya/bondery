@@ -1,0 +1,31 @@
+---
+title: api_key_method_forbidden
+description: Api Key Method Forbidden
+---
+
+## When this happens
+
+A read-only API key called POST, PATCH, PUT, or DELETE on an integration route.
+
+## What your integration should do
+
+Use a full-access key or switch to GET/HEAD. Read-only keys cannot write.
+
+## What end users should see
+
+Explain the integration lacks write permission.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authorization_error` |
+| **HTTP status** | 403 |
+| **code** | `api_key_method_forbidden` |
+| **doc_url** | `/docs/api/errors/api_key_method_forbidden` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/auth/api-key-access.ts`

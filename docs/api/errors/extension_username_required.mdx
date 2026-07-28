@@ -1,0 +1,31 @@
+---
+title: extension_username_required
+description: Extension Username Required
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Chrome extension** operations.
+
+## What your integration should do
+
+Update the extension build or supply the required LinkedIn username field.
+
+## What end users should see
+
+Translate with `common.errors.api.extension_username_required` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `extension_username_required` |
+| **doc_url** | `/docs/api/errors/extension_username_required` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/extension-upsert.ts`

@@ -1,0 +1,31 @@
+---
+title: relationship_already_exists
+description: Relationship Already Exists
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Relationships** operations.
+
+## What your integration should do
+
+Refresh server state, resolve the conflict, then retry the mutation.
+
+## What end users should see
+
+Translate with `common.errors.api.relationship_already_exists` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `conflict_error` |
+| **HTTP status** | 409 |
+| **code** | `relationship_already_exists` |
+| **doc_url** | `/docs/api/errors/relationship_already_exists` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/relationships.ts`

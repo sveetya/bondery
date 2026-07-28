@@ -1,0 +1,50 @@
+---
+title: Update & backups
+---
+
+## Schema migrations
+
+The `migrate` service (same API image) runs `prisma migrate deploy` + `functions.sql` before `api`/`webapp` start — schema changes apply automatically on every `docker compose up -d`. There is no manual migration step.
+
+## Image upgrades
+
+By default both services use the floating **`production`** image tag with **`pull_policy: always`** in [`docker-compose.yml`](../../deploy/bondery/docker-compose.yml). That means every `docker compose up -d` (or Dokploy redeploy) **pulls the latest `production` images** from GHCR — you do not need to bump a version in `.env` to receive app updates.
+
+```bash
+./scripts/upgrade.sh
+```
+
+This pulls the latest `api`/`webapp` images and runs `docker compose up -d`, which recreates `migrate` (gating schema changes) before `api`/`webapp`.
+
+### Pinning a version
+
+Pin semver tags when you want a frozen rollback target instead of tracking `production`:
+
+```bash
+BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.4 BONDERY_INFRA_API_IMAGE_TAG=1.7.4 docker compose up -d
+```
+
+Avoid `--no-deps api`/`--no-deps webapp` on releases that ship schema changes — it skips the `migrate` dependency check, so the service could start against an un-migrated database.
+
+## Backups
+
+| Data | How |
+|------|-----|
+| Postgres | `docker compose exec -T db pg_dump -U postgres bondery > backup-$(date +%F).sql` |
+| Local / S3 storage | Snapshot files under your storage driver (`BONDERY_STORAGE_DRIVER`) |
+| Redis | Volume `redis-data` — rate limits and sync wake only; safe to recreate |
+
+### Restore checklist
+
+1. Stop `api` and `webapp`.
+2. Restore the dump into `db` (`psql` via `docker compose exec -T db`).
+3. Restore storage files if needed.
+4. Start apps; verify `/health` and `/api/ready`.
+
+Schedule daily dumps off-box. Rehearse a restore at least once per quarter.
+
+## Related
+
+* [Get started](./get-started.mdx)
+* [Configuration](./configuration.mdx)
+* [deploy/bondery/README.md](../../deploy/bondery/README.md) — compose reference

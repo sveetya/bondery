@@ -1,0 +1,32 @@
+---
+title: validation_error
+description: Validation Error
+---
+
+## When this happens
+
+Fastify/Zod schema validation failed before the route handler executed.
+
+## What your integration should do
+
+Read `error.details` for field-level Zod issues. Fix the request body or query params.
+
+## What end users should see
+
+Highlight invalid fields (`common.errors.api.validation_error`).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `validation_error` |
+| **doc_url** | `/docs/api/errors/validation_error` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/errors/map-to-response.ts`
+- `apps/api/src/routes/contacts/photo/index.ts`

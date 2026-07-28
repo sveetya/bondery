@@ -1,0 +1,31 @@
+---
+title: contact_location_invalid
+description: Contact Location Invalid
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Contacts** operations.
+
+## What your integration should do
+
+Verify contact ids, required body fields, and that the record belongs to the authenticated user.
+
+## What end users should see
+
+Translate with `common.errors.api.contact_location_invalid` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `contact_location_invalid` |
+| **doc_url** | `/docs/api/errors/contact_location_invalid` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/update-contact.ts`

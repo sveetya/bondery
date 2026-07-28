@@ -1,0 +1,31 @@
+---
+title: api_key_limit_exceeded
+description: Api Key Limit Exceeded
+---
+
+## When this happens
+
+Creating a 6th API key for the account.
+
+## What your integration should do
+
+Delete an unused key in Settings → API keys, then create a new one. Maximum is 5 keys per account.
+
+## What end users should see
+
+Tell the user they reached the API key limit.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `conflict_error` |
+| **HTTP status** | 409 |
+| **code** | `api_key_limit_exceeded` |
+| **doc_url** | `/docs/api/errors/api_key_limit_exceeded` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/services/me/api-keys.ts`

@@ -1,0 +1,103 @@
+---
+title: Internationalization (i18n)
+description: How Bondery loads, types, and validates translated copy across apps.
+icon: Languages
+---
+
+User-facing strings live in `@bondery/translations`. Each app calls **generated namespace hooks** — not generic `t(key, { ns })` — so TypeScript can autocomplete keys and prefixes.
+
+## Locales
+
+| Code | Language | Role |
+|------|----------|--------|
+| `en` | English | Reference locale (`DEFAULT_LOCALE`) |
+| `cs` | Czech | |
+| `de` | German | |
+
+Source of truth: [`packages/schemas/locale/supported-locales.json`](../../packages/schemas/locale/supported-locales.json). Exported as `SUPPORTED_LOCALES` from `@bondery/schemas/locale`.
+
+To add a language, follow [Add a new language](./guides/add-new-language.mdx).
+
+## Layout
+
+```
+packages/translations/
+  manifest.json          # namespaces + preload groups
+  src/locales/{locale}/  # one JSON file per namespace
+```
+
+A **namespace** is the filename without `.json` (folders are organizational only). Examples: `common`, `GroupsPage`, `MobileSettings`.
+
+## Hooks (use these in app code)
+
+### Webapp
+
+```typescript
+import { useGroupsPageTranslations } from "@/lib/i18n/generated/hooks";
+
+const t = useGroupsPageTranslations("AddGroupModal");
+t("Title"); // → GroupsPage.AddGroupModal.Title
+```
+
+Server components: `getGroupsPageTranslations()` from `hooks.server`.
+
+**Do not use:** `useWebTranslations()`, `getWebTranslations()`, or `t(key, { ns: "…" })`.
+
+### Mobile
+
+```typescript
+import { useMobileSettingsTranslations } from "@/lib/i18n/generated/hooks";
+
+const t = useMobileSettingsTranslations();
+t("Title");
+```
+
+### Chrome extension
+
+```typescript
+import { useExtensionPopupTranslations } from "../lib/i18n/generated/hooks";
+
+const t = useExtensionPopupTranslations("LoggedOut");
+t("Title");
+```
+
+Hooks are regenerated from `manifest.json` when you run `npm run build -w @bondery/translations`. Each hook hardcodes its namespace and type-checks `keyPrefix` branches.
+
+## Dynamic keys (rare)
+
+When a key is only known at runtime (interaction types, slash commands), cast to `LooseTranslateFn`:
+
+```typescript
+import type { LooseTranslateFn } from "@bondery/translations";
+
+const t = useInteractionTypesTranslations() as LooseTranslateFn;
+t(dynamicKey);
+```
+
+For `<Trans>` components, wrap `t` with `transT()` from `@/lib/i18n/transT`.
+
+## Regenerate types and hooks
+
+After editing locale JSON or `manifest.json`:
+
+```bash
+npm run build -w @bondery/translations
+```
+
+This rebuilds `Catalog` types, prefix unions, i18next augmentations, and per-app `generated/hooks*.ts`.
+
+## CI checks
+
+| Command | What it verifies |
+|---------|------------------|
+| `npm run i18n:types:check` | Generated i18next-cli types are current |
+| `npm run i18n:status:check` | Every key used in code exists in all locales |
+| `npm run i18n:lint` | No unexpected hardcoded UI strings (webapp + mobile) |
+| `npm run check-translations` | Locale file parity, manifest rules, Languages exonyms |
+
+Run these before opening a PR that touches copy.
+
+## Related
+
+* [Add a new language](./guides/add-new-language.mdx)
+* [`packages/translations/README.md`](../../packages/translations/README.md) — manifest layout and mirror tooling

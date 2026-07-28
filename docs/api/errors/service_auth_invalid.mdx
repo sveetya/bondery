@@ -1,0 +1,31 @@
+---
+title: service_auth_invalid
+description: Service Auth Invalid
+---
+
+## When this happens
+
+Internal route received a bearer token that does not match the configured service secret.
+
+## What your integration should do
+
+Send `Authorization: Bearer <BONDERY_PRIVATE_SERVICE_SECRET>` on internal routes only.
+
+## What end users should see
+
+Not shown to end users — fix server configuration.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authentication_error` |
+| **HTTP status** | 401 |
+| **code** | `service_auth_invalid` |
+| **doc_url** | `/docs/api/errors/service_auth_invalid` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/auth/strategies.ts`

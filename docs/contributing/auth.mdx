@@ -1,0 +1,170 @@
+---
+title: Authentication
+description: How Bondery auth works locally — OAuth clients, env vars, and bootstrap commands.
+icon: Shield
+---
+
+# Authentication
+
+The **API** is Bondery's single OAuth 2.1 authorization server. The webapp, mobile app, and Chrome extension are **first-party OAuth clients** of that server — they do not talk to GitHub or LinkedIn directly.
+
+This page covers local bootstrap and troubleshooting. For production secret storage and rotation, see [Secrets management](../deploy/secrets.mdx). For REST API keys (integrations), see [API authentication](../api/authentication.mdx).
+
+## Architecture
+
+| Role | Component | Notes |
+| --- | --- | --- |
+| **Authorization server** | `apps/api` (`/auth/*`) | Issues sessions, OAuth codes, and resource-bound JWTs |
+| **Confidential client** | `apps/webapp` | Server-side BFF — holds an OAuth client secret; browser only sees an encrypted webapp session cookie |
+| **Public clients** | `apps/mobile`, `apps/chrome-extension` | PKCE only — no client secret (cannot be kept secret in a distributed binary) |
+| **Upstream IdPs** | GitHub, LinkedIn | Configured only on the API; social login callbacks hit the API, not the webapp |
+
+```
+User → client (webapp / mobile / extension)
+     → API /auth/oauth2/authorize
+     → API login (password or GitHub/LinkedIn)
+     → redirect with authorization code
+     → client exchanges code + PKCE verifier for tokens
+     → client calls API with Bearer JWT (or native session on mobile)
+```
+
+OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/scripts/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI and self-host deploys (`packages/db/scripts/release-migrate.ts`).
+
+## Local bootstrap
+
+<Steps>
+<Step>
+
+### Generate auth env values
+
+Add these to root `.env.local`. You invent the values — nothing external issues them.
+
+```bash
+# Webapp confidential OAuth client
+openssl rand -hex 16   # BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID
+openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET
+
+# Chrome extension public OAuth client
+openssl rand -hex 16   # BONDERY_PUBLIC_OAUTH_CLIENT_ID
+
+# Webapp encrypted session cookie key
+openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_SESSION_SECRET
+
+# Better Auth signing (if not already set)
+openssl rand -hex 32   # BONDERY_PRIVATE_BETTER_AUTH_SECRET
+```
+
+Example `.env.local` fragment:
+
+```env
+BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID="a1b2c3d4e5f6789012345678abcdef01"
+BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET="<64-char hex from openssl>"
+BONDERY_PUBLIC_OAUTH_CLIENT_ID="fedcba0987654321fedcba0987654321"
+BONDERY_PRIVATE_WEBAPP_SESSION_SECRET="<64-char hex from openssl>"
+BONDERY_INFRA_CHROME_EXTENSION_ID="lpcmokfekjjejnpobhbkgmjkodfhpmha"
+```
+
+`BONDERY_INFRA_CHROME_EXTENSION_ID` is the ID shown on `chrome://extensions` after loading the unpacked extension. Each machine may differ during local dev — update it when your extension ID changes.
+
+</Step>
+<Step>
+
+### Start Postgres and apply migrations
+
+```bash
+cd deploy/bondery
+docker compose -f docker-compose.dev-db.yml up -d
+cd ../..
+npm run db:migrate:deploy -w @bondery/db
+```
+
+<Callout type="info">
+Use `db:migrate:deploy` to apply existing migrations locally. Reserve `db:migrate:dev` for **authoring** new schema changes — it uses a Prisma shadow database that does not have PostGIS pre-installed and will fail on the initial migration.
+</Callout>
+
+</Step>
+<Step>
+
+### Sync env and provision OAuth clients
+
+```bash
+npm run env
+npm run provision-oauth-clients:dev -w api
+```
+
+`provision-oauth-clients` upserts `OauthClient` rows for the webapp and extension, and links them to the API resource. Re-run it whenever you change OAuth client ids, secrets, redirect URIs, or extension ID.
+
+</Step>
+<Step>
+
+### Verify
+
+```bash
+npm run test:auth -w api
+```
+
+Requires Postgres running with migrations and provisioning complete. Starts the API in-process and exercises the full authorization-code + PKCE flow.
+
+</Step>
+</Steps>
+
+## Environment variables
+
+| Variable | Secret? | Apps | Purpose |
+| --- | --- | --- | --- |
+| `BONDERY_PRIVATE_BETTER_AUTH_SECRET` | Yes | API | Signs Better Auth sessions and tokens (≥32 chars) |
+| `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID` | No | API, webapp | Webapp OAuth client id |
+| `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET` | Yes | API, webapp | Webapp OAuth client secret (API stores only a hash) |
+| `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` | Yes | Webapp | Encrypts the webapp's own session cookie (≥32 chars) |
+| `BONDERY_PUBLIC_OAUTH_CLIENT_ID` | No | API, extension | Chrome extension OAuth client id |
+| `BONDERY_INFRA_CHROME_EXTENSION_ID` | No | API | Builds extension redirect URI (`https://<id>.chromiumapp.org/`) |
+| `BONDERY_PRIVATE_AUTH_GITHUB_*` | Mixed | API | GitHub social login (optional locally) |
+| `BONDERY_PRIVATE_AUTH_LINKEDIN_*` | Mixed | API | LinkedIn social login (optional locally) |
+
+Canonical definitions live in [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts).
+
+## Common errors
+
+### `oauth_resource` / `oauth_client` table does not exist
+
+Migrations have not been applied. Run `npm run db:migrate:deploy -w @bondery/db`, then re-run provisioning.
+
+### `Environment variable not found: DATABASE_URL` during migrate
+
+Run migrations from the repo root with the `@bondery/db` workspace script (it loads `packages/db/.env.local`). If that file is missing, run `npm run env` first.
+
+### Redirect URI mismatch (Chrome extension)
+
+Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision-oauth-clients:dev -w api`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
+
+### CORS blocked on `sign-in/social` with `200 (OK)` but no `Access-Control-Allow-Origin`
+
+The auth handler writes responses via `reply.hijack()`, which bypasses Fastify's CORS plugin. The API merges CORS headers onto Better Auth responses directly — ensure you are on a build that includes this fix, then restart the API.
+
+If the error persists after restart, check the setup table below.
+
+Common causes:
+
+| Setup | Fix |
+| --- | --- |
+| Webapp on a non-default port (e.g. `http://localhost:49171` from Cursor port-forward) | In **development**, the API now allows any `localhost` / `127.0.0.1` port automatically. Restart the API after pulling. |
+| Physical phone needs API | Install Tailscale on phone and dev machine. Temporarily set `BONDERY_PUBLIC_API_URL` to `http://100.x.x.x:26631` (your Tailscale IP), run `npm run env`, restart API. Keep webapp on localhost for laptop web dev. |
+| Expo web or LAN IP testing | Add the origin to `BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS` (comma-separated), then `npm run env` and restart the API. |
+
+Also verify GitHub/LinkedIn OAuth app callback URLs point at the **API** host you are using (e.g. `http://localhost:26631/auth/callback/github` for daily web dev, or `http://<tailscale-ip>:26631/auth/callback/github` when testing on a physical phone), not the webapp origin.
+
+<Callout type="warn">
+**Do not point the localhost webapp at a remote API URL.** Browser auth calls from `localhost` to a Tailscale or LAN IP cross origins and break cookie semantics. Use localhost API for web dev; swap `BONDERY_PUBLIC_API_URL` to your Tailscale IP only for native mobile sessions. LinkedIn OAuth may require HTTPS (Tailscale Serve or Funnel) — optional for native mobile, which does not use browser OAuth redirects.
+</Callout>
+
+### Webapp login redirect loop
+
+The webapp and the authorization server maintain separate sessions. OAuth continuation uses `/oauth/login` (not `/login`). If you see a loop between consent and login, confirm the API `loginPage` points at `/oauth/login` and that you are on a current API build.
+
+## Related
+
+* [Local development setup](./local-setup.mdx)
+* [Environment configuration](./environment.mdx)
+* [Architecture](./architecture.mdx)
+* [Secrets management](../deploy/secrets.mdx) — production storage and rotation
+* [Deploy configuration](../deploy/configuration.mdx) — operator OAuth setup

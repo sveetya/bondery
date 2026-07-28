@@ -1,0 +1,31 @@
+---
+title: sqlite_schema_mismatch
+description: Sqlite Schema Mismatch
+---
+
+## When this happens
+
+Sync bootstrap detected a local schema version mismatch.
+
+## What your integration should do
+
+Mobile client SQLite schema is behind the server — ship a new app build or run migrations.
+
+## What end users should see
+
+Prompt the user to update the mobile app.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 426 |
+| **code** | `sqlite_schema_mismatch` |
+| **doc_url** | `/docs/api/errors/sqlite_schema_mismatch` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/sync/protocol.ts`

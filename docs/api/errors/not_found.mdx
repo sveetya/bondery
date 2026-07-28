@@ -1,0 +1,37 @@
+---
+title: not_found
+description: Not Found
+---
+
+## When this happens
+
+Generic 404 wrapper when no more specific code applies.
+
+## What your integration should do
+
+Treat as a missing resource. Do not retry blindly — confirm the id and user scope.
+
+## What end users should see
+
+Show a friendly not-found message (`common.errors.api.not_found`).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `not_found_error` |
+| **HTTP status** | 404 |
+| **code** | `not_found` |
+| **doc_url** | `/docs/api/errors/not_found` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/rate-limit.ts`
+- `apps/api/src/routes/contacts/important-dates/index.ts`
+- `apps/api/src/routes/contacts/relationships/index.ts`
+- `apps/api/src/routes/files/index.ts`
+- `apps/api/src/routes/groups/contacts.ts`
+- `apps/api/src/routes/interactions/index.ts`
+- _…and 5 more_

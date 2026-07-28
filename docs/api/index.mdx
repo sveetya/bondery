@@ -1,0 +1,41 @@
+---
+title: Introduction
+icon: BookOpen
+description: Overview of the Bondery REST API for integrations and automation.
+---
+
+The Bondery API lets you use Bondery as a central contact book in your own workflows — from AI agents to automated imports in custom apps.
+
+<Callout type="warn">
+Bondery is in beta. Behavior may change; this documentation tracks the current release.
+</Callout>
+
+## Base URL
+
+```
+https://api.usebondery.com/
+```
+
+When self-hosting, use your own API origin (see [Self-hosting → Get started](../deploy/get-started.mdx)).
+
+## Authentication
+
+See [Authentication](./authentication.mdx) for session tokens vs long-lived API keys, permission levels, and which routes accept API keys.
+
+## Explore
+
+<Cards>
+  <Card title="Guides" href="/docs/api/guides/bulk-import-contacts">
+    Step-by-step integration patterns.
+  </Card>
+  <Card title="API reference" href="/docs/api/api-reference">
+    OpenAPI endpoint reference generated from the codebase.
+  </Card>
+  <Card title="Error codes" href="/docs/api/errors">
+    Machine-readable `error.code` values for client-side handling.
+  </Card>
+</Cards>
+
+## Help
+
+If you run into issues, see [Getting help and troubleshooting](../getting-help-and-troubleshooting.mdx) or [open an issue](https://github.com/usebondery/bondery/issues). Pull requests are welcome.

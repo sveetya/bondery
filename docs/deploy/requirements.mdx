@@ -1,0 +1,45 @@
+---
+title: Requirements
+---
+
+Run the full product stack on your own VPS: **api + webapp + redis + Postgres** via [`deploy/bondery/docker-compose.yml`](../../deploy/bondery/docker-compose.yml).
+
+## Hardware
+
+| Profile | RAM | CPU | Disk |
+|---------|-----|-----|------|
+| Floor | 2 GB | 2 cores | 30 GB SSD |
+| **Recommended** | **4 GB** | 2 cores | 50 GB SSD |
+| Comfortable prod | 8 GB | 4 cores | 80 GB+ SSD |
+
+The default stack is four containers (`webapp`, `api`, `redis`, `db`) plus Traefik or another reverse proxy. That is much lighter than a full Supabase-style platform — most small teams run comfortably on a 4 GB VPS. Leave headroom if you enable heavy background jobs, large imports, or many concurrent sync clients.
+
+## Software
+
+| Requirement | Notes |
+|---|---|
+| Docker + Compose v2 | Required |
+| DNS | Hostnames for API and webapp (e.g. `api.example.com`, `app.example.com`) |
+| TLS | Traefik (e.g. via Dokploy) or terminate TLS on a reverse proxy |
+
+## Stack layout
+
+<Files>
+  <Folder defaultOpen name="deploy/bondery">
+    <File name="docker-compose.yml" />
+    <File name="docker-compose.postgres.yml" />
+    <File name="docker-compose.override.yml.example" />
+    <File name=".env.example" />
+  </Folder>
+</Files>
+
+| Service | Role |
+|---|---|
+| `webapp` | Next.js app (port 26632) |
+| `api` | Fastify API + Better Auth (port 26631) |
+| `redis` | Rate limits, sync wake, WebSocket tickets |
+| `db` | PostGIS Postgres (internal; port 54322 with host override) |
+
+## Next step
+
+[Get started](./get-started.mdx) — bring the stack up and run first-boot migrations.

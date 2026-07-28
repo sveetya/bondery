@@ -1,0 +1,164 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import GithubSlugger from "github-slugger";
+import { type FileObject, printErrors, scanURLs, validateFiles } from "next-validate-link";
+import { glob } from "tinyglobby";
+
+const DOCS_DIR = join(process.cwd(), "../../docs");
+
+function isDocsPath(filePath: string): boolean {
+  return filePath.startsWith(`${DOCS_DIR}/`);
+}
+
+function filePathToSlugs(filePath: string): string[] {
+  const rel = relative(DOCS_DIR, filePath).replace(/\.mdx$/, "");
+  if (rel === "index") {
+    return [];
+  }
+  if (rel.endsWith("/index")) {
+    return rel.slice(0, -"/index".length).split("/");
+  }
+  return rel.split("/");
+}
+
+function filePathToUrl(filePath: string): string {
+  const slugs = filePathToSlugs(filePath);
+  return slugs.length === 0 ? "/docs" : `/docs/${slugs.join("/")}`;
+}
+
+function resolveDocsFilePath(path: string): string | undefined {
+  const candidates = [
+    path,
+    `${path}.mdx`,
+    join(path, "index.mdx"),
+    path.replace(/\.mdx$/, ".md"),
+    join(path.replace(/\.md$/, ""), "index.md"),
+  ];
+
+  for (const candidate of candidates) {
+    if (isDocsPath(candidate) && existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return undefined;
+}
+
+function pathToUrl(path: string): string | undefined {
+  const resolved = resolveDocsFilePath(path);
+  return resolved ? filePathToUrl(resolved) : undefined;
+}
+
+function isAllowedHref(href: string): boolean {
+  if (
+    href.startsWith("http://") ||
+    href.startsWith("https://") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("#")
+  ) {
+    return true;
+  }
+
+  // Repo source links from docs (outside the docs content tree).
+  if (href.startsWith("../../") || href.includes("/../../")) {
+    return true;
+  }
+
+  return false;
+}
+
+function getHeadingsFromRaw(content: string): string[] {
+  const slugger = new GithubSlugger();
+  const headings = new Set<string>();
+
+  for (const line of content.split("\n")) {
+    for (const match of line.matchAll(/\{#([^}]+)\}/g)) {
+      headings.add(match[1]);
+    }
+
+    const heading = line.match(/^#{1,6}\s+(.+?)\s*$/);
+    if (!heading) {
+      continue;
+    }
+
+    const text = heading[1].replace(/\s*\{#[^}]+\}\s*/g, "").trim();
+    if (text) {
+      headings.add(slugger.slug(text));
+    }
+  }
+
+  return [...headings];
+}
+
+async function checkLinks() {
+  const files = await glob("**/*.mdx", {
+    absolute: true,
+    cwd: DOCS_DIR,
+  });
+
+  const scanned = await scanURLs({
+    cwd: join(process.cwd(), "src/app"),
+    populate: {
+      "docs/[[...slug]]": files.map((filePath) => {
+        const content = readFileSync(filePath, "utf8");
+        return {
+          hashes: getHeadingsFromRaw(content),
+          value: {
+            slug: filePathToSlugs(filePath),
+          },
+        };
+      }),
+    },
+    preset: "next",
+  });
+
+  for (const filePath of files) {
+    const content = readFileSync(filePath, "utf8");
+    scanned.urls.set(filePathToUrl(filePath), {
+      hashes: getHeadingsFromRaw(content),
+    });
+  }
+
+  scanned.fallbackUrls.push({
+    meta: {},
+    url: /^\/docs(?:\/|$)/,
+  });
+
+  console.log(
+    `Collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks.`,
+  );
+
+  const fileObjects: FileObject[] = files.map((filePath) => ({
+    content: readFileSync(filePath, "utf8"),
+    data: {},
+    path: filePath,
+    url: filePathToUrl(filePath),
+  }));
+
+  const results = await validateFiles(fileObjects, {
+      baseDir: DOCS_DIR,
+      checkRelativePaths: "exists",
+      checkRelativeUrls: true,
+      determinatePathname: (pathname) => {
+        if (pathname.endsWith(".mdx") || pathname.endsWith(".md")) {
+          return "relative-file-path";
+        }
+        return "relative-url";
+      },
+      markdown: {
+        components: {},
+      },
+      pathToUrl,
+      scanned,
+      whitelist: isAllowedHref,
+    });
+
+  printErrors(results, true);
+
+  const errorCount = results.reduce((count, result) => count + result.errors.length, 0);
+  if (errorCount === 0) {
+    console.log(`Docs MDX links OK: ${files.length} files, ${scanned.urls.size} routes.`);
+  }
+}
+
+void checkLinks();

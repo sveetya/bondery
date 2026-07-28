@@ -1,0 +1,31 @@
+---
+title: service_unavailable
+description: Service Unavailable
+---
+
+## When this happens
+
+API explicitly returned 503 via `serviceUnavailable()`.
+
+## What your integration should do
+
+Retry with backoff. If persistent, check Postgres, Redis, and API health endpoints.
+
+## What end users should see
+
+Show temporary outage copy (`common.errors.api.service_unavailable`).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `service_unavailable_error` |
+| **HTTP status** | 503 |
+| **code** | `service_unavailable` |
+| **doc_url** | `/docs/api/errors/service_unavailable` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/errors/http-errors.ts`

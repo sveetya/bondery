@@ -1,0 +1,31 @@
+---
+title: merge_recommendation_id_required
+description: Merge Recommendation Id Required
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Merge recommendations** operations.
+
+## What your integration should do
+
+Verify the recommendation id still exists — recommendations expire after action.
+
+## What end users should see
+
+Translate with `common.errors.api.merge_recommendation_id_required` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `merge_recommendation_id_required` |
+| **doc_url** | `/docs/api/errors/merge_recommendation_id_required` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/merge-recommendations.ts`

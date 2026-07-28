@@ -1,0 +1,94 @@
+---
+title: Add a new language
+icon: Languages
+description: Ship a new UI locale across webapp, mobile, extension, and API error strings.
+---
+
+This guide walks through adding a locale to Bondery. English (`en`) is the reference — every namespace file must exist for the new locale before CI passes.
+
+<Steps>
+<Step>
+
+## Register the locale
+
+Add an entry to [`packages/schemas/locale/supported-locales.json`](../../../packages/schemas/locale/supported-locales.json):
+
+```json
+{ "code": "fr", "flag": "fr", "nativeName": "français" }
+```
+
+Keep `default` as `en`. If the locale needs a Postgres enum value, the `postgresEnum` block in that file documents the shared enum name (`supported_locale`).
+
+</Step>
+<Step>
+
+## Copy locale files
+
+Duplicate the English tree:
+
+```bash
+cp -r packages/translations/src/locales/en packages/translations/src/locales/fr
+```
+
+Every JSON path under `en/` must exist for the new code. CI compares file trees and fails on missing or extra files.
+
+Translate values in place — **do not rename keys** or namespaces.
+
+</Step>
+<Step>
+
+## Add exonyms to Languages namespace
+
+Each locale has a `Languages.json` file listing human-readable names for every supported language code. Add the new locale's exonyms to **all** locale folders (`en`, `cs`, `de`, and your new one).
+
+`npm run check-translations` verifies parity against `supported-locales.json`.
+
+</Step>
+<Step>
+
+## Regenerate hooks and types
+
+```bash
+npm run build -w @bondery/translations
+```
+
+This updates generated hooks, `Catalog` types, and i18next augmentations. Commit the generated artifacts with your locale JSON.
+
+</Step>
+<Step>
+
+## Translate API error strings
+
+API error messages shown in product UI use the translations package. Add keys for any new error copy under the relevant namespace and run:
+
+```bash
+npm run check-api-error-translations
+```
+
+</Step>
+<Step>
+
+## Verify locally
+
+```bash
+npm run i18n:status
+npm run i18n:lint
+npm run check-translations
+```
+
+Fix any missing keys or hardcoded strings the scanners report. Switch language in the webapp or mobile settings to spot-check UI.
+
+</Step>
+<Step>
+
+## Update docs
+
+Add the locale to the table in [Internationalization (i18n)](../i18n.mdx) and, if user-facing, note it in [Changelog](../../changelog.mdx).
+
+</Step>
+</Steps>
+
+## Related
+
+* [Internationalization (i18n)](../i18n.mdx) — hooks, namespaces, and CI overview
+* [`packages/translations/README.md`](../../../packages/translations/README.md)

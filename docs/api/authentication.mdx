@@ -1,0 +1,70 @@
+---
+title: Authentication
+icon: Key
+docId: api.authentication
+description: Authenticate REST API requests with long-lived API keys.
+---
+
+Use **API keys** for scripts, automation tools, and server-side integrations. Send the key as a `Bearer` token on every request.
+
+Replace `https://api.usebondery.com` with your self-hosted API domain when applicable.
+
+## Create an API key
+
+1. Sign in to the webapp ([app.usebondery.com](https://app.usebondery.com) or your instance).
+2. Open **Settings → API keys**.
+3. Click **Create API key**, choose a label and permission level, then copy the key when it is shown.
+
+<Callout type="warn">
+The full key is shown **once**. Store it in a secrets manager. Bondery only keeps a masked prefix for identification.
+</Callout>
+
+Each account can have up to **5** keys. Deleting a key takes effect immediately.
+
+## Send the key
+
+Keys use the `bondery_key_` prefix:
+
+```
+bondery_key_<keyId>_<secret>
+```
+
+```bash
+curl -H "Authorization: Bearer bondery_key_abc123_your_secret_here" \
+  https://api.usebondery.com/api/contacts
+```
+
+## Permission levels
+
+Access level is fixed when the key is created. Create a new key if you need a different level.
+
+| Level | HTTP methods | Use when |
+| --- | --- | --- |
+| **Read only** | `GET`, `HEAD` | Listing or exporting data without writes |
+| **Full access** | All methods | Imports, creates, updates, and deletes |
+
+A read-only key that calls `POST`, `PATCH`, or `DELETE` receives **403** with `api_key_method_forbidden`.
+
+## Which routes accept API keys
+
+Only routes marked for integrations (`openApiArea: integration`) accept API keys. That includes contacts, groups, tags, interactions, contact share, import endpoints, and geocode. The full contract is in the [API reference](./api-reference/index.mdx).
+
+API keys **do not** work on session-only routes: account settings, merge, relationships, per-contact enrichment, sync, chat, subscriptions, admin, webhooks, or extension internals. A valid key on those paths returns **403** (`api_key_route_forbidden`).
+
+## Error codes
+
+| HTTP | `code` | When |
+| --- | --- | --- |
+| `401` | `invalid_api_key` | Malformed key, wrong secret, deleted key, or dev pepper mismatch |
+| `401` | `auth_required` | No credentials on a session-only route |
+| `403` | `api_key_route_forbidden` | Valid key on a non-integration route |
+| `403` | `api_key_method_forbidden` | Read-only key used for a write |
+| `409` | `api_key_limit_exceeded` | Account already has 5 keys |
+
+See [Error codes](./errors/index.mdx) for the full catalog.
+
+## Security
+
+- Do not commit API keys or paste them in public channels.
+- Prefer **read-only** keys when an integration only reads data.
+- Rotate by creating a new key, updating the integration, then deleting the old one.

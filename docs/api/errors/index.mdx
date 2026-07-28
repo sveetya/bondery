@@ -1,0 +1,11 @@
+---
+title: Error codes
+icon: CircleAlert
+description: Machine-readable error codes returned by the Bondery API.
+---
+
+Every failed API response uses a nested `{ error: { type, code, message, ... } }` envelope. Use `code` for client-side translation — never show `message` in product UI.
+
+Browse codes by type in the sidebar, or pick one below.
+
+<ApiErrorsIndex />

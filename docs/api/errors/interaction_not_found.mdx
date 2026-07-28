@@ -1,0 +1,31 @@
+---
+title: interaction_not_found
+description: Interaction Not Found
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Interactions** operations.
+
+## What your integration should do
+
+Confirm the resource id exists and belongs to the authenticated user before retrying.
+
+## What end users should see
+
+Translate with `common.errors.api.interaction_not_found` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `not_found_error` |
+| **HTTP status** | 404 |
+| **code** | `interaction_not_found` |
+| **doc_url** | `/docs/api/errors/interaction_not_found` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/services/interactions/index.ts`

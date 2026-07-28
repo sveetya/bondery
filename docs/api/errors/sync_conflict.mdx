@@ -1,0 +1,31 @@
+---
+title: sync_conflict
+description: Sync Conflict
+---
+
+## When this happens
+
+Sync push rejected because server version moved since the client's base revision.
+
+## What your integration should do
+
+Pull latest server state, merge client changes, then push again.
+
+## What end users should see
+
+Explain the record changed elsewhere (`common.errors.api.sync_conflict`).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `conflict_error` |
+| **HTTP status** | 409 |
+| **code** | `sync_conflict` |
+| **doc_url** | `/docs/api/errors/sync_conflict` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/errors/map-to-response.ts`

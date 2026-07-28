@@ -1,0 +1,164 @@
+---
+title: "Dokploy deployment (Bondery production)"
+icon: Cloud
+---
+
+Canonical production topology — **two** Compose apps:
+
+<Callout type="info">
+**Bondery production only** — not part of the self-host distribution. Self-hosters follow [Self-hosting](../deploy/get-started.mdx).
+</Callout>
+
+| Host | Service | Stack |
+|------|---------|--------|
+| `app.usebondery.com` | `webapp` :26632 | [`deploy/bondery`](../../deploy/bondery/) Compose |
+| `api.usebondery.com` | `api` :26631 | same Compose file |
+| (internal) | `redis`, `db` | same Compose — **never** attach a public domain |
+| `usebondery.com` | `website` :26630 | [`deploy/ops`](../../deploy/ops/) Compose (Bondery prod only) |
+
+Self-hosters use **only** [`deploy/bondery`](../../deploy/bondery/) (api + webapp + redis + Postgres). Marketing lives in ops and is not part of the self-host distribution. Guides: [`deploy/bondery/README.md`](../../deploy/bondery) · [`docs/deploy/get-started.md`](../deploy/get-started.mdx) · [`deploy/ops/README.md`](../../deploy/ops).
+
+## Product Compose application (`deploy/bondery`)
+
+| Setting | Value |
+|---------|-------|
+| Provider | **Docker Compose** |
+| Compose path | `deploy/bondery/docker-compose.yml` (includes `docker-compose.postgres.yml`) |
+| Domains | Traefik labels via `BONDERY_INFRA_WEBAPP_DOMAIN` / `BONDERY_INFRA_API_DOMAIN` |
+
+### Environment
+
+Copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) into Dokploy env (or a compose `.env`):
+
+```bash
+BONDERY_INFRA_API_DOMAIN=api.usebondery.com
+BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com
+BONDERY_INFRA_WEBSITE_DOMAIN=usebondery.com
+BONDERY_INFRA_CHROME_EXTENSION_ID=lpcmokfekjjejnpobhbkgmjkodfhpmha
+BONDERY_PRIVATE_REDIS_URL=redis://redis:6379
+```
+
+Plus Postgres password, `DATABASE_URL` for the API, Better Auth secrets, and OAuth vars from [`.env.example`](../../deploy/bondery/.env.example). The `migrate` service (same API image) runs `prisma migrate deploy` + `functions.sql` before `api`/`webapp` start on every redeploy — no manual first-boot step.
+
+**Important:**
+
+- Image tags: `production` (floating channel) is the default; pin semver when you want a fixed rollback target.
+- Set hostnames only (`BONDERY_INFRA_*_DOMAIN`). Compose derives `https://…` URLs and Traefik `Host()` rules.
+- `BONDERY_PRIVATE_BETTER_AUTH_SECRET` must be **≥32 characters** in `.env`.
+- Webapp never receives raw `BONDERY_PRIVATE_*` secrets except its own session/OAuth client secrets — compose allowlists public vars for the webapp service.
+- Compose sets `BONDERY_INFRA_INTERNAL_API_URL=http://api:26631` for SSR.
+
+### Health checks
+
+| Service | Liveness | Notes |
+|---------|----------|--------|
+| `webapp` | `GET /api/live` | Do **not** use `/api/status` (proxies API) |
+| `webapp` readiness | `GET /api/ready` | Runtime config valid |
+| `api` | `GET /status` | Process up |
+| `api` deps | `GET /health` | Redis / Postgres / pending migrations / integrations |
+| `db` | Compose healthcheck | `api` waits for `service_healthy` |
+| `migrate` | Compose one-shot | `api`/`webapp` wait for `service_completed_successfully`; runs `prisma migrate deploy` + `functions.sql` |
+
+Redeploy the **full** Compose app (Dokploy's default) so `migrate` runs before `api`/`webapp` on schema-changing releases — don't redeploy `api`/`webapp` in isolation.
+
+### Isolated Deployments
+
+Leave Dokploy **Isolated Deployments** off for the default Bondery app (one stack per host). Optional for operators running multiple Bondery instances on one Dokploy host — see Dokploy docs.
+
+## Ops Compose application (`deploy/ops` — marketing website)
+
+| Setting | Value |
+|---------|-------|
+| Provider | **Docker Compose** |
+| Compose path | `deploy/ops/docker-compose.yml` |
+| Image | `ghcr.io/usebondery/website:production` (hardcoded floating channel) |
+| Domain | `BONDERY_INFRA_WEBSITE_DOMAIN` Traefik label → port `26630` |
+
+**CI:** Push to the `release` branch (path-filtered) runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml), which builds/pushes `:production` + `:sha-<short>`. Optional Dokploy redeploy webhook: secret `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`.
+
+```bash
+BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com
+BONDERY_INFRA_WEBSITE_DOMAIN=usebondery.com
+```
+
+Compose derives `BONDERY_PUBLIC_*_URL` from those domains. Health: `GET /api/live` (liveness), `GET /api/ready` (env valid).
+
+**Cutover from Nixpacks:** stop the old Nixpacks/Railpack website app **before** deploying ops Compose (same Traefik Host). Details: [`deploy/ops/README.md`](../../deploy/ops).
+
+## Webapp runtime config
+
+The webapp exposes `GET /runtime-config.json` and injects `window.__BONDERY_RUNTIME_CONFIG__` during SSR — build once, deploy many.
+
+After changing domain or `BONDERY_PUBLIC_*` variables, **redeploy** the affected service(s) (no image rebuild for env-only changes).
+
+## Better Auth URLs
+
+Social login and sessions are handled by the API (`/auth/*`) — the API is its own issuer/authorization server (`baseURL` = `BONDERY_PUBLIC_API_URL`). Webapp, mobile, and the chrome extension are each independent OAuth 2.1 + PKCE clients of that one authorization server.
+
+| Setting | Value |
+|---------|-------|
+| **API base (issuer)** | `https://api.usebondery.com` (`BONDERY_INFRA_API_DOMAIN`) |
+| **Webapp's own OAuth client redirect** | `https://app.usebondery.com/auth/oauth-callback` |
+| **Chrome extension** | OAuth 2.1 via API; redirect `https://{BONDERY_INFRA_CHROME_EXTENSION_ID}.chromiumapp.org/` |
+
+### GitHub / LinkedIn OAuth apps
+
+Authorization callback URL must be the **API's** Better Auth callback (`basePath` is `/auth`):
+
+```
+https://api.usebondery.com/auth/callback/github
+https://api.usebondery.com/auth/callback/linkedin
+```
+
+(Replace host with your `BONDERY_INFRA_API_DOMAIN`.)
+
+### Register the webapp and extension as trusted OAuth clients (once per environment)
+
+The webapp is a confidential OAuth client, and the Chrome extension a public OAuth client, of the API's own authorization server. Both are provisioned deterministically from env vars — there is no signed-in-session registration step. Generate values yourself and set them before first deploy:
+
+```bash
+openssl rand -hex 16   # -> BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID
+openssl rand -hex 32   # -> BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET
+openssl rand -hex 16   # -> BONDERY_PUBLIC_OAUTH_CLIENT_ID (extension)
+```
+
+Set `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID` (api + webapp), `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET` (webapp), `BONDERY_PUBLIC_OAUTH_CLIENT_ID` (api + extension), plus a `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` (≥32 chars) for the webapp's own encrypted session cookie. `apps/api/scripts/provision-oauth-clients.ts` upserts the matching `OauthClient` rows in Postgres automatically as part of `packages/db/scripts/release-migrate.ts`, right after migrations run on every deploy.
+
+## Environment migration (pre-1.7.x → `BONDERY_*`)
+
+If the API container crashes with missing `NEXT_PUBLIC_*` or legacy deploy paths, you are on an **old API image**.
+
+1. **Pin images** to `1.7.4` or newer (or redeploy after `:production` has moved past the env migration).
+2. **Rename Dokploy / compose `.env` keys** to `BONDERY_*` — see [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example).
+3. Redeploy the stack and pull fresh images (`docker compose pull` or Dokploy redeploy).
+
+## Cutover (API-only Compose + separate webapp image → unified stack)
+
+### Preflight
+
+1. Record current image digests / env for API Compose and standalone webapp.
+2. Keep the standalone webapp Dokploy app running as rollback until verified.
+3. Redis volume continuity is optional (rate-limit / sync-wake / WS tickets only — disposable).
+
+### Steps
+
+1. Point the existing Compose app at `deploy/bondery/docker-compose.yml` (in-place preferred).
+2. Set domains and secrets from `.env.example` (image tags optional — unset falls back to `:production`).
+3. Deploy; wait until `redis` and `db` healthy and `api` `/status` OK.
+4. Confirm Traefik routes: `api.usebondery.com` → `api:26631`, `app.usebondery.com` → `webapp:26632`. Do **not** route Redis or Postgres publicly.
+5. Stop the old standalone webapp app if it conflicts on the domain.
+6. Smoke: `curl` live/ready/status/health; login; one authenticated mutation; sync/WebSocket if used.
+
+### Rollback
+
+1. Re-point `app.usebondery.com` to the preserved standalone webapp image app.
+2. Restore previous image tags or digests and redeploy.
+3. A fresh Redis volume on rollback is acceptable.
+
+### After 24–48h healthy bake
+
+1. Remove the old Dokploy webapp Docker Image application.
+
+## API with external Redis
+
+Advanced: run the API image alone with managed Redis — see [api-container.md](./api-container.mdx).

@@ -1,0 +1,37 @@
+---
+title: bad_request
+description: Bad Request
+---
+
+## When this happens
+
+The request failed input validation before the handler ran.
+
+## What your integration should do
+
+Inspect the request payload, ids, and auth method. Retry once after fixing input.
+
+## What end users should see
+
+Translate with `common.errors.api.bad_request` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `bad_request` |
+| **doc_url** | `/docs/api/errors/bad_request` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/routes/chat/index.ts`
+- `apps/api/src/routes/contacts/photo/index.ts`
+- `apps/api/src/routes/import/instagram/index.ts`
+- `apps/api/src/routes/import/linkedin/index.ts`
+- `apps/api/src/routes/import/vcard/index.ts`
+- `apps/api/src/routes/me/index.ts`
+- _…and 3 more_

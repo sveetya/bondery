@@ -1,0 +1,63 @@
+---
+title: Get started
+---
+
+<Steps>
+<Step>
+
+## Prepare environment
+
+```bash
+docker network create dokploy-network   # once, when using Traefik / Dokploy
+
+cd deploy/bondery
+cp .env.example .env
+```
+
+Fill domains and secrets — see [Configuration](./configuration.mdx) for the full variable list.
+
+</Step>
+<Step>
+
+## Start services
+
+```bash
+docker compose up -d
+```
+
+**Without Traefik** (laptop smoke test):
+
+```bash
+cp docker-compose.override.yml.example docker-compose.override.yml
+docker compose up -d
+curl -sf http://localhost:26631/status
+curl -sf http://localhost:26632/api/live
+```
+
+</Step>
+<Step>
+
+## First-boot database
+
+`docker compose up` runs the `migrate` service first — it applies `prisma migrate deploy` and `functions.sql` against the empty database before `api`/`webapp` start. No manual step needed.
+
+</Step>
+<Step>
+
+## Verify
+
+```bash
+curl -sf https://api.example.com/health
+curl -sf https://app.example.com/api/ready
+```
+
+Manually test: OAuth login, API key auth, avatar upload, and a reminder if you use scheduled jobs.
+
+</Step>
+</Steps>
+
+## Related
+
+* [Requirements](./requirements.mdx)
+* [Configuration](./configuration.mdx)
+* [Update & backups](./update.mdx)

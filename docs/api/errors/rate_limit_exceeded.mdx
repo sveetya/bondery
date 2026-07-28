@@ -1,0 +1,32 @@
+---
+title: rate_limit_exceeded
+description: Rate Limit Exceeded
+---
+
+## When this happens
+
+Redis-backed rate limiter blocked the request.
+
+## What your integration should do
+
+Backoff and retry with exponential delay. Inspect `Retry-After` when present.
+
+## What end users should see
+
+Ask the user to wait (`common.errors.api.rate` or rate-limit copy).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `rate_limit_error` |
+| **HTTP status** | 429 |
+| **code** | `rate_limit_exceeded` |
+| **doc_url** | `/docs/api/errors/rate_limit_exceeded` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/rate-limit.ts`
+- `apps/api/src/test/map-error-to-response.test.ts`

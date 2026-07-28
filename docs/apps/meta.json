@@ -1,0 +1,10 @@
+{
+  "title": "Apps",
+  "icon": "MonitorSmartphone",
+  "pages": [
+    "webapp",
+    "chrome-extension",
+    "mobile-app",
+    "api"
+  ]
+}

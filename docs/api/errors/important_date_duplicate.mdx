@@ -1,0 +1,31 @@
+---
+title: important_date_duplicate
+description: Important Date Duplicate
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation.
+
+## What your integration should do
+
+Refresh server state, resolve the conflict, then retry the mutation.
+
+## What end users should see
+
+Translate with `common.errors.api.important_date_duplicate` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `conflict_error` |
+| **HTTP status** | 409 |
+| **code** | `important_date_duplicate` |
+| **doc_url** | `/docs/api/errors/important_date_duplicate` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/important-dates.ts`

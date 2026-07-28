@@ -1,0 +1,31 @@
+---
+title: chat_quota_exceeded
+description: Chat Quota Exceeded
+---
+
+## When this happens
+
+The caller is authenticated but not allowed to perform this action. Affects **Chat** operations.
+
+## What your integration should do
+
+Check chat quota, session id, and that the user is within plan limits.
+
+## What end users should see
+
+Translate with `common.errors.api.chat_quota_exceeded` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authorization_error` |
+| **HTTP status** | 403 |
+| **code** | `chat_quota_exceeded` |
+| **doc_url** | `/docs/api/errors/chat_quota_exceeded` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/routes/chat/index.ts`

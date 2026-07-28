@@ -1,0 +1,33 @@
+---
+title: auth_required
+description: Auth Required
+---
+
+## When this happens
+
+No session and no valid API key on a protected route.
+
+## What your integration should do
+
+Send a Better Auth session cookie/token, or use an API key only on integration routes.
+
+## What end users should see
+
+Prompt sign-in (`common.errors.api.auth_required`).
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authentication_error` |
+| **HTTP status** | 401 |
+| **code** | `auth_required` |
+| **doc_url** | `/docs/api/errors/auth_required` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/extension/version-check.ts`
+- `apps/api/src/lib/platform/auth/strategies.ts`
+- `apps/api/src/test/map-error-to-response.test.ts`

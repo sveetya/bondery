@@ -1,0 +1,31 @@
+---
+title: invalid_api_key
+description: Invalid Api Key
+---
+
+## When this happens
+
+Bearer token looks like an API key but `validateApiKey` returned null.
+
+## What your integration should do
+
+Verify the full `bondery_key_<id>_<secret>` string, confirm the key exists, and match `BONDERY_PRIVATE_API_KEY_PEPPER` in dev.
+
+## What end users should see
+
+Show a generic authentication failure — do not leak whether the id or secret failed.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authentication_error` |
+| **HTTP status** | 401 |
+| **code** | `invalid_api_key` |
+| **doc_url** | `/docs/api/errors/invalid_api_key` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/auth/strategies.ts`

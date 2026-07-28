@@ -1,0 +1,31 @@
+---
+title: settings_no_fields
+description: Settings No Fields
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Settings** operations.
+
+## What your integration should do
+
+Send at least one mutable settings field and verify the session user owns the settings row.
+
+## What end users should see
+
+Translate with `common.errors.api.settings_no_fields` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `settings_no_fields` |
+| **doc_url** | `/docs/api/errors/settings_no_fields` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/services/me/settings.ts`

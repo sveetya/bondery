@@ -1,0 +1,74 @@
+---
+title: Configuration
+---
+
+Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) — do not hand-edit generated app env files.
+
+## Core secrets
+
+| Variable | Purpose |
+|----------|---------|
+| `BONDERY_PRIVATE_BETTER_AUTH_SECRET` | Better Auth signing secret (≥32 characters) |
+| `BONDERY_PRIVATE_POSTGRES_PASSWORD` | Postgres password (compose `db` service) |
+| `BONDERY_PRIVATE_API_KEY_PEPPER` | API key hashing pepper |
+| `BONDERY_PRIVATE_REDIS_URL` | `redis://redis:6379` in the default stack |
+
+### `DATABASE_URL`
+
+`DATABASE_URL` is the standard Postgres connection string the API uses for **everything that touches the database**: Prisma ORM (`@bondery/db`), Better Auth sessions, and the **pg-boss** job queue.
+
+```
+postgresql://postgres:<password>@db:5432/bondery
+```
+
+| Context | Who sets it |
+|---------|-------------|
+| **Self-host compose** | You set `BONDERY_PRIVATE_POSTGRES_PASSWORD` in `.env`; compose **derives** `DATABASE_URL` for the `api` service automatically — you do not need to paste the URL into `.env`. |
+| **Local development** | You set `DATABASE_URL` in root `.env.local` (see [Environment configuration](../contributing/environment.mdx)). |
+| **Webapp** | Does **not** use `DATABASE_URL` — it talks to the API over HTTP. |
+
+Used in: `apps/api` (Prisma client, pg-boss), `packages/db` (migrations), and one-off migration scripts under `packages/db/scripts/`.
+
+## Domains
+
+Set hostnames only:
+
+```bash
+BONDERY_INFRA_API_DOMAIN=api.example.com
+BONDERY_INFRA_WEBAPP_DOMAIN=app.example.com
+```
+
+Compose derives public `https://…` URLs and Traefik `Host()` rules. Do not set `BONDERY_PUBLIC_*_URL` in the stack `.env` unless you have a non-standard setup.
+
+## OAuth (Better Auth)
+
+Auth runs on the API (`/auth/*`). The API is its own OAuth issuer (`baseURL` = `BONDERY_PUBLIC_API_URL`). Webapp, mobile, and the Chrome extension are independent OAuth 2.1 + PKCE clients.
+
+1. Set `BONDERY_PRIVATE_AUTH_GITHUB_*` and `BONDERY_PRIVATE_AUTH_LINKEDIN_*`.
+2. In GitHub / LinkedIn developer settings, callback URL:
+
+   `https://<BONDERY_INFRA_API_DOMAIN>/auth/callback/github` (or `/linkedin`)
+
+3. Generate and set values for `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID`, `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET`, `BONDERY_PUBLIC_OAUTH_CLIENT_ID` (extension), and `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` (≥32 chars) — e.g. `openssl rand -hex 32`. These are arbitrary values you choose, not issued by anything.
+4. Set `BONDERY_INFRA_CHROME_EXTENSION_ID` so the API allows the extension redirect URI.
+
+   `apps/api/scripts/provision-oauth-clients.ts` upserts the matching webapp and extension `OauthClient` rows in Postgres automatically — it runs as part of `packages/db/scripts/release-migrate.ts` right after `prisma migrate deploy` on every deploy. There is no separate registration step or session cookie required.
+
+See [Secrets management](./secrets.mdx) for production secret storage and rotation runbooks.
+
+## Storage
+
+| Mode | Variables |
+|---|---|
+| Local disk (default for small installs) | `BONDERY_STORAGE_DRIVER=local`, `BONDERY_PRIVATE_STORAGE_LOCAL_PATH` |
+| S3-compatible | `BONDERY_STORAGE_DRIVER=s3`, `BONDERY_PRIVATE_S3_*`, optional `BONDERY_PUBLIC_STORAGE_URL` |
+
+## Local development parity
+
+Contributors use the same variable names in root `.env.local`. See [Environment configuration](../contributing/environment.mdx).
+
+## Related
+
+* [Get started](./get-started.mdx)
+* [Secrets management](./secrets.mdx)
+* [Update & backups](./update.mdx)

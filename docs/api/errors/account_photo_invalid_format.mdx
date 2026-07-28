@@ -1,0 +1,31 @@
+---
+title: account_photo_invalid_format
+description: Account Photo Invalid Format
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Account** operations.
+
+## What your integration should do
+
+Verify profile fields and uploaded media format/size.
+
+## What end users should see
+
+Translate with `common.errors.api.account_photo_invalid_format` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `account_photo_invalid_format` |
+| **doc_url** | `/docs/api/errors/account_photo_invalid_format` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/services/me/account.ts`

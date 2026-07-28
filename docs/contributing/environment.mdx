@@ -1,0 +1,83 @@
+---
+title: "Environment configuration"
+icon: Settings
+---
+
+Bondery uses one naming scheme everywhere and one root file for local development.
+
+## Naming contract
+
+| Prefix | Meaning | Who may read it |
+| --- | --- | --- |
+| `BONDERY_PUBLIC_*` | Safe for browsers / mobile / extension | Any product surface |
+| `BONDERY_PRIVATE_*` | Secrets | API (and webapp session encryption keys) |
+| `BONDERY_INFRA_*` | Domains, image tags, internal DNS, build metadata | Deploy + webapp runtime |
+| `BONDERY_OPS_*` | CI / release tooling | GitHub Actions only — not synced into app local files |
+
+**Same fact → same key name** in every app (e.g. `BONDERY_PUBLIC_API_URL` on api, webapp, extension, and mobile).
+
+### `DATABASE_URL`
+
+`DATABASE_URL` is the standard Postgres connection string for Prisma, Better Auth, and pg-boss. It is **not** prefixed with `BONDERY_`.
+
+| Context | What you set |
+|---------|----------------|
+| **Local dev** | Full URL in root `.env.local`, e.g. `postgresql://postgres:password@127.0.0.1:54322/bondery` |
+| **Self-host compose** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` — compose builds `DATABASE_URL` for the `api` container |
+| **Webapp** | Nothing — the webapp calls the API over HTTP |
+
+Used in `apps/api`, `packages/db` (migrations), and `packages/db/scripts/*`.
+
+## Local happy path
+
+```bash
+npm install
+npm run setup:dev
+# edit .env.local (OAuth clients, DATABASE_URL, secrets)
+cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
+cd ../..
+npm run db:migrate:deploy -w @bondery/db
+npm run env
+npm run provision-oauth-clients:dev -w api
+npm run dev
+```
+
+| Script | Purpose |
+| --- | --- |
+| `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
+| `npm run env` | Sync root `.env.local` → per-app env files → validate |
+
+Codegen / CI (not day-to-day DX):
+
+```bash
+npm run env -- --write-examples --write-turbo   # regenerate committed examples + turbo.json
+npm run env -- --check                          # regenerate + fail if git dirty
+```
+
+Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
+
+## Authoring vs generated files
+
+| Edit | Do not edit |
+| --- | --- |
+| Root [`.env.local`](../../.env.local) (gitignored) | `apps/*/.env*.local` (generated) |
+| Manifest [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) | Generated `*.example` headers say “do not edit” |
+
+Template: [`.env.local.example`](../../.env.local.example).
+
+## Platform adapters (why not `NEXT_PUBLIC_` / `EXPO_PUBLIC_`)
+
+- **Webapp** — runtime config via dynamic `process.env[name]` + `/runtime-config.json` (same Docker image, many environments). Never use `NEXT_PUBLIC_*` for product config.
+- **Website** — Server Components / route handlers read `BONDERY_PUBLIC_*` from `process.env`. Client leaves receive values as RSC props (no `next.config` `env`, no `NEXT_PUBLIC_*`).
+- **Mobile** — Expo only auto-inlines `EXPO_PUBLIC_*`. We load `BONDERY_PUBLIC_*` in `app.config.ts` into `extra`, and [`apps/mobile/src/lib/config.ts`](../../apps/mobile/src/lib/config.ts) reads `Constants.expoConfig.extra`.
+- **Chrome extension** — Vite `envPrefix: ["BONDERY_PUBLIC_", "WXT_"]`.
+
+Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from `@next/env` so load order matches `next dev` / `next build`.
+
+## Production / self-host
+
+Operators use [`deploy/bondery/.env`](../../deploy/bondery/.env.example) with Compose — same `BONDERY_*` names and `DATABASE_URL` for the API service. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
+
+## Manifest
+
+[`@bondery/helpers/env`](../../packages/helpers/src/env/manifest.ts) is the single contract: canonical keys, which apps receive them, `requiredIn`, and turbo scopes. Per-app `check-env` scripts read required lists from the manifest (API also cross-checks `required-env.ts`).

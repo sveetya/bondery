@@ -1,0 +1,31 @@
+---
+title: group_member_ids_empty
+description: Group Member Ids Empty
+---
+
+## When this happens
+
+The request failed input validation before the handler ran. Affects **Groups** operations.
+
+## What your integration should do
+
+Verify group id, member ids, and request body shape for bulk membership changes.
+
+## What end users should see
+
+Translate with `common.errors.api.group_member_ids_empty` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `group_member_ids_empty` |
+| **doc_url** | `/docs/api/errors/group_member_ids_empty` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/contacts/resolve-group-member-ids.ts`

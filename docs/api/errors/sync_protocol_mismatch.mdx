@@ -1,0 +1,31 @@
+---
+title: sync_protocol_mismatch
+description: Sync Protocol Mismatch
+---
+
+## When this happens
+
+Sync client sent an unsupported protocol version.
+
+## What your integration should do
+
+Upgrade the mobile app to a build that speaks the current sync protocol.
+
+## What end users should see
+
+Prompt an app update.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 426 |
+| **code** | `sync_protocol_mismatch` |
+| **doc_url** | `/docs/api/errors/sync_protocol_mismatch` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/sync/protocol.ts`

@@ -1,0 +1,37 @@
+---
+title: contact_not_found
+description: Contact Not Found
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. The target resource does not exist or is not visible to this user. Affects **Contacts** operations.
+
+## What your integration should do
+
+Confirm the resource id exists and belongs to the authenticated user before retrying.
+
+## What end users should see
+
+Translate with `common.errors.api.contact_not_found` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `not_found_error` |
+| **HTTP status** | 404 |
+| **code** | `contact_not_found` |
+| **doc_url** | `/docs/api/errors/contact_not_found` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/delete-contact.ts`
+- `apps/api/src/domains/contacts/enrichment/enrich-queue.ts`
+- `apps/api/src/domains/contacts/enrichment/enrich.ts`
+- `apps/api/src/domains/contacts/enrichment/linkedin-data.ts`
+- `apps/api/src/domains/contacts/important-dates.ts`
+- `apps/api/src/domains/contacts/merge.ts`
+- _…and 6 more_

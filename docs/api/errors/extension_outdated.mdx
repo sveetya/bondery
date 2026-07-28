@@ -1,0 +1,31 @@
+---
+title: extension_outdated
+description: Extension Outdated
+---
+
+## When this happens
+
+Extension version check failed in `version-check.ts`.
+
+## What your integration should do
+
+Ship a newer Chrome extension build — the API rejected the extension version header.
+
+## What end users should see
+
+Prompt the user to update the extension from the store.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 426 |
+| **code** | `extension_outdated` |
+| **doc_url** | `/docs/api/errors/extension_outdated` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/extension/version-check.ts`

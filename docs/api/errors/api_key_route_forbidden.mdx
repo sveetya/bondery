@@ -1,0 +1,31 @@
+---
+title: api_key_route_forbidden
+description: Api Key Route Forbidden
+---
+
+## When this happens
+
+A valid API key called a session-only or internal route.
+
+## What your integration should do
+
+Call an integration route only (`openApiArea: integration`). See Authentication → which routes accept API keys.
+
+## What end users should see
+
+Explain this action is not available via API keys.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authorization_error` |
+| **HTTP status** | 403 |
+| **code** | `api_key_route_forbidden` |
+| **doc_url** | `/docs/api/errors/api_key_route_forbidden` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/auth/api-key-access.ts`

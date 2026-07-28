@@ -1,0 +1,11 @@
+{
+  "title": "Self-hosting",
+  "icon": "Server",
+  "pages": [
+    "requirements",
+    "get-started",
+    "configuration",
+    "secrets",
+    "update"
+  ]
+}

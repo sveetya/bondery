@@ -1,0 +1,31 @@
+---
+title: relationship_self_forbidden
+description: Relationship Self Forbidden
+---
+
+## When this happens
+
+A domain rule blocked the operation after validation. Affects **Relationships** operations.
+
+## What your integration should do
+
+Verify both contact ids, relationship type, and that you are not relating a contact to itself.
+
+## What end users should see
+
+Translate with `common.errors.api.relationship_self_forbidden` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `relationship_self_forbidden` |
+| **doc_url** | `/docs/api/errors/relationship_self_forbidden` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/contacts/relationships.ts`

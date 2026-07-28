@@ -1,0 +1,31 @@
+---
+title: group_remove_members_invalid_body
+description: Group Remove Members Invalid Body
+---
+
+## When this happens
+
+The request failed input validation before the handler ran. Affects **Groups** operations.
+
+## What your integration should do
+
+Verify group id, member ids, and request body shape for bulk membership changes.
+
+## What end users should see
+
+Translate with `common.errors.api.group_remove_members_invalid_body` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `group_remove_members_invalid_body` |
+| **doc_url** | `/docs/api/errors/group_remove_members_invalid_body` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/routes/groups/contacts.ts`

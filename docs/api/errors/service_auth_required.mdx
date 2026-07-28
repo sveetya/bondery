@@ -1,0 +1,31 @@
+---
+title: service_auth_required
+description: Service Auth Required
+---
+
+## When this happens
+
+Internal route (`verifyServiceSecret`) had no bearer token.
+
+## What your integration should do
+
+Internal server-to-server routes require the service bearer secret, not a user session or API key.
+
+## What end users should see
+
+Not shown to end users — fix server configuration.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `authentication_error` |
+| **HTTP status** | 401 |
+| **code** | `service_auth_required` |
+| **doc_url** | `/docs/api/errors/service_auth_required` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/platform/auth/strategies.ts`

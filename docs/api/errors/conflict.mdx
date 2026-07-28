@@ -1,0 +1,31 @@
+---
+title: conflict
+description: Conflict
+---
+
+## When this happens
+
+The action conflicts with existing server state.
+
+## What your integration should do
+
+Refresh server state, resolve the conflict, then retry the mutation.
+
+## What end users should see
+
+Translate with `common.errors.api.conflict` when a string exists; otherwise map by domain prefix. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `conflict_error` |
+| **HTTP status** | 409 |
+| **code** | `conflict` |
+| **doc_url** | `/docs/api/errors/conflict` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/routes/subscriptions/checkout.ts`
