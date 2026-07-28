@@ -1,0 +1,17 @@
+import { prisma } from "@bondery/db";
+import type { FastifyBaseLogger } from "fastify";
+import { runReminderDigestDispatch } from "./reminder-dispatch.js";
+
+/** Nightly enrich-queue cleanup — calls cleanup_stale_enrich_queue() in Postgres. */
+export async function runEnrichQueueCleanup(log: FastifyBaseLogger): Promise<void> {
+  const rows = await prisma.$queryRaw<{ count: number }[]>`
+    SELECT cleanup_stale_enrich_queue() AS count
+  `;
+  log.info({ deleted: rows[0]?.count ?? 0 }, "Enrich queue cleanup complete");
+}
+
+/** Port of hourly reminder cron — selects due users and sends digest emails. */
+export async function runHourlyReminderDigest(log: FastifyBaseLogger): Promise<void> {
+  const result = await runReminderDigestDispatch();
+  log.info(result, "Hourly reminder digest complete");
+}
