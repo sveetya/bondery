@@ -1,0 +1,27 @@
+name: Turborepo remote cache
+description: >-
+  Exports TURBO_TOKEN, TURBO_TEAM, and TURBO_TELEMETRY_DISABLED into GITHUB_ENV
+  for steps that run turbo (check-types, build, etc.). No-op when token is unset.
+
+inputs:
+  turbo_token:
+    description: Vercel Remote Cache token (BONDERY_OPS_TURBO_TOKEN)
+    required: false
+    default: ""
+  turbo_team:
+    description: Vercel team slug (BONDERY_OPS_TURBO_TEAM)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        echo "TURBO_TELEMETRY_DISABLED=1" >> "$GITHUB_ENV"
+        if [ -n "${{ inputs.turbo_token }}" ]; then
+          echo "TURBO_TOKEN=${{ inputs.turbo_token }}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${{ inputs.turbo_team }}" ]; then
+          echo "TURBO_TEAM=${{ inputs.turbo_team }}" >> "$GITHUB_ENV"
+        fi

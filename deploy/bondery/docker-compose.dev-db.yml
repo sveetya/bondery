@@ -1,0 +1,28 @@
+# Local dev Postgres only — no Traefik, no dokploy-network.
+#
+#   cd deploy/bondery
+#   cp .env.example .env   # set BONDERY_PRIVATE_POSTGRES_PASSWORD to match root .env.local
+#   docker compose -f docker-compose.dev-db.yml up -d
+#
+# Host port 54322. Stop the legacy apps/supabase-db stack first if it still owns that port.
+
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${BONDERY_PRIVATE_POSTGRES_PASSWORD:?BONDERY_PRIVATE_POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: bondery
+    volumes:
+      - bondery-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bondery"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  bondery-postgres-data:
