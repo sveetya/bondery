@@ -3,6 +3,7 @@
   "AuthenticationError": "Chyba ověření",
   "ContinueWith": "Pokračovat s {provider}",
   "Description": "Přihlásíme vás nebo vytvoříme nový účet, pokud jej ještě nemáte.",
+  "LastUsed": "Naposledy použito",
   "MobileNotAvailable": "Mobilní aplikace již brzy",
   "MobileNotAvailableMessage": "Aplikace Bondery zatím není dostupná na mobilních zařízeních. Navštivte nás prosím na počítači nebo notebooku.",
   "PrivacyPolicy": "Zásadami ochrany osobních údajů",

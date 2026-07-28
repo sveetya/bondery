@@ -1,6 +1,9 @@
 export { IMPORTANT_DATE_TYPE_META } from "#globals/important-dates.js";
 export {
   API_ROUTES,
+  BETTER_AUTH_BASE_PATH,
+  betterAuthAuthorizationServerMetadataPath,
+  betterAuthPath,
   CHANGELOG_URL,
   CHROME_EXTENSION_URL,
   formatMetadataTitle,
@@ -11,6 +14,7 @@ export {
   SOCIAL_LINKS,
   STATUS_PAGE_URL,
   SUPPORT_EMAIL,
+  toBffApiPath,
   WEBAPP_NAME,
   WEBAPP_ROUTES,
   WEBSITE_ROUTES,

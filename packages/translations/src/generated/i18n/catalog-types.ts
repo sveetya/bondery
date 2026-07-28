@@ -1035,6 +1035,7 @@ export type LoginPageCatalog = {
   AuthenticationError: string;
   ContinueWith: string;
   Description: string;
+  LastUsed: string;
   MobileNotAvailable: string;
   MobileNotAvailableMessage: string;
   PrivacyPolicy: string;

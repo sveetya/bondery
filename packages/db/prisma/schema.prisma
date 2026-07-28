@@ -1,0 +1,817 @@
+// Bondery Prisma schema.
+//
+// Table/column names intentionally match the existing Postgres schema
+// (see apps/supabase-db/supabase/migrations, superseded by this package)
+// so that the identity + data migration only needs to move rows, not
+// rename columns. Auth tables (User/Session/Account/Verification/Jwks)
+// follow Better Auth's Prisma adapter conventions — regenerate them with
+// `npx @better-auth/cli generate` once the final `betterAuth()` plugin
+// list is locked in, then reconcile with this file.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Better Auth
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false) @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  sessions Session[]
+  accounts Account[]
+
+  // App-domain relations (FK preserved from the Supabase migration: user_id -> user.id)
+  userSettings              UserSettings?
+  people                    People[]
+  groups                    Group[]
+  tags                      Tag[]
+  interactions              Interaction[]
+  apiKeys                   ApiKey[]
+  chatSessions              ChatSession[]
+  subscriptions             Subscription[]
+  linkedinEnrichQueue       LinkedinEnrichQueue[]
+  peopleMergeRecommendations PeopleMergeRecommendation[]
+  reminderDispatchLogs      ReminderDispatchLog[]
+  syncChangeLogs            SyncChangeLog[]
+  syncMutationReceipts      SyncMutationReceipt[]
+  syncUserSequence          SyncUserSequence?
+
+  oauthClients       OauthClient[]
+  oauthRefreshTokens OauthRefreshToken[]
+  oauthAccessTokens  OauthAccessToken[]
+  oauthConsents      OauthConsent[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid()) @db.Uuid
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  oauthRefreshTokens OauthRefreshToken[]
+  oauthAccessTokens  OauthAccessToken[]
+
+  @@map("session")
+}
+
+/// One row per linked OAuth identity (github / linkedin) — replaces
+/// Supabase `auth.identities`.
+///
+/// Better Auth 1.7 renamed `accountId` -> `providerAccountId` and made
+/// `issuer` a required field. We keep the underlying column names
+/// (`account_id`) via `@map` so this is a zero-data-movement rename at the
+/// Prisma layer; only `issuer` is a real backfilled column (see the
+/// `add_oauth_provider_1_7` migration for the deterministic
+/// `local:oauth:<providerId>` backfill used for our only two social
+/// providers, github and linkedin).
+model Account {
+  id                    String    @id @default(uuid()) @db.Uuid
+  providerAccountId     String    @map("account_id")
+  providerId            String    @map("provider_id")
+  issuer                String
+  userId                String    @map("user_id") @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@unique([issuer, providerAccountId])
+  // Legacy index kept through the rollback window so a reverted deploy can
+  // still rely on the pre-1.7 (providerId, accountId) uniqueness guarantee.
+  // Both indexes cover the same two physical columns (provider_id,
+  // account_id); drop this one in the follow-up contract migration.
+  @@unique([providerId, providerAccountId], map: "account_provider_id_account_id_key")
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(uuid()) @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime? @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  @@map("verification")
+}
+
+/// Signing keys for the `jwt` plugin (used to mint access tokens the API
+/// verifies, replacing Supabase's JWKS-based access tokens).
+model Jwks {
+  id         String    @id @default(uuid()) @db.Uuid
+  publicKey  String    @map("public_key")
+  privateKey String    @map("private_key")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  expiresAt  DateTime? @map("expires_at")
+  alg        String?
+  crv        String?
+
+  @@map("jwks")
+}
+
+/// OAuth 2.1 authorization-server tables added by `@better-auth/oauth-provider`
+/// (Better Auth 1.7). Field names/shapes were extracted directly from
+/// `getAuthTables(auth.options)` for our locked plugin configuration —
+/// see the `add_oauth_provider_1_7` migration notes.
+model OauthClient {
+  id                               String    @id @default(uuid()) @db.Uuid
+  clientId                         String    @unique @map("client_id")
+  clientSecret                     String?   @map("client_secret")
+  disabled                         Boolean   @default(false)
+  skipConsent                      Boolean?  @map("skip_consent")
+  enableEndSession                 Boolean?  @map("enable_end_session")
+  subjectType                      String?   @map("subject_type")
+  scopes                           String[]
+  userId                           String?   @map("user_id") @db.Uuid
+  user                             User?     @relation(fields: [userId], references: [id])
+  createdAt                        DateTime? @default(now()) @map("created_at")
+  updatedAt                        DateTime? @updatedAt @map("updated_at")
+  name                             String?
+  uri                              String?
+  icon                             String?
+  contacts                         String[]
+  tos                              String?
+  policy                           String?
+  softwareId                       String?   @map("software_id")
+  softwareVersion                  String?   @map("software_version")
+  softwareStatement                String?   @map("software_statement")
+  redirectUris                     String[]  @map("redirect_uris")
+  postLogoutRedirectUris           String[]  @map("post_logout_redirect_uris")
+  backchannelLogoutUri             String?   @map("backchannel_logout_uri")
+  backchannelLogoutSessionRequired Boolean?  @map("backchannel_logout_session_required")
+  tokenEndpointAuthMethod          String?   @map("token_endpoint_auth_method")
+  jwks                             String?
+  jwksUri                          String?   @map("jwks_uri")
+  grantTypes                       String[]  @map("grant_types")
+  responseTypes                    String[]  @map("response_types")
+  public                           Boolean?
+  type                             String?
+  requirePKCE                      Boolean?  @map("require_pkce")
+  dpopBoundAccessTokens            Boolean   @default(false) @map("dpop_bound_access_tokens")
+  referenceId                      String?   @map("reference_id")
+  metadata                         Json?
+
+  clientResources OauthClientResource[]
+  refreshTokens   OauthRefreshToken[]
+  accessTokens    OauthAccessToken[]
+  consents        OauthConsent[]
+
+  @@map("oauth_client")
+}
+
+model OauthResource {
+  id                            String    @id @default(uuid()) @db.Uuid
+  identifier                    String    @unique
+  name                          String
+  accessTokenTtl                Int?      @map("access_token_ttl")
+  refreshTokenTtl               Int?      @map("refresh_token_ttl")
+  signingAlgorithm               String?   @map("signing_algorithm")
+  signingKeyId                  String?   @map("signing_key_id")
+  allowedScopes                 String[]  @map("allowed_scopes")
+  customClaims                  Json?     @map("custom_claims")
+  dpopBoundAccessTokensRequired Boolean   @default(false) @map("dpop_bound_access_tokens_required")
+  disabled                      Boolean   @default(false)
+  createdAt                     DateTime? @default(now()) @map("created_at")
+  updatedAt                     DateTime? @updatedAt @map("updated_at")
+  policyVersion                 Int       @default(1) @map("policy_version")
+  metadata                      Json?
+
+  clientResources OauthClientResource[]
+
+  @@map("oauth_resource")
+}
+
+model OauthClientResource {
+  id         String        @id @default(uuid()) @db.Uuid
+  clientId   String        @map("client_id")
+  client     OauthClient   @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  resourceId String        @map("resource_id")
+  resource   OauthResource @relation(fields: [resourceId], references: [identifier], onDelete: Cascade)
+  metadata   Json?
+  createdAt  DateTime?     @default(now()) @map("created_at")
+
+  @@index([clientId])
+  @@index([resourceId])
+  @@map("oauth_client_resource")
+}
+
+model OauthRefreshToken {
+  id                      String    @id @default(uuid()) @db.Uuid
+  token                   String    @unique
+  clientId                String    @map("client_id")
+  client                  OauthClient @relation(fields: [clientId], references: [clientId])
+  sessionId               String?   @map("session_id") @db.Uuid
+  session                 Session?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  userId                  String    @map("user_id") @db.Uuid
+  user                    User      @relation(fields: [userId], references: [id])
+  referenceId             String?   @map("reference_id")
+  authorizationCodeId     String?   @map("authorization_code_id")
+  resources               String[]
+  requestedUserInfoClaims String[]  @map("requested_user_info_claims")
+  expiresAt               DateTime? @map("expires_at")
+  createdAt               DateTime? @default(now()) @map("created_at")
+  revoked                 DateTime?
+  rotatedAt               DateTime? @map("rotated_at")
+  rotationReplayResponse  String?   @map("rotation_replay_response")
+  rotationReplayExpiresAt DateTime? @map("rotation_replay_expires_at")
+  authTime                DateTime? @map("auth_time")
+  confirmation            Json?
+  scopes                  String[]
+
+  accessTokens OauthAccessToken[]
+
+  @@index([clientId])
+  @@index([sessionId])
+  @@index([userId])
+  @@index([authorizationCodeId])
+  @@map("oauth_refresh_token")
+}
+
+model OauthAccessToken {
+  id                      String             @id @default(uuid()) @db.Uuid
+  token                   String             @unique
+  clientId                String             @map("client_id")
+  client                  OauthClient        @relation(fields: [clientId], references: [clientId])
+  sessionId               String?            @map("session_id") @db.Uuid
+  session                 Session?           @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  userId                  String?            @map("user_id") @db.Uuid
+  user                    User?              @relation(fields: [userId], references: [id])
+  referenceId             String?            @map("reference_id")
+  authorizationCodeId     String?            @map("authorization_code_id")
+  resources               String[]
+  requestedUserInfoClaims String[]           @map("requested_user_info_claims")
+  refreshId               String?            @map("refresh_id") @db.Uuid
+  refresh                 OauthRefreshToken? @relation(fields: [refreshId], references: [id])
+  expiresAt               DateTime?          @map("expires_at")
+  createdAt               DateTime?          @default(now()) @map("created_at")
+  revoked                 DateTime?
+  confirmation            Json?
+  scopes                  String[]
+
+  @@index([clientId])
+  @@index([sessionId])
+  @@index([userId])
+  @@index([authorizationCodeId])
+  @@index([refreshId])
+  @@map("oauth_access_token")
+}
+
+model OauthConsent {
+  id                      String      @id @default(uuid()) @db.Uuid
+  clientId                String      @map("client_id")
+  client                  OauthClient @relation(fields: [clientId], references: [clientId])
+  userId                  String?     @map("user_id") @db.Uuid
+  user                    User?       @relation(fields: [userId], references: [id])
+  referenceId             String?     @map("reference_id")
+  resources               String[]
+  requestedUserInfoClaims String[]    @map("requested_user_info_claims")
+  scopes                  String[]
+  createdAt               DateTime?   @default(now()) @map("created_at")
+  updatedAt               DateTime?   @updatedAt @map("updated_at")
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauth_consent")
+}
+
+/// Replay-protection ledger for signed client-assertion JWTs (private_key_jwt
+/// / client_secret_jwt). No foreign keys — Better Auth only tracks the
+/// assertion's expiry to bound the anti-replay window.
+model OauthClientAssertion {
+  id        String   @id @default(uuid()) @db.Uuid
+  expiresAt DateTime @map("expires_at")
+
+  @@map("oauth_client_assertion")
+}
+
+// ---------------------------------------------------------------------------
+// App domain (1:1 with previous `public` schema tables)
+// ---------------------------------------------------------------------------
+
+enum ColorScheme {
+  light
+  dark
+  auto
+
+  @@map("color_scheme")
+}
+
+enum SupportedLocale {
+  en
+  cs
+  de
+
+  @@map("supported_locale")
+}
+
+model UserSettings {
+  id                        String          @id @default(uuid()) @db.Uuid
+  userId                    String          @unique @map("user_id") @db.Uuid
+  user                      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language                  SupportedLocale @default(en)
+  timezone                  String?
+  timeFormat                String          @default("24h") @map("time_format")
+  colorScheme               ColorScheme     @default(auto) @map("color_scheme")
+  leftSwipeAction           String          @default("none") @map("left_swipe_action")
+  rightSwipeAction          String          @default("none") @map("right_swipe_action")
+  groupSortOrder            String          @default("alphabetical") @map("group_sort_order")
+  tagSortOrder              String          @default("alphabetical") @map("tag_sort_order")
+  reminderSendHour          String          @default("09:00") @map("reminder_send_hour")
+  nextReminderAtUtc         DateTime        @map("next_reminder_at_utc")
+  isAdmin                   Boolean         @default(false) @map("is_admin")
+  onboardingCompletedAt     DateTime?       @map("onboarding_completed_at")
+  gettingStartedDismissedAt DateTime?       @map("getting_started_dismissed_at")
+  importCompletedAt         DateTime?       @map("import_completed_at")
+  importFollowupPlatform    String?         @map("import_followup_platform")
+  importFollowupStatus      String?         @map("import_followup_status")
+  aiMessagesUsed            Int             @default(0) @map("ai_messages_used")
+  aiMessagesThisMonth       Int             @default(0) @map("ai_messages_this_month")
+  aiMessagesMonthResetAt    DateTime        @map("ai_messages_month_reset_at")
+  createdAt                 DateTime        @default(now()) @map("created_at")
+  updatedAt                 DateTime        @updatedAt @map("updated_at")
+
+  @@map("user_settings")
+}
+
+model People {
+  id                       String    @id @default(uuid()) @db.Uuid
+  userId                   String    @map("user_id") @db.Uuid
+  user                     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName                String    @map("first_name")
+  middleName               String?   @map("middle_name")
+  lastName                 String?   @map("last_name")
+  headline                 String?
+  notes                    String?
+  notesUpdatedAt           DateTime? @map("notes_updated_at")
+  myself                   Boolean?  @default(false)
+  hasAvatar                Boolean   @default(false) @map("has_avatar")
+  language                 String?
+  timezone                 String?
+  location                 String?
+  latitude                 Float?
+  longitude                Float?
+  gisPoint                 Unsupported("geography(Point,4326)")?
+  keepFrequencyDays        Int?      @map("keep_frequency_days")
+  lastInteraction          DateTime? @map("last_interaction")
+  lastInteractionActivityId String?   @map("last_interaction_activity_id") @db.Uuid
+  lastInteractionActivity  Interaction? @relation("PeopleLastInteraction", fields: [lastInteractionActivityId], references: [id])
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+
+  phones               PeoplePhone[]
+  emails               PeopleEmail[]
+  socials              PeopleSocial[]
+  addresses            PeopleAddress[]
+  importantDates       PeopleImportantDate[]
+  groups               PeopleGroup[]
+  tags                 PeopleTag[]
+  linkedin             PeopleLinkedin?
+  interactionParticipant InteractionParticipant[]
+  relationshipsFrom    PeopleRelationship[] @relation("SourcePerson")
+  relationshipsTo      PeopleRelationship[] @relation("TargetPerson")
+  mergeRecommendationsLeft  PeopleMergeRecommendation[] @relation("LeftPerson")
+  mergeRecommendationsRight PeopleMergeRecommendation[] @relation("RightPerson")
+  enrichQueue          LinkedinEnrichQueue[]
+  interactionsLast     Interaction[] @relation("LastInteractionActivity")
+
+  @@map("people")
+  @@index([userId])
+}
+
+model PeoplePhone {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  personId   String   @map("person_id") @db.Uuid
+  person     People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  value      String
+  type       String   @default("mobile")
+  prefix     String   @default("")
+  preferred  Boolean  @default(false)
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("people_phones")
+}
+
+model PeopleEmail {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  personId   String   @map("person_id") @db.Uuid
+  person     People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  value      String
+  type       String   @default("personal")
+  preferred  Boolean  @default(false)
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("people_emails")
+}
+
+model PeopleSocial {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  personId    String    @map("person_id") @db.Uuid
+  person      People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  platform    String
+  handle      String
+  connectedAt DateTime? @map("connected_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_socials")
+}
+
+model PeopleAddress {
+  id                    String    @id @default(uuid()) @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  personId              String    @map("person_id") @db.Uuid
+  person                People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  label                 String?
+  type                  String    @default("home")
+  value                 String
+  addressLine1          String?   @map("address_line1")
+  addressLine2          String?   @map("address_line2")
+  addressCity           String?   @map("address_city")
+  addressState          String?   @map("address_state")
+  addressStateCode      String?   @map("address_state_code")
+  addressPostalCode     String?   @map("address_postal_code")
+  addressCountry        String?   @map("address_country")
+  addressCountryCode    String?   @map("address_country_code")
+  addressFormatted      String?   @map("address_formatted")
+  addressGranularity    String    @default("unknown") @map("address_granularity")
+  addressGeocodeSource  String?   @map("address_geocode_source")
+  geocodeConfidence     String?   @map("geocode_confidence")
+  latitude              Float?
+  longitude             Float?
+  gisPoint              Unsupported("geography(Point,4326)")?
+  timezone              String?
+  sortOrder             Int       @default(0) @map("sort_order")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_addresses")
+}
+
+model PeopleImportantDate {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  personId         String    @map("person_id") @db.Uuid
+  person           People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type             String
+  date             DateTime  @db.Date
+  note             String?
+  notifyOn         DateTime? @map("notify_on") @db.Date
+  notifyDaysBefore  Int?      @map("notify_days_before")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_important_dates")
+}
+
+model PeopleRelationship {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  sourcePersonId   String   @map("source_person_id") @db.Uuid
+  sourcePerson     People   @relation("SourcePerson", fields: [sourcePersonId], references: [id], onDelete: Cascade)
+  targetPersonId   String   @map("target_person_id") @db.Uuid
+  targetPerson     People   @relation("TargetPerson", fields: [targetPersonId], references: [id], onDelete: Cascade)
+  relationshipType String   @map("relationship_type")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("people_relationships")
+}
+
+model Group {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  color     String?
+  emoji     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  people PeopleGroup[]
+
+  @@map("groups")
+}
+
+model PeopleGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  groupId   String   @map("group_id") @db.Uuid
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([personId, groupId])
+  @@map("people_groups")
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  color     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  people PeopleTag[]
+
+  @@map("tags")
+}
+
+model PeopleTag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  tagId     String   @map("tag_id") @db.Uuid
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([personId, tagId])
+  @@map("people_tags")
+}
+
+model Interaction {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  title       String?
+  description String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  participants     InteractionParticipant[]
+  peopleLastActive People[] @relation("LastInteractionActivity")
+  peopleWithLastInteraction People[] @relation("PeopleLastInteraction")
+
+  @@map("interactions")
+}
+
+model InteractionParticipant {
+  interactionId String      @map("interaction_id") @db.Uuid
+  interaction   Interaction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  personId      String      @map("person_id") @db.Uuid
+  person        People      @relation(fields: [personId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@id([interactionId, personId])
+  @@map("interaction_participants")
+}
+
+model PeopleLinkedin {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @unique @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  bio       String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  workHistory      PeopleWorkHistory[]
+  educationHistory PeopleEducationHistory[]
+
+  @@map("people_linkedin")
+}
+
+model PeopleWorkHistory {
+  id                String          @id @default(uuid()) @db.Uuid
+  userId            String          @map("user_id") @db.Uuid
+  peopleLinkedinId  String          @map("people_linkedin_id") @db.Uuid
+  peopleLinkedin    PeopleLinkedin  @relation(fields: [peopleLinkedinId], references: [id], onDelete: Cascade)
+  companyName       String          @map("company_name")
+  companyLinkedinId String?         @map("company_linkedin_id")
+  title             String?
+  employmentType    String?         @map("employment_type")
+  location          String?
+  description       String?
+  startDate         DateTime?       @map("start_date") @db.Date
+  endDate           DateTime?       @map("end_date") @db.Date
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  @@map("people_work_history")
+}
+
+model PeopleEducationHistory {
+  id               String         @id @default(uuid()) @db.Uuid
+  userId           String         @map("user_id") @db.Uuid
+  peopleLinkedinId String         @map("people_linkedin_id") @db.Uuid
+  peopleLinkedin   PeopleLinkedin @relation(fields: [peopleLinkedinId], references: [id], onDelete: Cascade)
+  schoolName       String         @map("school_name")
+  schoolLinkedinId String?        @map("school_linkedin_id")
+  degree           String?
+  description      String?
+  startDate        DateTime?      @map("start_date") @db.Date
+  endDate          DateTime?      @map("end_date") @db.Date
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("people_education_history")
+}
+
+model PeopleMergeRecommendation {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leftPersonId     String   @map("left_person_id") @db.Uuid
+  leftPerson       People   @relation("LeftPerson", fields: [leftPersonId], references: [id], onDelete: Cascade)
+  rightPersonId    String   @map("right_person_id") @db.Uuid
+  rightPerson      People   @relation("RightPerson", fields: [rightPersonId], references: [id], onDelete: Cascade)
+  score            Float
+  reasons          String[]
+  algorithmVersion String   @default("v1") @map("algorithm_version")
+  isDeclined       Boolean  @default(false) @map("is_declined")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("people_merge_recommendations")
+}
+
+model LinkedinEnrichQueue {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId     String   @map("person_id") @db.Uuid
+  person       People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  status       String   @default("pending")
+  errorMessage String?  @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("linkedin_enrich_queue")
+}
+
+model GeocodeCache {
+  id              String   @id @default(uuid()) @db.Uuid
+  placeKey        String   @unique @map("place_key")
+  placeOriginal    String   @map("place_original")
+  geocodeFound     Boolean  @default(false) @map("geocode_found")
+  formattedLabel   String?  @map("formatted_label")
+  name             String?
+  city             String?
+  state            String?
+  stateCode        String?  @map("state_code")
+  country          String?
+  countryCode      String?  @map("country_code")
+  lat              Float?
+  lon              Float?
+  locationEwkt     String?  @map("location_ewkt")
+  timezone         String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("geocode_cache")
+}
+
+model ApiKey {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keyId       String    @unique @map("key_id")
+  keyHash     String    @map("key_hash")
+  keyPrefix   String    @map("key_prefix")
+  label       String
+  permission  String    @default("read")
+  lastUsedAt  DateTime? @map("last_used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("api_keys")
+}
+
+model ChatSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid()) @db.Uuid
+  sessionId String      @map("session_id") @db.Uuid
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   Json
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@map("chat_messages")
+}
+
+model Subscription {
+  id                    String    @id @default(uuid()) @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  polarCustomerId       String    @map("polar_customer_id")
+  polarSubscriptionId   String    @unique @map("polar_subscription_id")
+  status                String
+  currentPeriodStart    DateTime? @map("current_period_start")
+  currentPeriodEnd      DateTime? @map("current_period_end")
+  cancelAtPeriodEnd     Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model PendingSubscription {
+  polarSubscriptionId   String    @id @map("polar_subscription_id")
+  polarCustomerId       String    @map("polar_customer_id")
+  email                 String
+  status                String
+  currentPeriodEnd      DateTime? @map("current_period_end")
+  cancelAtPeriodEnd     Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  @@map("pending_subscriptions")
+}
+
+model ReminderDispatchLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminderDate DateTime @map("reminder_date") @db.Date
+  timezone     String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("reminder_dispatch_log")
+}
+
+model SyncChangeLog {
+  serverSequence BigInt   @id @map("server_sequence")
+  userId         String   @map("user_id") @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tableName      String   @map("table_name")
+  entityId       String   @map("entity_id")
+  operation      String
+  rowData        Json?    @map("row_data")
+  changeIndex    Int      @map("change_index")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("sync_change_log")
+  @@index([userId, serverSequence])
+}
+
+model SyncMutationReceipt {
+  userId            String   @map("user_id") @db.Uuid
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientMutationId  String   @map("client_mutation_id")
+  mutationType      String   @map("mutation_type")
+  payloadHash       String   @map("payload_hash")
+  serverSequence    BigInt   @map("server_sequence")
+  result            Json
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@id([userId, clientMutationId])
+  @@map("sync_mutation_receipts")
+}
+
+model SyncUserSequence {
+  userId       String @id @map("user_id") @db.Uuid
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastSequence BigInt @default(0) @map("last_sequence")
+
+  @@map("sync_user_sequence")
+}

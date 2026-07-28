@@ -1,3 +1,5 @@
+@import "./brand-tokens.css";
+
 :root {
   --transition-time: 200ms;
   --transition-ease: ease-in-out;
@@ -14,11 +16,6 @@
     transform var(--transition-time) var(--transition-ease),
     filter var(--transition-time) var(--transition-ease),
     background-color var(--transition-time) var(--transition-ease);
-}
-
-::selection {
-  background-color: var(--mantine-primary-color-filled);
-  color: white;
 }
 
 .button-scale-effect:hover:not(:disabled):not([data-disabled]):not([disabled]),

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@takumi-rs/helpers": "2.4.0",
     "sharp": "^0.35.3"
   },
   "description": "Bondery branding assets and icons",
@@ -25,15 +26,47 @@
       "node": "./dist/*.js",
       "types": "./src/*.ts"
     },
-    "./icon-generator": {
-      "default": "./scripts/generate-icons.ts",
-      "types": "./scripts/icon-generator.d.ts"
+    "./og": {
+      "default": "./dist/og/index.js",
+      "import": "./dist/og/index.js",
+      "node": "./dist/og/index.js",
+      "types": "./src/og/index.ts"
     },
     "./react": {
       "default": "./dist/react/index.js",
       "import": "./dist/react/index.js",
       "node": "./dist/react/index.js",
       "types": "./src/react/index.ts"
+    },
+    "./og/Logotype": {
+      "default": "./dist/og/Logotype.js",
+      "import": "./dist/og/Logotype.js",
+      "node": "./dist/og/Logotype.js",
+      "types": "./src/og/Logotype.tsx"
+    },
+    "./og/OgMarketing": {
+      "default": "./dist/og/OgMarketing.js",
+      "import": "./dist/og/OgMarketing.js",
+      "node": "./dist/og/OgMarketing.js",
+      "types": "./src/og/OgMarketing.tsx"
+    },
+    "./og/OgTitled": {
+      "default": "./dist/og/OgTitled.js",
+      "import": "./dist/og/OgTitled.js",
+      "node": "./dist/og/OgTitled.js",
+      "types": "./src/og/OgTitled.tsx"
+    },
+    "./og/constants": {
+      "default": "./dist/og/constants.js",
+      "import": "./dist/og/constants.js",
+      "node": "./dist/og/constants.js",
+      "types": "./src/og/constants.ts"
+    },
+    "./og/fonts": {
+      "default": "./dist/og/fonts.js",
+      "import": "./dist/og/fonts.js",
+      "node": "./dist/og/fonts.js",
+      "types": "./src/og/fonts.ts"
     },
     "./react/BonderyIcon": {
       "default": "./dist/react/BonderyIcon.js",
@@ -64,6 +97,10 @@
       "import": "./dist/react/index.d.js",
       "node": "./dist/react/index.d.js",
       "types": "./src/react/index.d.ts"
+    },
+    "./icon-generator": {
+      "default": "./scripts/generate-icons.ts",
+      "types": "./scripts/icon-generator.d.ts"
     }
   },
   "files": [

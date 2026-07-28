@@ -2,7 +2,7 @@ import { DOC_LINKS, type DocId } from "#docs/doc-links.generated.js";
 import { HELP_DOCS_URL } from "#globals/paths.js";
 
 /**
- * Resolves a stable doc ID to the canonical GitBook URL.
+ * Resolves a stable doc ID to the canonical docs URL.
  */
 export function docHref(id: DocId): string {
   const entry = DOC_LINKS[id];

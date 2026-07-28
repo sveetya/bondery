@@ -539,4 +539,4 @@ export const resourcesByNamespace = {
     cs: r199,
     de: r200,
   },
-} as const satisfies Record<string, Record<SupportedLocale, Record<string, unknown>>>;
+} satisfies Record<string, Record<SupportedLocale, Record<string, unknown>>>;

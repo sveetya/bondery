@@ -78,7 +78,7 @@ import { useExtensionPopupTranslations } from "../lib/i18n/generated/hooks";
 const t = useExtensionPopupTranslations("LoggedOut");
 ```
 
-Legacy generic hooks (`useWebTranslations`, `useMobileTranslations`, `getWebTranslations`) and per-call `{ ns: }` overrides are removed — use generated namespace hooks instead. See [`docs/contributing/i18n.md`](../../docs/contributing/i18n.md).
+Legacy generic hooks (`useWebTranslations`, `useMobileTranslations`, `getWebTranslations`) and per-call `{ ns: }` overrides are removed — use generated namespace hooks instead. See [`docs/contributing/i18n.mdx`](../../docs/contributing/i18n.mdx).
 
 ## Supported locales
 

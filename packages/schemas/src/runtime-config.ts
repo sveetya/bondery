@@ -13,8 +13,6 @@ export const webappRuntimeConfigSchema = z
     posthogHost: z.string().url().optional(),
     posthogKey: z.string().min(1).optional(),
     runtimeConfigVersion: z.literal(1),
-    supabasePublishableKey: z.string().min(1),
-    supabaseUrl: z.string().url(),
     version: z.string().min(1).optional(),
     webappUrl: z.string().url(),
     websiteUrl: z.string().url(),

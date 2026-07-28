@@ -4,11 +4,13 @@ Canonical types, Zod validation schemas, and constants for Bondery.
 
 This is the **contract layer**: it defines what data is allowed and what shapes cross API, sync, and client boundaries. It does not contain business normalization (name parsing, social URL extraction, geocoding, etc.).
 
+Database row types and the Prisma client live in [`@bondery/db`](../db/) — not here.
+
 ## Dependency rule
 
 `@bondery/schemas` must **not** depend on any other `@bondery/*` package.
 
-Other packages (for example `@bondery/helpers`) may depend on schemas. Apps may depend on both.
+Other packages (for example `@bondery/helpers`, `@bondery/db`) may depend on schemas. Apps may depend on both.
 
 ## Validation vs normalization
 
@@ -27,8 +29,6 @@ Schemas may include lightweight structural transforms (trim-to-null, lowercase e
 | `@bondery/schemas` | Entity schemas, types, shared utilities |
 | `@bondery/schemas/http` | Route transport primitives (params, coerced query, pagination), shared response helpers (`okResponse`, `standardErrorResponses`), `contactIdSchema` |
 | `@bondery/schemas/constants` | Field limits, product constants |
-| `@bondery/schemas/supabase.types` | Generated Supabase `Database` types |
-| `@bondery/schemas/database` | Alias for supabase types |
 | `@bondery/schemas/sync` | Mobile sync protocol and mutation payloads |
 
 ## Usage
@@ -51,6 +51,12 @@ const payload: CreateContactInput = {
 ```
 
 For form submit flows that start from a single full-name field or raw social input, use `@bondery/helpers/forms` instead of combining validation and normalization inside schemas.
+
+For Postgres row types and queries, import from `@bondery/db`:
+
+```typescript
+import { prisma, type People } from "@bondery/db";
+```
 
 ## Wire vs form vs read models
 

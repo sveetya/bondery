@@ -13,7 +13,13 @@
 
 export type EnvEnvironment = "development" | "production";
 
-export type TargetId = "api" | "webapp" | "website" | "mobile" | "chrome-extension" | "supabase-db";
+export type TargetId =
+  | "api"
+  | "webapp"
+  | "website"
+  | "mobile"
+  | "chrome-extension"
+  | "db";
 
 export type EnvTargetWrite = {
   /** App / package id */
@@ -29,7 +35,7 @@ export type EnvTargetWrite = {
    */
   deriveFrom?: string;
   /** Optional value transform when deriving */
-  transform?: "webapp-auth-callback" | "supabase-auth-callback";
+  transform?: "webapp-auth-callback";
 };
 
 export type EnvVarDef = {
@@ -88,9 +94,9 @@ export const SYNC_TARGETS: SyncTargetConfig[] = [
     productionExampleFile: "apps/chrome-extension/.env.production.example",
   },
   {
-    devFile: "apps/supabase-db/.env.local",
-    exampleFile: "apps/supabase-db/.env.local.example",
-    id: "supabase-db",
+    devFile: "packages/db/.env.local",
+    exampleFile: "packages/db/.env.local.example",
+    id: "db",
   },
 ];
 
@@ -116,19 +122,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Public URLs",
     requiredIn: ["development", "production"],
     secret: false,
-    targets: [
-      t("api"),
-      t("webapp"),
-      t("website"),
-      t("chrome-extension"),
-      t("supabase-db", "BONDERY_SUPABASE_WEBAPP_URL"),
-      {
-        deriveFrom: "BONDERY_PUBLIC_WEBAPP_URL",
-        id: "supabase-db",
-        runtimeName: "BONDERY_SUPABASE_WEBAPP_CALLBACK_URL",
-        transform: "webapp-auth-callback",
-      },
-    ],
+    targets: [t("api"), t("webapp"), t("website"), t("chrome-extension"), t("mobile")],
   },
   {
     canonical: "BONDERY_PUBLIC_WEBSITE_URL",
@@ -149,106 +143,188 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api")],
   },
 
-  // --- Supabase ---
+  // --- Database ---
   {
-    canonical: "BONDERY_PUBLIC_SUPABASE_URL",
-    description:
-      "Supabase project URL (OAuth provider redirect_uri is derived as {url}/auth/v1/callback)",
-    exampleValue: "http://127.0.0.1:54321",
-    group: "Supabase",
-    requiredIn: ["development", "production"],
-    secret: false,
-    targets: [
-      t("api"),
-      t("webapp"),
-      t("chrome-extension"),
-      t("mobile"),
-      {
-        deriveFrom: "BONDERY_PUBLIC_SUPABASE_URL",
-        id: "supabase-db",
-        runtimeName: "BONDERY_SUPABASE_AUTH_CALLBACK_URL",
-        transform: "supabase-auth-callback",
-      },
-    ],
-  },
-  {
-    canonical: "BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
-    description: "Supabase publishable (anon) key",
-    exampleValue: "sb_publishable_<your-publishable-key>",
-    group: "Supabase",
-    requiredIn: ["development", "production"],
-    secret: false,
-    targets: [t("api"), t("webapp"), t("mobile")],
-  },
-  {
-    canonical: "BONDERY_PRIVATE_SUPABASE_SECRET_KEY",
-    description: "Supabase secret (service role) key",
-    exampleValue: "sb_secret_<your-secret-key>",
-    group: "Supabase",
+    canonical: "DATABASE_URL",
+    description: "Postgres connection string (Prisma + API)",
+    exampleValue: "postgresql://postgres:password@127.0.0.1:54322/bondery",
+    group: "Database",
     requiredIn: ["development", "production"],
     secret: true,
-    targets: [t("api")],
-  },
-  {
-    canonical: "BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK",
-    description: "Compact single-line JWT signing JWK JSON",
-    exampleValue:
-      '{"kty":"EC","kid":"<your-kid>","use":"sig","alg":"ES256","crv":"P-256","d":"<private-d>","x":"<public-x>","y":"<public-y>"}',
-    group: "Supabase",
-    requiredIn: ["development", "production"],
-    secret: true,
-    targets: [t("api")],
-  },
-  {
-    canonical: "BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID",
-    description: "Chrome extension OAuth client id (Supabase Dashboard)",
-    exampleValue: "",
-    group: "Supabase",
-    requiredIn: ["development", "production"],
-    secret: false,
-    targets: [t("chrome-extension")],
+    targets: [t("api"), t("db")],
   },
 
-  // --- supabase-db auth (CLI substitution names) ---
-  // BONDERY_SUPABASE_AUTH_CALLBACK_URL is derived from BONDERY_PUBLIC_SUPABASE_URL
+  // --- Auth (Better Auth) ---
   {
-    canonical: "BONDERY_SUPABASE_AUTH_EXTERNAL_GITHUB_CLIENT_ID",
-    description: "GitHub OAuth client id for local Supabase Auth",
+    canonical: "BONDERY_PRIVATE_BETTER_AUTH_SECRET",
+    description: "Better Auth secret (≥32 characters)",
+    exampleValue: "your-super-secret-better-auth-secret-min-32-chars",
+    group: "Auth",
+    requiredIn: ["development", "production"],
+    secret: true,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
+    description: "GitHub OAuth client id for Better Auth",
     exampleValue: "",
-    group: "Supabase Auth (local)",
+    group: "Auth",
     requiredIn: [],
     secret: false,
-    targets: [t("supabase-db")],
+    targets: [t("api")],
   },
   {
-    canonical: "BONDERY_SUPABASE_AUTH_EXTERNAL_GITHUB_SECRET",
-    description: "GitHub OAuth client secret for local Supabase Auth",
+    canonical: "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
+    description: "GitHub OAuth client secret for Better Auth",
     exampleValue: "",
-    group: "Supabase Auth (local)",
+    group: "Auth",
     requiredIn: [],
     secret: true,
-    targets: [t("supabase-db")],
+    targets: [t("api")],
   },
   {
-    canonical: "BONDERY_SUPABASE_AUTH_EXTERNAL_LINKEDIN_CLIENT_ID",
-    description: "LinkedIn OAuth client id for local Supabase Auth",
+    canonical: "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID",
+    description: "LinkedIn OAuth client id for Better Auth",
     exampleValue: "",
-    group: "Supabase Auth (local)",
+    group: "Auth",
     requiredIn: [],
     secret: false,
-    targets: [t("supabase-db")],
+    targets: [t("api")],
   },
   {
-    canonical: "BONDERY_SUPABASE_AUTH_EXTERNAL_LINKEDIN_SECRET",
-    description: "LinkedIn OAuth client secret for local Supabase Auth",
+    canonical: "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET",
+    description: "LinkedIn OAuth client secret for Better Auth",
     exampleValue: "",
-    group: "Supabase Auth (local)",
+    group: "Auth",
     requiredIn: [],
     secret: true,
-    targets: [t("supabase-db")],
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
+    description:
+      "Chrome extension OAuth client id (synced as legacy name below). Also consumed by the API's deployment-time OAuth client provisioning.",
+    exampleValue: "",
+    group: "Auth",
+    requiredIn: ["development", "production"],
+    secret: false,
+    targets: [t("api"), t("chrome-extension")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+    description: "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)",
+    exampleValue: "",
+    group: "Auth",
+    requiredIn: ["development", "production"],
+    secret: false,
+    targets: [t("api"), t("webapp")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+    description:
+      "Webapp's own OAuth client secret (never exposed to the browser). The API only ever stores/verifies its hash via deployment-time provisioning; it never round-trips the plaintext value.",
+    exampleValue: "",
+    group: "Auth",
+    requiredIn: ["development", "production"],
+    secret: true,
+    targets: [t("api"), t("webapp")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
+    description: "Symmetric key (≥32 chars) for encrypting the webapp's own session cookie",
+    exampleValue: "your-super-secret-webapp-session-secret-min-32-chars",
+    group: "Auth",
+    requiredIn: ["development", "production"],
+    secret: true,
+    targets: [t("webapp")],
+  },
+
+  // --- Storage ---
+  {
+    canonical: "BONDERY_STORAGE_DRIVER",
+    description:
+      "Optional override: local | s3. Defaults to s3 when S3 credentials are set, otherwise local.",
+    exampleValue: "local",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_STORAGE_LOCAL_PATH",
+    description: "Local filesystem storage root (API only)",
+    exampleValue: "./.storage",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_STORAGE_URL",
+    description:
+      "Public CDN/base URL for S3 objects. Local disk mode derives URLs from BONDERY_PUBLIC_API_URL.",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_S3_ENDPOINT",
+    description: "S3-compatible endpoint (when BONDERY_STORAGE_DRIVER=s3)",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_S3_REGION",
+    description: "S3 region (when BONDERY_STORAGE_DRIVER=s3)",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_S3_BUCKET",
+    description: "S3 bucket name (when BONDERY_STORAGE_DRIVER=s3)",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_S3_ACCESS_KEY_ID",
+    description: "S3 access key id (when BONDERY_STORAGE_DRIVER=s3)",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: true,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
+    description: "S3 secret access key (when BONDERY_STORAGE_DRIVER=s3)",
+    exampleValue: "",
+    group: "Storage",
+    requiredIn: [],
+    secret: true,
+    targets: [t("api")],
   },
 
   // --- API secrets ---
+  {
+    canonical: "BONDERY_PRIVATE_SERVICE_SECRET",
+    description: "Internal service-to-service HMAC secret",
+    exampleValue: "<your-service-secret>",
+    group: "API secrets",
+    requiredIn: ["development", "production"],
+    secret: true,
+    targets: [t("api")],
+  },
   {
     canonical: "BONDERY_PRIVATE_API_KEY_PEPPER",
     description: "Pepper for hashing API keys",
@@ -461,61 +537,23 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("webapp")],
   },
   {
-    canonical: "BONDERY_INFRA_INTERNAL_API_URL",
-    description: "Compose-internal API URL (production webapp only)",
-    exampleValue: "",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [t("webapp")],
-  },
-  {
-    canonical: "BONDERY_INFRA_INTERNAL_SUPABASE_URL",
+    canonical: "BONDERY_INFRA_CHROME_EXTENSION_ID",
     description:
-      "Compose-internal Supabase Kong URL for API server-side clients (e.g. http://kong:8000)",
-    exampleValue: "http://kong:8000",
+      "Chrome Web Store extension ID. Used to derive the https://{id}.chromiumapp.org/ redirect URI registered for the extension's OAuth client (see scripts/provision-oauth-clients.ts).",
+    exampleValue: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
     group: "Infra",
     requiredIn: [],
     secret: false,
     targets: [t("api")],
   },
   {
-    canonical: "BONDERY_INFRA_SUPABASE_DOMAIN",
-    description:
-      "Supabase public hostname (no scheme); Compose derives BONDERY_PUBLIC_SUPABASE_URL",
-    exampleValue: "supabase.usebondery.com",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [],
-  },
-  {
-    canonical: "BONDERY_INFRA_CHROME_EXTENSION_ID",
-    description:
-      "Chrome Web Store extension ID; Compose appends https://{id}.chromiumapp.org(/) to Auth redirect allow-list",
-    exampleValue: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [],
-  },
-  {
     canonical: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
-    description: "Postgres password for bundled self-hosted Supabase",
+    description: "Postgres password for bundled self-hosted database",
     exampleValue: "your-super-secret-and-long-postgres-password",
-    group: "Supabase self-host",
+    group: "Database",
     requiredIn: [],
     secret: true,
-    targets: [],
-  },
-  {
-    canonical: "BONDERY_PRIVATE_SUPABASE_JWT_SECRET",
-    description: "HS256 JWT secret for self-hosted GoTrue / PostgREST / Realtime",
-    exampleValue: "your-super-secret-jwt-token-with-at-least-32-characters-long",
-    group: "Supabase self-host",
-    requiredIn: [],
-    secret: true,
-    targets: [],
+    targets: [t("db")],
   },
   {
     canonical: "BONDERY_PUBLIC_SYNC_DEBUG",
@@ -545,7 +583,6 @@ export const TURBO_SYSTEM_PASSTHROUGH = [
   "TURBO_TOKEN",
   "npm_package_version",
   "METRO_MAX_WORKERS",
-  "NGROK",
   "PORT",
   "LOG_LEVEL",
   "SYNC_WAKE_ENABLED",
@@ -575,9 +612,6 @@ export function applyTransform(transform: EnvTargetWrite["transform"], value: st
   const base = value.replace(/\/$/, "");
   if (transform === "webapp-auth-callback") {
     return `${base}/auth/callback`;
-  }
-  if (transform === "supabase-auth-callback") {
-    return `${base}/auth/v1/callback`;
   }
   return value;
 }

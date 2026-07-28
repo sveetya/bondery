@@ -44,8 +44,16 @@ export function parseSyncWsClientMessage(raw: unknown): SyncWsClientMessage | nu
 export function buildSyncWsUrl(apiBaseUrl: string, ticket: string): string {
   const base = apiBaseUrl.replace(/\/+$/, "").replace(/\/api$/, "");
   const wsBase = base.replace(/^http:/, "ws:").replace(/^https:/, "wss:");
-  const path = "/api/sync/ws";
+  const path = "/sync/ws";
   const url = new URL(`${wsBase}${path}`);
+  url.searchParams.set("ticket", ticket);
+  return url.toString();
+}
+
+/** Same-origin BFF WebSocket URL for the webapp (proxied to the API). */
+export function buildBffSyncWsUrl(origin: string, ticket: string): string {
+  const wsBase = origin.replace(/\/+$/, "").replace(/^http:/, "ws:").replace(/^https:/, "wss:");
+  const url = new URL(`${wsBase}/api/sync/ws`);
   url.searchParams.set("ticket", ticket);
   return url.toString();
 }

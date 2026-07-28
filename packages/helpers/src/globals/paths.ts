@@ -1,3 +1,17 @@
+/** Better Auth mount path on the API host (`api.example.com/auth/*`). */
+export const BETTER_AUTH_BASE_PATH = "/auth" as const;
+
+/** Path under {@link BETTER_AUTH_BASE_PATH}, e.g. `/auth/oauth2/token`. */
+export function betterAuthPath(segment: string): string {
+  const suffix = segment.startsWith("/") ? segment : `/${segment}`;
+  return `${BETTER_AUTH_BASE_PATH}${suffix}`;
+}
+
+/** RFC 8414 authorization-server metadata document for the configured base path. */
+export function betterAuthAuthorizationServerMetadataPath(): string {
+  return `/.well-known/oauth-authorization-server${BETTER_AUTH_BASE_PATH}`;
+}
+
 export const WEBSITE_ROUTES = {
   ABOUT: "/about",
   APP_GROUP: "/app",
@@ -11,55 +25,65 @@ export const WEBSITE_ROUTES = {
 };
 
 export const API_ROUTES = {
-  ADMIN_STATS: "/api/admin/stats",
-  CHAT: "/api/chat",
-  CHAT_SESSIONS: "/api/chat/sessions",
-  CONTACTS: "/api/contacts",
-  CONTACTS_ENRICH_QUEUE_COUNT: "/api/contacts/enrich-queue/count",
-  CONTACTS_IMPORT_INSTAGRAM: "/api/contacts/import/instagram",
-  CONTACTS_IMPORT_LINKEDIN: "/api/contacts/import/linkedin",
-  CONTACTS_IMPORT_VCARD: "/api/contacts/import/vcard",
-  CONTACTS_KEEP_IN_TOUCH_COUNT: "/api/contacts/keep-in-touch/count",
-  CONTACTS_MAP_ADDRESS_PINS: "/api/contacts/map-address-pins",
-  CONTACTS_MAP_PINS: "/api/contacts/map-pins",
-  CONTACTS_MERGE: "/api/contacts/merge",
-  CONTACTS_MERGE_RECOMMENDATIONS: "/api/contacts/merge-recommendations",
-  CONTACTS_MERGE_RECOMMENDATIONS_COUNT: "/api/contacts/merge-recommendations/count",
-  CONTACTS_MERGE_RECOMMENDATIONS_REFRESH: "/api/contacts/merge-recommendations/refresh",
-  CONTACTS_SELECT: "/api/contacts/select",
-  CONTACTS_SHARE: "/api/contacts/share",
-  CONTACTS_UPCOMING_REMINDERS: "/api/contacts/important-dates/upcoming",
-  EXTENSION: "/api/extension",
-  GEOCODE: "/api/geocode",
-  GEOCODE_SUGGEST: "/api/geocode/suggest",
-  GEOCODE_TIMEZONE: "/api/geocode/timezone",
-  GROUPS: "/api/groups",
-  INTERACTIONS: "/api/interactions",
-  INTERNAL_REMINDER_DIGEST: "/api/internal/reminder-digest",
-  ME: "/api/me",
-  ME_API_KEYS: "/api/me/api-keys",
-  ME_FEEDBACK: "/api/me/feedback",
-  ME_INITIALIZE: "/api/me/initialize",
-  ME_ONBOARDING_COMPLETE: "/api/me/onboarding/complete",
-  ME_ONBOARDING_IMPORT_FOLLOWUP: "/api/me/onboarding/import-followup",
-  ME_PERSON: "/api/me/person",
-  ME_PHOTO: "/api/me/photo",
-  ME_SESSION: "/api/me/session",
-  ME_SETTINGS: "/api/me/settings",
-  ME_SETTINGS_GETTING_STARTED_DISMISS: "/api/me/settings/getting-started-dismiss",
-  SUBSCRIPTIONS: "/api/subscriptions",
-  SUBSCRIPTIONS_CHECKOUT: "/api/subscriptions/checkout",
-  SUBSCRIPTIONS_PORTAL: "/api/subscriptions/portal",
-  SUBSCRIPTIONS_SYNC: "/api/subscriptions/sync",
-  SYNC: "/api/sync",
-  SYNC_BOOTSTRAP: "/api/sync/bootstrap",
-  SYNC_PULL: "/api/sync/pull",
-  SYNC_PUSH: "/api/sync/push",
-  SYNC_WS: "/api/sync/ws",
-  SYNC_WS_TICKET: "/api/sync/ws-ticket",
-  TAGS: "/api/tags",
-  WEBHOOKS_POLAR: "/api/webhooks/polar",
+  ADMIN_STATS: "/admin/stats",
+  CHAT: "/chat",
+  CHAT_SESSIONS: "/chat/sessions",
+  CONTACTS: "/contacts",
+  CONTACTS_ENRICH_QUEUE_COUNT: "/contacts/enrich-queue/count",
+  CONTACTS_IMPORT_INSTAGRAM: "/contacts/import/instagram",
+  CONTACTS_IMPORT_LINKEDIN: "/contacts/import/linkedin",
+  CONTACTS_IMPORT_VCARD: "/contacts/import/vcard",
+  CONTACTS_KEEP_IN_TOUCH_COUNT: "/contacts/keep-in-touch/count",
+  CONTACTS_MAP_ADDRESS_PINS: "/contacts/map-address-pins",
+  CONTACTS_MAP_PINS: "/contacts/map-pins",
+  CONTACTS_MERGE: "/contacts/merge",
+  CONTACTS_MERGE_RECOMMENDATIONS: "/contacts/merge-recommendations",
+  CONTACTS_MERGE_RECOMMENDATIONS_COUNT: "/contacts/merge-recommendations/count",
+  CONTACTS_MERGE_RECOMMENDATIONS_REFRESH: "/contacts/merge-recommendations/refresh",
+  CONTACTS_SELECT: "/contacts/select",
+  CONTACTS_SHARE: "/contacts/share",
+  CONTACTS_UPCOMING_REMINDERS: "/contacts/important-dates/upcoming",
+  EXTENSION: "/extension",
+  GEOCODE: "/geocode",
+  GEOCODE_SUGGEST: "/geocode/suggest",
+  GEOCODE_TIMEZONE: "/geocode/timezone",
+  GROUPS: "/groups",
+  INTERACTIONS: "/interactions",
+  INTERNAL_REMINDER_DIGEST: "/internal/reminder-digest",
+  ME: "/me",
+  ME_API_KEYS: "/me/api-keys",
+  ME_FEEDBACK: "/me/feedback",
+  ME_INITIALIZE: "/me/initialize",
+  ME_ONBOARDING_COMPLETE: "/me/onboarding/complete",
+  ME_ONBOARDING_IMPORT_FOLLOWUP: "/me/onboarding/import-followup",
+  ME_PERSON: "/me/person",
+  ME_PHOTO: "/me/photo",
+  ME_SESSION: "/me/session",
+  ME_SETTINGS: "/me/settings",
+  ME_SETTINGS_GETTING_STARTED_DISMISS: "/me/settings/getting-started-dismiss",
+  SUBSCRIPTIONS: "/subscriptions",
+  SUBSCRIPTIONS_CHECKOUT: "/subscriptions/checkout",
+  SUBSCRIPTIONS_PORTAL: "/subscriptions/portal",
+  SUBSCRIPTIONS_SYNC: "/subscriptions/sync",
+  SYNC: "/sync",
+  SYNC_BOOTSTRAP: "/sync/bootstrap",
+  SYNC_PULL: "/sync/pull",
+  SYNC_PUSH: "/sync/push",
+  SYNC_WS: "/sync/ws",
+  SYNC_WS_TICKET: "/sync/ws-ticket",
+  TAGS: "/tags",
+  WEBHOOKS_POLAR: "/webhooks/polar",
 } as const;
+
+/** Browser-facing BFF path on the webapp origin (`/api/...`). */
+export function toBffApiPath(apiPath: string): string {
+  const normalized = apiPath.startsWith("/") ? apiPath : `/${apiPath}`;
+  if (normalized.startsWith("/api/")) {
+    return normalized;
+  }
+
+  return `/api${normalized}`;
+}
 
 export const CHROME_EXTENSION_URL =
   "https://chromewebstore.google.com/detail/lpcmokfekjjejnpobhbkgmjkodfhpmha";
@@ -71,7 +95,7 @@ export const CHROME_EXTENSION_URL =
  */
 export const MIN_EXTENSION_VERSION: string = "1.7.4";
 
-export const HELP_DOCS_URL = "https://bondery.gitbook.io";
+export const HELP_DOCS_URL = "https://usebondery.com/docs";
 export const CHANGELOG_URL = `${HELP_DOCS_URL}/changelog`;
 
 export const GITHUB_REPO_URL = "https://api.github.com/repos/usebondery/bondery";
@@ -115,6 +139,8 @@ export const WEBAPP_ROUTES = {
   LOGIN: "/login",
   MAP: "/app/map",
   MYSELF: "/app/myself",
+  /** Authorization-server login continuation — see oauthProvider.loginPage. */
+  OAUTH_LOGIN: "/oauth/login",
   ONBOARDING: "/app/onboarding",
   PEOPLE: "/app/people",
   PERSON: "/app/person",

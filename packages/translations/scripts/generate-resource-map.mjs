@@ -30,7 +30,7 @@ import type { SupportedLocale } from "@bondery/schemas/locale/supported-locale";
 
 export const resourcesByNamespace = {
 ${mapEntries.join("\n")}
-} as const satisfies Record<string, Record<SupportedLocale, Record<string, unknown>>>;
+} satisfies Record<string, Record<SupportedLocale, Record<string, unknown>>>;
 `;
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });

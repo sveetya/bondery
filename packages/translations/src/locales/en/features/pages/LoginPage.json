@@ -3,6 +3,7 @@
   "AuthenticationError": "Authentication Error",
   "ContinueWith": "Continue with {provider}",
   "Description": "We'll log you in or create a new account if you don't have one yet.",
+  "LastUsed": "Last used",
   "MobileNotAvailable": "Mobile App Coming Soon",
   "MobileNotAvailableMessage": "The Bondery app is not yet available on mobile devices. Please visit us on a desktop or laptop computer to get started.",
   "PrivacyPolicy": "Privacy Policy",

@@ -6,4 +6,3 @@ export * from "#format.js";
 export * from "#locale/index.js";
 export * from "#primitives/index.js";
 export * from "#runtime-config.js";
-export * from "#supabase.types.js";

@@ -17,6 +17,7 @@ export {
   getContactChannelTypeEmoji,
 } from "#contact/index.js";
 export { formatDateRange, formatDuration } from "#date/index.js";
+export { generateId, isUuidV7, isValidUuid } from "#ids/index.js";
 export { DOC_LINKS, type DocId, docHref } from "#docs/index.js";
 export type {
   CreateContactFromFullNameInput,
@@ -35,6 +36,9 @@ export {
 } from "#geocode/index.js";
 export {
   API_ROUTES,
+  BETTER_AUTH_BASE_PATH,
+  betterAuthAuthorizationServerMetadataPath,
+  betterAuthPath,
   CHANGELOG_URL,
   CHROME_EXTENSION_URL,
   formatMetadataTitle,
@@ -47,6 +51,7 @@ export {
   SOCIAL_PLATFORM_URL_DETAILS,
   STATUS_PAGE_URL,
   SUPPORT_EMAIL,
+  toBffApiPath,
   WEBAPP_NAME,
   WEBAPP_ROUTES,
   WEBSITE_ROUTES,
