@@ -44,7 +44,7 @@ Plus Postgres password, `DATABASE_URL` for the API, Better Auth secrets, and OAu
 
 - Image tags: `production` (floating channel) is the default; pin semver when you want a fixed rollback target.
 - Set hostnames only (`BONDERY_INFRA_*_DOMAIN`). Compose derives `https://…` URLs and Traefik `Host()` rules.
-- `BONDERY_PRIVATE_BETTER_AUTH_SECRET` must be **≥32 characters** in `.env`.
+- `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` must use format `version:secret` (e.g. `1:<≥32-char secret>`) in `.env`.
 - Webapp never receives raw `BONDERY_PRIVATE_*` secrets except its own session/OAuth client secrets — compose allowlists public vars for the webapp service.
 - Compose sets `BONDERY_INFRA_INTERNAL_API_URL=http://api:26631` for SSR.
 

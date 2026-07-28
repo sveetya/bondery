@@ -50,8 +50,8 @@ openssl rand -hex 16   # BONDERY_PUBLIC_OAUTH_CLIENT_ID
 # Webapp encrypted session cookie key
 openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_SESSION_SECRET
 
-# Better Auth signing (if not already set)
-openssl rand -hex 32   # BONDERY_PRIVATE_BETTER_AUTH_SECRET
+# Better Auth signing (version 1 bootstrap)
+openssl rand -hex 32   # BONDERY_PRIVATE_BETTER_AUTH_SECRETS=1:<value>
 ```
 
 Example `.env.local` fragment:
@@ -112,7 +112,7 @@ Requires Postgres running with migrations and provisioning complete. Starts the 
 
 | Variable | Secret? | Apps | Purpose |
 | --- | --- | --- | --- |
-| `BONDERY_PRIVATE_BETTER_AUTH_SECRET` | Yes | API | Signs Better Auth sessions and tokens (≥32 chars) |
+| `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` | Yes | API | Versioned Better Auth secrets (`1:<secret>` bootstrap; `2:<new>,1:<old>` rotation) |
 | `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID` | No | API, webapp | Webapp OAuth client id |
 | `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET` | Yes | API, webapp | Webapp OAuth client secret (API stores only a hash) |
 | `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` | Yes | Webapp | Encrypts the webapp's own session cookie (≥32 chars) |

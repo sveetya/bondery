@@ -8,7 +8,7 @@ Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/
 
 | Variable | Purpose |
 |----------|---------|
-| `BONDERY_PRIVATE_BETTER_AUTH_SECRET` | Better Auth signing secret (≥32 characters) |
+| `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` | Better Auth versioned signing secrets (`version:secret`, highest version first) |
 | `BONDERY_PRIVATE_POSTGRES_PASSWORD` | Postgres password (compose `db` service) |
 | `BONDERY_PRIVATE_API_KEY_PEPPER` | API key hashing pepper |
 | `BONDERY_PRIVATE_REDIS_URL` | `redis://redis:6379` in the default stack |

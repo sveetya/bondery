@@ -156,9 +156,10 @@ export const ENV_MANIFEST: EnvVarDef[] = [
 
   // --- Auth (Better Auth) ---
   {
-    canonical: "BONDERY_PRIVATE_BETTER_AUTH_SECRET",
-    description: "Better Auth secret (≥32 characters)",
-    exampleValue: "your-super-secret-better-auth-secret-min-32-chars",
+    canonical: "BONDERY_PRIVATE_BETTER_AUTH_SECRETS",
+    description:
+      "Better Auth versioned secrets (format: version:secret[,version:secret...]; highest version first)",
+    exampleValue: "1:your-super-secret-better-auth-secret-min-32-chars",
     group: "Auth",
     requiredIn: ["development", "production"],
     secret: true,

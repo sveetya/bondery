@@ -105,7 +105,7 @@ Mobile offline sync uses **custom pull/bootstrap** endpoints on the API (`GET /a
 
 Prefer root `.env.local` + `npm run env` (see [Environment configuration](environment.mdx)). That writes `apps/api/.env.development.local`.
 
-Required secrets include `BONDERY_PRIVATE_BETTER_AUTH_SECRET` (≥32 characters) and `BONDERY_PRIVATE_API_KEY_PEPPER` — see [API keys](#api-keys-long-lived-integration-tokens) below.
+Required secrets include `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` (format `1:<secret>`, each secret ≥32 characters) and `BONDERY_PRIVATE_API_KEY_PEPPER` — see [API keys](#api-keys-long-lived-integration-tokens) below.
 
 For mobile sync, set CORS for Expo web if needed:
 
