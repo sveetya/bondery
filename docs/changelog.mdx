@@ -7,12 +7,30 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ## [Unreleased]
 
+### ✨ Added
+
+- `@bondery/db` Prisma package with schema, migrations, and generated client as the shared database layer.
+- API: Better Auth with OAuth providers, first-party OAuth clients for webapp/mobile/extension, and file storage routes.
+- Webapp: Playwright e2e scaffolding for auth and core app flows.
+- Website: self-hosted product docs with Fumadocs search and LLM export routes.
+
+### 🔄 Changed
+
+- API, webapp, mobile, and Chrome extension now authenticate through Better Auth instead of Supabase Auth.
+- Self-host Compose stack uses bundled Postgres (Prisma migrations) instead of the Supabase sidecar.
+- Webapp app routes reorganized into `(shell)` and `(chromeless)` route groups.
+
 ### 📝 Documentation
 
 - Migrated product docs from GitBook to self-hosted Fumadocs on `usebondery.com/docs` (website app). Disable GitBook Git Sync after deploy.
 - Updated docs for Prisma + Better Auth stack (removed legacy Supabase references). Reorganized sidebar: Apps section, core concepts above self-hosting, getting help above changelog.
 - API tab: Introduction landing page, Guides section (bulk import), Error codes as a top-level sidebar item. Self-hosting split into Requirements / Get started / Configuration / Update; Dokploy and API container moved to Contributing (production only).
 - Develop tab: flattened sidebar (Architecture, Development, Guides, Production deployment). Rewrote i18n reference; added guide for new locales. Renamed Clients → Apps; error pages no longer use Mantine.
+
+### Breaking
+
+- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed. Self-hosters must run `npm run setup:dev`, apply Prisma migrations, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
+- **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](deploy/get-started.mdx) for the new bootstrap flow.
 
 ## [1.7.4] - 20.07.2026
 
