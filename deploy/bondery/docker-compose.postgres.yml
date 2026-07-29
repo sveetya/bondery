@@ -1,5 +1,5 @@
 # Plain Postgres (PostGIS) for Better Auth + Prisma.
-# Included by docker-compose.yml. Supersedes docker-compose.supabase.yml (deprecated).
+# Included by docker-compose.yml.
 
 services:
   db:

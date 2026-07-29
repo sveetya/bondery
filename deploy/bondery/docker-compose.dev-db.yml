@@ -1,10 +1,8 @@
 # Local dev Postgres only — no Traefik, no dokploy-network.
 #
-#   cd deploy/bondery
-#   cp .env.example .env   # set BONDERY_PRIVATE_POSTGRES_PASSWORD to match root .env.local
-#   docker compose -f docker-compose.dev-db.yml up -d
+#   npm run start:postgres
 #
-# Host port 54322. Stop the legacy apps/supabase-db stack first if it still owns that port.
+# Host port 54322. Stop any other Postgres on that port before starting.
 
 services:
   db:

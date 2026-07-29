@@ -1,0 +1,88 @@
+# Bundled SeaweedFS object storage (S3-compatible gateway).
+# Included by docker-compose.yml. API uses BONDERY_PRIVATE_S3_* against seaweedfs-s3:8333.
+
+services:
+  seaweedfs-master:
+    command: "master -ip=seaweedfs-master -mdir=/data -defaultReplication=000"
+    healthcheck:
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:9333/cluster/status"]
+      timeout: 5s
+    image: chrislusf/seaweedfs:3.86
+    networks:
+      - internal
+    restart: unless-stopped
+    volumes:
+      - seaweedfs-master-data:/data
+
+  seaweedfs-volume:
+    command: "volume -mserver=seaweedfs-master:9333 -dir=/data -max=100"
+    depends_on:
+      seaweedfs-master:
+        condition: service_healthy
+    image: chrislusf/seaweedfs:3.86
+    networks:
+      - internal
+    restart: unless-stopped
+    volumes:
+      - seaweedfs-volume-data:/data
+
+  seaweedfs-filer:
+    command: "filer -master=seaweedfs-master:9333 -ip=seaweedfs-filer"
+    depends_on:
+      seaweedfs-master:
+        condition: service_healthy
+    healthcheck:
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8888/"]
+      timeout: 5s
+    image: chrislusf/seaweedfs:3.86
+    networks:
+      - internal
+    restart: unless-stopped
+    volumes:
+      - seaweedfs-filer-data:/data
+
+  seaweedfs-s3:
+    depends_on:
+      seaweedfs-filer:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "/etc/seaweedfs/entrypoint.sh"]
+    environment:
+      BONDERY_PRIVATE_S3_ACCESS_KEY_ID: ${BONDERY_PRIVATE_S3_ACCESS_KEY_ID:?BONDERY_PRIVATE_S3_ACCESS_KEY_ID must be set}
+      BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY: ${BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY:?BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY must be set}
+    healthcheck:
+      interval: 10s
+      retries: 5
+      start_period: 15s
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:8333/status"]
+      timeout: 5s
+    image: chrislusf/seaweedfs:3.86
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bondery-storage.rule=Host(`${BONDERY_INFRA_STORAGE_DOMAIN:-storage.localhost}`)
+      - traefik.http.routers.bondery-storage.entrypoints=websecure
+      - traefik.http.routers.bondery-storage.tls.certResolver=letsencrypt
+      - traefik.http.routers.bondery-storage.service=bondery-storage
+      - traefik.http.services.bondery-storage.loadbalancer.server.port=8333
+    networks:
+      - dokploy-network
+      - internal
+    restart: unless-stopped
+    volumes:
+      - ./seaweedfs/entrypoint.sh:/etc/seaweedfs/entrypoint.sh:ro
+
+networks:
+  internal:
+    driver: bridge
+  dokploy-network:
+    external: true
+
+volumes:
+  seaweedfs-filer-data:
+  seaweedfs-master-data:
+  seaweedfs-volume-data:

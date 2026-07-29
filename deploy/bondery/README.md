@@ -1,4 +1,4 @@
-# Bondery stack (webapp + API + Redis + Supabase)
+# Bondery stack (webapp + API + Redis + Postgres + SeaweedFS)
 
 Canonical Docker Compose distribution for **self-hosters** and **Bondery production** (Dokploy).
 
@@ -7,7 +7,7 @@ The marketing website is **not** in this stack — see [`deploy/ops`](../ops/) (
 Local development:
 
 - Redis: **[`apps/redis`](../../apps/redis/)** (`npm run start -w redis`, port 26636)
-- Supabase: **[`apps/supabase-db`](../../apps/supabase-db/)** (`npm run start -w supabase-db`) — not this Compose file
+- Postgres: **`deploy/bondery/docker-compose.dev-db.yml`** or `packages/db` migrations — not this Compose file
 
 Docs: [docs/deploy/self-host.md](../../docs/deploy/self-host.md) · [docs/deploy/dokploy.md](../../docs/deploy/dokploy.md) · [docs/deploy/api-container.md](../../docs/deploy/api-container.md)
 
@@ -23,7 +23,8 @@ cp .env.example .env
 docker compose up -d
 
 # First boot only — empty database
-npm run stack:bootstrap:greenfield -w supabase-db
+npm run db:migrate:deploy -w @bondery/db
+cd apps/api && npx tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts
 ```
 
 Without Traefik (host ports):
@@ -33,7 +34,6 @@ cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
 curl -s http://localhost:26631/status
 curl -s http://localhost:26632/api/live
-curl -s http://localhost:8000/auth/v1/health
 ```
 
 ### Services
@@ -41,41 +41,31 @@ curl -s http://localhost:8000/auth/v1/health
 | Service | Image | Port | Notes |
 |---------|-------|------|--------|
 | `webapp` | `ghcr.io/usebondery/webapp` | 26632 | Liveness `/api/live` |
-| `api` | `ghcr.io/usebondery/api` | 26631 | Waits for Redis + Kong healthy |
+| `api` | `ghcr.io/usebondery/api` | 26631 | Better Auth + Prisma; waits for Redis + Postgres + SeaweedFS |
 | `redis` | `redis:7.4-alpine` | internal | AOF + volume `redis-data` |
-| `kong` | Kong gateway | 8000 (Traefik) | Public Supabase API (`BONDERY_INFRA_SUPABASE_DOMAIN`) |
-| `db` | `supabase/postgres:17` | internal | Named volume `supabase-db-data` |
-| `auth`, `rest`, `realtime`, `storage`, `imgproxy`, `meta` | Supabase | internal | See `docker-compose.supabase.yml` |
-| `studio` | Supabase Studio | profile `studio` | Off by default |
+| `db` | `postgis/postgis:17-3.5` | internal | Named volume `postgres-data` |
+| `seaweedfs-*` | SeaweedFS | 8333 (Traefik) | S3 creds from `.env` → rendered at startup (`seaweedfs/entrypoint.sh`) |
 
-Compose entrypoint: **`docker-compose.yml`** includes **`docker-compose.supabase.yml`**. Dokploy points at this path only.
+Compose entrypoint: **`docker-compose.yml`** includes **`docker-compose.postgres.yml`** and **`docker-compose.seaweedfs.yml`**. Dokploy points at this path only.
 
 ### Networking
 
-- `webapp` + `api` + `kong` join external `dokploy-network` (Traefik).
-- Supabase data-plane services + `redis` join private `internal` only (except `kong`, which also joins Traefik).
+- `webapp` + `api` join external `dokploy-network` (Traefik).
+- Postgres, Redis, and SeaweedFS join private `internal` only.
 - Set hostnames (`BONDERY_INFRA_*_DOMAIN`); Compose derives `https://…` URLs.
 - Webapp SSR uses `BONDERY_INFRA_INTERNAL_API_URL=http://api:26631`.
-- API uses `BONDERY_INFRA_INTERNAL_SUPABASE_URL=http://kong:8000`.
 
 ### Upgrades / rollback
 
 ```bash
-# Upgrade only webapp (API + Redis + Supabase stay up)
+# Upgrade only webapp (API + Redis + Postgres stay up)
 BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.3 docker compose up -d --no-deps webapp
 
 # Upgrade only API
 BONDERY_INFRA_API_IMAGE_TAG=1.7.3 docker compose up -d --no-deps api
 ```
 
-Supabase image bumps: edit `docker-compose.supabase.yml` + `versions.supabase.lock`, test on staging.
-
-After rotating `BONDERY_PRIVATE_SUPABASE_JWT_SECRET` or `BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK`:
-
-```bash
-# Re-run derive-jwt-env.mjs --print, update .env / Dokploy, then:
-docker compose up -d --force-recreate auth rest realtime storage kong
-```
+After releasing schema migrations, run `npm run db:migrate:deploy -w @bondery/db` against production Postgres (see [self-host.md](../../docs/deploy/self-host.md)).
 
 ### Image tags (api / webapp)
 
@@ -92,5 +82,3 @@ docker compose up -d --force-recreate auth rest realtime storage kong
 
 - Never expose Redis or Postgres to the public internet.
 - API secrets (`BONDERY_PRIVATE_*`) load only into the `api` service (`env_file`). Webapp receives an explicit allowlist.
-- JWT signing JWK must be **compact single-line JSON** in `.env`.
-- Studio is opt-in (`docker compose --profile studio up -d studio`) — do not put it on Traefik in production.

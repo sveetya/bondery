@@ -1,0 +1,17 @@
+# Local laptop overlay — use with root .env.local:
+#   npm run start:seaweedfs
+#
+# Publishes S3 on 127.0.0.1:8333 and avoids requiring external dokploy-network / Traefik.
+
+services:
+  seaweedfs-s3:
+    labels: !reset []
+    networks: !reset
+      - internal
+    ports:
+      - "8333:8333"
+
+networks:
+  dokploy-network:
+    external: false
+    driver: bridge
