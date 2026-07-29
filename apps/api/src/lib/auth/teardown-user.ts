@@ -1,9 +1,9 @@
 import { prisma } from "@bondery/db";
 import type { FastifyBaseLogger } from "fastify";
-import { createAdminClient } from "../data/supabase.js";
 import { getPolarClient } from "../../services/billing/polar.js";
 import { deletePendingSubscription } from "../../services/billing/subscription.js";
 import { sendAccountDeletedEmail } from "../../services/notifications/account-deleted.js";
+import { createAdminClient } from "../storage/supabase-client.js";
 
 const LINKEDIN_LOGOS_BUCKET = "linkedin_logos";
 

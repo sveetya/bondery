@@ -11,22 +11,24 @@
  *   const { client, user } = getAuth(request);
  */
 
+import { prisma } from "@bondery/db";
+import { betterAuthPath } from "@bondery/helpers/globals/paths";
 import type { ApiKeyPermission } from "@bondery/schemas";
 import type { Database } from "@bondery/schemas/supabase.types";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { createAdminClient, createAuthenticatedClient } from "../../data/supabase.js";
-import { forbidden, internal, serviceUnavailable, unauthorized } from "../errors/http-errors.js";
+import { productPermissionFromBa } from "../../auth/api-key-permissions.js";
+import { auth } from "../../auth/index.js";
+import { isPlatformAdmin } from "../../auth/is-platform-admin.js";
+import { forbidden, unauthorized } from "../errors/http-errors.js";
 import type { AppFastifyInstance } from "../fastify-types.js";
 import { assertApiKeyAccess } from "./api-key-access.js";
+import { isApiKeyBearerToken } from "./api-keys.js";
 import {
-  isApiKeyBearerToken,
-  loadJwtSigningMaterial,
-  mintSupabaseUserAccessToken,
-  supabaseAuthIssuerUrl,
-  validateApiKey,
-  verifyJwtSigningJwkAgainstJwks,
-} from "./api-keys.js";
+  createDomainDataClient,
+  resolveOAuthBearerUser,
+  resolveRequestAuthUser,
+} from "./resolve-request-auth.js";
 
 // ── Type augmentation ────────────────────────────────────────────────────────
 
@@ -38,7 +40,7 @@ declare module "fastify" {
       permission: ApiKeyPermission;
       label: string;
     } | null;
-    /** RLS-scoped Supabase client — set by verifySession / verifyAuth strategies */
+    /** Supabase data client — set by verifySession / verifyAuth strategies */
     authClient: SupabaseClient<Database> | null;
     /** Authenticated user — set by verifySession / verifyAuth strategies */
     authUser: { id: string; email: string } | null;
@@ -47,15 +49,38 @@ declare module "fastify" {
   interface FastifyInstance {
     /** Enforces API key route allowlist and permission for key-authenticated requests */
     assertApiKeyAccess: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
-    /** Validates session + checks is_admin flag on user_settings */
+    /** Validates session + Better Auth platform admin role */
     verifyAdmin: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     /** Validates session or long-lived API key */
     verifyAuth: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     /** Validates service role key via Authorization: Bearer header for server-to-server calls */
     verifyServiceSecret: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
-    /** Validates Supabase session from cookies / Authorization header */
+    /** Validates Better Auth session or OAuth resource JWT */
     verifySession: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
   }
+}
+
+function extractBearerToken(request: FastifyRequest): string | undefined {
+  const authHeader = request.headers.authorization;
+  if (typeof authHeader !== "string" || !authHeader.startsWith("Bearer ")) {
+    return undefined;
+  }
+
+  return authHeader.slice(7).trim() || undefined;
+}
+
+function isJwtShapedBearerToken(token: string): boolean {
+  return token.split(".").length === 3;
+}
+
+async function applyResolvedAuth(
+  request: FastifyRequest,
+  user: { id: string; email: string },
+  apiKey: FastifyRequest["authApiKey"] = null,
+): Promise<void> {
+  request.authUser = user;
+  request.authClient = createDomainDataClient();
+  request.authApiKey = apiKey;
 }
 
 // ── Strategy registration ────────────────────────────────────────────────────
@@ -65,98 +90,71 @@ declare module "fastify" {
  * Must be called after @fastify/env (needs config) and before route registration.
  */
 export function registerAuthStrategies(fastify: AppFastifyInstance): void {
-  // Decorate requests with auth slots (null = not yet authenticated)
   fastify.decorateRequest("authUser", null);
   fastify.decorateRequest("authClient", null);
   fastify.decorateRequest("authApiKey", null);
 
-  const pepper = fastify.config.BONDERY_PRIVATE_API_KEY_PEPPER.trim();
-  const jwtSigningJwk = fastify.config.BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK.trim();
-  const jwtIssuerUrl = supabaseAuthIssuerUrl(fastify.config.BONDERY_PUBLIC_SUPABASE_URL);
-
-  // ── verifySession ────────────────────────────────────────────────────────
-  // Extracts Supabase session from cookies / Bearer token.
-  // On success: populates request.authUser and request.authClient.
-  // On failure: throws 401.
   fastify.decorate(
     "verifySession",
     async (request: FastifyRequest, _reply: FastifyReply): Promise<void> => {
-      const { client, user } = await createAuthenticatedClient(request);
+      const bearerToken = extractBearerToken(request);
+      const user =
+        bearerToken && isJwtShapedBearerToken(bearerToken)
+          ? await resolveOAuthBearerUser(bearerToken)
+          : await resolveRequestAuthUser(request);
+
       if (!user) {
         throw unauthorized("Unauthorized - Please log in", "auth_required");
       }
-      request.authUser = user;
-      request.authClient = client;
-      request.authApiKey = null;
+
+      await applyResolvedAuth(request, user);
     },
   );
 
-  // ── verifyAuth ─────────────────────────────────────────────────────────────
   fastify.decorate(
     "verifyAuth",
     async (request: FastifyRequest, _reply: FastifyReply): Promise<void> => {
-      const authHeader = request.headers.authorization;
-      const bearerToken =
-        typeof authHeader === "string" && authHeader.startsWith("Bearer ")
-          ? authHeader.slice(7)
-          : undefined;
+      const bearerToken = extractBearerToken(request);
 
       if (bearerToken && isApiKeyBearerToken(bearerToken)) {
-        const admin = createAdminClient();
-        const validated = await validateApiKey(admin, bearerToken.trim(), pepper);
-        if (!validated) {
+        const verification = await auth.api.verifyApiKey({
+          body: { key: bearerToken },
+        });
+
+        if (!verification.valid || !verification.key) {
           throw unauthorized("Invalid API key", "invalid_api_key");
         }
 
-        let accessToken: string;
-        try {
-          accessToken = await mintSupabaseUserAccessToken(
-            validated.userId,
-            jwtSigningJwk,
-            jwtIssuerUrl,
-          );
-        } catch (error) {
-          request.log.error({ err: error }, "API key JWT mint failed");
-          throw internal("api_key_session_mint_failed", error);
+        const userId = verification.key.referenceId;
+        const permission = productPermissionFromBa(verification.key.permissions);
+
+        const keyUser = await prisma.user.findUnique({
+          select: { email: true, id: true },
+          where: { id: userId },
+        });
+
+        if (!keyUser?.email) {
+          throw unauthorized("Invalid API key", "invalid_api_key");
         }
 
-        const { client, user, authError } = await createAuthenticatedClient(request, accessToken);
-        if (!user) {
-          const jwksCheck = await verifyJwtSigningJwkAgainstJwks(jwtSigningJwk, jwtIssuerUrl);
-          request.log.warn(
-            {
-              authError,
-              envKid: jwksCheck.envKid,
-              jwkKidInJwks: jwksCheck.ok,
-              jwksKids: jwksCheck.jwksKids,
-              jwtIssuerUrl,
-            },
-            "API key hash valid but minted JWT was rejected by Supabase Auth",
-          );
-          if (jwksCheck.ok) {
-            throw serviceUnavailable(authError);
-          }
-          throw internal("jwt_signing_misconfigured", authError);
-        }
-
-        request.authUser = user;
-        request.authClient = client;
-
-        request.authApiKey = {
-          id: validated.id,
-          label: validated.label,
-          permission: validated.permission,
-        };
+        await applyResolvedAuth(
+          request,
+          { email: keyUser.email, id: keyUser.id },
+          {
+            id: verification.key.id,
+            label: verification.key.name ?? "",
+            permission,
+          },
+        );
         return;
       }
 
-      const { client, user } = await createAuthenticatedClient(request);
-      if (!user) {
+      const resolvedUser = await resolveRequestAuthUser(request);
+      if (!resolvedUser) {
         throw unauthorized("Unauthorized - Please log in", "auth_required");
       }
-      request.authUser = user;
-      request.authClient = client;
-      request.authApiKey = null;
+
+      await applyResolvedAuth(request, resolvedUser);
     },
   );
 
@@ -167,11 +165,6 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
     },
   );
 
-  // ── verifyServiceSecret ──────────────────────────────────────────────────
-  // Verifies the caller sent the Supabase service role key as a Bearer token
-  // by attempting an admin API call to GoTrue. If the token is a valid service
-  // role key, the call succeeds. Verified tokens are cached for the process
-  // lifetime to avoid repeated round-trips.
   const verifiedServiceTokens = new Set<string>();
 
   fastify.decorate(
@@ -219,24 +212,14 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
     },
   );
 
-  // ── verifyAdmin ────────────────────────────────────────────────────────────
-  // Verifies the user has an active session AND the is_admin flag is set
-  // on their user_settings row. Rejects with 403 if not an admin.
   fastify.decorate(
     "verifyAdmin",
     async (request: FastifyRequest, reply: FastifyReply): Promise<void> => {
       await fastify.verifySession(request, reply);
 
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
 
-      // Check admin flag
-      const { data, error } = await client
-        .from("user_settings")
-        .select("is_admin")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error || !data?.is_admin) {
+      if (!(await isPlatformAdmin(user.id))) {
         throw forbidden("Forbidden - Admin access required", "admin_required");
       }
     },
@@ -244,39 +227,29 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
 }
 
 /**
- * Loads JWT signing material and verifies the env JWK against Supabase JWKS.
- * Called from buildServer onReady only — not during OpenAPI generation.
+ * Verifies Better Auth JWKS is reachable at startup.
  */
 export async function verifyAuthAtStartup(fastify: AppFastifyInstance): Promise<void> {
-  const jwtSigningJwk = fastify.config.BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK.trim();
-  const jwtIssuerUrl = supabaseAuthIssuerUrl(fastify.config.BONDERY_PUBLIC_SUPABASE_URL);
+  const baseUrl = fastify.config.BONDERY_PUBLIC_API_URL.replace(/\/+$/, "");
+  const jwksUrl = `${baseUrl}${betterAuthPath("/jwks")}`;
 
-  await loadJwtSigningMaterial(jwtSigningJwk);
-
-  const jwksCheck = await verifyJwtSigningJwkAgainstJwks(jwtSigningJwk, jwtIssuerUrl);
-  if (!jwksCheck.ok) {
-    fastify.log.error(
-      {
-        envKid: jwksCheck.envKid,
-        jwksFetchError: jwksCheck.jwksFetchError,
-        jwksKids: jwksCheck.jwksKids,
-      },
-      jwksCheck.message ?? "JWT signing JWK does not match Supabase JWKS",
-    );
-    throw new Error(
-      jwksCheck.message ?? "BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK does not match Supabase JWKS",
-    );
+  try {
+    const response = await fetch(jwksUrl);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    fastify.log.error({ err: error, jwksUrl }, "Better Auth JWKS is not reachable");
+    throw new Error(`Better Auth JWKS is not reachable at ${jwksUrl}`);
   }
-  fastify.log.info(
-    { envKid: jwksCheck.envKid, jwksKids: jwksCheck.jwksKids },
-    "JWT signing JWK matches Supabase JWKS",
-  );
+
+  fastify.log.info({ jwksUrl }, "Better Auth JWKS reachable");
 }
 
 // ── Helper for handlers ──────────────────────────────────────────────────────
 
 /**
- * Retrieve the authenticated user and Supabase client from the request.
+ * Retrieve the authenticated user and data client from the request.
  * Only call this inside handlers protected by verifySession.
  */
 export function getAuth(request: FastifyRequest): {

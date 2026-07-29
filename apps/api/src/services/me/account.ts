@@ -1,35 +1,86 @@
 import { prisma } from "@bondery/db";
 import type { FastifyRequest } from "fastify";
-import type { DomainContext, DomainError } from "../../domains/_shared/context.js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { DomainError } from "../../domains/_shared/context.js";
+import { auth } from "../../lib/auth/index.js";
+import { toFetchHeaders } from "../../lib/auth/request-headers.js";
 import {
   deleteContactAvatarAndClearFlag,
   uploadContactAvatarAndSetFlag,
 } from "../../lib/contacts/avatar-storage.js";
-import { auth } from "../../lib/auth/index.js";
-import { toFetchHeaders } from "../../lib/auth/request-headers.js";
-import { deleteUserWithTeardown } from "../../lib/auth/teardown-user.js";
-import { createAdminClient, resolveContactAvatarUrl } from "../../lib/data/supabase.js";
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 
 export async function updateAccountMetadata(
   ctx: DomainContext,
   input: { name?: string; middlename?: string; surname?: string },
 ) {
-  const { client } = ctx;
-  const { data, error } = await client.auth.updateUser({
-    data: {
-      middlename: input.middlename,
-      name: input.name,
-      surname: input.surname,
-    },
-  });
+  const { client, user } = ctx;
 
-  if (error) {
-    throw internal("account_failed_to_update_account");
+  if (input.name !== undefined) {
+    await prisma.user.update({
+      data: { name: input.name },
+      where: { id: user.id },
+    });
   }
 
-  return { data: data.user, success: true as const };
+  const myselfUpdates: Record<string, string> = {};
+  if (input.name !== undefined) {
+    myselfUpdates.first_name = input.name;
+  }
+  if (input.surname !== undefined) {
+    myselfUpdates.last_name = input.surname;
+  }
+  if (input.middlename !== undefined) {
+    myselfUpdates.middlename = input.middlename;
+  }
+
+  if (Object.keys(myselfUpdates).length > 0) {
+    const { error } = await client
+      .from("people")
+      .update(myselfUpdates)
+      .eq("user_id", user.id)
+      .eq("myself", true);
+
+    if (error) {
+      throw internal("account_failed_to_update_account", error);
+    }
+  }
+
+  const profile = await prisma.user.findUnique({
+    select: { email: true, id: true, name: true },
+    where: { id: user.id },
+  });
+
+  const { data: myself } = await client
+    .from("people")
+    .select("first_name, last_name, middlename, has_avatar")
+    .eq("user_id", user.id)
+    .eq("myself", true)
+    .maybeSingle();
+
+  const avatarUrl = myself?.has_avatar
+    ? resolveContactAvatarUrl(client, user.id, {
+        hasAvatar: true,
+        id: user.id,
+      })
+    : null;
+
+  return {
+    data: {
+      email: profile?.email ?? user.email,
+      id: user.id,
+      user_metadata: {
+        avatar_url: avatarUrl,
+        middlename: myself?.middlename ?? undefined,
+        name: myself?.first_name ?? profile?.name ?? undefined,
+        surname: myself?.last_name ?? undefined,
+      },
+    },
+    success: true as const,
+  };
 }
 
 export async function deleteAccount(
@@ -39,21 +90,10 @@ export async function deleteAccount(
   const { user, log } = ctx;
   const headers = toFetchHeaders(request);
 
-  const profile = await prisma.user.findUnique({
-    select: { email: true, id: true, name: true },
-    where: { id: user.id },
-  });
-
-  const deletionUser = {
-    email: profile?.email ?? user.email,
-    id: user.id,
-    name: profile?.name ?? null,
-  };
-
   try {
     const session = await auth.api.getSession({ headers });
     if (session?.user) {
-      await auth.api.deleteUser({ headers });
+      await auth.api.deleteUser({ body: {}, headers });
       log?.info({ userId: user.id }, "Account deleted via Better Auth");
       return { success: true };
     }
@@ -61,14 +101,7 @@ export async function deleteAccount(
     throw internal("account_failed_to_delete_account", error);
   }
 
-  try {
-    await deleteUserWithTeardown(deletionUser, log);
-  } catch (error) {
-    throw internal("account_failed_to_delete_account", error);
-  }
-
-  log?.info({ userId: user.id }, "Account deleted");
-  return { success: true };
+  throw internal("account_failed_to_delete_account");
 }
 
 export async function uploadProfilePhoto(

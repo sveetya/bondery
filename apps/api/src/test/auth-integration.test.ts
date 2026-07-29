@@ -19,8 +19,8 @@ import { after, before, describe, it } from "node:test";
 import { prisma } from "@bondery/db";
 import { generateId } from "@bondery/helpers/ids";
 import type { FastifyInstance } from "fastify";
-import { loadTestEnv } from "./load-test-env.js";
 import { provisionNewUser } from "../lib/auth/provision-new-user.js";
+import { loadTestEnv } from "./load-test-env.js";
 
 loadTestEnv();
 
@@ -451,5 +451,45 @@ describe("real-database OAuth 2.1 + PKCE protocol", () => {
     assert.equal(authorizeResponse.statusCode, 302);
     const setCookie = authorizeResponse.headers["set-cookie"];
     assert.ok(setCookie, "expected at least one Set-Cookie header to survive the bridge");
+  });
+
+  it("resolves bearer sessions from Postgres when Redis has no cache entry", async () => {
+    const { auth } = await import("../lib/auth/index.js");
+    const { requireRedisCommands } = await import("../lib/data/redis.js");
+    const { BETTER_AUTH_REDIS_KEY_PREFIX } = await import("../lib/auth/secondary-storage.js");
+
+    const user = await createTestUser();
+    createdUserIds.push(user.id);
+    const sessionToken = await createNativeSession(user.id);
+
+    const redis = requireRedisCommands();
+    const cached = await redis.get(`${BETTER_AUTH_REDIS_KEY_PREFIX}${sessionToken}`);
+    assert.equal(cached, null, "Postgres-only session must not require a Redis cache hit");
+
+    const session = await auth.api.getSession({
+      headers: new Headers({ authorization: `Bearer ${sessionToken}` }),
+    });
+    assert.equal(session?.user?.id, user.id);
+  });
+
+  it("revokes a Postgres-backed session through Better Auth sign-out", async () => {
+    const { auth } = await import("../lib/auth/index.js");
+
+    const user = await createTestUser();
+    createdUserIds.push(user.id);
+    const sessionToken = await createNativeSession(user.id);
+
+    const signOutResponse = await auth.api.signOut({
+      headers: new Headers({ authorization: `Bearer ${sessionToken}` }),
+    });
+    assert.ok(signOutResponse, "sign-out should complete for a valid bearer session");
+
+    const session = await auth.api.getSession({
+      headers: new Headers({ authorization: `Bearer ${sessionToken}` }),
+    });
+    assert.equal(session, null);
+
+    const row = await prisma.session.findFirst({ where: { token: sessionToken } });
+    assert.equal(row, null);
   });
 });

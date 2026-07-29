@@ -1,47 +1,66 @@
+import { prisma } from "@bondery/db";
 import { API_KEY_LIMITS } from "@bondery/schemas";
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
 import {
-  formatApiKeyPrefix,
-  generateApiKeyMaterial,
-  hashApiKey,
-} from "../../lib/platform/auth/api-keys.js";
+  baPermissionsFromProduct,
+  formatApiKeyPrefixDisplay,
+  productPermissionFromBa,
+} from "../../lib/auth/api-key-permissions.js";
+import { auth } from "../../lib/auth/index.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 
 function mapApiKeyRow(row: {
   id: string;
-  label: string;
-  permission: string;
-  key_prefix: string;
-  last_used_at: string | null;
-  created_at: string;
+  name: string | null;
+  start: string | null;
+  prefix: string | null;
+  permissions: string | null;
+  lastRequest: Date | null;
+  createdAt: Date;
 }) {
   return {
-    createdAt: row.created_at,
+    createdAt: row.createdAt.toISOString(),
     id: row.id,
-    keyPrefix: row.key_prefix,
-    label: row.label,
-    lastUsedAt: row.last_used_at,
-    permission: row.permission === "read" ? ("read" as const) : ("full" as const),
+    keyPrefix: formatApiKeyPrefixDisplay(row.start, row.prefix),
+    label: row.name ?? "",
+    lastUsedAt: row.lastRequest?.toISOString() ?? null,
+    permission: productPermissionFromBa(row.permissions),
+  };
+}
+
+export async function listApiKeys(userId: string) {
+  const rows = await prisma.apikey.findMany({
+    orderBy: { createdAt: "desc" },
+    select: {
+      createdAt: true,
+      id: true,
+      lastRequest: true,
+      name: true,
+      permissions: true,
+      prefix: true,
+      start: true,
+    },
+    where: { referenceId: userId },
+  });
+
+  const apiKeys = rows.map(mapApiKeyRow);
+  return {
+    apiKeys,
+    totalCount: apiKeys.length,
   };
 }
 
 export async function createApiKey(
   ctx: DomainContext,
   input: { label: string; permission: "read" | "full" },
-  pepper: string,
 ) {
-  const { client, user } = ctx;
+  const { user } = ctx;
 
-  const { count, error: countError } = await client
-    .from("api_keys")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id);
+  const count = await prisma.apikey.count({
+    where: { referenceId: user.id },
+  });
 
-  if (countError) {
-    throw internal("api_key_failed", countError.message);
-  }
-
-  if ((count ?? 0) >= API_KEY_LIMITS.maxPerUser) {
+  if (count >= API_KEY_LIMITS.maxPerUser) {
     throw new DomainError(
       `Maximum of ${API_KEY_LIMITS.maxPerUser} API keys per account`,
       409,
@@ -49,70 +68,86 @@ export async function createApiKey(
     );
   }
 
-  const { keyId, secret, fullKey } = generateApiKeyMaterial();
-  const keyHash = hashApiKey(fullKey, pepper);
-  const keyPrefix = formatApiKeyPrefix(keyId, secret);
+  let created: Awaited<ReturnType<typeof auth.api.createApiKey>>;
+  try {
+    created = await auth.api.createApiKey({
+      body: {
+        name: input.label.trim(),
+        permissions: baPermissionsFromProduct(input.permission),
+        userId: user.id,
+      },
+    });
+  } catch (error) {
+    throw internal("api_key_failed", error);
+  }
 
-  const { data, error } = await client
-    .from("api_keys")
-    .insert({
-      key_hash: keyHash,
-      key_id: keyId,
-      key_prefix: keyPrefix,
-      label: input.label.trim(),
-      permission: input.permission,
-      user_id: user.id,
-    })
-    .select("id, label, permission, key_prefix, last_used_at, created_at")
-    .single();
-
-  if (error || !data) {
-    throw internal("api_key_failed", error?.message ?? "Failed to create API key");
+  if (!created?.id || !created.key) {
+    throw internal("api_key_failed", "Better Auth did not return a key");
   }
 
   return {
-    ...mapApiKeyRow(data),
-    secret: fullKey,
+    ...mapApiKeyRow({
+      createdAt: new Date(created.createdAt),
+      id: created.id,
+      lastRequest: created.lastRequest ? new Date(created.lastRequest) : null,
+      name: created.name ?? input.label.trim(),
+      permissions: created.permissions ? JSON.stringify(created.permissions) : null,
+      prefix: created.prefix ?? null,
+      start: created.start ?? null,
+    }),
+    permission: input.permission,
+    secret: created.key,
   };
 }
 
 export async function updateApiKeyLabel(ctx: DomainContext, apiKeyId: string, label: string) {
-  const { client, user } = ctx;
+  const { user } = ctx;
 
-  const { data, error } = await client
-    .from("api_keys")
-    .update({ label: label.trim() })
-    .eq("id", apiKeyId)
-    .eq("user_id", user.id)
-    .select("id, label, permission, key_prefix, last_used_at, created_at")
-    .single();
+  const existing = await prisma.apikey.findFirst({
+    select: { id: true },
+    where: { id: apiKeyId, referenceId: user.id },
+  });
 
-  if (error) {
-    if (error.code === "PGRST116") {
-      throw new DomainError("API key not found", 404, "api_key_not_found");
-    }
-    throw internal("api_key_failed", error.message);
+  if (!existing) {
+    throw new DomainError("API key not found", 404, "api_key_not_found");
   }
 
-  return mapApiKeyRow(data);
+  let updated: Awaited<ReturnType<typeof auth.api.updateApiKey>>;
+  try {
+    updated = await auth.api.updateApiKey({
+      body: {
+        keyId: apiKeyId,
+        name: label.trim(),
+        userId: user.id,
+      },
+    });
+  } catch (error) {
+    throw internal("api_key_failed", error);
+  }
+
+  if (!updated?.id) {
+    throw internal("api_key_failed", "Better Auth did not return the updated key");
+  }
+
+  return mapApiKeyRow({
+    createdAt: new Date(updated.createdAt),
+    id: updated.id,
+    lastRequest: updated.lastRequest ? new Date(updated.lastRequest) : null,
+    name: updated.name ?? label.trim(),
+    permissions: updated.permissions ? JSON.stringify(updated.permissions) : null,
+    prefix: updated.prefix ?? null,
+    start: updated.start ?? null,
+  });
 }
 
 export async function deleteApiKey(ctx: DomainContext, apiKeyId: string): Promise<void> {
-  const { client, user } = ctx;
+  const { user } = ctx;
 
-  const { data, error } = await client
-    .from("api_keys")
-    .delete()
-    .eq("id", apiKeyId)
-    .eq("user_id", user.id)
-    .select("id")
-    .maybeSingle();
+  const deleted = await prisma.apikey.deleteMany({
+    where: { id: apiKeyId, referenceId: user.id },
+  });
 
-  if (error) {
-    throw internal("api_key_failed", error.message);
-  }
-
-  if (!data) {
+  if (deleted.count === 0) {
     throw new DomainError("API key not found", 404, "api_key_not_found");
   }
 }

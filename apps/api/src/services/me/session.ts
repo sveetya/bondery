@@ -1,6 +1,7 @@
 import type { ColorSchemePreference, UserSessionData } from "@bondery/schemas";
 import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import type { DomainContext } from "../../domains/_shared/context.js";
+import { isPlatformAdmin } from "../../lib/auth/is-platform-admin.js";
 import { getMyselfProfile } from "../../lib/contacts/myself.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { syncProviderAvatarIfNeeded } from "./provider-avatar-import.js";
@@ -35,6 +36,7 @@ export async function getUserSession(ctx: DomainContext): Promise<UserSessionDat
     avatarUrl,
     colorScheme: parseColorScheme(settings.color_scheme),
     displayName: firstName?.trim() || user.email || "User",
+    isPlatformAdmin: await isPlatformAdmin(user.id),
     language: settings.language ?? DEFAULT_LOCALE,
     onboardingCompletedAt: settings.onboarding_completed_at ?? null,
     timeFormat: settings.time_format === "12h" ? "12h" : DEFAULT_TIME_FORMAT,

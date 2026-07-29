@@ -17,11 +17,15 @@ import {
 } from "@bondery/schemas/http/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal } from "../../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
-import { createApiKey, deleteApiKey, updateApiKeyLabel } from "../../../services/me/api-keys.js";
+import {
+  createApiKey,
+  deleteApiKey,
+  listApiKeys,
+  updateApiKeyLabel,
+} from "../../../services/me/api-keys.js";
 
 export const meApiKeysRoutes: AppRoutePlugin = async (fastify) => {
   fastify.addHook("onRoute", (routeOptions) => {
@@ -29,8 +33,6 @@ export const meApiKeysRoutes: AppRoutePlugin = async (fastify) => {
       routeOptions.schema.tags = ["Me"];
     }
   });
-
-  const pepper = fastify.config.BONDERY_PRIVATE_API_KEY_PEPPER.trim();
 
   fastify.get(
     "/",
@@ -41,32 +43,8 @@ export const meApiKeysRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-
-      const { data, error } = await client
-        .from("api_keys")
-        .select("id, label, permission, key_prefix, last_used_at, created_at")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        request.log.error({ err: error }, "Failed to list API keys");
-        throw internal("internal_server_error", error.message);
-      }
-
-      const apiKeys = (data ?? []).map((row) => ({
-        createdAt: row.created_at,
-        id: row.id,
-        keyPrefix: row.key_prefix,
-        label: row.label,
-        lastUsedAt: row.last_used_at,
-        permission: row.permission === "read" ? ("read" as const) : ("full" as const),
-      }));
-
-      return {
-        apiKeys,
-        totalCount: apiKeys.length,
-      };
+      const { user } = getAuth(request);
+      return listApiKeys(user.id);
     },
   );
 
@@ -83,7 +61,7 @@ export const meApiKeysRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     withDomainRoute({ body: createApiKeyInputSchema }, async (ctx, { body }, reply) => {
-      const result = await createApiKey(ctx, body, pepper);
+      const result = await createApiKey(ctx, body);
       reply.status(201);
       return result;
     }),
