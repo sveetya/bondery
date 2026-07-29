@@ -1,6 +1,6 @@
 "use client";
 
-import { getUserFacingError } from "@bondery/helpers/api";
+import { getAuthUserFacingError } from "@bondery/helpers/api";
 import { WEBAPP_ROUTES, WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { AnchorLink, errorNotificationTemplate } from "@bondery/mantine-next";
 import { Card, Stack, Text } from "@mantine/core";
@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoginProviderButtons } from "@/app/(app)/login/components/LoginProviderButtons";
 import { Logo } from "@/app/(app)/login/components/Logo";
+import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
@@ -37,7 +38,7 @@ export function OAuthLoginClient() {
     shownOAuthErrorRef.current = oauthError;
     notifications.show(
       errorNotificationTemplate({
-        description: tCommon("errors.unknown"),
+        description: getAuthUserFacingError({ code: oauthError }, tCommon),
         title: t("AuthenticationError"),
       }),
     );
@@ -46,6 +47,8 @@ export function OAuthLoginClient() {
   const handleOAuthLogin = async (provider: "github" | "linkedin") => {
     try {
       setLoading(true);
+
+      await setLocalePreferencesCookie();
 
       // No `redirect`/`oauth_query` param is built here: the current
       // page's query string already carries Better Auth's own signed
@@ -64,7 +67,7 @@ export function OAuthLoginClient() {
       if (error) {
         notifications.show(
           errorNotificationTemplate({
-            description: tCommon("errors.unknown"),
+            description: getAuthUserFacingError(error, tCommon),
             title: t("AuthenticationError"),
           }),
         );
@@ -72,7 +75,7 @@ export function OAuthLoginClient() {
     } catch (err) {
       notifications.show(
         errorNotificationTemplate({
-          description: getUserFacingError(err, tCommon),
+          description: getAuthUserFacingError(err, tCommon),
           title: t("UnexpectedError"),
         }),
       );

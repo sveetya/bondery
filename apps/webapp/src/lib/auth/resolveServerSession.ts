@@ -1,56 +1,47 @@
-import type { User } from "@supabase/supabase-js";
 import { cache } from "react";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import {
+  fetchBetterAuthAccessToken,
+  fetchBetterAuthSession,
+  signOutBetterAuthSession,
+  type BetterAuthUser,
+} from "@/lib/auth/server";
 
 export type ServerSessionResult =
-  | { status: "ok"; user: User; accessToken: string }
+  | { status: "ok"; user: BetterAuthUser; accessToken: string }
   | { status: "unauthorized" };
 
 /**
  * Single server-side session primitive for auth guards and API transport.
  *
- * Validates with Supabase (`getUser`) before returning the access token.
- * Wrapped in React cache() so it runs at most once per request.
+ * Reads the webapp's encrypted OAuth-BFF session cookie — independent of
+ * Better Auth's native API-domain cookie used for social sign-in/consent.
  */
 export const resolveServerSession = cache(async (): Promise<ServerSessionResult> => {
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const session = await fetchBetterAuthSession();
+  const accessToken = await fetchBetterAuthAccessToken(undefined, session);
 
-  if (error || !user) {
+  if (!session || !accessToken) {
     return { status: "unauthorized" };
   }
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const accessToken = session?.access_token;
-
-  if (!accessToken) {
-    return { status: "unauthorized" };
-  }
-
-  return { accessToken, status: "ok", user };
+  return {
+    accessToken,
+    status: "ok",
+    user: session.user,
+  };
 });
 
-/** Clears Supabase auth cookies on the server (e.g. stale or deleted-user sessions). */
+/** Clears the webapp BFF session cookie on the server. */
 export async function signOutServerSession(): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  await supabase.auth.signOut();
+  await signOutBetterAuthSession();
 }
 
-/** Clears auth cookies only when a session cookie exists but fails verification. */
+/** Clears the BFF session cookie when a stale encrypted payload fails decryption. */
 export async function signOutStaleServerSession(): Promise<void> {
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
+  const session = await fetchBetterAuthSession();
   if (!session) {
     return;
   }
 
-  await supabase.auth.signOut();
+  await signOutBetterAuthSession();
 }

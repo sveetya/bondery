@@ -1,3 +1,9 @@
+/** Encrypted webapp OAuth-BFF session (server-only). */
+export const WEBAPP_SESSION_COOKIE = "bondery_webapp_session";
+
+/** Short-lived PKCE/state cookie for the webapp OAuth-BFF authorize hop. */
+export const OAUTH_FLOW_COOKIE = "bondery_oauth_flow";
+
 /** Pause after "Back online" before auto-navigating away from the unavailable page. */
 export const OUTAGE_RESUME_DELAY_MS = 300;
 

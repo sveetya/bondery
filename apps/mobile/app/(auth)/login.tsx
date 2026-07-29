@@ -1,27 +1,16 @@
 import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react-native";
-import * as ExpoLinking from "expo-linking";
-import { useRouter } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Linking,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { useLoginPageTranslations, useMobileAuthTranslations } from "@/lib/i18n/generated/hooks";
+import { authClient } from "../../src/lib/auth/client";
 import { WEBSITE_URL } from "../../src/lib/config";
 import { preloadMobileNamespaces } from "../../src/lib/i18n/preloadMobileNamespaces";
-import { supabase } from "../../src/lib/supabase/client";
 import { OAUTH_PROVIDER_COLORS } from "../../src/theme/colors";
 import { MOBILE_TYPOGRAPHY } from "../../src/theme/tokens";
 import { useMobileThemeColors } from "../../src/theme/useMobileThemeColors";
 
-type Provider = "github" | "linkedin_oidc";
+type Provider = "github" | "linkedin";
 
 const PROVIDERS: Array<{
   provider: Provider;
@@ -44,21 +33,12 @@ const PROVIDERS: Array<{
     Icon: IconBrandLinkedin,
     labelKey: "Providers.LinkedIn",
     pressedBackgroundColor: OAUTH_PROVIDER_COLORS.linkedin.backgroundPress,
-    provider: "linkedin_oidc",
+    provider: "linkedin",
     textColor: OAUTH_PROVIDER_COLORS.linkedin.text,
   },
 ];
 
-function getCallbackUrl() {
-  if (Platform.OS === "web") {
-    return `${window.location.origin}/auth/callback`;
-  }
-
-  return ExpoLinking.createURL("auth/callback");
-}
-
 export default function LoginScreen() {
-  const router = useRouter();
   const colors = useMobileThemeColors();
   const tLoginPage = useLoginPageTranslations();
   const tMobileAuth = useMobileAuthTranslations();
@@ -70,7 +50,7 @@ export default function LoginScreen() {
   }, []);
 
   const startOAuth = async (provider: Provider) => {
-    if (!supabase) {
+    if (!authClient) {
       setError(tMobileAuth("MissingConfig"));
       return;
     }
@@ -79,58 +59,14 @@ export default function LoginScreen() {
     setLoadingProvider(provider);
 
     try {
-      const redirectTo = getCallbackUrl();
-
-      if (Platform.OS === "web") {
-        const { error: signInError } = await supabase.auth.signInWithOAuth({
-          options: { redirectTo },
-          provider,
-        });
-
-        if (signInError) {
-          throw signInError;
-        }
-
-        return;
-      }
-
-      const { data, error: signInError } = await supabase.auth.signInWithOAuth({
-        options: {
-          redirectTo,
-          skipBrowserRedirect: true,
-        },
+      const { error: signInError } = await authClient.signIn.social({
+        callbackURL: "bondery://auth/callback",
         provider,
       });
 
       if (signInError) {
-        throw signInError;
+        throw new Error(signInError.message);
       }
-
-      if (!data?.url) {
-        throw new Error(tMobileAuth("MissingAuthUrl"));
-      }
-
-      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
-
-      if (result.type !== "success" || !result.url) {
-        setError(tMobileAuth("LoginCancelled"));
-        return;
-      }
-
-      const responseUrl = new URL(result.url);
-      const code = responseUrl.searchParams.get("code") || "";
-      const authError =
-        responseUrl.searchParams.get("error_description") ||
-        responseUrl.searchParams.get("error") ||
-        "";
-
-      router.replace({
-        params: {
-          code,
-          error: authError,
-        },
-        pathname: "/auth/callback",
-      });
     } catch (oauthError) {
       setError(
         oauthError instanceof Error ? oauthError.message : tLoginPage("UnexpectedErrorMessage"),

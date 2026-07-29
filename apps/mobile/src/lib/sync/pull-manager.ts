@@ -1,7 +1,7 @@
 import { API_ROUTES } from "@bondery/helpers/globals/paths";
 import type { SyncBootstrapResponse, SyncPullResponse } from "@bondery/schemas/sync";
+import { getAccessToken } from "../auth/client";
 import { API_URL } from "../config";
-import { supabase } from "../supabase/client";
 import { syncRequestHeaders } from "./constants";
 import { getSyncDatabase } from "./db";
 import { applyBootstrapTables, applySyncBatches } from "./materializer";
@@ -129,16 +129,12 @@ export function schedulePull(input: { reason: SyncPullReason }): Promise<boolean
   return pullInFlight;
 }
 
-async function getAccessToken(): Promise<string | null> {
-  if (!supabase) {
-    return null;
-  }
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
+async function getSyncAccessToken(): Promise<string | null> {
+  return getAccessToken();
 }
 
 async function syncFetch<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const token = await getAccessToken();
+  const token = await getSyncAccessToken();
   if (!token) {
     throw new Error("Not authenticated");
   }

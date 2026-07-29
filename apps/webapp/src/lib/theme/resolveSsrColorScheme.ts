@@ -1,7 +1,7 @@
 import type { ColorSchemePreference } from "@bondery/schemas";
 import { cache } from "react";
 import { getAppSession } from "@/lib/app/getAppSession";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { fetchBetterAuthSession } from "@/lib/auth/server";
 
 /**
  * SSR color scheme for root layout (ColorSchemeScript + html attribute).
@@ -9,10 +9,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
  */
 export const resolveSsrColorScheme = cache(async (): Promise<ColorSchemePreference> => {
   try {
-    const supabase = await createServerSupabaseClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const session = await fetchBetterAuthSession();
 
     if (!session) {
       return "auto";

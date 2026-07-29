@@ -1,17 +1,10 @@
 import { buildApiErrorFromResponse } from "@bondery/helpers/api";
+import { authClient, getAccessToken } from "../auth/client";
 import { API_URL } from "../config";
-import { supabase } from "../supabase/client";
 import { resolveFetchFailureMessage } from "./parseApiErrorBody";
 
 export async function getBearerHeaders(): Promise<Record<string, string>> {
-  if (!supabase) {
-    throw new Error(
-      "Missing mobile env config. Set BONDERY_PUBLIC_API_URL, BONDERY_PUBLIC_SUPABASE_URL, and BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
-    );
-  }
-
-  const { data } = await supabase.auth.getSession();
-  const accessToken = data.session?.access_token;
+  const accessToken = await getAccessToken();
 
   if (!accessToken) {
     throw new Error("No authenticated mobile session found.");
@@ -36,13 +29,13 @@ async function mobileFetch(url: string, init?: RequestInit): Promise<Response> {
 let isSigningOutLocally = false;
 
 async function invalidateSessionOnUnauthorized(): Promise<void> {
-  if (!supabase || isSigningOutLocally) {
+  if (!authClient || isSigningOutLocally) {
     return;
   }
 
   isSigningOutLocally = true;
   try {
-    await supabase.auth.signOut({ scope: "local" });
+    await authClient.signOut();
   } finally {
     isSigningOutLocally = false;
   }

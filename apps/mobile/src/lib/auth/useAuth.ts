@@ -1,8 +1,13 @@
-import type { Session } from "@supabase/supabase-js";
+import type { Session, User } from "better-auth/types";
 import { createContext, useContext } from "react";
 
+export type AuthSessionPayload = {
+  session: Session;
+  user: User;
+};
+
 export type AuthContextValue = {
-  session: Session | null;
+  session: AuthSessionPayload | null;
   isLoadingSession: boolean;
   isAuthenticated: boolean;
 };

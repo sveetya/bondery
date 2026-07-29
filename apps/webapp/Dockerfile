@@ -21,8 +21,6 @@ ENV npm_config_ignore_scripts=true
 ENV BONDERY_PUBLIC_API_URL=https://api.example.com
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
-ENV BONDERY_PUBLIC_SUPABASE_URL=https://example.supabase.co
-ENV BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY=build-placeholder
 RUN npm ci
 RUN npx turbo build --filter=webapp
 RUN npm prune --omit=dev

@@ -5,8 +5,8 @@ import {
   type SyncWsBatchMessage,
   syncWsTicketResponseSchema,
 } from "@bondery/schemas/sync";
+import { getAccessToken } from "../auth/client";
 import { API_URL } from "../config";
-import { supabase } from "../supabase/client";
 import { syncRequestHeaders } from "./constants";
 import { ensureDeviceId } from "./outbox/pending-mutations";
 import { onSyncWakeEvent, onSyncWakeReconnect, setSyncPullMode } from "./pull-manager";
@@ -19,14 +19,6 @@ type SyncWakeClient = {
 };
 
 let activeClient: SyncWakeClient | null = null;
-
-async function getAccessToken(): Promise<string | null> {
-  if (!supabase) {
-    return null;
-  }
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
-}
 
 async function fetchWsTicket(): Promise<string> {
   const token = await getAccessToken();

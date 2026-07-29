@@ -7,13 +7,13 @@ import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ActionSheetPopup } from "../../components/ActionSheetPopup";
 import { StackNavBar } from "../../components/chrome";
 import { deleteMyAccount, fetchSettings } from "../../lib/api/client";
+import { authClient } from "../../lib/auth/client";
 import {
   useCommonTranslations,
   useMobileAuthTranslations,
   useMobileSettingsTranslations,
   useSettingsPageTranslations,
 } from "../../lib/i18n/generated/hooks";
-import { supabase } from "../../lib/supabase/client";
 import { useMyselfContact } from "../../lib/sync/hooks/useSyncQuery";
 import { MOBILE_LAYOUT } from "../../theme/tokens";
 import { useMobileThemeColors } from "../../theme/useMobileThemeColors";
@@ -64,11 +64,11 @@ export function SettingsAccountScreen() {
   }, [loadAccount]);
 
   const signOut = async () => {
-    if (!supabase) {
+    if (!authClient) {
       throw new Error(tMobileAuth("MissingConfig"));
     }
 
-    const { error } = await supabase.auth.signOut();
+    const { error } = await authClient.signOut();
     if (error) {
       throw new Error(getUserFacingError(error, t));
     }
@@ -102,8 +102,8 @@ export function SettingsAccountScreen() {
     try {
       await deleteMyAccount();
 
-      if (supabase) {
-        await supabase.auth.signOut({ scope: "local" });
+      if (authClient) {
+        await authClient.signOut();
       }
 
       setDeleteConfirmOpen(false);

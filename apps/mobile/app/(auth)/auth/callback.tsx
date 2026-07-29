@@ -1,70 +1,53 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import {
-  useCommonTranslations,
-  useMobileAuthTranslations,
-} from "../../../src/lib/i18n/generated/hooks";
-import { supabase } from "../../../src/lib/supabase/client";
+import { authClient } from "../../../src/lib/auth/client";
+import { useMobileAuthTranslations } from "../../../src/lib/i18n/generated/hooks";
 import { MOBILE_TYPOGRAPHY } from "../../../src/theme/tokens";
 import { useMobileThemeColors } from "../../../src/theme/useMobileThemeColors";
 
 export default function AuthCallbackScreen() {
   const tMobileAuth = useMobileAuthTranslations();
-  const _t = useCommonTranslations();
   const router = useRouter();
   const colors = useMobileThemeColors();
-  const params = useLocalSearchParams<{ code?: string; error?: string }>();
   const [statusError, setStatusError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
     const completeSignIn = async () => {
-      if (!supabase) {
+      if (!authClient) {
         if (active) {
           setStatusError(tMobileAuth("MissingConfig"));
         }
         return;
       }
 
-      if (params.error) {
-        if (active) {
-          setStatusError(params.error);
-        }
-        return;
-      }
-
-      const code = params.code || "";
-
-      if (!code) {
-        const { data } = await supabase.auth.getSession();
-        if (data.session) {
-          router.replace("/contacts");
-        } else if (active) {
-          setStatusError(tMobileAuth("MissingCode"));
-        }
-        return;
-      }
-
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await authClient.getSession();
 
       if (error) {
         if (active) {
-          setStatusError(error.message);
+          setStatusError(error.message ?? tMobileAuth("MissingCode"));
         }
         return;
       }
 
-      router.replace("/contacts");
+      if (data?.session) {
+        router.replace("/contacts");
+        return;
+      }
+
+      if (active) {
+        setStatusError(tMobileAuth("MissingCode"));
+      }
     };
 
-    completeSignIn();
+    void completeSignIn();
 
     return () => {
       active = false;
     };
-  }, [params.code, params.error, router, tMobileAuth]);
+  }, [router, tMobileAuth]);
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.surface }]}>

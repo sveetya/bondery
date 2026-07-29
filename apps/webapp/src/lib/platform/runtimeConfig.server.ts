@@ -31,14 +31,6 @@ export function buildWebappRuntimeConfigFromEnv(): WebappRuntimeConfig {
     posthogHost: runtimeEnv(WEBAPP_RUNTIME_ENV.posthogHost),
     posthogKey: runtimeEnv(WEBAPP_RUNTIME_ENV.posthogKey),
     runtimeConfigVersion: 1,
-    supabasePublishableKey: requireValue(
-      WEBAPP_RUNTIME_ENV.supabasePublishableKey,
-      runtimeEnv(WEBAPP_RUNTIME_ENV.supabasePublishableKey),
-    ),
-    supabaseUrl: requireValue(
-      WEBAPP_RUNTIME_ENV.supabaseUrl,
-      runtimeEnv(WEBAPP_RUNTIME_ENV.supabaseUrl),
-    ),
     version: runtimeEnv("BONDERY_INFRA_VERSION") ?? runtimeEnv("npm_package_version"),
     webappUrl: requireValue(WEBAPP_RUNTIME_ENV.webappUrl, runtimeEnv(WEBAPP_RUNTIME_ENV.webappUrl)),
     websiteUrl: requireValue(
@@ -52,16 +44,6 @@ export function buildWebappRuntimeConfigFromEnv(): WebappRuntimeConfig {
 
 function assertProductionRuntimeConfig(config: WebappRuntimeConfig): void {
   const errors: string[] = [];
-
-  if (config.supabaseUrl === WEBAPP_RUNTIME_BUILD_PLACEHOLDERS.supabaseUrl) {
-    errors.push(`${WEBAPP_RUNTIME_ENV.supabaseUrl} is still the Docker build placeholder`);
-  }
-
-  if (config.supabasePublishableKey === WEBAPP_RUNTIME_BUILD_PLACEHOLDERS.supabasePublishableKey) {
-    errors.push(
-      `${WEBAPP_RUNTIME_ENV.supabasePublishableKey} is still the Docker build placeholder`,
-    );
-  }
 
   if (config.apiBaseUrl === WEBAPP_RUNTIME_BUILD_PLACEHOLDERS.apiUrl) {
     errors.push(`${WEBAPP_RUNTIME_ENV.apiUrl} is still the Docker build placeholder`);

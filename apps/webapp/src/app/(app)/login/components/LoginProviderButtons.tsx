@@ -33,10 +33,10 @@ export function LoginProviderButtons({
   const activeProviders = useMemo(
     () =>
       INTEGRATION_PROVIDERS.filter((provider) => provider.active).sort((a, b) => {
-        if (a.providerKey === "linkedin" && b.providerKey !== "linkedin") {
+        if (a.providerKey === "linkedin_oidc" && b.providerKey !== "linkedin_oidc") {
           return -1;
         }
-        if (b.providerKey === "linkedin" && a.providerKey !== "linkedin") {
+        if (b.providerKey === "linkedin_oidc" && a.providerKey !== "linkedin_oidc") {
           return 1;
         }
         return 0;
@@ -70,7 +70,7 @@ export function LoginProviderButtons({
             key={provider.provider}
             leftSection={<IconComponent size={20} />}
             loading={loading}
-            onClick={() => onProviderClick(provider.providerKey as OAuthProvider)}
+            onClick={() => onProviderClick(provider.provider as OAuthProvider)}
             rightSection={
               isLastUsed ? (
                 <Badge

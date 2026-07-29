@@ -11,7 +11,6 @@ Client infrastructure for the Next.js webapp. **`lib/` root has no `.ts` files**
 | `query/` | TanStack Query keys, hooks, prefetch, invalidation — see [`query/README.md`](./query/README.md) |
 | `contacts/` | Contact display helpers (avatars, names, search, activity types, social tooltips, shared table/map types) |
 | `auth/` | Session teardown, locale detection, unauthorized redirects |
-| `supabase/` | Browser and server Supabase clients |
 | `i18n/` | Translation loading, locale hooks, relative time formatting |
 | `extension/` | Extension detection, enrich batch store, notification store (no React UI) |
 | `modals/` | Modal dismiss/blocking primitives — see [`modals/README.md`](./modals/README.md) |

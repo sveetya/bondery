@@ -1,7 +1,7 @@
 import { API_ROUTES } from "@bondery/helpers/globals/paths";
 import type { SyncMutation, SyncPushResponse } from "@bondery/schemas/sync";
+import { getAccessToken } from "../../auth/client";
 import { API_URL } from "../../config";
-import { supabase } from "../../supabase/client";
 import { syncRequestHeaders } from "../constants";
 import { applyPushResultToLocal } from "../mutations/apply-push-result";
 import { notifySyncSubscribers, pullOnce } from "../pull-manager";
@@ -34,11 +34,7 @@ function notifySyncError(message: string): void {
 }
 
 async function getBearerToken(): Promise<string | null> {
-  if (!supabase) {
-    return null;
-  }
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
+  return getAccessToken();
 }
 
 export async function drainPendingMutations(): Promise<void> {

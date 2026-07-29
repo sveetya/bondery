@@ -1,6 +1,6 @@
 import type { NextRequest, ProxyConfig } from "next/server";
 import { REQUEST_SEARCH_HEADER } from "@/lib/auth/constants";
-import { updateSession } from "@/lib/supabase/proxy";
+import { updateSession } from "@/lib/auth/proxy";
 
 export async function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);

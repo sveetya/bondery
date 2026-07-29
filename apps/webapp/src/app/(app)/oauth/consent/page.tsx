@@ -1,5 +1,7 @@
 "use client";
 
+import { buildSignedOAuthQuery } from "@/lib/auth/signedOAuthQuery";
+import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import { errorNotificationTemplate } from "@bondery/mantine-next";
 import {
   Button,
@@ -18,35 +20,37 @@ import { notifications } from "@mantine/notifications";
 import { IconCheck, IconShield, IconX } from "@tabler/icons-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createWebappAuthClient } from "@/lib/auth/client";
+import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
 import { useOAuthConsentTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
-import { createBrowswerSupabaseClient } from "@/lib/supabase/client";
 
-function getOAuthRedirectUrl(data: unknown): string | null {
+type OAuthClientDetails = {
+  client_name?: string;
+  client_id?: string;
+};
+
+function getRedirectUri(data: unknown): string | null {
   if (!data || typeof data !== "object") {
     return null;
   }
 
-  const candidate = data as { redirect_to?: string; redirect_url?: string };
-  return candidate.redirect_to ?? candidate.redirect_url ?? null;
+  const candidate = data as { redirect_uri?: string; redirect_to?: string; url?: string };
+  return candidate.redirect_uri ?? candidate.redirect_to ?? candidate.url ?? null;
 }
 
 /**
- * OAuth 2.1 Consent Page
+ * OAuth 2.1 consent page for the API authorization server (Better Auth).
  *
- * Displayed when a third-party app (e.g. the Chrome extension) initiates
- * an OAuth authorization flow. The user can approve or deny the request.
- *
- * URL: /oauth/consent?authorization_id=<id>
+ * The AS redirects here with a signed `oauth_query` continuation on the URL.
  */
 export default function OAuthConsentPage() {
   const t = useOAuthConsentTranslations();
   const searchParams = useSearchParams();
   const router = useRouter();
   const runtimeConfig = useWebappRuntimeConfig();
-  const supabase = useMemo(() => createBrowswerSupabaseClient(runtimeConfig), [runtimeConfig]);
-
-  const authorizationId = searchParams.get("authorization_id");
+  const authClient = useMemo(() => createWebappAuthClient(runtimeConfig), [runtimeConfig]);
+  const apiBaseUrl = runtimeConfig.apiBaseUrl.replace(/\/+$/, "");
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -56,59 +60,59 @@ export default function OAuthConsentPage() {
     redirect_uri: string;
     scope: string;
   } | null>(null);
-  const handledAuthorizationIdRef = useRef<string | null>(null);
+  const handledRef = useRef(false);
   const redirectingRef = useRef(false);
 
+  const oauthQuery = useMemo(
+    () => buildSignedOAuthQuery(searchParams.toString()) ?? "",
+    [searchParams],
+  );
+
   const fetchDetails = useCallback(async () => {
-    if (!authorizationId) {
+    if (!oauthQuery) {
       setError(t("MissingAuthorizationId"));
       setLoading(false);
       return;
     }
 
+    if (handledRef.current || redirectingRef.current) {
+      return;
+    }
+
+    handledRef.current = true;
+
     try {
-      if (handledAuthorizationIdRef.current === authorizationId || redirectingRef.current) {
-        return;
-      }
-
-      handledAuthorizationIdRef.current = authorizationId;
-      // Check if user is logged in
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) {
-        // Redirect to login, preserving authorization_id
-        const consentPath = `/oauth/consent?authorization_id=${authorizationId}`;
+      const session = await authClient.getSession();
+      if (!session.data?.user) {
         redirectingRef.current = true;
-        router.push(`/login?redirect=${encodeURIComponent(consentPath)}`);
+        const consentPath = `/oauth/consent?${searchParams.toString()}`;
+        router.push(`/login?${RETURN_INTENT_PARAM}=${encodeURIComponent(consentPath)}`);
         return;
       }
 
-      // Fetch authorization details
-      const { data, error: detailsError } =
-        await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
-      if (detailsError || !data) {
-        setError(detailsError?.message ?? t("InvalidRequest"));
+      const clientId = searchParams.get("client_id");
+      if (!clientId) {
+        setError(t("InvalidRequest"));
         setLoading(false);
         return;
       }
 
-      // If user already consented, data is an OAuthRedirect
-      const preApprovedRedirect = getOAuthRedirectUrl(data);
-      if (preApprovedRedirect) {
-        redirectingRef.current = true;
-        window.location.href = preApprovedRedirect;
+      const clientResponse = await fetch(
+        `${apiBaseUrl}${BETTER_AUTH_BASE_PATH}/oauth2/get-client?client_id=${encodeURIComponent(clientId)}`,
+        { credentials: "include" },
+      );
+
+      if (!clientResponse.ok) {
+        setError(t("InvalidRequest"));
+        setLoading(false);
         return;
       }
-      const details = data as {
-        client?: { name?: string };
-        redirect_uri?: string;
-        scope?: string;
-      };
+
+      const clientDetails = (await clientResponse.json()) as OAuthClientDetails;
       setAuthDetails({
-        client: { name: details.client?.name ?? "" },
-        redirect_uri: details.redirect_uri ?? "",
-        scope: details.scope ?? "",
+        client: { name: clientDetails.client_name ?? clientId },
+        redirect_uri: searchParams.get("redirect_uri") ?? "",
+        scope: searchParams.get("scope") ?? "",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("UnexpectedError"));
@@ -117,36 +121,39 @@ export default function OAuthConsentPage() {
         setLoading(false);
       }
     }
-  }, [authorizationId, supabase, router, t]);
+  }, [apiBaseUrl, authClient, oauthQuery, router, searchParams, t]);
 
   useEffect(() => {
-    fetchDetails();
+    void fetchDetails();
   }, [fetchDetails]);
 
-  async function handleApprove() {
-    if (!authorizationId) {
+  async function submitConsent(accept: boolean) {
+    if (!oauthQuery) {
       return;
     }
+
     setSubmitting(true);
     try {
-      const { data, error: approveError } =
-        await supabase.auth.oauth.approveAuthorization(authorizationId);
-      if (approveError) {
-        notifications.show(
-          errorNotificationTemplate({
-            description: approveError.message,
-            title: t("ErrorTitle"),
-          }),
-        );
-        return;
+      const response = await fetch(`${apiBaseUrl}${BETTER_AUTH_BASE_PATH}/oauth2/consent`, {
+        body: JSON.stringify({
+          accept,
+          oauth_query: oauthQuery,
+        }),
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as { message?: string } | null;
+        throw new Error(body?.message ?? t("ErrorTitle"));
       }
 
-      // Redirect back to the OAuth client with authorization result
-      const redirectUrl = getOAuthRedirectUrl(data);
+      const data = await response.json();
+      const redirectUrl = getRedirectUri(data);
       if (redirectUrl) {
         redirectingRef.current = true;
         window.location.href = redirectUrl;
-      } else {
       }
     } catch (err) {
       notifications.show(
@@ -160,43 +167,6 @@ export default function OAuthConsentPage() {
     }
   }
 
-  async function handleDeny() {
-    if (!authorizationId) {
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const { data, error: denyError } =
-        await supabase.auth.oauth.denyAuthorization(authorizationId);
-      if (denyError) {
-        notifications.show(
-          errorNotificationTemplate({
-            description: denyError.message,
-            title: t("ErrorTitle"),
-          }),
-        );
-        return;
-      }
-
-      const redirectUrl = getOAuthRedirectUrl(data);
-      if (redirectUrl) {
-        redirectingRef.current = true;
-        window.location.href = redirectUrl;
-      } else {
-      }
-    } catch (err) {
-      notifications.show(
-        errorNotificationTemplate({
-          description: err instanceof Error ? err.message : t("UnexpectedError"),
-          title: t("ErrorTitle"),
-        }),
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  // Loading state
   if (loading) {
     return (
       <Center mih="100vh">
@@ -205,7 +175,6 @@ export default function OAuthConsentPage() {
     );
   }
 
-  // Error state
   if (error || !authDetails) {
     return (
       <Center mih="100vh">
@@ -226,7 +195,6 @@ export default function OAuthConsentPage() {
     );
   }
 
-  // Parse scopes for display
   const scopes = authDetails.scope ? authDetails.scope.split(" ").filter(Boolean) : [];
 
   return (
@@ -277,12 +245,12 @@ export default function OAuthConsentPage() {
             <Button
               disabled={submitting}
               loading={submitting}
-              onClick={handleDeny}
+              onClick={() => submitConsent(false)}
               variant="default"
             >
               {t("Deny")}
             </Button>
-            <Button disabled={submitting} loading={submitting} onClick={handleApprove}>
+            <Button disabled={submitting} loading={submitting} onClick={() => submitConsent(true)}>
               {t("Approve")}
             </Button>
           </Group>

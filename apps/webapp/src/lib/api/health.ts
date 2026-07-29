@@ -16,7 +16,6 @@ export type HealthReport = {
   cacheExpiresAt: string;
   services: {
     supabase?: {
-      auth?: ServiceProbeResult;
       database?: ServiceProbeResult;
       storage?: ServiceProbeResult;
     };

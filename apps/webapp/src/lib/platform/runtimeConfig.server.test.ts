@@ -5,7 +5,7 @@ import {
   normalizeApiBaseUrl,
   resolveServerApiBaseUrl,
 } from "../api/resolveServerApiUrl.js";
-import { WEBAPP_INTERNAL_API_URL_ENV, WEBAPP_RUNTIME_ENV } from "./runtimeConfig.env.js";
+import { WEBAPP_INTERNAL_API_URL_ENV, WEBAPP_RUNTIME_BUILD_PLACEHOLDERS, WEBAPP_RUNTIME_ENV } from "./runtimeConfig.env.js";
 import {
   buildWebappRuntimeConfigFromEnv,
   validateWebappRuntimeConfigAtStartup,
@@ -18,8 +18,6 @@ describe("webapp runtime config", () => {
     process.env[WEBAPP_RUNTIME_ENV.apiUrl] = "https://api.example.com";
     process.env[WEBAPP_RUNTIME_ENV.webappUrl] = "https://app.example.com";
     process.env[WEBAPP_RUNTIME_ENV.websiteUrl] = "https://example.com";
-    process.env[WEBAPP_RUNTIME_ENV.supabaseUrl] = "https://xyz.supabase.co";
-    process.env[WEBAPP_RUNTIME_ENV.supabasePublishableKey] = "sb_publishable_test";
     process.env[WEBAPP_RUNTIME_ENV.posthogKey] = "";
     process.env[WEBAPP_RUNTIME_ENV.posthogHost] = "";
     process.env.PRIVATE_SHOULD_NOT_LEAK = "nope";
@@ -29,8 +27,6 @@ describe("webapp runtime config", () => {
     assert.equal(cfg.apiBaseUrl, "https://api.example.com");
     assert.equal(cfg.webappUrl, "https://app.example.com");
     assert.equal(cfg.websiteUrl, "https://example.com");
-    assert.equal(cfg.supabaseUrl, "https://xyz.supabase.co");
-    assert.equal(cfg.supabasePublishableKey, "sb_publishable_test");
     assert.equal("PRIVATE_SHOULD_NOT_LEAK" in (cfg as Record<string, unknown>), false);
     assert.equal(WEBAPP_INTERNAL_API_URL_ENV in (cfg as Record<string, unknown>), false);
     assert.equal(
@@ -46,11 +42,9 @@ describe("webapp runtime config", () => {
     const previous = { ...process.env };
 
     process.env = { ...process.env, NODE_ENV: "production" };
-    process.env[WEBAPP_RUNTIME_ENV.apiUrl] = "https://api.example.com";
+    process.env[WEBAPP_RUNTIME_ENV.apiUrl] = WEBAPP_RUNTIME_BUILD_PLACEHOLDERS.apiUrl;
     process.env[WEBAPP_RUNTIME_ENV.webappUrl] = "https://app.example.com";
     process.env[WEBAPP_RUNTIME_ENV.websiteUrl] = "https://example.com";
-    process.env[WEBAPP_RUNTIME_ENV.supabaseUrl] = "https://example.supabase.co";
-    process.env[WEBAPP_RUNTIME_ENV.supabasePublishableKey] = "build-placeholder";
 
     assert.throws(() => validateWebappRuntimeConfigAtStartup(), /Invalid webapp runtime config/);
 

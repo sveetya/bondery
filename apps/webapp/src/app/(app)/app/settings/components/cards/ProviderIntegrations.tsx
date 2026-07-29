@@ -23,7 +23,7 @@ import { detectBonderyChromeExtension } from "@/lib/extension/detectBonderyChrom
 import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { TypedTrans } from "@/lib/i18n/TypedTrans";
 import { INTEGRATION_PROVIDERS } from "@/lib/platform/config";
-import { createBrowswerSupabaseClient } from "@/lib/supabase/client";
+import { createWebappAuthClient } from "@/lib/auth/client";
 import { openChromeExtensionModal } from "../modals/openChromeExtensionModal";
 import { IntegrationCard } from "./IntegrationCard";
 
@@ -92,10 +92,10 @@ export function ProviderIntegrations({
     });
 
     try {
-      const supabase = createBrowswerSupabaseClient();
+      const authClient = createWebappAuthClient();
 
-      const { data, error } = await supabase.auth.linkIdentity({
-        provider: provider === "linkedin" ? "linkedin_oidc" : provider,
+      const { data, error } = await authClient.linkSocial({
+        provider,
       });
 
       if (error) {
@@ -150,16 +150,18 @@ export function ProviderIntegrations({
 
   const confirmUnlinkProvider = async (provider: "github" | "linkedin") => {
     try {
-      const providerName = provider === "linkedin" ? "linkedin_oidc" : provider;
+      const providerName = provider;
       const targetIdentity = userIdentities.find((identity) => identity.provider === providerName);
 
       if (!targetIdentity) {
         throw new Error(`${provider} identity not found`);
       }
 
-      const supabase = createBrowswerSupabaseClient();
+      const authClient = createWebappAuthClient();
 
-      const { error } = await supabase.auth.unlinkIdentity(targetIdentity);
+      const { error } = await authClient.unlinkAccount({
+        accountId: targetIdentity.identity_id,
+      });
 
       if (error) {
         throw new Error(error.message);

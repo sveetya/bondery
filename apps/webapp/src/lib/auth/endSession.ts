@@ -4,9 +4,9 @@ import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { buildLoginUrl, getClientReturnPathForLogin } from "@/lib/auth/returnIntent";
+import { createWebappAuthClient } from "@/lib/auth/client";
 import { resetState } from "@/lib/extension/enrichBatchStore";
 import { statusNotificationsStore } from "@/lib/extension/statusNotificationsStore";
-import { createBrowswerSupabaseClient } from "@/lib/supabase/client";
 
 export type EndSessionReason = "user_initiated" | "session_expired" | "account_deleted";
 
@@ -16,10 +16,6 @@ export type EndSessionOptions = {
 };
 
 let isEndingSession = false;
-
-function resolveSignOutScope(reason: EndSessionReason): "local" | undefined {
-  return reason === "user_initiated" ? undefined : "local";
-}
 
 function resolveRedirectTo(reason: EndSessionReason, redirectTo?: string): string {
   if (redirectTo !== undefined) {
@@ -35,8 +31,8 @@ function resolveRedirectTo(reason: EndSessionReason, redirectTo?: string): strin
 
 /**
  * Ends the authenticated client session: cancels and clears caches, resets
- * module stores, dismisses UI chrome, signs out of Supabase, and hard-navigates
- * to login. Idempotent — safe to call more than once.
+ * module stores, dismisses UI chrome, signs out of Better Auth + the webapp
+ * BFF session, and hard-navigates to login. Idempotent — safe to call more than once.
  */
 export async function endSession({ reason, redirectTo }: EndSessionOptions): Promise<void> {
   if (typeof window === "undefined" || isEndingSession) {
@@ -76,12 +72,15 @@ export async function endSession({ reason, redirectTo }: EndSessionOptions): Pro
     }
 
     try {
-      const supabase = createBrowswerSupabaseClient();
-      const scope = resolveSignOutScope(reason);
-      if (scope) {
-        await supabase.auth.signOut({ scope });
-      } else {
-        await supabase.auth.signOut();
+      await fetch("/api/session/logout", { method: "POST" });
+    } catch {
+      // Continue teardown if BFF cookie clear fails.
+    }
+
+    try {
+      const authClient = createWebappAuthClient();
+      if (reason === "user_initiated") {
+        await authClient.signOut();
       }
     } catch {
       // Still redirect if sign-out fails.

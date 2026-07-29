@@ -9,6 +9,7 @@ export interface MeSessionData {
   avatarUrl: string | null;
   colorScheme: ColorSchemePreference;
   displayName: string;
+  isPlatformAdmin: boolean;
   locale: SupportedLocale;
   onboardingCompletedAt: string | null;
   timeFormat: "12h" | "24h";
@@ -24,6 +25,7 @@ export function parseMeSession(raw: UserSessionResponse): MeSessionData {
         ? data.colorScheme
         : "auto",
     displayName: data.displayName || "User",
+    isPlatformAdmin: data.isPlatformAdmin === true,
     locale: coerceSupportedLocale(data.language),
     onboardingCompletedAt: data.onboardingCompletedAt ?? null,
     timeFormat: data.timeFormat === "12h" ? "12h" : "24h",

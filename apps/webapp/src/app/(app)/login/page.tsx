@@ -26,7 +26,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     redirect(returnPath ?? WEBAPP_ROUTES.HOME);
   }
 
-  // Drop stale JWT cookies (e.g. user deleted in Supabase) so they are not retried forever.
+  // Drop stale BFF session cookies so they are not retried forever.
   await signOutStaleServerSession();
 
   return (

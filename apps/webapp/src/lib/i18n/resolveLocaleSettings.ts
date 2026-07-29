@@ -4,7 +4,7 @@ import type { SupportedLocale } from "@bondery/translations";
 import { DEFAULT_LOCALE } from "@bondery/translations";
 import { cache } from "react";
 import { getAppSession } from "@/lib/app/getAppSession";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { fetchBetterAuthSession } from "@/lib/auth/server";
 import { getLocaleFromHeaders } from "./getLocaleFromHeaders";
 
 export interface LocaleSettings {
@@ -30,14 +30,11 @@ const FALLBACK: LocaleSettings = {
  *
  * IMPORTANT: this function uses getSession() (cookie read, no network) to check
  * auth status. It is NOT an auth guard — never use it for access control.
- * Auth guards must use resolveServerSession() which verifies with Supabase.
+ * Auth guards must use resolveServerSession() which reads the encrypted BFF session.
  */
 export const resolveLocaleSettings = cache(async (): Promise<LocaleSettings> => {
   try {
-    const supabase = await createServerSupabaseClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const session = await fetchBetterAuthSession();
 
     if (!session) {
       const locale = await getLocaleFromHeaders();

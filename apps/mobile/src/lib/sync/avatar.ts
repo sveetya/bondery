@@ -1,5 +1,16 @@
-import { normalizeMobileUrlForDevice, SUPABASE_URL } from "../config";
-import { supabase } from "../supabase/client";
+import { createClient } from "@supabase/supabase-js";
+import {
+  HAS_MOBILE_CONFIG,
+  normalizeMobileUrlForDevice,
+  SUPABASE_ANON_KEY,
+  SUPABASE_URL,
+} from "../config";
+
+const storageClient = HAS_MOBILE_CONFIG
+  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+  : null;
 
 export function resolveLocalContactAvatarUrl(
   userId: string,
@@ -7,12 +18,12 @@ export function resolveLocalContactAvatarUrl(
   hasAvatar: boolean,
   updatedAt?: string | null,
 ): string | null {
-  if (!hasAvatar || !supabase || !userId) {
+  if (!hasAvatar || !storageClient || !userId) {
     return null;
   }
 
   const path = `${userId}/${personId}.jpg`;
-  const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+  const { data } = storageClient.storage.from("avatars").getPublicUrl(path);
   const baseUrl = data?.publicUrl ?? null;
   if (!baseUrl) {
     return null;
@@ -23,24 +34,9 @@ export function resolveLocalContactAvatarUrl(
 }
 
 export function resolveStoragePublicUrl(path: string): string | null {
-  if (!supabase) {
+  if (!storageClient) {
     return null;
   }
-  const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+  const { data } = storageClient.storage.from("avatars").getPublicUrl(path);
   return data?.publicUrl ? normalizeMobileUrlForDevice(data.publicUrl) : null;
-}
-
-/** Fallback when Supabase client unavailable — construct from public URL pattern. */
-export function resolveAvatarUrlFromBase(
-  userId: string,
-  personId: string,
-  hasAvatar: boolean,
-  updatedAt?: string | null,
-): string | null {
-  if (!hasAvatar || !SUPABASE_URL) {
-    return null;
-  }
-  const base = `${SUPABASE_URL.replace(/\/+$/, "")}/storage/v1/object/public/avatars/${userId}/${personId}.jpg`;
-  const cacheBust = updatedAt ? `?t=${Date.parse(updatedAt)}` : "";
-  return normalizeMobileUrlForDevice(`${base}${cacheBust}`);
 }

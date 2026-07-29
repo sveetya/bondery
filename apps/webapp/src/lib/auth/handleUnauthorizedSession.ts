@@ -5,7 +5,7 @@ export { isUnauthorizedApiError, isUnauthorizedResponseStatus } from "@/lib/auth
 import { endSession } from "@/lib/auth/endSession";
 
 /**
- * Clears client caches, ends the local Supabase session, and redirects to login.
+ * Clears client caches, ends the local session, and redirects to login.
  * Call when the API reports an expired or invalid session (401 / auth_required).
  */
 export async function handleUnauthorizedSession(): Promise<void> {
