@@ -1,5 +1,7 @@
 # Migrations and connections
 
+Bondery uses **classic Prisma migrate** (`prisma migrate dev` / `deploy`), not Prisma Next (`migration plan`, `db update`). For upstream Prisma Next migration skills and a concept map, see [prisma-skills.md](./prisma-skills.md).
+
 ## Migration workflow
 
 Package scripts in `packages/db/package.json`:
@@ -72,7 +74,7 @@ Account for:
 
 - Use interactive `$transaction` for atomic multi-step database state changes
 - Keep it short and deterministic
-- Never await Mapy, Anthropic, SMTP, Polar, S3, or other network calls inside
+- Never await Mapy, Anthropic, SMTP, Stripe, S3, or other network calls inside
 - Prefer database constraints/upserts to read-then-write races
 - For queues, follow upstream locking guidance (`FOR UPDATE SKIP LOCKED`) when implementing SQL workers; pg-boss already owns its queue mechanics
 

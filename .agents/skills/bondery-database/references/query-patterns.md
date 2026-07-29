@@ -1,6 +1,6 @@
 # Query patterns
 
-Bondery-specific Prisma patterns. For generic index, N+1, pooling, and `EXPLAIN` guidance, read `supabase-postgres-best-practices`.
+Bondery-specific Prisma ORM 7 patterns (`@prisma/client`). For generic index, N+1, pooling, and `EXPLAIN` guidance, read `supabase-postgres-best-practices`. For Prisma Next query APIs (`db.orm`, `db.sql`), see [prisma-skills.md](./prisma-skills.md) — not used in this repo today.
 
 ## Select only required fields
 

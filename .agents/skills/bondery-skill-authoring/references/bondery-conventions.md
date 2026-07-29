@@ -9,7 +9,7 @@ Project-specific rules for first-party skills in `.agents/skills/bondery-*`.
 | Directory = `name` frontmatter field | `bondery-api/` → `name: bondery-api` |
 | Lowercase letters, numbers, hyphens only | `bondery-e2e-tests` ✅ `bondery_e2e` ❌ |
 | `bondery-` prefix for first-party skills | `bondery-ux`, `bondery-core` |
-| Upstream skills keep upstream name | `supabase-postgres-best-practices` |
+| Upstream skills keep upstream name | `supabase-postgres-best-practices`, `prisma-next-*` |
 | `metadata.namespace: bondery` on first-party skills | Required |
 
 ## Hub + references pattern
@@ -42,7 +42,8 @@ Do not duplicate content across skills — link and keep a single source of trut
 | API contracts, Fastify, sync | `bondery-api` |
 | UI, i18n, error display | `bondery-ux` |
 | Monorepo boundaries, extension schema | `bondery-core` |
-| Prisma schema, migrations, Postgres usage | `bondery-database` |
+| Prisma schema, migrations, Postgres usage (Bondery classic Prisma) | `bondery-database` |
+| Prisma Next (upstream CLI skills; routed from `bondery-database`) | `prisma-next-*` in `.agents/skills/` |
 | E2E / Playwright | `bondery-e2e-tests` |
 | Security, auth, tenant isolation | `bondery-security` |
 | Legal disclosure, subprocessors, policy claims | `bondery-legal` |

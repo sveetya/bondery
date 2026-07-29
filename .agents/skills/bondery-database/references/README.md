@@ -8,3 +8,4 @@
 | [migrations-and-connections.md](./migrations-and-connections.md) | Migration lifecycle and Prisma connections |
 | [query-patterns.md](./query-patterns.md) | Selects, batching, transactions, N+1 |
 | [schema-drift-and-gaps.md](./schema-drift-and-gaps.md) | Current drift and prioritized follow-ups |
+| [prisma-skills.md](./prisma-skills.md) | Upstream `prisma-next-*` skills; classic Prisma vs Prisma Next routing |

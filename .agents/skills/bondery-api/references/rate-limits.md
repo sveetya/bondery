@@ -38,7 +38,7 @@ Override via `config: { rateLimit: TIER }` on route options.
 
 - `GET /status`
 - `GET /sync/ws`, `GET /sync/ws-ticket`
-- `POST /webhooks/polar`
+- `POST /webhooks/stripe`
 - `POST /internal/reminder-digest`
 - All `/admin/stats/*` routes
 

@@ -18,7 +18,7 @@ metadata:
 - Adding or changing API routes, webhooks, or internal service calls
 - Handling user input, file uploads, or HTML/markdown rendering
 - Working with secrets, env vars, or client token storage
-- Integrating payments (Polar), AI tools, sync WebSockets, or third-party APIs
+- Integrating payments (Stripe), AI tools, sync WebSockets, or third-party APIs
 - Reviewing changes that touch tenant data, cookies, CORS, or extension bridges
 - Planning self-hosted deployment or production hardening
 
@@ -41,7 +41,7 @@ Do **not** activate for routine UI refactors, copy changes, or non-security API 
 4. **Secrets in env only** — Use `packages/helpers/src/env/manifest.ts` (`BONDERY_PRIVATE_*`, `secret: true`). No hardcoded keys, tokens, or passwords.
 5. **Public clients never get secrets** — Webapp OAuth client secrets stay server-only. Mobile and extension use PKCE + state validation.
 6. **CORS is not authorization** — Trusted origins (`lib/platform/trusted-origins.ts`) control browser cross-origin access, not who can read data.
-7. **Webhooks verify raw bytes** — HMAC/signature validation on the exact request body before parsing (Polar pattern in `routes/webhooks/polar.ts`).
+7. **Webhooks verify raw bytes** — HMAC/signature validation on the exact request body before parsing (Stripe pattern in `routes/webhooks/stripe.ts`).
 8. **5xx errors are sanitized** — Client sees generic message; details only in server logs (`map-to-response.ts`).
 9. **AI tool arguments are untrusted** — Zod-validate and scope to user-owned domain context; model output never grants authority.
 10. **No secrets or PII in logs or client bundles** — Redact tokens, cookies, passwords, and contact PII from structured logs.
@@ -59,7 +59,7 @@ Do **not** activate for routine UI refactors, copy changes, or non-security API 
 
 Full index: [references/README.md](references/README.md).
 
-Cross-skill owners: API contracts → `bondery-api`; UI error display → `bondery-ux`; Prisma schema/migrations → `bondery-database`; generic Postgres indexes/RLS (legacy stack) → `supabase-postgres-best-practices`; E2E auth flows → `bondery-e2e-tests`; policy/subprocessor disclosure accuracy → `bondery-legal`.
+Cross-skill owners: API contracts → `bondery-api`; UI error display → `bondery-ux`; Prisma schema/migrations (classic) → `bondery-database` (Prisma Next → `prisma-next-*` via `bondery-database/references/prisma-skills.md`); generic Postgres indexes/RLS (legacy stack) → `supabase-postgres-best-practices`; E2E auth flows → `bondery-e2e-tests`; policy/subprocessor disclosure accuracy → `bondery-legal`.
 
 ## Verification commands
 

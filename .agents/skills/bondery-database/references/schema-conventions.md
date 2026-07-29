@@ -16,7 +16,7 @@ Legitimate non-UUID keys already exist:
 
 - Composite join keys such as `@@id([interactionId, personId])`
 - Protocol sequences such as `SyncChangeLog.serverSequence BigInt @id`
-- Provider-owned natural keys such as `PendingSubscription.polarSubscriptionId`
+- Provider-owned natural keys such as `PendingSubscription.stripeSubscriptionId`
 
 Do not force UUIDs onto protocol sequences, join-table composite keys, or externally owned identifiers.
 

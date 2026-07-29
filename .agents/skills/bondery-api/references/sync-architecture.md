@@ -136,7 +136,7 @@ See `apps/mobile/src/lib/api/online-only.ts`.
 
 ## Naming note
 
-`POST /api/subscriptions/sync` is Polar billing sync — unrelated to mobile data sync.
+`POST /api/subscriptions/sync` is Stripe billing sync — unrelated to mobile data sync.
 
 ## Checklist
 

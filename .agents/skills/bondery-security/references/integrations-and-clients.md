@@ -4,16 +4,16 @@ Webhooks, WebSockets, AI tools, extension bridges, and mobile privacy boundaries
 
 ## Webhooks
 
-### Polar subscriptions
+### Stripe subscriptions
 
-`apps/api/src/routes/webhooks/polar.ts`:
-- **HMAC-SHA256** via `@polar-sh/sdk` `validateEvent` (Standard Webhooks)
+`apps/api/src/routes/webhooks/stripe.ts`:
+- **Signature verification** via `stripe.webhooks.constructEvent` on the raw request body
 - **Raw body preserved** — custom `application/json` buffer parser; signature over exact bytes
-- Rejects if `BONDERY_PRIVATE_POLAR_WEBHOOK_SECRET` unset → `webhook_not_configured`
+- Rejects if `BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET` unset → `webhook_not_configured`
 - Invalid signature → 400 `bad_request`
 - Unhandled event types → 200 no-op (idempotent)
 - Rate limit disabled
-- User resolution: `externalCustomerId` (UUID) first, email fallback
+- User resolution: `metadata.bondery_user_id` first, email fallback
 
 **Pattern for new webhooks:** verify signature on raw body before JSON parse; fail closed if secret unset.
 

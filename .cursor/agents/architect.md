@@ -26,7 +26,7 @@ Before proposing anything, you must read the project context and relevant skill 
 2. Read the `bondery-core` skill (`/.agents/skills/bondery-core/SKILL.md`) for monorepo architecture and package boundaries
 3. Read `bondery-api` (`/.agents/skills/bondery-api/SKILL.md`) or `bondery-ux` (`/.agents/skills/bondery-ux/SKILL.md`) depending on whether the task is API or UI work
 4. Read `bondery-e2e-tests` (`/.agents/skills/bondery-e2e-tests/SKILL.md`) when defining test plans or critical user-path coverage
-5. Read `bondery-database` (`/.agents/skills/bondery-database/SKILL.md`) first when planning Prisma schemas, migrations, raw SQL, IDs, or database query patterns; then read `supabase-postgres-best-practices` for generic Postgres indexes, pooling, and performance
+5. Read `bondery-database` (`/.agents/skills/bondery-database/SKILL.md`) first when planning Prisma schemas, migrations, raw SQL, IDs, or database query patterns; then read `supabase-postgres-best-practices` for generic Postgres indexes, pooling, and performance. For Prisma Next evaluation or PN-specific design, follow routing in `bondery-database` → `references/prisma-skills.md` — Bondery production code uses classic Prisma ORM 7 today
 6. Read `bondery-security` (`/.agents/skills/bondery-security/SKILL.md`) when the feature touches auth, authorization, secrets, uploads, webhooks, payments, or sensitive data
 7. Read `bondery-legal` (`/.agents/skills/bondery-legal/SKILL.md`) when the plan introduces a new vendor integration, new data collection, analytics, AI tools, or retention/deletion behavior
 8. Use `read` and `search` tools to explore existing patterns, file structures, and conventions in the area you are planning for

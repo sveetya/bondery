@@ -23,7 +23,7 @@ Update this file in the **same PR** that adds or removes a vendor integration.
 | **PostHog** | Product analytics (webapp) | Events, pageviews; admin may query `person.properties.email` | EU | `apps/webapp/instrumentation-client.ts`, `BONDERY_PUBLIC_POSTHOG_*` | `in-sync` |
 | **SMTP** (generic nodemailer) | Transactional email | User email, contact share fields, reminder content | Depends on provider | `BONDERY_PRIVATE_EMAIL_*`, `services/notifications/`, `services/contacts/share.ts` | `drifted` — policy lists **Plunk** |
 | **Anthropic** | AI chat assistant | Chat messages + contact PII from tool results | US | `BONDERY_PRIVATE_ANTHROPIC_API_KEY`, `services/chat/` | `in-sync` |
-| **Polar** | Subscriptions, billing | Email, user UUID, subscription metadata | — | `BONDERY_PRIVATE_POLAR_*`, `routes/subscriptions/`, `routes/webhooks/polar.ts` | `in-sync` |
+| **Stripe** | Subscriptions, billing | Email, user UUID, subscription metadata | US / EU | `BONDERY_PRIVATE_STRIPE_*`, `routes/subscriptions/`, `routes/webhooks/stripe.ts` | `in-sync` |
 | **GitHub** | OAuth sign-in | Email, name, avatar URL, provider account ID | US | `BONDERY_PRIVATE_AUTH_GITHUB_*`, Better Auth | `undisclosed` — not in subprocessor table |
 | **LinkedIn** | OAuth sign-in (OIDC) | Email, name, profile (`openid profile email`) | US/EU | `BONDERY_PRIVATE_AUTH_LINKEDIN_*`, Better Auth | `undisclosed` — not in subprocessor table |
 | **Mapy.com** | Geocoding, timezone | Location/address strings from contacts | EU | `BONDERY_PRIVATE_MAPS_KEY`, `lib/integrations/mapy.ts`, `routes/geocode/` | `in-sync` |

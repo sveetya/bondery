@@ -27,7 +27,7 @@ Always read:
 - `bondery-api` skill (`/.agents/skills/bondery-api/SKILL.md`) — API routes, transport, sync
 - `bondery-ux` skill (`/.agents/skills/bondery-ux/SKILL.md`) — UI patterns and i18n
 - `bondery-e2e-tests` skill (`/.agents/skills/bondery-e2e-tests/SKILL.md`) — when adding or changing Playwright E2E specs
-- `bondery-database` skill (`/.agents/skills/bondery-database/SKILL.md`) — Prisma schema, migrations, UUIDv7, raw SQL, and Postgres usage
+- `bondery-database` skill (`/.agents/skills/bondery-database/SKILL.md`) — Prisma schema, migrations, UUIDv7, raw SQL, and Postgres usage (classic Prisma ORM 7; upstream `prisma-next-*` skills routed from `references/prisma-skills.md` for PN-only work)
 - `supabase-postgres-best-practices` skill — Postgres query performance, indexes, and connection pooling
 - `next-best-practices` skill — Next.js routing, data fetching, and project conventions
 - `mantine-best-practices` skill — component usage, theming, and established UI patterns

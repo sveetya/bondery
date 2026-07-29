@@ -36,7 +36,7 @@ flowchart LR
 | Browser → webapp BFF | REST proxy, sync ticket | Encrypted `bondery_webapp_session` cookie |
 | Browser → API (social/OAuth UI) | Better Auth endpoints | Better Auth session cookie on API domain |
 | Client → API (data) | REST, sync pull | Session, OAuth JWT, or API key |
-| Webhook → API | Polar events | HMAC on raw body |
+| Webhook → API | Stripe events | Signature on raw body |
 | Internal → API | Reminder digest, jobs | `BONDERY_PRIVATE_SERVICE_SECRET` bearer |
 | Public → API | Avatar/logo files | None (by design) |
 

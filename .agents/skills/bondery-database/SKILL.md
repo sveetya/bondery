@@ -5,7 +5,7 @@ description: >
   raw SQL, PostGIS, pg_trgm, connections, transactions, and query patterns.
   Use when changing Prisma models, migrations, database functions, IDs, or query performance.
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   namespace: bondery
 ---
 
@@ -22,6 +22,8 @@ metadata:
 - Changing Prisma connection or migration deployment behavior
 
 Use `supabase-postgres-best-practices` for generic Postgres performance theory. Use `bondery-security` for tenant authorization and the current no-RLS model. Use `bondery-core` for the canonical extension-schema rule.
+
+**Stack:** Bondery runs **Prisma ORM 7** (classic `schema.prisma` + `@prisma/client`), not Prisma Next. Upstream `prisma-next-*` skills are installed for PN-specific work and evaluation — see [references/prisma-skills.md](references/prisma-skills.md). Do not substitute PN CLI commands or `db.orm` APIs for Bondery migrations and queries unless a dedicated PN adoption project is in scope.
 
 ## Non-negotiables (ranked)
 
@@ -58,6 +60,8 @@ Use `supabase-postgres-best-practices` for generic Postgres performance theory. 
 | Migration or connection behavior | [references/migrations-and-connections.md](references/migrations-and-connections.md) |
 | Selects, batching, transactions, N+1 | [references/query-patterns.md](references/query-patterns.md) |
 | Known schema drift and follow-ups | [references/schema-drift-and-gaps.md](references/schema-drift-and-gaps.md) |
+| Prisma Next skills, PN vs classic Prisma, upstream routing | [references/prisma-skills.md](references/prisma-skills.md) |
+| Prisma Next contract / migrations / queries (PN projects only) | `prisma-next-contract`, `prisma-next-migrations`, `prisma-next-queries` — via [references/prisma-skills.md](references/prisma-skills.md) |
 
 Full index: [references/README.md](references/README.md).
 

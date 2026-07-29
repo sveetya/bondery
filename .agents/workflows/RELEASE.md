@@ -37,8 +37,7 @@ Complete all of the following **before** pushing anything to the `release` branc
    root package.json
    apps/api/package.json
    apps/chrome-extension/package.json
-   apps/supabase-db/package.json
-   apps/webapp/package.json
+   apps/mobile/package.json
    apps/website/package.json
    packages/branding/package.json
    packages/emails/package.json
@@ -46,6 +45,7 @@ Complete all of the following **before** pushing anything to the `release` branc
    packages/mantine-next/package.json
    packages/translations/package.json
    packages/schemas/package.json
+   packages/db/package.json
    packages/vcard/package.json
    ```
 2. **Update the minimum Extension version** in the packages/helpers package. The const to update is `MIN_EXTENSION_VERSION` in `packages/helpers/src/constants.ts`. This ensures users are prompted to update if they have an incompatible extension version.
@@ -54,13 +54,8 @@ Complete all of the following **before** pushing anything to the `release` branc
    ```bash
    npm run generate-openapi
    ```
-5. **Generate Supabase TypeScript types** from the local database and commit the output. This ensures `supabase.types.ts` reflects the current schema and all RPC signatures.
-   ```bash
-   npm run generate-types
-   ```
-   > Requires the local Supabase instance to be running (`npm run start -w apps/supabase-db`).
-6. **Build all packages and apps** (`turbo build`) and verify there are no errors.
-7. **Commit** everything to `main`.
+5. **Build all packages and apps** (`turbo build`) and verify there are no errors.
+6. **Commit** everything to `main`.
 
 ---
 

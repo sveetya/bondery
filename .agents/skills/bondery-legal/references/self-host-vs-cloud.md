@@ -38,7 +38,7 @@ Self-hosters are **not** bound by Bondery's published subprocessor table unless 
 |--------|--------|-----------|
 | Link to `/privacy` from login | Correct | Operator should link to **their** policy |
 | Assume PostHog analytics | If key configured | Optional — operator choice |
-| Assume Polar billing | Bondery cloud | Operator may omit |
+| Assume Stripe billing | Bondery cloud | Operator may omit |
 | Retention jobs in code | Should match hosted policy when Bondery runs them | Operator configures backups/logs |
 
 ## Documented gap

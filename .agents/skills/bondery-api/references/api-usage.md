@@ -251,7 +251,7 @@ npm run check-api-fetch          # non-strict variant (webapp package.json)
 
 ## Out of scope for wrappers
 
-- External URLs (Polar checkout iframe, Supabase, CDN assets)
+- External URLs (Stripe embedded checkout, Supabase, CDN assets)
 - Scraping / third-party APIs (LinkedIn in extension content scripts)
 
 ---

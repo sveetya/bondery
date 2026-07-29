@@ -11,7 +11,7 @@ Mapper: `apps/api/src/lib/platform/errors/map-to-response.ts`. Throw helpers: `a
 | **200 OK** | GET, PATCH, PUT, most success with body | Default for reads and updates |
 | **201 Created** | POST that creates a resource | `POST /contacts`, `/groups`, `/tags`, `/interactions`, `/chat/sessions`, `/me/api-keys` — include full resource in body |
 | **204 No Content** | Success with no body | `DELETE /me/api-keys/:id`, `DELETE /chat/sessions/:id`, `POST /me/initialize` |
-| **302 Found** | Redirect | `GET /subscriptions/portal` → Polar portal |
+| **302 Found** | Redirect | `GET /subscriptions/portal` → Stripe customer portal |
 
 ## Client errors
 
