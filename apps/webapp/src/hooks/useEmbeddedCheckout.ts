@@ -146,7 +146,7 @@ export function useEmbeddedCheckout({
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
       try {
-        const checkout = await stripe.initEmbeddedCheckout({ clientSecret });
+        const checkout = await stripe.createEmbeddedCheckoutPage({ clientSecret });
         checkoutRef.current = checkout;
         checkout.mount(`#${checkoutMountId}`);
         setIsLoading(false);

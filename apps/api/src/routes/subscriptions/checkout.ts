@@ -106,7 +106,7 @@ export async function subscriptionCheckoutRoutes(fastify: FastifyInstance): Prom
             },
             trial_period_days: 15,
           },
-          ui_mode: "embedded",
+          ui_mode: "embedded_page",
         });
 
         if (!session.client_secret) {

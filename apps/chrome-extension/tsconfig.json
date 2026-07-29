@@ -15,7 +15,7 @@
     "target": "ES2020",
     "types": ["chrome", "node"]
   },
-  "exclude": ["node_modules", "dist", ".output", ".wxt"],
+  "exclude": ["node_modules", "dist", ".output"],
   "extends": "./.wxt/tsconfig.json",
-  "include": ["src/**/*", "scripts/**/*", "wxt.config.ts"]
+  "include": ["src/**/*", "scripts/**/*", "wxt.config.ts", ".wxt/wxt.d.ts", ".wxt/types/**/*.d.ts"]
 }

@@ -3,13 +3,13 @@ import { MantineProvider, v8CssVariablesResolver } from "@mantine/core";
 import type React from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { browser } from "wxt/browser";
+import { extLog } from "../log";
 
 /**
  * CSS imports for Mantine / Bondery are NOT included here because content
  * scripts use `cssInjectionMode: "ui"` which auto-injects CSS into the
  * Shadow DOM. Popup / welcome pages that render outside a Shadow Root must
  * import the styles at their own entry-point level. See:
-import { extLog } from "../log";
  *   - src/entrypoints/popup/main.tsx
  *   - src/entrypoints/welcome/main.tsx
  */

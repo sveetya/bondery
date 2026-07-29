@@ -18,7 +18,7 @@ import { checkVersionCompatibility } from "./version-check";
 export function initBackground(): void {
   browser.runtime.onInstalled.addListener(async (details) => {
     if (details.reason === "install") {
-      const welcomeUrl = browser.runtime.getURL("welcome.html");
+      const welcomeUrl = chrome.runtime.getURL("welcome.html");
       await browser.tabs.create({ url: welcomeUrl });
     } else if (details.reason === "update") {
       await browser.storage.local.remove("updateRequired");

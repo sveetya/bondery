@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   readonly BONDERY_PUBLIC_API_URL: string;
   readonly BONDERY_PUBLIC_OAUTH_CLIENT_ID: string;
   readonly BONDERY_PUBLIC_WEBAPP_URL: string;
+  readonly DEV: boolean;
   readonly WXT_DEBUG?: string;
 }
 
