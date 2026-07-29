@@ -1,15 +1,15 @@
 export {
+  billingIntervalSchema,
+  billingSubscriptionStatusSchema,
   planTierSchema,
-  polarRecurringIntervalSchema,
-  polarSubscriptionStatusSchema,
   subscriptionSchema,
   subscriptionStatusSchema,
   subscriptionStatusValueSchema,
 } from "./schema.js";
 export type {
+  BillingInterval,
+  BillingSubscriptionStatus,
   PlanTier,
-  PolarRecurringInterval,
-  PolarSubscriptionStatus,
   Subscription,
   SubscriptionStatus,
   SubscriptionStatusValue,

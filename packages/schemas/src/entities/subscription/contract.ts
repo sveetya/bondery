@@ -1,17 +1,17 @@
 import type { z } from "zod";
 import type { Assert, IsEqual } from "#internal/type-equality.js";
 import type {
+  billingIntervalSchema,
+  billingSubscriptionStatusSchema,
   planTierSchema,
-  polarRecurringIntervalSchema,
-  polarSubscriptionStatusSchema,
   subscriptionSchema,
   subscriptionStatusSchema,
   subscriptionStatusValueSchema,
 } from "./schema.js";
 import type {
+  BillingInterval,
+  BillingSubscriptionStatus,
   PlanTier,
-  PolarRecurringInterval,
-  PolarSubscriptionStatus,
   Subscription,
   SubscriptionStatus,
   SubscriptionStatusValue,
@@ -22,11 +22,11 @@ type _SubscriptionStatusValue = Assert<
 >;
 type _Subscription = Assert<IsEqual<Subscription, z.infer<typeof subscriptionSchema>>>;
 type _PlanTier = Assert<IsEqual<PlanTier, z.infer<typeof planTierSchema>>>;
-type _PolarSubscriptionStatus = Assert<
-  IsEqual<PolarSubscriptionStatus, z.infer<typeof polarSubscriptionStatusSchema>>
+type _BillingSubscriptionStatus = Assert<
+  IsEqual<BillingSubscriptionStatus, z.infer<typeof billingSubscriptionStatusSchema>>
 >;
-type _PolarRecurringInterval = Assert<
-  IsEqual<PolarRecurringInterval, z.infer<typeof polarRecurringIntervalSchema>>
+type _BillingInterval = Assert<
+  IsEqual<BillingInterval, z.infer<typeof billingIntervalSchema>>
 >;
 type _SubscriptionStatus = Assert<
   IsEqual<SubscriptionStatus, z.infer<typeof subscriptionStatusSchema>>

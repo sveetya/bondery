@@ -40,7 +40,6 @@ const SCAN_FILES = [
   "apps/website/.env.development.local.example",
   "apps/chrome-extension/.env.development.example",
   "apps/mobile/.env.example",
-  "apps/supabase-db/.env.local.example",
   "apps/api/openapi.yaml",
   "apps/api/src/openapi/swagger-config.ts",
   "apps/api/scripts/generate-openapi.ts",
@@ -48,7 +47,7 @@ const SCAN_FILES = [
   "docs/contributing/architecture.md",
   "docs/contributing/local-setup.md",
   "apps/website/README.md",
-  "apps/supabase-db/README.md",
+  "archive/supabase-db/README.md",
   ".agents/workflows/CHROME-EXTENSION-OAUTH.md",
   ".agents/skills/native-data-fetching/SKILL.md",
 ];

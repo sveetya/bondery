@@ -437,10 +437,6 @@
       "default": "./src/styles.css",
       "style": "./src/styles.css",
       "types": "./src/styles.d.ts"
-    },
-    "./brand-tokens": {
-      "default": "./src/brand-tokens.css",
-      "style": "./src/brand-tokens.css"
     }
   },
   "imports": {

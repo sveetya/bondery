@@ -1,4 +1,5 @@
 {
+  "version": 1,
   "skills": {
     "add-app-clip": {
       "computedHash": "b70016deb6f8ea4d713ef93c18e65441ab656ed7dca200eef23561f1786564ab",
@@ -11,6 +12,11 @@
       "skillPath": "plugins/expo/skills/building-native-ui/SKILL.md",
       "source": "expo/skills",
       "sourceType": "github"
+    },
+    "connect-recommend": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "ddf136d2fdc3fb24d5b4b932ec60cb714e941ca8b624b5f3fe8888728e5b5563"
     },
     "eas-update-insights": {
       "computedHash": "f20cd2dd96b9d8f33b3635f8c985b7159155e24658f93db878aa8c444ceda181",
@@ -69,6 +75,97 @@
       "source": "expo/skills",
       "sourceType": "github"
     },
+    "prisma-next": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next/SKILL.md",
+      "computedHash": "0e12f86c73b9dad3e0de4326ac0f6ee804cb88bf9d515119268a79944adbf79f"
+    },
+    "prisma-next-build": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-build/SKILL.md",
+      "computedHash": "3a912b373a91de66e1b797a2b4f76278d6f8a33ef95e76a86c926950e4312430"
+    },
+    "prisma-next-contract": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-contract/SKILL.md",
+      "computedHash": "645f919986f6b2524baea4247c9dc366b91cf67b9e4c405ca9605a9f28e6e314"
+    },
+    "prisma-next-debug": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-debug/SKILL.md",
+      "computedHash": "9a184efa9c69aa0066341ecf9440e61b61f9ce1289113c9b88302c1ef6769439"
+    },
+    "prisma-next-feedback": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-feedback/SKILL.md",
+      "computedHash": "959738888ba233c1e69cb5f0606cdae6058569dc7cfdccb70b08dbe039b0bcdd"
+    },
+    "prisma-next-migration-review": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-migration-review/SKILL.md",
+      "computedHash": "693a4c15f1a1fddd45aa78cc274245a8abb0638bab6ff807d54ba0fd04bf9794"
+    },
+    "prisma-next-migrations": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-migrations/SKILL.md",
+      "computedHash": "8569cff34ec761f4f486fd5deebadc02bdb975124c57b6e8983852fe727c7b52"
+    },
+    "prisma-next-queries": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-queries/SKILL.md",
+      "computedHash": "436503dd9f1adec9c3081d2831da5d2a590c4a17e83f0de352a0990e28507622"
+    },
+    "prisma-next-quickstart": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-quickstart/SKILL.md",
+      "computedHash": "504a872abea76ad93886fc47eaa9a6f96e258debb3a450aba865efd51165483f"
+    },
+    "prisma-next-runtime": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-runtime/SKILL.md",
+      "computedHash": "7fc36488ca066cf592eaa07a564c184ebff534b4d3596d2c95c4ddb24f4119cd"
+    },
+    "prisma-next-supabase": {
+      "source": "prisma/prisma-next",
+      "sourceType": "github",
+      "skillPath": "skills/prisma-next-supabase/SKILL.md",
+      "computedHash": "b49cce07ee812680f4480f0d60639a68b8f5150497c58042e60399b8901c32eb"
+    },
+    "stripe-best-practices": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "1ded21978231cf0d973dfd9191090b76cad0e70d4424b1f13b228b3b9dca9a7d"
+    },
+    "stripe-directory": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "58d8c458beaa92877ed2f0a622af65a0a91e2804efcc4188ac87a35780015361"
+    },
+    "stripe-docs": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "7f8b47057d65cdc55c60ed870bf6ad508907e5d981fca77781b4964de54d985f"
+    },
+    "stripe-projects": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "a53a28a78e6561d15dd1aadaf552217bfa2f9dbb2ef57aa9cd7a9caf93ef5eed"
+    },
+    "upgrade-stripe": {
+      "source": "docs.stripe.com",
+      "sourceType": "well-known",
+      "computedHash": "46bb3c16878f93b953ed901b950686d64f04f90c67400bf31e1a0d7790d889df"
+    },
     "upgrading-expo": {
       "computedHash": "a1c3049b7e78f66d78dbe38e4f4900980bbeffb825e1118da8e09cc6c89eea29",
       "skillPath": "plugins/expo/skills/upgrading-expo/SKILL.md",
@@ -81,6 +178,5 @@
       "source": "expo/skills",
       "sourceType": "github"
     }
-  },
-  "version": 1
+  }
 }

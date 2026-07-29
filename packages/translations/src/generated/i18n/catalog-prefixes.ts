@@ -12,7 +12,7 @@ export type CheckoutPrefix = never;
 
 export type CommandPalettePrefix = never;
 
-export type CommonPrefix = "a11y" | "actions" | "app" | "confirm" | "errors" | "errors.api" | "feedback";
+export type CommonPrefix = "a11y" | "actions" | "app" | "confirm" | "errors" | "errors.api" | "errors.auth" | "feedback";
 
 export type ContactActionMenuPrefix = never;
 

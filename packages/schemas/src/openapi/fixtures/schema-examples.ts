@@ -426,11 +426,11 @@ export const EXAMPLE_SUBSCRIPTION_STATUS_RESPONSE = {
 };
 
 export const EXAMPLE_CHECKOUT_RESPONSE = {
-  url: "https://checkout.polar.sh/session/example",
+  clientSecret: "cs_test_example",
 };
 
 export const EXAMPLE_SUBSCRIPTION_SYNC_SUCCESS_RESPONSE = {
-  source: "polar_api" as const,
+  source: "stripe_api" as const,
   synced: true as const,
 };
 
@@ -509,14 +509,12 @@ export const EXAMPLE_HEALTH_OK_RESPONSE = {
   services: {
     anthropic: { configured: true, ok: true },
     mapy: { configured: true, ok: true },
-    polar: { configured: true, ok: true },
+    stripe: { configured: true, ok: true },
     posthog: { configured: true, ok: true },
+    postgres: { latencyMs: 18, ok: true },
     redis: { latencyMs: 2, ok: true },
     smtp: { configured: true, ok: true },
-    supabase: {
-      database: { latencyMs: 18, ok: true },
-      storage: { latencyMs: 15, ok: true },
-    },
+    storage: { latencyMs: 15, ok: true },
   },
   status: "ok" as const,
   timestamp: EXAMPLE_ISO_TIMESTAMP,
@@ -526,10 +524,8 @@ export const EXAMPLE_HEALTH_UNHEALTHY_RESPONSE = {
   ...EXAMPLE_HEALTH_OK_RESPONSE,
   services: {
     ...EXAMPLE_HEALTH_OK_RESPONSE.services,
-    supabase: {
-      database: { error: "Connection refused", ok: false },
-      storage: { error: "Connection refused", ok: false },
-    },
+    postgres: { error: "Connection refused", ok: false },
+    storage: { error: "Connection refused", ok: false },
   },
   status: "unhealthy" as const,
 };

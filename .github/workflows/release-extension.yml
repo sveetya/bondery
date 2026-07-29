@@ -21,8 +21,7 @@ jobs:
       TURBO_TELEMETRY_DISABLED: 1
       BONDERY_PUBLIC_WEBAPP_URL: ${{ vars.BONDERY_PUBLIC_WEBAPP_URL }}
       BONDERY_PUBLIC_API_URL: ${{ vars.BONDERY_PUBLIC_API_URL }}
-      BONDERY_PUBLIC_SUPABASE_URL: ${{ vars.BONDERY_PUBLIC_SUPABASE_URL }}
-      BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID: ${{ vars.BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID }}
+      BONDERY_PUBLIC_OAUTH_CLIENT_ID: ${{ vars.BONDERY_PUBLIC_OAUTH_CLIENT_ID }}
       BONDERY_OPS_CHROME_EXTENSION_ID: ${{ vars.BONDERY_OPS_CHROME_EXTENSION_ID }}
       BONDERY_OPS_CHROME_PUBLISHER_ID: ${{ vars.BONDERY_OPS_CHROME_PUBLISHER_ID }}
       PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON }}
@@ -78,8 +77,7 @@ jobs:
         run: |
           echo "BONDERY_PUBLIC_WEBAPP_URL=$BONDERY_PUBLIC_WEBAPP_URL" > apps/chrome-extension/.env.production.local
           echo "BONDERY_PUBLIC_API_URL=$BONDERY_PUBLIC_API_URL" >> apps/chrome-extension/.env.production.local
-          echo "BONDERY_PUBLIC_SUPABASE_URL=$BONDERY_PUBLIC_SUPABASE_URL" >> apps/chrome-extension/.env.production.local
-          echo "BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID=$BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID" >> apps/chrome-extension/.env.production.local
+          echo "BONDERY_PUBLIC_OAUTH_CLIENT_ID=$BONDERY_PUBLIC_OAUTH_CLIENT_ID" >> apps/chrome-extension/.env.production.local
 
       - name: Build Chrome Extension
         env:

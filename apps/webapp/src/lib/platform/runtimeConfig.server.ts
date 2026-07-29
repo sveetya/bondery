@@ -31,6 +31,7 @@ export function buildWebappRuntimeConfigFromEnv(): WebappRuntimeConfig {
     posthogHost: runtimeEnv(WEBAPP_RUNTIME_ENV.posthogHost),
     posthogKey: runtimeEnv(WEBAPP_RUNTIME_ENV.posthogKey),
     runtimeConfigVersion: 1,
+    stripePublishableKey: runtimeEnv(WEBAPP_RUNTIME_ENV.stripePublishableKey),
     version: runtimeEnv("BONDERY_INFRA_VERSION") ?? runtimeEnv("npm_package_version"),
     webappUrl: requireValue(WEBAPP_RUNTIME_ENV.webappUrl, runtimeEnv(WEBAPP_RUNTIME_ENV.webappUrl)),
     websiteUrl: requireValue(

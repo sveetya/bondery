@@ -62,14 +62,14 @@ function SubscriptionCardContent({
   const monthlyResetAt = formatDate(subscriptionStatus.aiMonthlyResetAt);
 
   const getSubscriptionDescription = (): { text: string; color: string } => {
-    const polarStatus = subscriptionStatus.polarStatus;
+    const billingStatus = subscriptionStatus.billingStatus;
 
     if (!isPremium) {
-      if (polarStatus === "past_due" || polarStatus === "unpaid" || polarStatus === "incomplete") {
+      if (billingStatus === "past_due" || billingStatus === "unpaid" || billingStatus === "incomplete") {
         return { color: "red", text: t("PaymentIssue") };
       }
 
-      if (polarStatus === "canceled" || polarStatus === "incomplete_expired") {
+      if (billingStatus === "canceled" || billingStatus === "incomplete_expired") {
         if (periodEndsAt) {
           return {
             color: "orange",
@@ -88,7 +88,7 @@ function SubscriptionCardContent({
       };
     }
 
-    if (polarStatus === "trialing") {
+    if (billingStatus === "trialing") {
       if (subscriptionStatus.cancelAtPeriodEnd) {
         if (trialEndsAt) {
           return {
@@ -116,7 +116,7 @@ function SubscriptionCardContent({
       return { color: "teal", text: t("TrialActive") };
     }
 
-    if (polarStatus === "active") {
+    if (billingStatus === "active") {
       if (subscriptionStatus.cancelAtPeriodEnd) {
         if (periodEndsAt) {
           return {
@@ -134,11 +134,11 @@ function SubscriptionCardContent({
       return { color: "dimmed", text: t("ActivePlan") };
     }
 
-    if (polarStatus === "past_due" || polarStatus === "unpaid" || polarStatus === "incomplete") {
+    if (billingStatus === "past_due" || billingStatus === "unpaid" || billingStatus === "incomplete") {
       return { color: "red", text: t("PaymentIssue") };
     }
 
-    if (polarStatus === "canceled" || polarStatus === "incomplete_expired") {
+    if (billingStatus === "canceled" || billingStatus === "incomplete_expired") {
       if (periodEndsAt) {
         return {
           color: "orange",
@@ -196,7 +196,12 @@ function SubscriptionCardContent({
                 {t("ManageSubscription")}
               </Button>
             ) : (
-              <UpgradeButton />
+              <Stack gap={4}>
+                <UpgradeButton />
+                <Text c="dimmed" size="xs">
+                  {t("StudentPromoHint")}
+                </Text>
+              </Stack>
             )}
           </Group>
           {isPremium && subscriptionStatus.aiMessageLimit > 0 && (

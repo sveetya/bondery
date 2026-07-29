@@ -48,8 +48,7 @@ jobs:
               "BONDERY_INFRA_API_DOMAIN": "api.example-smoke.test",
               "BONDERY_INFRA_WEBAPP_DOMAIN": "app.example-smoke.test",
               "BONDERY_INFRA_WEBSITE_DOMAIN": "www.example-smoke.test",
-              "BONDERY_PUBLIC_SUPABASE_URL": "https://smoke.supabase.co",
-              "BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_smoke",
+              "BONDERY_INFRA_STORAGE_DOMAIN": "storage.example-smoke.test",
           }
           lines = []
           seen = set()

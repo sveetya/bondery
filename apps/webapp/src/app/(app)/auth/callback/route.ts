@@ -4,7 +4,7 @@ import { buildWebappRuntimeConfigFromEnv, getWebappPublicOrigin } from "@/lib/pl
 import { RETURN_INTENT_PARAM, parseReturnIntent } from "@/lib/auth/returnIntent";
 
 /**
- * Legacy Supabase OAuth callback URL — redirects into the Better Auth BFF start hop.
+ * Legacy OAuth callback URL — redirects into the Better Auth BFF start hop.
  */
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);

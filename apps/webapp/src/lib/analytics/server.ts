@@ -18,7 +18,7 @@ const posthogClient = process.env.BONDERY_PRIVATE_POSTHOG_KEY
  * Captures an analytics event from a server component, server action, or route handler.
  * Uses Next.js `after()` to flush the event after the response is sent.
  *
- * @param distinctId - The user's unique ID (Supabase user UUID).
+ * @param distinctId - The user's unique ID (user UUID).
  * @param event - The event name (e.g. "contact_created").
  * @param properties - Optional event properties. Do not include PII like names or emails.
  */

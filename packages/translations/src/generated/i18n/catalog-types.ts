@@ -132,10 +132,16 @@ export type CheckoutCatalog = {
   errorMessage: string;
   errorTitle: string;
   errorUnauthorized: string;
+  intervalAnnual: string;
+  intervalMonthly: string;
+  paymentBlockedAction: string;
+  paymentBlockedMessage: string;
+  paymentBlockedTitle: string;
   successMessage: string;
   successTitle: string;
   upgradePendingMessage: string;
   upgradePendingTitle: string;
+  upgradesDisabledTooltip: string;
   upgradeToPremium: string;
 };
 
@@ -236,6 +242,15 @@ export type CommonCatalog = {
     };
     apiTemporarilyUnavailable: string;
     apiUnreachable: string;
+    auth: {
+      CREDENTIAL_ACCOUNT_NOT_FOUND: string;
+      EMAIL_NOT_VERIFIED: string;
+      INVALID_EMAIL_OR_PASSWORD: string;
+      INVALID_PASSWORD: string;
+      SESSION_EXPIRED: string;
+      SOCIAL_ACCOUNT_ALREADY_LINKED: string;
+      USER_NOT_FOUND: string;
+    };
     connection: string;
     requestFailed: string;
     serverGeneric: string;
@@ -2112,6 +2127,7 @@ export type SettingsPageCatalog = {
     PaymentIssue: string;
     PremiumPlan: string;
     RenewsOn: string;
+    StudentPromoHint: string;
     SubscriptionExpired: string;
     SubscriptionExpiredDate: string;
     SubscriptionExpiresNoRenew: string;

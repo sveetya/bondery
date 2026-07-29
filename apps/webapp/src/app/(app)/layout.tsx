@@ -11,7 +11,7 @@ initServerI18next(i18nConfig);
 
 /**
  * Force dynamic rendering because resolveLocaleSettings() reads request headers
- * (Accept-Language) and cookies (Supabase session) on every request.
+ * (Accept-Language) and cookies (webapp session) on every request.
  */
 export const dynamic = "force-dynamic";
 

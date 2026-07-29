@@ -40,9 +40,8 @@ export default defineConfig({
       // Validate required environment variables
       const requiredEnvVars = [
         "BONDERY_PUBLIC_WEBAPP_URL",
-        "BONDERY_PUBLIC_SUPABASE_URL",
         "BONDERY_PUBLIC_API_URL",
-        "BONDERY_PUBLIC_SUPABASE_OAUTH_CLIENT_ID",
+        "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
       ];
       const missing = requiredEnvVars.filter((key) => !process.env[key]);
 
@@ -61,7 +60,6 @@ export default defineConfig({
 
     const webappUrl = process.env.BONDERY_PUBLIC_WEBAPP_URL || DEV_URLS.webapp;
     const apiUrl = process.env.BONDERY_PUBLIC_API_URL || DEV_URLS.api;
-    const supabaseUrl = process.env.BONDERY_PUBLIC_SUPABASE_URL || DEV_URLS.supabase;
 
     // Build host permissions dynamically
     const hostPermissions = [
@@ -76,11 +74,6 @@ export default defineConfig({
     // Add API URL if it is on a different origin than the webapp
     if (getOrigin(apiUrl) !== getOrigin(webappUrl)) {
       hostPermissions.push(getOrigin(apiUrl));
-    }
-
-    // Add Supabase URL for OAuth token exchange
-    if (supabaseUrl) {
-      hostPermissions.push(getOrigin(supabaseUrl));
     }
 
     return {

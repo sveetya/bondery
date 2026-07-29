@@ -13,6 +13,7 @@ export const webappRuntimeConfigSchema = z
     posthogHost: z.string().url().optional(),
     posthogKey: z.string().min(1).optional(),
     runtimeConfigVersion: z.literal(1),
+    stripePublishableKey: z.string().min(1).optional(),
     version: z.string().min(1).optional(),
     webappUrl: z.string().url(),
     websiteUrl: z.string().url(),

@@ -68,6 +68,18 @@
       "node": "./dist/og/fonts.js",
       "types": "./src/og/fonts.ts"
     },
+    "./og/truncate": {
+      "default": "./dist/og/truncate.js",
+      "import": "./dist/og/truncate.js",
+      "node": "./dist/og/truncate.js",
+      "types": "./src/og/truncate.ts"
+    },
+    "./react/BonderyDynamicLogotype": {
+      "default": "./dist/react/BonderyDynamicLogotype.js",
+      "import": "./dist/react/BonderyDynamicLogotype.js",
+      "node": "./dist/react/BonderyDynamicLogotype.js",
+      "types": "./src/react/BonderyDynamicLogotype.tsx"
+    },
     "./react/BonderyIcon": {
       "default": "./dist/react/BonderyIcon.js",
       "import": "./dist/react/BonderyIcon.js",
@@ -97,6 +109,12 @@
       "import": "./dist/react/index.d.js",
       "node": "./dist/react/index.d.js",
       "types": "./src/react/index.d.ts"
+    },
+    "./typography": {
+      "default": "./dist/typography.js",
+      "import": "./dist/typography.js",
+      "node": "./dist/typography.js",
+      "types": "./src/typography.ts"
     },
     "./icon-generator": {
       "default": "./scripts/generate-icons.ts",

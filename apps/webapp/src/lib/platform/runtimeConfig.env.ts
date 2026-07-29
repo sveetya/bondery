@@ -3,6 +3,7 @@ export const WEBAPP_RUNTIME_ENV = {
   apiUrl: "BONDERY_PUBLIC_API_URL",
   posthogHost: "BONDERY_PUBLIC_POSTHOG_HOST",
   posthogKey: "BONDERY_PUBLIC_POSTHOG_KEY",
+  stripePublishableKey: "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
   webappUrl: "BONDERY_PUBLIC_WEBAPP_URL",
   websiteUrl: "BONDERY_PUBLIC_WEBSITE_URL",
 } as const;

@@ -34,6 +34,12 @@
       "node": "./dist/shared/EmailWrapper.js",
       "types": "./src/shared/EmailWrapper.tsx"
     },
+    "./templates/AccountDeletedEmail": {
+      "default": "./dist/templates/AccountDeletedEmail.js",
+      "import": "./dist/templates/AccountDeletedEmail.js",
+      "node": "./dist/templates/AccountDeletedEmail.js",
+      "types": "./src/templates/AccountDeletedEmail.tsx"
+    },
     "./templates/FeedbackEmail": {
       "default": "./dist/templates/FeedbackEmail.js",
       "import": "./dist/templates/FeedbackEmail.js",
@@ -51,6 +57,12 @@
       "import": "./dist/templates/ShareContactEmail.js",
       "node": "./dist/templates/ShareContactEmail.js",
       "types": "./src/templates/ShareContactEmail.tsx"
+    },
+    "./templates/TrialEndingEmail": {
+      "default": "./dist/templates/TrialEndingEmail.js",
+      "import": "./dist/templates/TrialEndingEmail.js",
+      "node": "./dist/templates/TrialEndingEmail.js",
+      "types": "./src/templates/TrialEndingEmail.tsx"
     }
   },
   "files": [

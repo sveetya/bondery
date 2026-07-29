@@ -142,15 +142,17 @@ function run() {
     aiMessagesUsed: 2,
     aiMonthlyResetAt: null,
     amount: 20,
+    billingStatus: "active",
     cancelAtPeriodEnd: false,
     canUseChat: true,
     currency: "USD",
     currentPeriodEnd: null,
+    paymentBlocked: false,
     plan: "premium",
-    polarStatus: "active",
     productName: "Premium",
     recurringInterval: "month",
     trialEndsAt: null,
+    upgradesEnabled: false,
   });
   assertEqual(subscriptionStatus.plan, "premium", "subscriptionStatusSchema should parse dto");
 

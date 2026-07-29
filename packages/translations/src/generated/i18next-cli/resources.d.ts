@@ -78,6 +78,15 @@ export default interface Resources {
       },
       "apiTemporarilyUnavailable": "The API is temporarily unavailable. Please try again.",
       "apiUnreachable": "Can't reach the Bondery server. Try again in a moment.",
+      "auth": {
+        "CREDENTIAL_ACCOUNT_NOT_FOUND": "No password sign-in found for this account.",
+        "EMAIL_NOT_VERIFIED": "Please verify your email before signing in.",
+        "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
+        "INVALID_PASSWORD": "Invalid password.",
+        "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+        "SOCIAL_ACCOUNT_ALREADY_LINKED": "This social account is already linked to another user.",
+        "USER_NOT_FOUND": "User not found."
+      },
       "connection": "Check your connection and try again.",
       "requestFailed": "Request failed. Please try again.",
       "serverGeneric": "Something went wrong on the server. Please try again.",
@@ -312,11 +321,17 @@ export default interface Resources {
     "errorMessage": "Something went wrong. Please try again.",
     "errorTitle": "Checkout failed",
     "errorUnauthorized": "Please log in and try again.",
+    "intervalAnnual": "Annual",
+    "intervalMonthly": "Monthly",
+    "paymentBlockedAction": "Update billing",
+    "paymentBlockedMessage": "We could not process your payment after several attempts. Update your billing details to restore Premium access.",
+    "paymentBlockedTitle": "Payment required",
     "successMessage": "Enjoy unlimited AI chat and all Premium features.",
     "successTitle": "You're now Premium!",
     "upgradePendingMessage": "Your account will upgrade to Premium shortly.",
     "upgradePendingTitle": "Payment received",
-    "upgradeToPremium": "Upgrade to Premium"
+    "upgradeToPremium": "Upgrade to Premium",
+    "upgradesDisabledTooltip": "Premium upgrades are not available yet. Check back soon."
   },
   "features/pages/ContactPage": {
     "Description": "If you have any questions, please feel free to contact us.",
@@ -1228,6 +1243,7 @@ export default interface Resources {
       "PaymentIssue": "We could not process your payment. Please update your billing details.",
       "PremiumPlan": "Premium",
       "RenewsOn": "Your plan will renew on {date}.",
+      "StudentPromoHint": "Have a student code? Enter it at checkout.",
       "SubscriptionExpired": "Your subscription has expired.",
       "SubscriptionExpiredDate": "Your subscription expired on {date}.",
       "SubscriptionExpiresNoRenew": "Your subscription will expire and will not renew.",

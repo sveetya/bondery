@@ -1,9 +1,9 @@
 /**
- * OAuth Authentication Utilities for Chrome Extension
+ * OAuth Authentication Utilities for Chrome Extension (Better Auth AS on API).
  */
 
 import { browser } from "wxt/browser";
-import { config } from "../../config";
+import { config, getOAuthResource, getOAuthTokenUrl, OAUTH_SCOPE } from "../../config";
 import { extLog } from "../log";
 
 export interface StoredTokens {
@@ -63,6 +63,15 @@ export async function isAuthenticated(): Promise<boolean> {
 
 let refreshInFlight: Promise<StoredTokens | null> | null = null;
 
+function buildTokenRequestBody(params: Record<string, string>): URLSearchParams {
+  const body = new URLSearchParams({
+    client_id: config.oauthClientId,
+    resource: getOAuthResource(),
+    ...params,
+  });
+  return body;
+}
+
 export async function refreshAccessToken(): Promise<StoredTokens | null> {
   if (refreshInFlight) {
     return refreshInFlight;
@@ -75,9 +84,8 @@ export async function refreshAccessToken(): Promise<StoredTokens | null> {
     }
 
     try {
-      const response = await fetch(`${config.supabaseUrl}/auth/v1/oauth/token`, {
-        body: new URLSearchParams({
-          client_id: config.oauthClientId,
+      const response = await fetch(getOAuthTokenUrl(), {
+        body: buildTokenRequestBody({
           grant_type: "refresh_token",
           refresh_token: tokens.refreshToken,
         }),
@@ -166,9 +174,8 @@ export async function exchangeCodeForTokens(
   redirectUri: string,
 ): Promise<StoredTokens | null> {
   try {
-    const response = await fetch(`${config.supabaseUrl}/auth/v1/oauth/token`, {
-      body: new URLSearchParams({
-        client_id: config.oauthClientId,
+    const response = await fetch(getOAuthTokenUrl(), {
+      body: buildTokenRequestBody({
         code,
         code_verifier: codeVerifier,
         grant_type: "authorization_code",

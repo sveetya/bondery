@@ -374,6 +374,7 @@
     "PaymentIssue": "We could not process your payment. Please update your billing details.",
     "PremiumPlan": "Premium",
     "RenewsOn": "Your plan will renew on {date}.",
+    "StudentPromoHint": "Have a student code? Enter it at checkout.",
     "SubscriptionExpired": "Your subscription has expired.",
     "SubscriptionExpiredDate": "Your subscription expired on {date}.",
     "SubscriptionExpiresNoRenew": "Your subscription will expire and will not renew.",

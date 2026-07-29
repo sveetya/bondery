@@ -4,7 +4,7 @@ import { signOutServerSession } from "@/lib/auth/resolveServerSession";
 import { buildLoginUrl, getRequestReturnPathForLogin } from "@/lib/auth/returnIntent";
 
 /**
- * Clears Supabase auth cookies and redirects to login when the API reports
+ * Clears the webapp session and redirects to login when the API reports
  * an expired or invalid session. Server-side counterpart to handleUnauthorizedSession.
  */
 export async function handleServerUnauthorizedSession(returnPath?: string): Promise<never> {

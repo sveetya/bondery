@@ -374,6 +374,7 @@
     "PaymentIssue": "Wir konnten deine Zahlung nicht verarbeiten. Bitte aktualisiere deine Zahlungsdaten.",
     "PremiumPlan": "Premium",
     "RenewsOn": "Dein Plan wird am {date} verlängert.",
+    "StudentPromoHint": "Studentenrabatt? Gib den Code beim Checkout ein.",
     "SubscriptionExpired": "Dein Abonnement ist abgelaufen.",
     "SubscriptionExpiredDate": "Dein Abonnement ist am {date} abgelaufen.",
     "SubscriptionExpiresNoRenew": "Dein Abonnement endet und wird nicht verlängert.",

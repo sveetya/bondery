@@ -15,14 +15,12 @@ export type HealthReport = {
   cached: boolean;
   cacheExpiresAt: string;
   services: {
-    supabase?: {
-      database?: ServiceProbeResult;
-      storage?: ServiceProbeResult;
-    };
+    postgres?: ServiceProbeResult;
+    storage?: ServiceProbeResult;
     redis?: ServiceProbeResult;
     smtp?: ServiceProbeResult;
     anthropic?: ServiceProbeResult;
-    polar?: ServiceProbeResult;
+    stripe?: ServiceProbeResult;
     mapy?: ServiceProbeResult;
     posthog?: ServiceProbeResult;
   };

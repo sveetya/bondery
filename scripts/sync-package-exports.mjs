@@ -38,10 +38,6 @@ const PACKAGE_CONFIGS = {
   "packages/mantine-next/package.json": { srcDir: "src" },
   "packages/schemas/package.json": {
     extraExports: {
-      "./database": {
-        default: "./dist/supabase.types.js",
-        types: "./src/supabase.types.ts",
-      },
       "./locale/supported-locales.json": {
         default: "./dist/locale/supported-locales.json",
       },

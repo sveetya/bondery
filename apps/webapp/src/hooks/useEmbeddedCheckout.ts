@@ -6,97 +6,50 @@ import {
   successNotificationTemplate,
   warningNotificationTemplate,
 } from "@bondery/mantine-next";
-import type { SubscriptionStatus } from "@bondery/schemas";
-import { useComputedColorScheme } from "@mantine/core";
+import type { BillingInterval, SubscriptionStatus } from "@bondery/schemas";
 import { notifications } from "@mantine/notifications";
-import type { PolarEmbedCheckout } from "@polar-sh/checkout/embed";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, clientApiJson } from "@/lib/api/client";
-import { getSubscriptionStatus, syncSubscription } from "@/lib/api/domains/subscription";
+import { getSubscriptionStatus } from "@/lib/api/domains/subscription";
 import { isUnauthorizedApiError } from "@/lib/auth/handleUnauthorizedSession";
 import { useCheckoutTranslations } from "@/lib/i18n/generated/hooks";
+import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 import { invalidateSubscription } from "@/lib/query/invalidation";
 
-/** Maximum ms to wait for the Polar iframe onLoaded event before resetting loading state. */
-const IFRAME_LOAD_TIMEOUT_MS = 15_000;
-
-/** Maximum ms to wait for the webhook to update the DB after checkout success. */
+const CHECKOUT_POLL_INTERVAL_MS = 800;
 const WEBHOOK_CONFIRM_TIMEOUT_MS = 10_000;
 
-const CHECKOUT_POLL_INTERVAL_MS = 800;
-
 interface UseEmbeddedCheckoutOptions {
-  /** Optional callback invoked after the checkout `success` event fires. */
+  checkoutMountId: string;
   onSuccess?: () => void;
 }
 
 interface UseEmbeddedCheckoutResult {
-  /** True while the session is being created or the iframe is loading. */
+  closeCheckout: () => void;
   isLoading: boolean;
-  /** Opens the embedded Polar checkout overlay. */
-  openCheckout: () => Promise<void>;
+  isModalOpen: boolean;
+  openCheckout: (interval: BillingInterval) => Promise<void>;
 }
 
 function isCheckoutConfirmed(status: SubscriptionStatus | null): boolean {
   return status?.plan === "premium";
 }
 
-async function waitForCheckoutConfirmation(
-  cancelled: () => boolean,
-): Promise<"confirmed" | "timeout"> {
-  const started = Date.now();
-
-  try {
-    await syncSubscription();
-  } catch {
-    // Polar webhook may still land; keep polling GET /api/subscriptions.
-  }
-
-  while (Date.now() - started < WEBHOOK_CONFIRM_TIMEOUT_MS) {
-    if (cancelled()) {
-      return "timeout";
-    }
-
-    try {
-      const status = await getSubscriptionStatus();
-      if (isCheckoutConfirmed(status)) {
-        return "confirmed";
-      }
-    } catch {
-      // Transient errors during webhook propagation — retry until timeout.
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, CHECKOUT_POLL_INTERVAL_MS));
-  }
-
-  return "timeout";
-}
-
-/**
- * Hook that creates a Polar checkout session and opens it as an in-app iframe overlay.
- *
- * Flow:
- *  1. POST /api/subscriptions/checkout → get session URL (409 = already subscribed)
- *  2. PolarEmbedCheckout.create(url) → iframe overlay appears
- *  3. `success` event → poll GET /api/subscriptions until premium is confirmed
- *  4. When plan is premium → show success notification, call onSuccess, router.refresh()
- *  5. If polling times out → show pending notification
- *  6. `close` event → clean up instance ref, reset loading state
- *
- * @param options.onSuccess Optional callback invoked when the DB confirms the upgrade.
- */
 export function useEmbeddedCheckout({
+  checkoutMountId,
   onSuccess,
-}: UseEmbeddedCheckoutOptions = {}): UseEmbeddedCheckoutResult {
+}: UseEmbeddedCheckoutOptions): UseEmbeddedCheckoutResult {
   const [isLoading, setIsLoading] = useState(false);
-  const checkoutRef = useRef<InstanceType<typeof PolarEmbedCheckout> | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const checkoutRef = useRef<{ destroy: () => void } | null>(null);
+  const pollTimerRef = useRef<number | null>(null);
   const confirmationCancelledRef = useRef(false);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const colorScheme = useComputedColorScheme("light");
   const t = useCheckoutTranslations();
+  const { stripePublishableKey } = useWebappRuntimeConfig();
 
   const handleCheckoutConfirmed = useCallback(() => {
     void invalidateSubscription(queryClient);
@@ -104,123 +57,142 @@ export function useEmbeddedCheckout({
     router.refresh();
   }, [onSuccess, queryClient, router]);
 
-  useEffect(() => {
-    return () => {
-      confirmationCancelledRef.current = true;
-      if (checkoutRef.current) {
-        checkoutRef.current.close();
-        checkoutRef.current = null;
-      }
-    };
+  const closeCheckout = useCallback(() => {
+    confirmationCancelledRef.current = true;
+    if (pollTimerRef.current != null) {
+      window.clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    checkoutRef.current?.destroy();
+    checkoutRef.current = null;
+    setIsModalOpen(false);
+    setIsLoading(false);
   }, []);
 
-  const openCheckout = useCallback(async () => {
-    setIsLoading(true);
-    confirmationCancelledRef.current = false;
+  useEffect(() => {
+    return () => {
+      closeCheckout();
+    };
+  }, [closeCheckout]);
 
-    let url: string;
-    try {
-      const checkoutSession = await clientApiJson<{ url: string }>(
-        API_ROUTES.SUBSCRIPTIONS_CHECKOUT,
-        { method: "POST" },
-      );
-      url = checkoutSession.url;
-    } catch (error) {
-      if (error instanceof ApiError && error.status === 409) {
+  const openCheckout = useCallback(
+    async (interval: BillingInterval) => {
+      if (!stripePublishableKey) {
         notifications.show(
-          warningNotificationTemplate({
-            description: t("alreadySubscribedMessage"),
-            title: t("alreadySubscribedTitle"),
+          errorNotificationTemplate({
+            description: t("errorMessage"),
+            title: t("errorTitle"),
+          }),
+        );
+        return;
+      }
+
+      setIsLoading(true);
+      confirmationCancelledRef.current = false;
+
+      let clientSecret: string;
+      try {
+        const checkoutSession = await clientApiJson<{ clientSecret: string }>(
+          API_ROUTES.SUBSCRIPTIONS_CHECKOUT,
+          {
+            body: JSON.stringify({ interval }),
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+          },
+        );
+        clientSecret = checkoutSession.clientSecret;
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 409) {
+          notifications.show(
+            warningNotificationTemplate({
+              description: t("alreadySubscribedMessage"),
+              title: t("alreadySubscribedTitle"),
+            }),
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        if (isUnauthorizedApiError(error)) {
+          setIsLoading(false);
+          return;
+        }
+
+        notifications.show(
+          errorNotificationTemplate({
+            description: t("errorMessage"),
+            title: t("errorTitle"),
           }),
         );
         setIsLoading(false);
         return;
       }
 
-      if (isUnauthorizedApiError(error)) {
+      const { loadStripe } = await import("@stripe/stripe-js");
+      const stripe = await loadStripe(stripePublishableKey);
+
+      if (!stripe) {
+        notifications.show(
+          errorNotificationTemplate({
+            description: t("errorMessage"),
+            title: t("errorTitle"),
+          }),
+        );
         setIsLoading(false);
         return;
       }
 
-      notifications.show(
-        errorNotificationTemplate({
-          description: t("errorMessage"),
-          title: t("errorTitle"),
-        }),
-      );
-      setIsLoading(false);
-      return;
-    }
+      setIsModalOpen(true);
+      await new Promise((resolve) => requestAnimationFrame(resolve));
 
-    const { PolarEmbedCheckout } = await import("@polar-sh/checkout/embed");
+      try {
+        const checkout = await stripe.initEmbeddedCheckout({ clientSecret });
+        checkoutRef.current = checkout;
+        checkout.mount(`#${checkoutMountId}`);
+        setIsLoading(false);
 
-    let checkout: InstanceType<typeof PolarEmbedCheckout>;
+        const started = Date.now();
+        pollTimerRef.current = window.setInterval(() => {
+          void (async () => {
+            if (confirmationCancelledRef.current) {
+              return;
+            }
 
-    const iframeLoadTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, IFRAME_LOAD_TIMEOUT_MS);
+            if (Date.now() - started > WEBHOOK_CONFIRM_TIMEOUT_MS) {
+              return;
+            }
 
-    try {
-      checkout = await PolarEmbedCheckout.create(url, {
-        onLoaded: () => {
-          clearTimeout(iframeLoadTimeout);
-          setIsLoading(false);
-        },
-        theme: colorScheme === "dark" ? "dark" : "light",
-      });
-    } catch {
-      clearTimeout(iframeLoadTimeout);
-      notifications.show(
-        errorNotificationTemplate({
-          description: t("errorMessage"),
-          title: t("errorTitle"),
-        }),
-      );
-      setIsLoading(false);
-      return;
-    }
+            try {
+              const status = await getSubscriptionStatus();
+              if (!isCheckoutConfirmed(status)) {
+                return;
+              }
 
-    checkoutRef.current = checkout;
-
-    checkout.addEventListener("success", () => {
-      void (async () => {
-        const result = await waitForCheckoutConfirmation(
-          () => confirmationCancelledRef.current,
+              closeCheckout();
+              notifications.show(
+                successNotificationTemplate({
+                  description: t("successMessage"),
+                  title: t("successTitle"),
+                }),
+              );
+              handleCheckoutConfirmed();
+            } catch {
+              // Keep polling while checkout is open.
+            }
+          })();
+        }, CHECKOUT_POLL_INTERVAL_MS);
+      } catch {
+        closeCheckout();
+        notifications.show(
+          errorNotificationTemplate({
+            description: t("errorMessage"),
+            title: t("errorTitle"),
+          }),
         );
+      }
+    },
+    [checkoutMountId, closeCheckout, handleCheckoutConfirmed, stripePublishableKey, t],
+  );
 
-        if (confirmationCancelledRef.current) {
-          return;
-        }
-
-        checkout.close();
-
-        if (result === "confirmed") {
-          notifications.show(
-            successNotificationTemplate({
-              description: t("successMessage"),
-              title: t("successTitle"),
-            }),
-          );
-        } else {
-          notifications.show(
-            warningNotificationTemplate({
-              description: t("upgradePendingMessage"),
-              title: t("upgradePendingTitle"),
-            }),
-          );
-        }
-
-        handleCheckoutConfirmed();
-      })();
-    });
-
-    checkout.addEventListener("close", () => {
-      confirmationCancelledRef.current = true;
-      checkoutRef.current = null;
-      clearTimeout(iframeLoadTimeout);
-      setIsLoading(false);
-    });
-  }, [colorScheme, handleCheckoutConfirmed, t]);
-
-  return { isLoading, openCheckout };
+  return { closeCheckout, isLoading, isModalOpen, openCheckout };
 }

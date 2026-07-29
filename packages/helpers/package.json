@@ -39,12 +39,6 @@
       "node": "./dist/api/index.js",
       "types": "./src/api/index.ts"
     },
-    "./auth/resolve-cookie-domain": {
-      "default": "./dist/auth/resolve-cookie-domain.js",
-      "import": "./dist/auth/resolve-cookie-domain.js",
-      "node": "./dist/auth/resolve-cookie-domain.js",
-      "types": "./src/auth/resolve-cookie-domain.ts"
-    },
     "./cli": {
       "default": "./dist/cli/index.js",
       "import": "./dist/cli/index.js",
@@ -87,12 +81,6 @@
       "node": "./dist/forms/index.js",
       "types": "./src/forms/index.ts"
     },
-    "./ids": {
-      "default": "./dist/ids/index.js",
-      "import": "./dist/ids/index.js",
-      "node": "./dist/ids/index.js",
-      "types": "./src/ids/index.ts"
-    },
     "./geocode": {
       "default": "./dist/geocode/index.js",
       "import": "./dist/geocode/index.js",
@@ -104,6 +92,12 @@
       "import": "./dist/globals/index.js",
       "node": "./dist/globals/index.js",
       "types": "./src/globals/index.ts"
+    },
+    "./ids": {
+      "default": "./dist/ids/index.js",
+      "import": "./dist/ids/index.js",
+      "node": "./dist/ids/index.js",
+      "types": "./src/ids/index.ts"
     },
     "./interactions": {
       "default": "./dist/interactions/index.js",
@@ -195,6 +189,18 @@
       "node": "./dist/api/api-error.test.js",
       "types": "./src/api/api-error.test.ts"
     },
+    "./api/get-auth-user-facing-error": {
+      "default": "./dist/api/get-auth-user-facing-error.js",
+      "import": "./dist/api/get-auth-user-facing-error.js",
+      "node": "./dist/api/get-auth-user-facing-error.js",
+      "types": "./src/api/get-auth-user-facing-error.ts"
+    },
+    "./api/get-better-auth-user-message": {
+      "default": "./dist/api/get-better-auth-user-message.js",
+      "import": "./dist/api/get-better-auth-user-message.js",
+      "node": "./dist/api/get-better-auth-user-message.js",
+      "types": "./src/api/get-better-auth-user-message.ts"
+    },
     "./api/get-user-facing-error": {
       "default": "./dist/api/get-user-facing-error.js",
       "import": "./dist/api/get-user-facing-error.js",
@@ -212,6 +218,24 @@
       "import": "./dist/api/types.js",
       "node": "./dist/api/types.js",
       "types": "./src/api/types.ts"
+    },
+    "./auth/platform-admin": {
+      "default": "./dist/auth/platform-admin.js",
+      "import": "./dist/auth/platform-admin.js",
+      "node": "./dist/auth/platform-admin.js",
+      "types": "./src/auth/platform-admin.ts"
+    },
+    "./auth/resolve-cookie-domain": {
+      "default": "./dist/auth/resolve-cookie-domain.js",
+      "import": "./dist/auth/resolve-cookie-domain.js",
+      "node": "./dist/auth/resolve-cookie-domain.js",
+      "types": "./src/auth/resolve-cookie-domain.ts"
+    },
+    "./auth/resolve-cookie-domain.test": {
+      "default": "./dist/auth/resolve-cookie-domain.test.js",
+      "import": "./dist/auth/resolve-cookie-domain.test.js",
+      "node": "./dist/auth/resolve-cookie-domain.test.js",
+      "types": "./src/auth/resolve-cookie-domain.test.ts"
     },
     "./cli/logger": {
       "default": "./dist/cli/logger.js",
@@ -327,6 +351,18 @@
       "node": "./dist/globals/social-platform-urls.js",
       "types": "./src/globals/social-platform-urls.ts"
     },
+    "./ids/generate-id": {
+      "default": "./dist/ids/generate-id.js",
+      "import": "./dist/ids/generate-id.js",
+      "node": "./dist/ids/generate-id.js",
+      "types": "./src/ids/generate-id.ts"
+    },
+    "./ids/generate-id.test": {
+      "default": "./dist/ids/generate-id.test.js",
+      "import": "./dist/ids/generate-id.test.js",
+      "node": "./dist/ids/generate-id.test.js",
+      "types": "./src/ids/generate-id.test.ts"
+    },
     "./instagram/parseInstagramUsername": {
       "default": "./dist/instagram/parseInstagramUsername.js",
       "import": "./dist/instagram/parseInstagramUsername.js",
@@ -344,6 +380,18 @@
       "import": "./dist/locale/languages.js",
       "node": "./dist/locale/languages.js",
       "types": "./src/locale/languages.ts"
+    },
+    "./locale/resolve-request-locale": {
+      "default": "./dist/locale/resolve-request-locale.js",
+      "import": "./dist/locale/resolve-request-locale.js",
+      "node": "./dist/locale/resolve-request-locale.js",
+      "types": "./src/locale/resolve-request-locale.ts"
+    },
+    "./locale/resolve-request-locale.test": {
+      "default": "./dist/locale/resolve-request-locale.test.js",
+      "import": "./dist/locale/resolve-request-locale.test.js",
+      "node": "./dist/locale/resolve-request-locale.test.js",
+      "types": "./src/locale/resolve-request-locale.test.ts"
     },
     "./locale/timezones": {
       "default": "./dist/locale/timezones.js",

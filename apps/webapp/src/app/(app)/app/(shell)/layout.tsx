@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { PaymentFailureModal } from "@/components/billing/PaymentFailureModal";
 import { AppShellRefreshRegistrar } from "@/components/shell/AppShellRefreshRegistrar";
 import { AppShellWithQueryBadges } from "@/components/shell/AppShellWithQueryBadges";
 import { AppShellWrapper } from "@/components/shell/AppShellWrapper";
@@ -64,6 +65,7 @@ export default async function AppShellLayout({ children }: { children: React.Rea
       <EnrichStatusNotificationManager />
       <EnrichResumeDetector />
       <ExtensionUpdateNotificationManager />
+      <PaymentFailureModal />
       <Suspense
         fallback={
           <AppShellWrapper

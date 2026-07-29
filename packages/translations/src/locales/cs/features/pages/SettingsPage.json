@@ -374,6 +374,7 @@
     "PaymentIssue": "Platbu se nepodařilo zpracovat. Aktualizujte prosím platební údaje.",
     "PremiumPlan": "Premium",
     "RenewsOn": "Váš plán se obnoví {date}.",
+    "StudentPromoHint": "Máte studentský kód? Zadejte ho při platbě.",
     "SubscriptionExpired": "Vaše předplatné vypršelo.",
     "SubscriptionExpiredDate": "Vaše předplatné vypršelo {date}.",
     "SubscriptionExpiresNoRenew": "Vaše předplatné vyprší a nebude se obnovovat.",

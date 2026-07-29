@@ -23,7 +23,7 @@ If you see:
 Authorization page could not be loaded … redirect URI exact match (https://<extension-id>.chromiumapp.org/)
 ```
 
-This means the OAuth client in your local Supabase does not have your extension's redirect URI registered (common after a DB reset or on a new machine). Follow the [Chrome Extension OAuth Setup workflow](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md) to fix it.
+This means the OAuth client on the API does not have your extension's redirect URI registered (common on a new machine). Follow the [Chrome Extension OAuth Setup workflow](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md) to fix it.
 
 ## Testing the "extension update required" flow locally
 

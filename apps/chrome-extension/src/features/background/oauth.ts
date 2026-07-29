@@ -1,5 +1,5 @@
 import { browser } from "wxt/browser";
-import { config } from "../../config";
+import { config, getOAuthAuthorizeUrl, getOAuthResource, getOAuthTokenUrl, OAUTH_SCOPE } from "../../config";
 import {
   clearTokens,
   exchangeCodeForTokens,
@@ -36,9 +36,8 @@ export async function handleAuthStatus(sendResponse: (response: unknown) => void
 
 export async function handleLogin(sendResponse: (response: unknown) => void): Promise<void> {
   extLog.debug("[background][oauth] login-request", {
-    apiUrl: config.appUrl,
+    apiUrl: config.apiUrl,
     loginInProgress: backgroundState.loginInProgress,
-    supabaseUrl: config.supabaseUrl,
   });
 
   if (backgroundState.loginInProgress) {
@@ -77,18 +76,17 @@ export async function initiateOAuthFlow(): Promise<{ success: boolean; error?: s
 
     const redirectUri = browser.identity.getRedirectURL();
 
-    const authBaseUrl = config.supabaseUrl.replace("http://localhost:", "http://127.0.0.1:");
-    const authUrl = new URL(`${authBaseUrl}/auth/v1/oauth/authorize`);
+    const authUrl = new URL(getOAuthAuthorizeUrl());
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("client_id", config.oauthClientId);
     authUrl.searchParams.set("redirect_uri", redirectUri);
     authUrl.searchParams.set("code_challenge", codeChallenge);
     authUrl.searchParams.set("code_challenge_method", "S256");
     authUrl.searchParams.set("state", state);
-    authUrl.searchParams.set("scope", "openid email profile");
+    authUrl.searchParams.set("scope", OAUTH_SCOPE);
+    authUrl.searchParams.set("resource", getOAuthResource());
 
     extLog.debug("[background][oauth] authorize-request", {
-      authBaseUrl,
       authorizeUrl: authUrl.toString(),
       clientId: config.oauthClientId,
       codeChallengePrefix: codeChallenge.slice(0, 12),
@@ -149,7 +147,7 @@ export async function initiateOAuthFlow(): Promise<{ success: boolean; error?: s
     extLog.debug("[background][oauth] exchange-start", {
       clientId: config.oauthClientId,
       redirectUri,
-      tokenEndpoint: `${config.supabaseUrl}/auth/v1/oauth/token`,
+      tokenEndpoint: getOAuthTokenUrl(),
     });
 
     const tokens = await exchangeCodeForTokens(code, codeVerifier, redirectUri);
@@ -183,7 +181,7 @@ export async function initiateOAuthFlow(): Promise<{ success: boolean; error?: s
       return {
         error:
           `Authorization page could not be loaded. ` +
-          `Verify Supabase OAuth app settings: client_id, OAuth server enabled, and redirect URI exact match (${redirectUri}).`,
+          `Verify OAuth client settings: client_id, redirect URI exact match (${redirectUri}), and API reachability.`,
         success: false,
       };
     }

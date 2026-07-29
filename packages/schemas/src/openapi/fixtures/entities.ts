@@ -252,15 +252,17 @@ export const EXAMPLE_SUBSCRIPTION_STATUS = {
   aiMessagesUsed: 12,
   aiMonthlyResetAt: EXAMPLE_ISO_TIMESTAMP,
   amount: 900,
+  billingStatus: "active" as const,
   cancelAtPeriodEnd: false,
   canUseChat: true,
   currency: "usd",
   currentPeriodEnd: EXAMPLE_ISO_TIMESTAMP,
+  paymentBlocked: false,
   plan: "premium" as const,
-  polarStatus: "active" as const,
   productName: "Bondery Premium",
   recurringInterval: "month" as const,
   trialEndsAt: null,
+  upgradesEnabled: false,
 };
 
 export const EXAMPLE_API_KEY_LIST_ITEM = {

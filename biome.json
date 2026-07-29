@@ -32,7 +32,6 @@
       "!**/Untitled-1.html",
       "!**/*.generated.ts",
       "!**/generated",
-      "!packages/schemas/src/supabase.types.ts",
       "!packages/schemas/src/openapi/fixtures",
       "!**/.dockerignore*"
     ]

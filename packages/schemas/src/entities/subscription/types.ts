@@ -5,16 +5,16 @@ export interface Subscription {
   createdAt: string;
   currentPeriodEnd: string | null;
   id: string;
-  polarCustomerId: string;
-  polarSubscriptionId: string;
   status: SubscriptionStatusValue;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
   updatedAt: string;
   userId: string;
 }
 
 export type PlanTier = "free" | "premium";
 
-export type PolarSubscriptionStatus =
+export type BillingSubscriptionStatus =
   | "incomplete"
   | "incomplete_expired"
   | "trialing"
@@ -23,20 +23,22 @@ export type PolarSubscriptionStatus =
   | "canceled"
   | "unpaid";
 
-export type PolarRecurringInterval = "day" | "week" | "month" | "year";
+export type BillingInterval = "month" | "year";
 
 export interface SubscriptionStatus {
   aiMessageLimit: number;
   aiMessagesUsed: number;
   aiMonthlyResetAt: string | null;
   amount: number | null;
+  billingStatus: BillingSubscriptionStatus | null;
   cancelAtPeriodEnd: boolean;
   canUseChat: boolean;
   currency: string | null;
   currentPeriodEnd: string | null;
+  paymentBlocked: boolean;
   plan: PlanTier;
-  polarStatus: PolarSubscriptionStatus | null;
   productName: string | null;
-  recurringInterval: PolarRecurringInterval | null;
+  recurringInterval: BillingInterval | null;
   trialEndsAt: string | null;
+  upgradesEnabled: boolean;
 }
