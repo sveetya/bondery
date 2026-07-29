@@ -3,7 +3,7 @@ import { getErrorDocUrl } from "@bondery/schemas/errors";
 import type { FastifyRateLimitOptions } from "@fastify/rate-limit";
 import fastifyRateLimit from "@fastify/rate-limit";
 import type { FastifyRequest } from "fastify";
-import { getRedisCommands } from "../data/redis.js";
+import { requireRedisCommands } from "../data/redis.js";
 import { URLS } from "./config.js";
 import type { AppFastifyInstance } from "./fastify-types.js";
 
@@ -49,13 +49,13 @@ function buildErrorResponse(_request: FastifyRequest, context: { ttl: number }) 
 
 export async function registerRateLimit(fastify: AppFastifyInstance): Promise<void> {
   const redisUrl = fastify.config.BONDERY_PRIVATE_REDIS_URL;
-  if (process.env.NODE_ENV === "production" && !redisUrl.trim()) {
+  if (!redisUrl.trim()) {
     throw new Error(
-      "BONDERY_PRIVATE_REDIS_URL must be set in production. In-memory rate limiting is per-instance and ineffective on serverless deployments.",
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
     );
   }
 
-  const redis = getRedisCommands(redisUrl);
+  const redis = requireRedisCommands(redisUrl);
 
   const options: FastifyRateLimitOptions = {
     allowList: (request: FastifyRequest) => request.method === "OPTIONS",

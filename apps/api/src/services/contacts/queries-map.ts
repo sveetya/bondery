@@ -2,8 +2,8 @@ import type { ContactAddressType } from "@bondery/schemas";
 import type { Database } from "@bondery/schemas/supabase.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../../lib/data/supabase.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 import type { MapBoundsQuery, ServiceLog } from "./queries-shared.js";
 
 export async function getMapAddressPins(

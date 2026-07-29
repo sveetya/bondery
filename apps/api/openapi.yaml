@@ -790,8 +790,8 @@ paths:
       description: "Readiness probe. Checks configured dependencies and returns per-service status. Results are cached in
         memory for one minute. Rate limited to one request per minute per client. Returns HTTP 503 when critical
         dependencies are unavailable (`status: unhealthy`). Returns HTTP 200 when all critical dependencies are healthy
-        (`status: ok` or `status: degraded`). Supabase auth is checked via `GET /auth/v1/health`; Supabase database
-        (PostgREST) via `GET /rest-admin/v1/ready`; Supabase storage via `GET /storage/v1/health`."
+        (`status: ok` or `status: degraded`). Supabase database (PostgREST) via `GET /rest-admin/v1/ready`; Supabase
+        storage via `GET /storage/v1/health`."
       responses:
         "200":
           description: Readiness report when dependencies are healthy or degraded
@@ -820,9 +820,6 @@ paths:
                     configured: true
                     ok: true
                   supabase:
-                    auth:
-                      latencyMs: 12
-                      ok: true
                     database:
                       latencyMs: 18
                       ok: true
@@ -929,20 +926,6 @@ paths:
                       supabase:
                         type: object
                         properties:
-                          auth:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
                           database:
                             type: object
                             properties:
@@ -972,7 +955,6 @@ paths:
                               - ok
                             additionalProperties: false
                         required:
-                          - auth
                           - database
                           - storage
                         additionalProperties: false
@@ -1024,9 +1006,6 @@ paths:
                       configured: true
                       ok: true
                     supabase:
-                      auth:
-                        latencyMs: 12
-                        ok: true
                       database:
                         latencyMs: 18
                         ok: true
@@ -1142,9 +1121,6 @@ paths:
                     configured: true
                     ok: true
                   supabase:
-                    auth:
-                      error: Connection refused
-                      ok: false
                     database:
                       error: Connection refused
                       ok: false
@@ -1251,20 +1227,6 @@ paths:
                       supabase:
                         type: object
                         properties:
-                          auth:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
                           database:
                             type: object
                             properties:
@@ -1294,7 +1256,6 @@ paths:
                               - ok
                             additionalProperties: false
                         required:
-                          - auth
                           - database
                           - storage
                         additionalProperties: false
@@ -1346,9 +1307,6 @@ paths:
                       configured: true
                       ok: true
                     supabase:
-                      auth:
-                        latencyMs: 12
-                        ok: true
                       database:
                         latencyMs: 18
                         ok: true
@@ -1499,7 +1457,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts:
+  /contacts:
     get:
       tags:
         - Contacts
@@ -2213,7 +2171,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/select:
+  /contacts/select:
     get:
       tags:
         - Contacts
@@ -2415,7 +2373,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/by-social:
+  /contacts/by-social:
     get:
       tags:
         - Contacts
@@ -2571,7 +2529,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/map-address-pins:
+  /contacts/map-address-pins:
     get:
       tags:
         - Contacts
@@ -2782,7 +2740,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/map-pins:
+  /contacts/map-pins:
     get:
       tags:
         - Contacts
@@ -2984,7 +2942,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/important-dates/upcoming:
+  /contacts/important-dates/upcoming:
     get:
       tags:
         - Contacts
@@ -3196,7 +3154,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}:
+  /contacts/{id}:
     get:
       tags:
         - Contacts
@@ -3828,7 +3786,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/groups:
+  /contacts/{id}/groups:
     get:
       tags:
         - Contacts
@@ -4001,7 +3959,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/vcard:
+  /contacts/{id}/vcard:
     get:
       tags:
         - Contacts
@@ -4145,7 +4103,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/tags:
+  /contacts/{id}/tags:
     get:
       tags:
         - Contacts
@@ -4397,7 +4355,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/tags/{tagId}:
+  /contacts/{id}/tags/{tagId}:
     delete:
       tags:
         - Contacts
@@ -4516,7 +4474,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/photo:
+  /contacts/{id}/photo:
     post:
       tags:
         - Contacts
@@ -4760,7 +4718,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/relationships:
+  /contacts/{id}/relationships:
     get:
       tags:
         - Contacts
@@ -5170,7 +5128,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/relationships/{relationshipId}:
+  /contacts/{id}/relationships/{relationshipId}:
     patch:
       tags:
         - Contacts
@@ -5492,7 +5450,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/important-dates:
+  /contacts/{id}/important-dates:
     get:
       tags:
         - Contacts
@@ -5896,7 +5854,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/enrich:
+  /contacts/{id}/enrich:
     post:
       tags:
         - Contacts
@@ -6090,7 +6048,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/{id}/linkedin-data:
+  /contacts/{id}/linkedin-data:
     post:
       tags:
         - Contacts
@@ -6480,7 +6438,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge-recommendations/count:
+  /contacts/merge-recommendations/count:
     get:
       tags:
         - Contacts
@@ -6594,7 +6552,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge-recommendations:
+  /contacts/merge-recommendations:
     get:
       tags:
         - Contacts
@@ -6770,7 +6728,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge-recommendations/refresh:
+  /contacts/merge-recommendations/refresh:
     post:
       tags:
         - Contacts
@@ -6931,7 +6889,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge-recommendations/{id}/decline:
+  /contacts/merge-recommendations/{id}/decline:
     patch:
       tags:
         - Contacts
@@ -7050,7 +7008,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge-recommendations/{id}/restore:
+  /contacts/merge-recommendations/{id}/restore:
     patch:
       tags:
         - Contacts
@@ -7169,7 +7127,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/merge:
+  /contacts/merge:
     post:
       tags:
         - Contacts
@@ -7316,7 +7274,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue/count:
+  /contacts/enrich-queue/count:
     get:
       tags:
         - Contacts
@@ -7430,7 +7388,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue/status:
+  /contacts/enrich-queue/status:
     get:
       tags:
         - Contacts
@@ -7548,7 +7506,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue/init:
+  /contacts/enrich-queue/init:
     post:
       tags:
         - Contacts
@@ -7670,7 +7628,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue/next-batch:
+  /contacts/enrich-queue/next-batch:
     get:
       tags:
         - Contacts
@@ -7805,7 +7763,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue/{id}:
+  /contacts/enrich-queue/{id}:
     patch:
       tags:
         - Contacts
@@ -7943,7 +7901,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/enrich-queue:
+  /contacts/enrich-queue:
     delete:
       tags:
         - Contacts
@@ -8057,7 +8015,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/keep-in-touch/count:
+  /contacts/keep-in-touch/count:
     get:
       tags:
         - Contacts
@@ -8171,7 +8129,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/linkedin/parse:
+  /contacts/import/linkedin/parse:
     post:
       tags:
         - Import
@@ -8348,7 +8306,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/linkedin/commit:
+  /contacts/import/linkedin/commit:
     post:
       tags:
         - Import
@@ -8533,7 +8491,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/instagram/parse:
+  /contacts/import/instagram/parse:
     post:
       tags:
         - Import
@@ -8710,7 +8668,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/instagram/commit:
+  /contacts/import/instagram/commit:
     post:
       tags:
         - Import
@@ -8895,7 +8853,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/vcard/parse:
+  /contacts/import/vcard/parse:
     post:
       tags:
         - Import
@@ -9224,7 +9182,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/import/vcard/commit:
+  /contacts/import/vcard/commit:
     post:
       tags:
         - Import
@@ -9554,7 +9512,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/groups:
+  /groups:
     get:
       tags:
         - Groups
@@ -10000,7 +9958,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/groups/{id}:
+  /groups/{id}:
     get:
       tags:
         - Groups
@@ -10368,7 +10326,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/groups/{id}/contacts:
+  /groups/{id}/contacts:
     get:
       tags:
         - Groups
@@ -11124,7 +11082,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/tags:
+  /tags:
     get:
       tags:
         - Tags
@@ -11558,7 +11516,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/tags/{id}:
+  /tags/{id}:
     get:
       tags:
         - Tags
@@ -11923,7 +11881,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/tags/{id}/contacts:
+  /tags/{id}/contacts:
     get:
       tags:
         - Tags
@@ -12379,7 +12337,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/interactions:
+  /interactions:
     get:
       tags:
         - Interactions
@@ -12716,7 +12674,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/interactions/{id}:
+  /interactions/{id}:
     get:
       tags:
         - Interactions
@@ -13204,7 +13162,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/contacts/share:
+  /contacts/share:
     post:
       tags:
         - Share
@@ -13365,7 +13323,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/geocode/suggest:
+  /geocode/suggest:
     get:
       tags:
         - Geocode
@@ -13622,7 +13580,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/geocode/timezone:
+  /geocode/timezone:
     get:
       tags:
         - Geocode
@@ -13754,7 +13712,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me:
+  /me:
     patch:
       tags:
         - Me
@@ -14018,7 +13976,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/person:
+  /me/person:
     get:
       tags:
         - Me
@@ -14147,7 +14105,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/photo:
+  /me/photo:
     post:
       tags:
         - Me
@@ -14389,7 +14347,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/initialize:
+  /me/initialize:
     post:
       tags:
         - Me
@@ -14398,7 +14356,7 @@ paths:
       responses:
         "204":
           description: No content
-  /api/me/session:
+  /me/session:
     get:
       tags:
         - Me
@@ -14426,6 +14384,8 @@ paths:
                           - auto
                       displayName:
                         type: string
+                      isPlatformAdmin:
+                        type: boolean
                       language:
                         type: string
                         enum:
@@ -14447,6 +14407,7 @@ paths:
                       - avatarUrl
                       - colorScheme
                       - displayName
+                      - isPlatformAdmin
                       - language
                       - onboardingCompletedAt
                       - timeFormat
@@ -14553,7 +14514,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/onboarding/complete:
+  /me/onboarding/complete:
     patch:
       tags:
         - Me
@@ -14667,7 +14628,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/onboarding/import-followup:
+  /me/onboarding/import-followup:
     patch:
       tags:
         - Me
@@ -14800,7 +14761,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/settings:
+  /me/settings:
     get:
       tags:
         - Me
@@ -15245,7 +15206,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/settings/getting-started-dismiss:
+  /me/settings/getting-started-dismiss:
     patch:
       tags:
         - Me
@@ -15359,7 +15320,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/feedback:
+  /me/feedback:
     post:
       tags:
         - Me
@@ -15492,7 +15453,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/api-keys:
+  /me/api-keys:
     get:
       tags:
         - Me
@@ -15805,7 +15766,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/me/api-keys/{id}:
+  /me/api-keys/{id}:
     patch:
       tags:
         - Me
@@ -16067,7 +16028,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/sync/bootstrap:
+  /sync/bootstrap:
     get:
       tags:
         - Sync
@@ -16247,7 +16208,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/sync/pull:
+  /sync/pull:
     get:
       tags:
         - Sync
@@ -16436,7 +16397,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/sync/push:
+  /sync/push:
     post:
       tags:
         - Sync
@@ -17353,7 +17314,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/sync/ws-ticket:
+  /sync/ws-ticket:
     get:
       tags:
         - Sync
@@ -17472,7 +17433,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/extension:
+  /extension:
     post:
       tags:
         - Extension
@@ -17662,7 +17623,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/chat:
+  /chat:
     post:
       tags:
         - Chat
@@ -17785,7 +17746,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/chat/sessions:
+  /chat/sessions:
     get:
       tags:
         - Chat
@@ -18070,7 +18031,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/chat/sessions/{sessionId}:
+  /chat/sessions/{sessionId}:
     patch:
       tags:
         - Chat
@@ -18327,7 +18288,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/chat/sessions/{sessionId}/messages:
+  /chat/sessions/{sessionId}/messages:
     get:
       tags:
         - Chat
@@ -18488,7 +18449,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/subscriptions:
+  /subscriptions:
     get:
       tags:
         - Subscriptions
@@ -18704,7 +18665,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/subscriptions/checkout:
+  /subscriptions/checkout:
     post:
       tags:
         - Subscriptions
@@ -18833,7 +18794,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/subscriptions/portal:
+  /subscriptions/portal:
     get:
       tags:
         - Subscriptions
@@ -18935,7 +18896,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/subscriptions/sync:
+  /subscriptions/sync:
     post:
       tags:
         - Subscriptions
@@ -19074,7 +19035,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/admin/stats/active-users:
+  /admin/stats/active-users:
     get:
       tags:
         - Stats
@@ -19223,7 +19184,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/admin/stats/funnel:
+  /admin/stats/funnel:
     get:
       tags:
         - Stats
@@ -19379,7 +19340,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/admin/stats/nps:
+  /admin/stats/nps:
     get:
       tags:
         - Stats
@@ -19516,7 +19477,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/admin/stats/total-users:
+  /admin/stats/total-users:
     get:
       tags:
         - Stats
@@ -19647,7 +19608,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/admin/stats/github-stars:
+  /admin/stats/github-stars:
     get:
       tags:
         - Stats
@@ -19768,7 +19729,7 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /api/webhooks/polar:
+  /webhooks/polar:
     post:
       tags:
         - Webhooks

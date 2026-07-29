@@ -4,8 +4,9 @@ import {
   deleteContactAvatarAndClearFlag,
   uploadContactAvatarAndSetFlag,
 } from "../../lib/contacts/avatar-storage.js";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { buildPeopleRowChange } from "../../lib/sync/build-changes.js";
 import { persistSyncChanges } from "../../lib/sync/persist-changes.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "../_shared/context.js";
@@ -67,7 +68,7 @@ export async function uploadContactPhoto(
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 
-  const { resolveContactAvatarUrl } = await import("../../lib/data/supabase.js");
+  const { resolveContactAvatarUrl } = await import("../../lib/storage/avatar-urls.js");
   const avatarUrl = resolveContactAvatarUrl(client, user.id, {
     hasAvatar: true,
     id: contactId,

@@ -1,6 +1,6 @@
 import type { Json } from "@bondery/schemas/supabase.types";
 import type { SyncChange, SyncEmitMeta, SyncTableKey, SyncWakeEvent } from "@bondery/schemas/sync";
-import { createAdminClient } from "../data/supabase.js";
+import { createAdminClient } from "../storage/supabase-client.js";
 import { allocateServerSequences } from "./idempotency.js";
 import { notifySyncWake } from "./wake/index.js";
 

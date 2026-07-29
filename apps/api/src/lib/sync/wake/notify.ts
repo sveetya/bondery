@@ -1,11 +1,8 @@
 import type { SyncWakeEvent } from "@bondery/schemas/sync";
 import type { FastifyBaseLogger } from "fastify";
 
-import { getRedisCommands, getRedisSubscriber } from "../../data/redis.js";
+import { requireRedisCommands, requireRedisSubscriber } from "../../data/redis.js";
 import { SyncConnectionHub } from "./hub.js";
-
-import { InMemorySyncWakeBus } from "./in-memory-bus.js";
-
 import { RedisSyncWakeBus } from "./redis-bus.js";
 import { createSyncWsTicketStore, type SyncWsTicketStore } from "./tickets.js";
 import type { SyncWakeBus } from "./types.js";
@@ -29,24 +26,21 @@ function isWakeEnabled(): boolean {
 }
 
 export function createSyncWakeRuntime(log?: FastifyBaseLogger): SyncWakeRuntime {
-  const redisUrl = process.env.BONDERY_PRIVATE_REDIS_URL?.trim() ?? "";
-  const hub = new SyncConnectionHub(log);
-  const commands = getRedisCommands(redisUrl || undefined);
-  const subscriber = getRedisSubscriber(redisUrl || undefined);
-  const tickets = createSyncWsTicketStore(commands);
-
-  let bus: SyncWakeBus;
-  let redisWakeBus: RedisSyncWakeBus | null = null;
-
-  if (commands && subscriber) {
-    redisWakeBus = new RedisSyncWakeBus(commands, subscriber);
-    bus = redisWakeBus;
-  } else {
-    bus = new InMemorySyncWakeBus();
+  const redisUrl = process.env.BONDERY_PRIVATE_REDIS_URL?.trim();
+  if (!redisUrl) {
+    throw new Error(
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+    );
   }
 
+  const hub = new SyncConnectionHub(log);
+  const commands = requireRedisCommands(redisUrl);
+  const subscriber = requireRedisSubscriber(redisUrl);
+  const tickets = createSyncWsTicketStore(commands);
+  const redisWakeBus = new RedisSyncWakeBus(commands, subscriber);
+
   return {
-    bus,
+    bus: redisWakeBus,
     enabled: isWakeEnabled(),
     hub,
     redisWakeBus,

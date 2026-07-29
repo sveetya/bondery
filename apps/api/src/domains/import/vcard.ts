@@ -5,11 +5,11 @@ import type {
   VCardPreparedContact,
 } from "@bondery/schemas";
 import { uploadContactAvatarAndSetFlag } from "../../lib/contacts/avatar-storage.js";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { decodeDataUri } from "../../lib/import/decode-data-uri.js";
 import { assignContactsToDefaultImportGroup } from "../../lib/import/default-groups.js";
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import type { DomainContext } from "../_shared/context.js";
 import { scheduleMergeRecommendationsRefresh } from "../contacts/merge-recommendations.js";
 

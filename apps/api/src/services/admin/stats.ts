@@ -11,8 +11,8 @@ import {
   EXAMPLE_TOTAL_USERS_RESPONSE,
 } from "@bondery/schemas/openapi/fixtures/responses";
 import { z } from "zod";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getActiveUsersTimeline, getNpsResults } from "../../services/admin/posthog.js";
 
 export const activeUsersTimelinePointSchema = z.object({

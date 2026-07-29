@@ -1,5 +1,5 @@
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 
 export async function findUserIdByEmail(email: string): Promise<string | null> {
   const admin = createAdminClient();

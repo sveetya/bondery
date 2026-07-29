@@ -8,7 +8,7 @@ import type {
 } from "@bondery/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { CONTACT_SELECT, type ContactWithId } from "../data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../data/supabase.js";
+import { resolveContactAvatarUrl } from "../storage/avatar-urls.js";
 import {
   type ContactExtrasPayload,
   fetchContactExtras,

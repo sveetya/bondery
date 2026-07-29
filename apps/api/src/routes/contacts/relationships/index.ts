@@ -24,12 +24,12 @@ import {
   updateRelationship,
 } from "../../../domains/contacts/relationships.js";
 import { extractAvatarOptions } from "../../../lib/data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../../../lib/data/supabase.js";
 import { getAuth } from "../../../lib/platform/auth/strategies.js";
 import { internal, notFound } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
+import { resolveContactAvatarUrl } from "../../../lib/storage/avatar-urls.js";
 
 // ── Constants ────────────────────────────────────────────────────
 

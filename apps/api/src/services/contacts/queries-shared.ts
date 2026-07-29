@@ -7,7 +7,7 @@ import type {
 import type { AvatarTransformQuery } from "@bondery/schemas/http";
 import type { Database } from "@bondery/schemas/supabase.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { resolveContactAvatarUrl } from "../../lib/data/supabase.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
 export const LOOKUP_SOCIAL_PLATFORMS: SocialPlatform[] = ["instagram", "linkedin", "facebook"];
 

@@ -1,7 +1,6 @@
 import {
   probeConfigured,
   probeRedis,
-  probeSupabaseAuth,
   probeSupabaseDatabase,
   probeSupabaseStorage,
 } from "./probes.js";
@@ -35,12 +34,7 @@ function isPosthogConfigured(config: HealthCheckConfig): boolean {
 }
 
 function deriveOverallStatus(services: HealthServices): HealthStatus {
-  const critical = [
-    services.supabase.auth,
-    services.supabase.database,
-    services.supabase.storage,
-    services.smtp,
-  ];
+  const critical = [services.supabase.database, services.supabase.storage, services.smtp];
 
   if (critical.some((service) => !service.ok)) {
     return "unhealthy";
@@ -60,8 +54,7 @@ function deriveOverallStatus(services: HealthServices): HealthStatus {
 }
 
 async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
-  const [auth, database, storage, redis] = await Promise.all([
-    probeSupabaseAuth(config.supabaseUrl, config.supabasePublishableKey),
+  const [database, storage, redis] = await Promise.all([
     probeSupabaseDatabase(config.supabaseUrl, config.supabasePublishableKey),
     probeSupabaseStorage(config.supabaseUrl, config.supabasePublishableKey),
     probeRedis(config.redisUrl),
@@ -74,7 +67,7 @@ async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
     posthog: probeConfigured(isPosthogConfigured(config)),
     redis,
     smtp: probeConfigured(isSmtpConfigured(config), { required: true }),
-    supabase: { auth, database, storage },
+    supabase: { database, storage },
   };
 }
 

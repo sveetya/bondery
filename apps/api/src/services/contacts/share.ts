@@ -6,8 +6,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
 import { attachContactExtras, type FullContactExtras } from "../../lib/contacts/enrichment.js";
 import { CONTACT_SELECT } from "../../lib/data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../../lib/data/supabase.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
 export type ShareContactInput = {
   personId: string;

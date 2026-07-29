@@ -1,7 +1,7 @@
 import type { AvatarTransformOptions } from "@bondery/schemas";
 import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
 import { INTERACTION_SELECT } from "../../lib/data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../../lib/data/supabase.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
 export function mapInteractionParticipant(
   client: DomainSupabaseClient,

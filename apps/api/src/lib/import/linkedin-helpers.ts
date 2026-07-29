@@ -8,9 +8,9 @@
 import type { Database, ScrapedEducationEntry, ScrapedWorkHistoryEntry } from "@bondery/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { uploadContactAvatarAndSetFlag } from "../contacts/avatar-storage.js";
-import { createAdminClient } from "../data/supabase.js";
 import { validateImageMagicBytes, validateImageUpload } from "../platform/config.js";
 import logger from "../platform/logger.js";
+import { createAdminClient } from "../storage/supabase-client.js";
 
 /**
  * Converts a loose date string (YYYY, YYYY-MM, or YYYY-MM-DD) into a

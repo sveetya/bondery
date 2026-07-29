@@ -17,7 +17,6 @@ const READINESS_DESCRIPTION =
   "Results are cached in memory for one minute. Rate limited to one request per minute per client. " +
   "Returns HTTP 503 when critical dependencies are unavailable (`status: unhealthy`). " +
   "Returns HTTP 200 when all critical dependencies are healthy (`status: ok` or `status: degraded`). " +
-  "Supabase auth is checked via `GET /auth/v1/health`; " +
   "Supabase database (PostgREST) via `GET /rest-admin/v1/ready`; " +
   "Supabase storage via `GET /storage/v1/health`.";
 

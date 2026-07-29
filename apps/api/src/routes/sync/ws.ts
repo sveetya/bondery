@@ -1,8 +1,8 @@
 import { parseSyncWsClientMessage } from "@bondery/schemas/sync";
 import websocket from "@fastify/websocket";
 import type { WebSocket } from "ws";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getLastServerSequence } from "../../lib/sync/idempotency.js";
 import {
   getSyncWakeRuntime,

@@ -3,8 +3,8 @@ import type { AvatarTransformQuery } from "@bondery/schemas/http";
 import type { Database } from "@bondery/schemas/supabase.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { extractAvatarOptions, GROUP_SELECT } from "../../lib/data/select-fragments.js";
-import { resolveContactAvatarUrl } from "../../lib/data/supabase.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
+import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
 export type PreviewListQuery = AvatarTransformQuery & {
   previewLimit?: number | string;

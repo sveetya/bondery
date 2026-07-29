@@ -6,7 +6,6 @@ export type ServiceProbeResult = {
 };
 
 export type SupabaseServiceStatus = {
-  auth: ServiceProbeResult;
   database: ServiceProbeResult;
   storage: ServiceProbeResult;
 };

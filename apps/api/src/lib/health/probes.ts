@@ -65,17 +65,6 @@ async function probeHttp(
   }
 }
 
-export async function probeSupabaseAuth(
-  supabaseUrl: string,
-  publishableKey: string,
-): Promise<ServiceProbeResult> {
-  const baseUrl = normalizeSupabaseBaseUrl(supabaseUrl);
-  return probeHttp(`${baseUrl}/auth/v1/health`, {
-    headers: supabaseRequestHeaders(publishableKey),
-    method: "GET",
-  });
-}
-
 export async function probeSupabaseDatabase(
   supabaseUrl: string,
   publishableKey: string,

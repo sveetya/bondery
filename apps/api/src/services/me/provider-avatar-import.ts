@@ -5,9 +5,9 @@
 import type { Database } from "@bondery/schemas/supabase.types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { uploadContactAvatarAndSetFlag } from "../../lib/contacts/avatar-storage.js";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import logger from "../../lib/platform/logger.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 
 const AVATARS_BUCKET = "avatars";
 

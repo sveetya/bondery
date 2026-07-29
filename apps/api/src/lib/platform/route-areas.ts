@@ -76,7 +76,7 @@ export function sessionRoutes(plugin: AppRoutePlugin): AppRoutePlugin {
   };
 }
 
-/** Admin routes: session + is_admin (OpenAPI area remains session/bearer-only). */
+/** Admin routes: session + platform admin role (OpenAPI area remains session/bearer-only). */
 export function adminRoutes(plugin: AppRoutePlugin): AppRoutePlugin {
   return async (fastify) => {
     fastify.addHook("onRoute", stampOpenApiArea("session"));

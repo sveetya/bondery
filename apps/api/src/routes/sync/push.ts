@@ -1,10 +1,10 @@
 import type { SyncPushResult } from "@bondery/schemas/sync";
 import { syncPushRequestSchema, syncPushResponseSchema } from "@bondery/schemas/sync";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
-import { createAdminClient } from "../../lib/data/supabase.js";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { applySyncMutation } from "../../lib/sync/apply-mutation.js";
 import {
   findSyncReceipt,

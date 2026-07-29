@@ -13,7 +13,6 @@ export const serviceProbeResultSchema = z.object({
 });
 
 export const supabaseServiceStatusSchema = z.object({
-  auth: serviceProbeResultSchema,
   database: serviceProbeResultSchema,
   storage: serviceProbeResultSchema,
 });

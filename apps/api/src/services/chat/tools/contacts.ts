@@ -5,7 +5,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { createContact } from "../../../domains/contacts/index.js";
 import { searchPeopleIds } from "../../../lib/data/search.js";
-import { resolveContactAvatarUrl } from "../../../lib/data/supabase.js";
+import { resolveContactAvatarUrl } from "../../../lib/storage/avatar-urls.js";
 import { chatDomainContext, formatToolDomainError } from "../domain-context.js";
 
 type GroupJoinRow = {

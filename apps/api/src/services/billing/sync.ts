@@ -1,6 +1,6 @@
 import type { Polar } from "@polar-sh/sdk";
 import type { DomainContext } from "../../domains/_shared/context.js";
-import { createAdminClient } from "../../lib/data/supabase.js";
+import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getPolarClient } from "../../services/billing/polar.js";
 import { deletePendingSubscription, mapStatus, upsertSubscription } from "./subscription.js";
 
