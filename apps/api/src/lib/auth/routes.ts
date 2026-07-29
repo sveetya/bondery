@@ -125,17 +125,7 @@ function toFetchRequest(request: FastifyRequest): Request {
     }
   }
 
-  const raw = request.raw;
-  if (method !== "GET" && method !== "HEAD") {
-    const bridged = Object.create(raw, {
-      body: { value: request.body },
-      readable: { value: false },
-      readableEnded: { value: true },
-    }) as FastifyRequest["raw"] & { body?: unknown };
-    return getRequest({ base: CANONICAL_ORIGIN, request: bridged });
-  }
-
-  return getRequest({ base: CANONICAL_ORIGIN, request: raw });
+  return getRequest({ base: CANONICAL_ORIGIN, request: request.raw });
 }
 
 async function sendFetchResponse(

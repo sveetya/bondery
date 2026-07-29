@@ -9,7 +9,6 @@
 
 import { prisma } from "@bondery/db";
 import { WEBAPP_ROUTES } from "@bondery/helpers";
-import { billingIntervalSchema } from "@bondery/schemas";
 import { conflictResponse } from "@bondery/schemas/http/responses";
 import { EXAMPLE_CHECKOUT_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
@@ -20,10 +19,6 @@ import { conflict, forbidden, internal } from "../../lib/platform/errors/http-er
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { getStripeClient } from "../../services/billing/stripe.js";
 
-const checkoutRequestSchema = z.object({
-  interval: billingIntervalSchema,
-});
-
 const checkoutResponseSchema = z
   .object({
     clientSecret: z.string(),
@@ -32,14 +27,6 @@ const checkoutResponseSchema = z
 
 function isBillingUpgradesEnabled(value: string | undefined): boolean {
   return value === "true";
-}
-
-function resolvePriceId(
-  interval: z.infer<typeof billingIntervalSchema>,
-  monthlyPriceId: string,
-  annualPriceId: string,
-): string {
-  return interval === "year" ? annualPriceId : monthlyPriceId;
 }
 
 export async function subscriptionCheckoutRoutes(fastify: FastifyInstance): Promise<void> {
@@ -53,8 +40,8 @@ export async function subscriptionCheckoutRoutes(fastify: FastifyInstance): Prom
     "/",
     {
       schema: {
-        body: checkoutRequestSchema,
-        description: "Create a Stripe embedded Checkout session for upgrade.",
+        description:
+          "Create a Stripe embedded Checkout session for upgrade (monthly plan; change billing in Stripe portal).",
         response: {
           ...withOkResponse(checkoutResponseSchema, "Checkout session client secret"),
           ...conflictResponse,
@@ -67,16 +54,12 @@ export async function subscriptionCheckoutRoutes(fastify: FastifyInstance): Prom
       }
 
       const { user } = getAuth(request);
-      const monthlyPriceId = fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY;
-      const annualPriceId = fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL;
+      const priceId = fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY;
 
-      if (!monthlyPriceId || !annualPriceId) {
-        request.log.error("Stripe price IDs are not configured");
+      if (!priceId) {
+        request.log.error("Stripe monthly price ID is not configured");
         throw internal("checkout_not_configured");
       }
-
-      const body = checkoutRequestSchema.parse(request.body);
-      const priceId = resolvePriceId(body.interval, monthlyPriceId, annualPriceId);
 
       const existing = await prisma.subscription.findFirst({
         select: { status: true },

@@ -10,6 +10,7 @@ import fastifyAuth from "@fastify/auth";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
 import fastifyEnv from "@fastify/env";
+import formbody from "@fastify/formbody";
 import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import fastifySwagger from "@fastify/swagger";
@@ -134,6 +135,8 @@ export async function buildApp(): Promise<AppFastifyInstance> {
   });
 
   await fastify.register(cookie);
+
+  await fastify.register(formbody);
 
   await fastify.register(multipart, {
     limits: {
