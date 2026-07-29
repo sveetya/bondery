@@ -38,7 +38,10 @@ async function resolveCookieHeader(cookieHeader?: string): Promise<string> {
 export async function fetchBetterAuthSession(
   cookieHeader?: string,
 ): Promise<BetterAuthSessionPayload | null> {
-  const cookieValue = extractCookieValue(await resolveCookieHeader(cookieHeader), WEBAPP_SESSION_COOKIE);
+  const cookieValue = extractCookieValue(
+    await resolveCookieHeader(cookieHeader),
+    WEBAPP_SESSION_COOKIE,
+  );
   if (!cookieValue) {
     return null;
   }

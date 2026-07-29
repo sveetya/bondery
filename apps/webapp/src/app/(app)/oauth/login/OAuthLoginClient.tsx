@@ -9,8 +9,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LoginProviderButtons } from "@/app/(app)/login/components/LoginProviderButtons";
 import { Logo } from "@/app/(app)/login/components/Logo";
-import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { createWebappAuthClient } from "@/lib/auth/client";
+import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 

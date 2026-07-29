@@ -12,10 +12,12 @@ type DigestPayloadRow = {
  * Builds the hourly reminder digest payload and dispatches emails.
  * Replaces `send_hourly_reminder_digests()` + pg_net HTTP round-trip.
  */
-export async function runReminderDigestDispatch(): Promise<ReminderDigestResponse & {
-  scheduledUsers?: number;
-  message?: string;
-}> {
+export async function runReminderDigestDispatch(): Promise<
+  ReminderDigestResponse & {
+    scheduledUsers?: number;
+    message?: string;
+  }
+> {
   const rows = await prisma.$queryRaw<DigestPayloadRow[]>`
     WITH run_started_at AS (
       SELECT now() AS ts
@@ -117,11 +119,11 @@ export async function runReminderDigestDispatch(): Promise<ReminderDigestRespons
 
   if (row.due_user_count === 0) {
     return {
+      failedUsers: 0,
       message: "No users due for current hourly window",
       scheduledUsers: 0,
-      success: true,
-      failedUsers: 0,
       sentUsers: 0,
+      success: true,
       targetDate: new Date().toISOString().slice(0, 10),
     };
   }
@@ -137,11 +139,11 @@ export async function runReminderDigestDispatch(): Promise<ReminderDigestRespons
       WHERE us.next_reminder_at_utc <= now()
     `;
     return {
+      failedUsers: 0,
       message: "No reminders due for current hourly window",
       scheduledUsers: 0,
-      success: true,
-      failedUsers: 0,
       sentUsers: 0,
+      success: true,
       targetDate: new Date().toISOString().slice(0, 10),
     };
   }
@@ -157,15 +159,17 @@ export async function runReminderDigestDispatch(): Promise<ReminderDigestRespons
   const result = await sendReminderDigest(emailConfig, row.payload);
 
   for (const user of row.payload.users) {
-    await prisma.reminderDispatchLog.create({
-      data: {
-        reminderDate: new Date(`${user.targetDate ?? row.payload.targetDate}T00:00:00.000Z`),
-        timezone: user.timezone ?? "UTC",
-        userId: user.userId,
-      },
-    }).catch(() => {
-      // unique constraint — already dispatched
-    });
+    await prisma.reminderDispatchLog
+      .create({
+        data: {
+          reminderDate: new Date(`${user.targetDate ?? row.payload.targetDate}T00:00:00.000Z`),
+          timezone: user.timezone ?? "UTC",
+          userId: user.userId,
+        },
+      })
+      .catch(() => {
+        // unique constraint — already dispatched
+      });
   }
 
   await prisma.$executeRaw`

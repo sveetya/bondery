@@ -5,8 +5,6 @@ import { getContactSharingPreview, shareContact } from "../../contacts/share.js"
 import { formatToolDomainError } from "../domain-context.js";
 
 export function createSharingTools(ctx: DomainContext) {
-  const { user } = ctx;
-
   return {
     prepare_contact_for_sharing: tool({
       description:

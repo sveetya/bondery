@@ -9,10 +9,10 @@ const apiUrl = `http://${e2eHost}:26631`;
 async function probe(url) {
   try {
     const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
-    return { reachable: true, status: response.status, ok: response.ok };
+    return { ok: response.ok, reachable: true, status: response.status };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return { reachable: false, status: null, ok: false, error: message };
+    return { error: message, ok: false, reachable: false, status: null };
   }
 }
 

@@ -24,10 +24,7 @@ export function ApiErrorsIndex() {
           <ul className="flex flex-col gap-1">
             {codes.map((code) => (
               <li key={code}>
-                <Link
-                  className="text-fd-primary hover:underline"
-                  href={`/docs/api/errors/${code}`}
-                >
+                <Link className="text-fd-primary hover:underline" href={`/docs/api/errors/${code}`}>
                   <InlineCode>{code}</InlineCode>
                 </Link>
               </li>

@@ -124,9 +124,7 @@ async function checkLinks() {
     url: /^\/docs(?:\/|$)/,
   });
 
-  console.log(
-    `Collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks.`,
-  );
+  console.log(`Collected ${scanned.urls.size} URLs, ${scanned.fallbackUrls.length} fallbacks.`);
 
   const fileObjects: FileObject[] = files.map((filePath) => ({
     content: readFileSync(filePath, "utf8"),
@@ -136,22 +134,22 @@ async function checkLinks() {
   }));
 
   const results = await validateFiles(fileObjects, {
-      baseDir: DOCS_DIR,
-      checkRelativePaths: "exists",
-      checkRelativeUrls: true,
-      determinatePathname: (pathname) => {
-        if (pathname.endsWith(".mdx") || pathname.endsWith(".md")) {
-          return "relative-file-path";
-        }
-        return "relative-url";
-      },
-      markdown: {
-        components: {},
-      },
-      pathToUrl,
-      scanned,
-      whitelist: isAllowedHref,
-    });
+    baseDir: DOCS_DIR,
+    checkRelativePaths: "exists",
+    checkRelativeUrls: true,
+    determinatePathname: (pathname) => {
+      if (pathname.endsWith(".mdx") || pathname.endsWith(".md")) {
+        return "relative-file-path";
+      }
+      return "relative-url";
+    },
+    markdown: {
+      components: {},
+    },
+    pathToUrl,
+    scanned,
+    whitelist: isAllowedHref,
+  });
 
   printErrors(results, true);
 

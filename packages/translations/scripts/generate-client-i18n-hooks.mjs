@@ -39,7 +39,7 @@ function hookBaseName(namespace) {
   return namespace;
 }
 
-function useHookName(namespace) {
+function clientHookFunctionName(namespace) {
   return `use${hookBaseName(namespace)}Translations`;
 }
 
@@ -53,7 +53,7 @@ function prefixImportsForNamespaces(namespaces) {
 }
 
 function generateClientHookFunction(ns) {
-  const useName = useHookName(ns);
+  const useName = clientHookFunctionName(ns);
   const prefixType = prefixTypeName(ns);
   const hasPrefixes = (branchPrefixesByNamespace[ns] ?? []).length > 0;
   const lines = [

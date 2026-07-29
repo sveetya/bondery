@@ -6,7 +6,5 @@ export const contentType = OG_IMAGE_CONTENT_TYPE;
 export const size = { height: 630, width: 1200 };
 
 export default async function Image() {
-  return createOgImageResponse(
-    <OgMarketing tagline={OG_DEFAULT_TAGLINE} />,
-  );
+  return createOgImageResponse(<OgMarketing tagline={OG_DEFAULT_TAGLINE} />);
 }

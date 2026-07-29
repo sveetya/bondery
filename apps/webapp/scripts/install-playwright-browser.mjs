@@ -26,9 +26,7 @@ const chromiumDirs = existsSync(cacheRoot)
   : [];
 
 const chromiumDir = chromiumDirs.at(-1);
-const chromeBinary = chromiumDir
-  ? join(cacheRoot, chromiumDir, "chrome-linux64", "chrome")
-  : null;
+const chromeBinary = chromiumDir ? join(cacheRoot, chromiumDir, "chrome-linux64", "chrome") : null;
 
 if (chromeBinary && existsSync(chromeBinary)) {
   console.log(`\nChromium ready at ${chromeBinary}`);

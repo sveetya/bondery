@@ -1,8 +1,8 @@
 import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
-import { EncryptJWT, createRemoteJWKSet, jwtDecrypt, jwtVerify } from "jose";
 import { BETTER_AUTH_BASE_PATH, betterAuthPath } from "@bondery/helpers/globals/paths";
+import { createRemoteJWKSet, EncryptJWT, jwtDecrypt, jwtVerify } from "jose";
 import { joinApiUrl, resolveServerApiBaseUrl } from "@/lib/api/resolveServerApiUrl";
 
 /**
@@ -110,25 +110,26 @@ export function buildAuthorizeUrl(params: {
 async function requestToken(body: URLSearchParams): Promise<TokenResponse | null> {
   const payload = body.toString();
   try {
-    const response = await fetch(joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/oauth2/token")), {
-      body: payload,
-      cache: "no-store",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      method: "POST",
-    });
+    const response = await fetch(
+      joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/oauth2/token")),
+      {
+        body: payload,
+        cache: "no-store",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        method: "POST",
+      },
+    );
 
     if (!response.ok) {
       if (process.env.NODE_ENV === "development") {
-        const errorBody = await response.text();
-        console.error(`[oauth] POST /auth/oauth2/token failed (${response.status}): ${errorBody}`);
+        const _errorBody = await response.text();
       }
       return null;
     }
 
     return (await response.json()) as TokenResponse;
-  } catch (error) {
+  } catch (_error) {
     if (process.env.NODE_ENV === "development") {
-      console.error("[oauth] POST /auth/oauth2/token request failed:", error);
     }
     return null;
   }
@@ -169,7 +170,9 @@ async function requestRefreshedTokens(refreshToken: string): Promise<TokenRespon
 let jwks: ReturnType<typeof createRemoteJWKSet> | null = null;
 
 function getJwks(): ReturnType<typeof createRemoteJWKSet> {
-  jwks ??= createRemoteJWKSet(new URL(joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/jwks"))));
+  jwks ??= createRemoteJWKSet(
+    new URL(joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/jwks"))),
+  );
   return jwks;
 }
 
@@ -201,17 +204,22 @@ type UserInfoResponse = {
 
 /** Fetches profile claims from the AS's UserInfo endpoint using the access token. */
 async function fetchUserInfo(accessToken: string): Promise<UserInfoResponse> {
-  const response = await fetch(joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/oauth2/userinfo")), {
-    cache: "no-store",
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
+  const response = await fetch(
+    joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/oauth2/userinfo")),
+    {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${accessToken}` },
+    },
+  );
   if (!response.ok) {
     throw new Error(`userinfo request failed with status ${response.status}`);
   }
   return (await response.json()) as UserInfoResponse;
 }
 
-async function resolveSessionUserFromTokens(tokens: TokenResponse & { id_token: string }): Promise<WebappSessionUser> {
+async function resolveSessionUserFromTokens(
+  tokens: TokenResponse & { id_token: string },
+): Promise<WebappSessionUser> {
   const idTokenSubject = await verifyIdTokenSubject(tokens.id_token);
   const userInfo = await fetchUserInfo(tokens.access_token);
 
@@ -231,7 +239,10 @@ async function resolveSessionUserFromTokens(tokens: TokenResponse & { id_token: 
   };
 }
 
-function buildSessionPayload(tokens: TokenResponse, user: WebappSessionUser): WebappSessionPayload | null {
+function buildSessionPayload(
+  tokens: TokenResponse,
+  user: WebappSessionUser,
+): WebappSessionPayload | null {
   if (!tokens.access_token || !tokens.refresh_token) {
     return null;
   }
@@ -272,7 +283,10 @@ export async function refreshSessionPayload(
   return tokens ? buildSessionPayload(tokens, session.user) : null;
 }
 
-async function encryptPayload(payload: Record<string, unknown>, ttlSeconds: number): Promise<string> {
+async function encryptPayload(
+  payload: Record<string, unknown>,
+  ttlSeconds: number,
+): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   return new EncryptJWT(payload)
     .setProtectedHeader({ alg: "dir", enc: "A256GCM" })

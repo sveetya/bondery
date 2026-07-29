@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { isAllowedRequestOrigin, resolveTrustedOrigins, withCorsHeaders } from "./trusted-origins.js";
+import {
+  isAllowedRequestOrigin,
+  resolveTrustedOrigins,
+  withCorsHeaders,
+} from "./trusted-origins.js";
 
 describe("resolveTrustedOrigins", () => {
   it("includes webapp, website, expo scheme, and extra origins", () => {

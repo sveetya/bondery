@@ -1,7 +1,5 @@
 {
-  "title": "Contributing",
   "icon": "Code",
-  "pages": [
-    "index"
-  ]
+  "pages": ["index"],
+  "title": "Contributing"
 }

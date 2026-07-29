@@ -1,7 +1,10 @@
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { NextResponse } from "next/server";
-import { buildWebappRuntimeConfigFromEnv, getWebappPublicOrigin } from "@/lib/platform/runtimeConfig.server";
-import { RETURN_INTENT_PARAM, parseReturnIntent } from "@/lib/auth/returnIntent";
+import { parseReturnIntent, RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
+import {
+  buildWebappRuntimeConfigFromEnv,
+  getWebappPublicOrigin,
+} from "@/lib/platform/runtimeConfig.server";
 
 /**
  * Legacy OAuth callback URL — redirects into the Better Auth BFF start hop.

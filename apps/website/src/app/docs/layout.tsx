@@ -14,11 +14,7 @@ export default function DocsRootLayout({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <DocsLayoutClient
-        tabs={getDocsLayoutTabs()}
-        tree={source.getPageTree()}
-        {...baseOptions()}
-      >
+      <DocsLayoutClient tabs={getDocsLayoutTabs()} tree={source.getPageTree()} {...baseOptions()}>
         {children}
       </DocsLayoutClient>
     </RootProvider>

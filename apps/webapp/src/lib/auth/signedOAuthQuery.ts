@@ -1,4 +1,4 @@
-const SIGNED_QUERY_ISSUED_AT_PARAM = "ba_iat";
+const _SIGNED_QUERY_ISSUED_AT_PARAM = "ba_iat";
 const SIGNED_QUERY_PARAMETER_NAME_PARAM = "ba_param";
 
 function getSignedOAuthQueryParameterNames(params: URLSearchParams): Set<string> | undefined {
@@ -24,7 +24,11 @@ export function buildSignedOAuthQuery(search: string): string | undefined {
 
   const signedParams = new URLSearchParams();
   for (const [key, value] of params.entries()) {
-    if (key === "sig" || key === SIGNED_QUERY_PARAMETER_NAME_PARAM || signedParameterNames.has(key)) {
+    if (
+      key === "sig" ||
+      key === SIGNED_QUERY_PARAMETER_NAME_PARAM ||
+      signedParameterNames.has(key)
+    ) {
       signedParams.append(key, value);
     }
   }

@@ -65,7 +65,11 @@ function SubscriptionCardContent({
     const billingStatus = subscriptionStatus.billingStatus;
 
     if (!isPremium) {
-      if (billingStatus === "past_due" || billingStatus === "unpaid" || billingStatus === "incomplete") {
+      if (
+        billingStatus === "past_due" ||
+        billingStatus === "unpaid" ||
+        billingStatus === "incomplete"
+      ) {
         return { color: "red", text: t("PaymentIssue") };
       }
 
@@ -134,7 +138,11 @@ function SubscriptionCardContent({
       return { color: "dimmed", text: t("ActivePlan") };
     }
 
-    if (billingStatus === "past_due" || billingStatus === "unpaid" || billingStatus === "incomplete") {
+    if (
+      billingStatus === "past_due" ||
+      billingStatus === "unpaid" ||
+      billingStatus === "incomplete"
+    ) {
       return { color: "red", text: t("PaymentIssue") };
     }
 

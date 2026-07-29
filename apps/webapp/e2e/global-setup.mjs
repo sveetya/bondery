@@ -9,7 +9,6 @@ const E2E_PORTS = [26631, 26632];
  */
 export default async function globalSetup() {
   if (ensureWslgDisplay()) {
-    console.log("WSLg detected — set DISPLAY=:0 for headed Chromium");
   }
 
   if (process.env.E2E_REUSE_SERVER === "1") {

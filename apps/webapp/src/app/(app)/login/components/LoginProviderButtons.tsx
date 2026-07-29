@@ -53,8 +53,7 @@ export function LoginProviderButtons({
     setLastMethod(authClient.getLastUsedLoginMethod());
   }, [authClient]);
 
-  const showLastUsedBadge =
-    lastMethod !== null && activeProviderKeys.has(lastMethod);
+  const showLastUsedBadge = lastMethod !== null && activeProviderKeys.has(lastMethod);
 
   return (
     <Stack gap="xs" w="100%">
@@ -73,12 +72,7 @@ export function LoginProviderButtons({
             onClick={() => onProviderClick(provider.provider as OAuthProvider)}
             rightSection={
               isLastUsed ? (
-                <Badge
-                  color="gray"
-                  data-testid="login-last-used-badge"
-                  size="sm"
-                  variant="light"
-                >
+                <Badge color="gray" data-testid="login-last-used-badge" size="sm" variant="light">
                   {t("LastUsed")}
                 </Badge>
               ) : undefined

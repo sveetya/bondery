@@ -3,8 +3,8 @@
 import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
-import { buildLoginUrl, getClientReturnPathForLogin } from "@/lib/auth/returnIntent";
 import { createWebappAuthClient } from "@/lib/auth/client";
+import { buildLoginUrl, getClientReturnPathForLogin } from "@/lib/auth/returnIntent";
 import { resetState } from "@/lib/extension/enrichBatchStore";
 import { statusNotificationsStore } from "@/lib/extension/statusNotificationsStore";
 

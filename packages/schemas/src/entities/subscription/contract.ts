@@ -25,9 +25,7 @@ type _PlanTier = Assert<IsEqual<PlanTier, z.infer<typeof planTierSchema>>>;
 type _BillingSubscriptionStatus = Assert<
   IsEqual<BillingSubscriptionStatus, z.infer<typeof billingSubscriptionStatusSchema>>
 >;
-type _BillingInterval = Assert<
-  IsEqual<BillingInterval, z.infer<typeof billingIntervalSchema>>
->;
+type _BillingInterval = Assert<IsEqual<BillingInterval, z.infer<typeof billingIntervalSchema>>>;
 type _SubscriptionStatus = Assert<
   IsEqual<SubscriptionStatus, z.infer<typeof subscriptionStatusSchema>>
 >;

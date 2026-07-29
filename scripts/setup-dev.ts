@@ -41,7 +41,9 @@ function main() {
   run("node --import tsx scripts/env.ts");
 
   log.success("Dev env ready");
-  log.info("Next: npm run start:postgres && npm run start:seaweedfs && npm run bootstrap:seaweedfs");
+  log.info(
+    "Next: npm run start:postgres && npm run start:seaweedfs && npm run bootstrap:seaweedfs",
+  );
   log.info("Then: npm run db:migrate:deploy -w @bondery/db && npm run env && npm run dev");
 }
 

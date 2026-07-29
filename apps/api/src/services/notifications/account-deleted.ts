@@ -1,11 +1,11 @@
 import { AccountDeletedEmail } from "@bondery/emails";
 import { render } from "@react-email/render";
+import type { FastifyBaseLogger } from "fastify";
 import {
   createEmailTransporter,
   emailConfigFromProcessEnv,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
-import type { FastifyBaseLogger } from "fastify";
 
 export type SendAccountDeletedEmailInput = {
   email: string;

@@ -48,10 +48,6 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
       const report = await getHealthReport({
         anthropicApiKey: fastify.config.BONDERY_PRIVATE_ANTHROPIC_API_KEY,
         mapsApiKey: fastify.config.BONDERY_PRIVATE_MAPS_KEY,
-        stripePriceIdAnnual: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL,
-        stripePriceIdMonthly: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY,
-        stripeSecretKey: fastify.config.BONDERY_PRIVATE_STRIPE_SECRET_KEY,
-        stripeWebhookSecret: fastify.config.BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET,
         posthogApiSecret: fastify.config.BONDERY_PRIVATE_POSTHOG_API_SECRET,
         posthogProjectId: fastify.config.BONDERY_PRIVATE_POSTHOG_PROJECT_ID,
         redisUrl: fastify.config.BONDERY_PRIVATE_REDIS_URL,
@@ -61,6 +57,10 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
         smtpPort: fastify.config.BONDERY_PRIVATE_EMAIL_PORT,
         smtpUser: fastify.config.BONDERY_PRIVATE_EMAIL_USER,
         storageS3Endpoint: fastify.config.BONDERY_PRIVATE_S3_ENDPOINT,
+        stripePriceIdAnnual: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL,
+        stripePriceIdMonthly: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY,
+        stripeSecretKey: fastify.config.BONDERY_PRIVATE_STRIPE_SECRET_KEY,
+        stripeWebhookSecret: fastify.config.BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET,
       });
 
       const statusCode = report.status === "unhealthy" ? 503 : 200;

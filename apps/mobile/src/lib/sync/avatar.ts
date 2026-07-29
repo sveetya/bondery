@@ -1,7 +1,4 @@
-import {
-  normalizeMobileUrlForDevice,
-  STORAGE_URL,
-} from "../config";
+import { normalizeMobileUrlForDevice, STORAGE_URL } from "../config";
 
 export function resolveLocalContactAvatarUrl(
   userId: string,

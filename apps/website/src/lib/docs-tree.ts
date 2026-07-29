@@ -3,6 +3,8 @@ import type * as PageTree from "fumadocs-core/page-tree";
 type TabKey = "product" | "selfhost" | "integrate" | "develop";
 
 const TAB_SLUGS: Record<TabKey, Set<string>> = {
+  develop: new Set(["contributing"]),
+  integrate: new Set(["api"]),
   product: new Set([
     "index",
     "getting-started",
@@ -13,8 +15,6 @@ const TAB_SLUGS: Record<TabKey, Set<string>> = {
     "changelog",
   ]),
   selfhost: new Set(["deploy"]),
-  integrate: new Set(["api"]),
-  develop: new Set(["contributing"]),
 };
 
 export function getActiveTabKey(pathname: string): TabKey {
@@ -85,10 +85,7 @@ function filterChildren(children: PageTree.Node[], allowed: Set<string>): PageTr
   return kept;
 }
 
-export function filterPageTreeForTab(
-  tree: PageTree.Root,
-  tabKey: TabKey,
-): PageTree.Root {
+export function filterPageTreeForTab(tree: PageTree.Root, tabKey: TabKey): PageTree.Root {
   return {
     ...tree,
     $id: `${tree.$id ?? "root"}-${tabKey}`,
@@ -96,9 +93,6 @@ export function filterPageTreeForTab(
   };
 }
 
-export function filterPageTreeForPathname(
-  tree: PageTree.Root,
-  pathname: string,
-): PageTree.Root {
+export function filterPageTreeForPathname(tree: PageTree.Root, pathname: string): PageTree.Root {
   return filterPageTreeForTab(tree, getActiveTabKey(pathname));
 }

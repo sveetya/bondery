@@ -1,7 +1,5 @@
 {
-  "title": "Guides",
   "icon": "BookOpen",
-  "pages": [
-    "bulk-import-contacts"
-  ]
+  "pages": ["bulk-import-contacts"],
+  "title": "Guides"
 }

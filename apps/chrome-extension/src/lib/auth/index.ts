@@ -3,7 +3,7 @@
  */
 
 import { browser } from "wxt/browser";
-import { config, getOAuthResource, getOAuthTokenUrl, OAUTH_SCOPE } from "../../config";
+import { config, getOAuthResource, getOAuthTokenUrl } from "../../config";
 import { extLog } from "../log";
 
 export interface StoredTokens {

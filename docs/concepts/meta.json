@@ -1,5 +1,4 @@
 {
-  "title": "Core concepts",
   "icon": "Layers",
   "pages": [
     "people",
@@ -12,5 +11,6 @@
     "map",
     "merge",
     "chat"
-  ]
+  ],
+  "title": "Core concepts"
 }

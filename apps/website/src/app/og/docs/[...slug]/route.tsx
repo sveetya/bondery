@@ -1,7 +1,7 @@
 import { OgTitled } from "@bondery/branding/og";
 import { notFound } from "next/navigation";
-import { getPageImage, source } from "@/lib/source";
 import { createOgImageResponse } from "@/lib/og/imageResponse";
+import { getPageImage, source } from "@/lib/source";
 
 export const revalidate = false;
 

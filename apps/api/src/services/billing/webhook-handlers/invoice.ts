@@ -1,5 +1,5 @@
-import type Stripe from "stripe";
 import type { FastifyBaseLogger } from "fastify";
+import type Stripe from "stripe";
 import { getSubscriptionIdFromInvoice } from "../stripe-helpers.js";
 import { resetPaymentFailureCount, setPaymentFailureCount } from "../subscription.js";
 

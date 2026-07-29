@@ -65,14 +65,20 @@ export async function rpcGetMapAddressPinsInBbox(
   `;
 }
 
-export async function rpcGetKeepInTouchOverdueCount(db: RpcClient, userId: string): Promise<number> {
+export async function rpcGetKeepInTouchOverdueCount(
+  db: RpcClient,
+  userId: string,
+): Promise<number> {
   const rows = await db.$queryRaw<{ count: number }[]>`
     SELECT get_keep_in_touch_overdue_count(${userId}::uuid) AS count
   `;
   return Number(rows[0]?.count ?? 0);
 }
 
-export async function rpcGetLinkedinEnrichEligibleCount(db: RpcClient, userId: string): Promise<number> {
+export async function rpcGetLinkedinEnrichEligibleCount(
+  db: RpcClient,
+  userId: string,
+): Promise<number> {
   const rows = await db.$queryRaw<{ count: number }[]>`
     SELECT get_linkedin_enrich_eligible_count(${userId}::uuid) AS count
   `;
@@ -118,9 +124,7 @@ export async function rpcCheckAndIncrementAiMessages(
   limit: number,
   isPremium: boolean,
 ): Promise<{ allowed: boolean; messagesUsed: number; resetAt: string }> {
-  const rows = await db.$queryRaw<
-    { allowed: boolean; messages_used: number; reset_at: Date }[]
-  >`
+  const rows = await db.$queryRaw<{ allowed: boolean; messages_used: number; reset_at: Date }[]>`
     SELECT allowed, messages_used, reset_at
     FROM check_and_increment_ai_messages(${userId}::uuid, ${limit}::int, ${isPremium})
   `;

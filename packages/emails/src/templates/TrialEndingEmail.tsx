@@ -39,7 +39,8 @@ export default function TrialEndingEmail({ trialEndsAt, userName }: TrialEndingE
             automatically unless you cancel from your account settings.
           </Text>
           <Text style={{ fontSize: "16px", lineHeight: "24px" }}>
-            Open Bondery and go to Settings → Subscription to manage billing or cancel before renewal.
+            Open Bondery and go to Settings → Subscription to manage billing or cancel before
+            renewal.
           </Text>
         </Column>
       </Section>

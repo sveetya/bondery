@@ -101,7 +101,8 @@ export async function listTags(ctx: TagListContext, query?: PreviewListQuery) {
         previewContacts.map((contact) => [
           contact.id,
           {
-            avatar: resolveContactAvatarUrl(user.id,
+            avatar: resolveContactAvatarUrl(
+              user.id,
               {
                 hasAvatar: contact.hasAvatar,
                 id: contact.id,
@@ -258,7 +259,8 @@ export async function listTagMembers(ctx: TagListContext, tagId: string, query: 
 
   const enrichedContacts = contacts.map((c) => ({
     ...c,
-    avatar: resolveContactAvatarUrl(user.id,
+    avatar: resolveContactAvatarUrl(
+      user.id,
       {
         hasAvatar: c.hasAvatar,
         id: c.id,

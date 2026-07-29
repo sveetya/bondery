@@ -1,5 +1,4 @@
-const LOCAL_DEV_ORIGIN =
-  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+const LOCAL_DEV_ORIGIN = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
 export function parseExtraAllowedOrigins(raw: string | undefined): string[] {
   if (!raw) {
@@ -29,7 +28,12 @@ export function resolveTrustedOrigins(options: {
   if (options.allowLocalDevOrigins) {
     // Better Auth wildcard patterns — dev only. Covers non-default webapp ports
     // (e.g. Cursor-forwarded localhost:49171) without listing every port in env.
-    origins.push("http://localhost:*", "http://127.0.0.1:*", "https://localhost:*", "https://127.0.0.1:*");
+    origins.push(
+      "http://localhost:*",
+      "http://127.0.0.1:*",
+      "https://localhost:*",
+      "https://127.0.0.1:*",
+    );
   }
 
   return [...new Set(origins)];
@@ -47,11 +51,20 @@ export function isAllowedRequestOrigin(
     return true;
   }
 
-  if (allowedOrigins.some((allowed) => allowed.includes("*") && originMatchesWildcard(origin, allowed))) {
+  if (
+    allowedOrigins.some(
+      (allowed) => allowed.includes("*") && originMatchesWildcard(origin, allowed),
+    )
+  ) {
     return true;
   }
 
-  return LOCAL_DEV_ORIGIN.test(origin) && allowedOrigins.some((allowed) => allowed.includes("localhost:*") || allowed.includes("127.0.0.1:*"));
+  return (
+    LOCAL_DEV_ORIGIN.test(origin) &&
+    allowedOrigins.some(
+      (allowed) => allowed.includes("localhost:*") || allowed.includes("127.0.0.1:*"),
+    )
+  );
 }
 
 function originMatchesWildcard(origin: string, pattern: string): boolean {
@@ -95,7 +108,12 @@ export function withCorsHeaders(
 
   const existingVary = headers.get("Vary");
   if (existingVary) {
-    if (!existingVary.split(",").map((value) => value.trim()).includes("Origin")) {
+    if (
+      !existingVary
+        .split(",")
+        .map((value) => value.trim())
+        .includes("Origin")
+    ) {
       headers.set("Vary", `${existingVary}, Origin`);
     }
   } else {

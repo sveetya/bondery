@@ -7,7 +7,7 @@ export type {
   ReminderDigestEmailProps,
 } from "#templates/ReminderDigestEmail.js";
 export { default as ReminderDigestEmail } from "#templates/ReminderDigestEmail.js";
-export type { TrialEndingEmailProps } from "#templates/TrialEndingEmail.js";
-export { default as TrialEndingEmail } from "#templates/TrialEndingEmail.js";
 export type { ShareContactEmailProps } from "#templates/ShareContactEmail.js";
 export { default as ShareContactEmail } from "#templates/ShareContactEmail.js";
+export type { TrialEndingEmailProps } from "#templates/TrialEndingEmail.js";
+export { default as TrialEndingEmail } from "#templates/TrialEndingEmail.js";

@@ -12,9 +12,15 @@ const RELATION_KEYS = new Set([
 ]);
 
 function usesCompositePrimaryKey(record: Record<string, unknown>): boolean {
-  if ("interactionId" in record && "personId" in record) return true;
-  if ("userId" in record && "clientMutationId" in record) return true;
-  if ("serverSequence" in record) return true;
+  if ("interactionId" in record && "personId" in record) {
+    return true;
+  }
+  if ("userId" in record && "clientMutationId" in record) {
+    return true;
+  }
+  if ("serverSequence" in record) {
+    return true;
+  }
   if ("userId" in record && "lastSequence" in record && Object.keys(record).length === 2) {
     return true;
   }
@@ -25,8 +31,12 @@ function usesCompositePrimaryKey(record: Record<string, unknown>): boolean {
 }
 
 function shouldInjectId(record: Record<string, unknown>): boolean {
-  if (record.id !== undefined && record.id !== null) return false;
-  if (usesCompositePrimaryKey(record)) return false;
+  if (record.id !== undefined && record.id !== null) {
+    return false;
+  }
+  if (usesCompositePrimaryKey(record)) {
+    return false;
+  }
 
   const scalarKeys = Object.keys(record).filter(
     (key) => key !== "create" && key !== "createMany" && !RELATION_KEYS.has(key),
@@ -61,11 +71,15 @@ function processRelationWrite(value: unknown, key: "create" | "createMany"): unk
 }
 
 export function injectCreateIds<T>(data: T): T {
-  if (data === null || data === undefined) return data;
+  if (data === null || data === undefined) {
+    return data;
+  }
   if (Array.isArray(data)) {
     return data.map((row) => injectCreateIds(row)) as T;
   }
-  if (typeof data !== "object") return data;
+  if (typeof data !== "object") {
+    return data;
+  }
 
   const record = data as Record<string, unknown>;
   const result: Record<string, unknown> = {};

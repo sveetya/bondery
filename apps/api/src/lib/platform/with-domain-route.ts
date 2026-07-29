@@ -54,12 +54,12 @@ function parseDomainRouteInput<T extends DomainRouteSchemas>(
 }
 
 /** Bridge return: response typing is enforced by route `schema.response`, not handler inference. */
-// biome-ignore lint/suspicious/noExplicitAny: must be assignable to every Zod OpenAPI route handler slot under TS 7
+// biome-ignore lint/suspicious/noExplicitAny: overload return must be assignable to every Zod OpenAPI route handler slot under TS 7
 export function withDomainRoute(handler: DomainRouteHandlerNoSchemas): any;
-// biome-ignore lint/suspicious/noExplicitAny: must be assignable to every Zod OpenAPI route handler slot under TS 7
 export function withDomainRoute<T extends DomainRouteSchemas>(
   schemas: T,
   handler: DomainRouteHandler<T>,
+  // biome-ignore lint/suspicious/noExplicitAny: overload return must be assignable to every Zod OpenAPI route handler slot under TS 7
 ): any;
 export function withDomainRoute<T extends DomainRouteSchemas>(
   schemasOrHandler: T | DomainRouteHandlerNoSchemas,

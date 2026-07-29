@@ -1,9 +1,9 @@
 import { cache } from "react";
 import {
+  type BetterAuthUser,
   fetchBetterAuthAccessToken,
   fetchBetterAuthSession,
   signOutBetterAuthSession,
-  type BetterAuthUser,
 } from "@/lib/auth/server";
 
 export type ServerSessionResult =

@@ -1,7 +1,11 @@
 import { API_ROUTES, WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { NextResponse } from "next/server";
 import { joinApiUrl, resolveServerApiBaseUrl } from "@/lib/api/resolveServerApiUrl";
-import { BYPASS_ONBOARDING_ONCE_COOKIE, OAUTH_FLOW_COOKIE, WEBAPP_SESSION_COOKIE } from "@/lib/auth/constants";
+import {
+  BYPASS_ONBOARDING_ONCE_COOKIE,
+  OAUTH_FLOW_COOKIE,
+  WEBAPP_SESSION_COOKIE,
+} from "@/lib/auth/constants";
 import { LOCALE_PREFS_COOKIE } from "@/lib/auth/detectLocale";
 import {
   completeOAuthCodeExchange,

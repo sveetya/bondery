@@ -22,10 +22,7 @@ import { forbidden, unauthorized } from "../errors/http-errors.js";
 import type { AppFastifyInstance } from "../fastify-types.js";
 import { assertApiKeyAccess } from "./api-key-access.js";
 import { isApiKeyBearerToken } from "./api-keys.js";
-import {
-  resolveOAuthBearerUser,
-  resolveRequestAuthUser,
-} from "./resolve-request-auth.js";
+import { resolveOAuthBearerUser, resolveRequestAuthUser } from "./resolve-request-auth.js";
 
 // ── Type augmentation ────────────────────────────────────────────────────────
 

@@ -1,184 +1,363 @@
 // @ts-nocheck
-import * as __fd_glob_167 from "../../../docs/contributing/guides/add-new-language.mdx?collection=docs"
-import * as __fd_glob_166 from "../../../docs/api/guides/bulk-import-contacts.mdx?collection=docs"
-import * as __fd_glob_165 from "../../../docs/api/errors/webhook_not_configured.mdx?collection=docs"
-import * as __fd_glob_164 from "../../../docs/api/errors/validation_error.mdx?collection=docs"
-import * as __fd_glob_163 from "../../../docs/api/errors/user_lookup_failed.mdx?collection=docs"
-import * as __fd_glob_162 from "../../../docs/api/errors/tag_not_found.mdx?collection=docs"
-import * as __fd_glob_161 from "../../../docs/api/errors/tag_failed.mdx?collection=docs"
-import * as __fd_glob_160 from "../../../docs/api/errors/sync_protocol_mismatch.mdx?collection=docs"
-import * as __fd_glob_159 from "../../../docs/api/errors/sync_conflict.mdx?collection=docs"
-import * as __fd_glob_158 from "../../../docs/api/errors/sqlite_schema_mismatch.mdx?collection=docs"
-import * as __fd_glob_157 from "../../../docs/api/errors/settings_no_fields.mdx?collection=docs"
-import * as __fd_glob_156 from "../../../docs/api/errors/settings_fetch_failed.mdx?collection=docs"
-import * as __fd_glob_155 from "../../../docs/api/errors/settings_failed_to_update_settings.mdx?collection=docs"
-import * as __fd_glob_154 from "../../../docs/api/errors/settings_failed_to_create_settings.mdx?collection=docs"
-import * as __fd_glob_153 from "../../../docs/api/errors/settings_failed_to_create_default_settings.mdx?collection=docs"
-import * as __fd_glob_152 from "../../../docs/api/errors/session_settings_missing.mdx?collection=docs"
-import * as __fd_glob_151 from "../../../docs/api/errors/session_fetch_failed.mdx?collection=docs"
-import * as __fd_glob_150 from "../../../docs/api/errors/service_unavailable.mdx?collection=docs"
-import * as __fd_glob_149 from "../../../docs/api/errors/service_auth_required.mdx?collection=docs"
-import * as __fd_glob_148 from "../../../docs/api/errors/service_auth_invalid.mdx?collection=docs"
-import * as __fd_glob_147 from "../../../docs/api/errors/relationship_self_forbidden.mdx?collection=docs"
-import * as __fd_glob_146 from "../../../docs/api/errors/relationship_not_found.mdx?collection=docs"
-import * as __fd_glob_145 from "../../../docs/api/errors/relationship_invalid.mdx?collection=docs"
-import * as __fd_glob_144 from "../../../docs/api/errors/relationship_failed.mdx?collection=docs"
-import * as __fd_glob_143 from "../../../docs/api/errors/relationship_already_exists.mdx?collection=docs"
-import * as __fd_glob_142 from "../../../docs/api/errors/rate_limit_exceeded.mdx?collection=docs"
-import * as __fd_glob_141 from "../../../docs/api/errors/onboarding_failed_to_update_import_follow_up.mdx?collection=docs"
-import * as __fd_glob_140 from "../../../docs/api/errors/onboarding_failed_to_dismiss_getting_started.mdx?collection=docs"
-import * as __fd_glob_139 from "../../../docs/api/errors/onboarding_failed_to_complete_onboarding.mdx?collection=docs"
-import * as __fd_glob_138 from "../../../docs/api/errors/not_found.mdx?collection=docs"
-import * as __fd_glob_137 from "../../../docs/api/errors/merge_recommendation_not_found.mdx?collection=docs"
-import * as __fd_glob_136 from "../../../docs/api/errors/merge_recommendation_id_required.mdx?collection=docs"
-import * as __fd_glob_135 from "../../../docs/api/errors/invalid_api_key.mdx?collection=docs"
-import * as __fd_glob_134 from "../../../docs/api/errors/internal_server_error.mdx?collection=docs"
-import * as __fd_glob_133 from "../../../docs/api/errors/interaction_update_failed.mdx?collection=docs"
-import * as __fd_glob_132 from "../../../docs/api/errors/interaction_participants_failed.mdx?collection=docs"
-import * as __fd_glob_131 from "../../../docs/api/errors/interaction_not_found.mdx?collection=docs"
-import * as __fd_glob_130 from "../../../docs/api/errors/interaction_no_fields.mdx?collection=docs"
-import * as __fd_glob_129 from "../../../docs/api/errors/interaction_interaction_was_created_but_could_not_be.mdx?collection=docs"
-import * as __fd_glob_128 from "../../../docs/api/errors/interaction_failed_to_remove_participants_deleteerro.mdx?collection=docs"
-import * as __fd_glob_127 from "../../../docs/api/errors/interaction_failed_to_add_participants_inserterror_m.mdx?collection=docs"
-import * as __fd_glob_126 from "../../../docs/api/errors/interaction_failed.mdx?collection=docs"
-import * as __fd_glob_125 from "../../../docs/api/errors/index.mdx?collection=docs"
-import * as __fd_glob_124 from "../../../docs/api/errors/important_date_duplicate.mdx?collection=docs"
-import * as __fd_glob_123 from "../../../docs/api/errors/import_vcard_failed.mdx?collection=docs"
-import * as __fd_glob_122 from "../../../docs/api/errors/import_linkedin_failed.mdx?collection=docs"
-import * as __fd_glob_121 from "../../../docs/api/errors/import_instagram_failed.mdx?collection=docs"
-import * as __fd_glob_120 from "../../../docs/api/errors/import_failed.mdx?collection=docs"
-import * as __fd_glob_119 from "../../../docs/api/errors/group_remove_members_invalid_body.mdx?collection=docs"
-import * as __fd_glob_118 from "../../../docs/api/errors/group_not_found.mdx?collection=docs"
-import * as __fd_glob_117 from "../../../docs/api/errors/group_member_ids_search_failed.mdx?collection=docs"
-import * as __fd_glob_116 from "../../../docs/api/errors/group_member_ids_invalid_body.mdx?collection=docs"
-import * as __fd_glob_115 from "../../../docs/api/errors/group_member_ids_filter_failed.mdx?collection=docs"
-import * as __fd_glob_114 from "../../../docs/api/errors/group_member_ids_empty.mdx?collection=docs"
-import * as __fd_glob_113 from "../../../docs/api/errors/group_failed.mdx?collection=docs"
-import * as __fd_glob_112 from "../../../docs/api/errors/group_add_contacts_invalid_body.mdx?collection=docs"
-import * as __fd_glob_111 from "../../../docs/api/errors/failed_to_render_or_send_feedback_email_.mdx?collection=docs"
-import * as __fd_glob_110 from "../../../docs/api/errors/failed_to_process_webhook.mdx?collection=docs"
-import * as __fd_glob_109 from "../../../docs/api/errors/failed_to_load_profile_contact.mdx?collection=docs"
-import * as __fd_glob_108 from "../../../docs/api/errors/failed_to_generate_vcard.mdx?collection=docs"
-import * as __fd_glob_107 from "../../../docs/api/errors/failed_to_fetch_total_users_growth.mdx?collection=docs"
-import * as __fd_glob_106 from "../../../docs/api/errors/failed_to_fetch_funnel_stats.mdx?collection=docs"
-import * as __fd_glob_105 from "../../../docs/api/errors/failed_to_create_checkout_session.mdx?collection=docs"
-import * as __fd_glob_104 from "../../../docs/api/errors/extension_username_required.mdx?collection=docs"
-import * as __fd_glob_103 from "../../../docs/api/errors/extension_outdated.mdx?collection=docs"
-import * as __fd_glob_102 from "../../../docs/api/errors/email_service_not_configured.mdx?collection=docs"
-import * as __fd_glob_101 from "../../../docs/api/errors/contact_update_failed.mdx?collection=docs"
-import * as __fd_glob_100 from "../../../docs/api/errors/contact_share_failed.mdx?collection=docs"
-import * as __fd_glob_99 from "../../../docs/api/errors/contact_share_email_send_failed.mdx?collection=docs"
-import * as __fd_glob_98 from "../../../docs/api/errors/contact_share_email_render_failed.mdx?collection=docs"
-import * as __fd_glob_97 from "../../../docs/api/errors/contact_not_found.mdx?collection=docs"
-import * as __fd_glob_96 from "../../../docs/api/errors/contact_merge_socials_failed.mdx?collection=docs"
-import * as __fd_glob_95 from "../../../docs/api/errors/contact_merge_same_contact.mdx?collection=docs"
-import * as __fd_glob_94 from "../../../docs/api/errors/contact_merge_invalid.mdx?collection=docs"
-import * as __fd_glob_93 from "../../../docs/api/errors/contact_merge_failed.mdx?collection=docs"
-import * as __fd_glob_92 from "../../../docs/api/errors/contact_location_invalid.mdx?collection=docs"
-import * as __fd_glob_91 from "../../../docs/api/errors/contact_location_incomplete.mdx?collection=docs"
-import * as __fd_glob_90 from "../../../docs/api/errors/contact_invalid.mdx?collection=docs"
-import * as __fd_glob_89 from "../../../docs/api/errors/contact_ids_search_failed.mdx?collection=docs"
-import * as __fd_glob_88 from "../../../docs/api/errors/contact_ids_only_myself.mdx?collection=docs"
-import * as __fd_glob_87 from "../../../docs/api/errors/contact_ids_invalid_body.mdx?collection=docs"
-import * as __fd_glob_86 from "../../../docs/api/errors/contact_ids_filter_failed.mdx?collection=docs"
-import * as __fd_glob_85 from "../../../docs/api/errors/contact_ids_empty.mdx?collection=docs"
-import * as __fd_glob_84 from "../../../docs/api/errors/contact_failed_to_upload_photo.mdx?collection=docs"
-import * as __fd_glob_83 from "../../../docs/api/errors/contact_failed_to_save_socials.mdx?collection=docs"
-import * as __fd_glob_82 from "../../../docs/api/errors/contact_failed_to_look_up_contact.mdx?collection=docs"
-import * as __fd_glob_81 from "../../../docs/api/errors/contact_failed_to_create_contact.mdx?collection=docs"
-import * as __fd_glob_80 from "../../../docs/api/errors/contact_failed_to_assign_default_group.mdx?collection=docs"
-import * as __fd_glob_79 from "../../../docs/api/errors/contact_failed.mdx?collection=docs"
-import * as __fd_glob_78 from "../../../docs/api/errors/contact_enrich_failed.mdx?collection=docs"
-import * as __fd_glob_77 from "../../../docs/api/errors/contact_delete_self_forbidden.mdx?collection=docs"
-import * as __fd_glob_76 from "../../../docs/api/errors/contact_delete_invalid_body.mdx?collection=docs"
-import * as __fd_glob_75 from "../../../docs/api/errors/contact_contact_was_updated_but_could_not_be_loa.mdx?collection=docs"
-import * as __fd_glob_74 from "../../../docs/api/errors/contact_contact_was_created_but_could_not_be_rel.mdx?collection=docs"
-import * as __fd_glob_73 from "../../../docs/api/errors/contact_contact_was_created_but_could_not_be_loa.mdx?collection=docs"
-import * as __fd_glob_72 from "../../../docs/api/errors/conflict.mdx?collection=docs"
-import * as __fd_glob_71 from "../../../docs/api/errors/checkout_not_configured.mdx?collection=docs"
-import * as __fd_glob_70 from "../../../docs/api/errors/chat_session_failed_to_update_session.mdx?collection=docs"
-import * as __fd_glob_69 from "../../../docs/api/errors/chat_session_failed_to_delete_session.mdx?collection=docs"
-import * as __fd_glob_68 from "../../../docs/api/errors/chat_session_failed_to_create_session.mdx?collection=docs"
-import * as __fd_glob_67 from "../../../docs/api/errors/chat_quota_exceeded.mdx?collection=docs"
-import * as __fd_glob_66 from "../../../docs/api/errors/billing_user_lookup_failed.mdx?collection=docs"
-import * as __fd_glob_65 from "../../../docs/api/errors/billing_subscription_upsert_failed.mdx?collection=docs"
-import * as __fd_glob_64 from "../../../docs/api/errors/billing_pending_subscription_store_failed.mdx?collection=docs"
-import * as __fd_glob_63 from "../../../docs/api/errors/bad_request.mdx?collection=docs"
-import * as __fd_glob_62 from "../../../docs/api/errors/bad_gateway.mdx?collection=docs"
-import * as __fd_glob_61 from "../../../docs/api/errors/auth_required.mdx?collection=docs"
-import * as __fd_glob_60 from "../../../docs/api/errors/api_key_route_forbidden.mdx?collection=docs"
-import * as __fd_glob_59 from "../../../docs/api/errors/api_key_not_found.mdx?collection=docs"
-import * as __fd_glob_58 from "../../../docs/api/errors/api_key_method_forbidden.mdx?collection=docs"
-import * as __fd_glob_57 from "../../../docs/api/errors/api_key_limit_exceeded.mdx?collection=docs"
-import * as __fd_glob_56 from "../../../docs/api/errors/api_key_failed.mdx?collection=docs"
-import * as __fd_glob_55 from "../../../docs/api/errors/admin_required.mdx?collection=docs"
-import * as __fd_glob_54 from "../../../docs/api/errors/account_photo_invalid_format.mdx?collection=docs"
-import * as __fd_glob_53 from "../../../docs/api/errors/account_invalid.mdx?collection=docs"
-import * as __fd_glob_52 from "../../../docs/api/errors/account_failed_to_upload_profile_photo.mdx?collection=docs"
-import * as __fd_glob_51 from "../../../docs/api/errors/account_failed_to_update_account.mdx?collection=docs"
-import * as __fd_glob_50 from "../../../docs/api/errors/account_failed_to_generate_avatar_url.mdx?collection=docs"
-import * as __fd_glob_49 from "../../../docs/api/errors/account_failed_to_delete_account.mdx?collection=docs"
-import * as __fd_glob_48 from "../../../docs/api/api-reference/index.mdx?collection=docs"
-import * as __fd_glob_47 from "../../../docs/deploy/update.mdx?collection=docs"
-import * as __fd_glob_46 from "../../../docs/deploy/secrets.mdx?collection=docs"
-import * as __fd_glob_45 from "../../../docs/deploy/requirements.mdx?collection=docs"
-import * as __fd_glob_44 from "../../../docs/deploy/get-started.mdx?collection=docs"
-import * as __fd_glob_43 from "../../../docs/deploy/configuration.mdx?collection=docs"
-import * as __fd_glob_42 from "../../../docs/contributing/sync-architecture.mdx?collection=docs"
-import * as __fd_glob_41 from "../../../docs/contributing/schemas.mdx?collection=docs"
-import * as __fd_glob_40 from "../../../docs/contributing/local-setup.mdx?collection=docs"
-import * as __fd_glob_39 from "../../../docs/contributing/index.mdx?collection=docs"
-import * as __fd_glob_38 from "../../../docs/contributing/i18n.mdx?collection=docs"
-import * as __fd_glob_37 from "../../../docs/contributing/how-to-write-docs.mdx?collection=docs"
-import * as __fd_glob_36 from "../../../docs/contributing/environment.mdx?collection=docs"
-import * as __fd_glob_35 from "../../../docs/contributing/dokploy.mdx?collection=docs"
-import * as __fd_glob_34 from "../../../docs/contributing/auth.mdx?collection=docs"
-import * as __fd_glob_33 from "../../../docs/contributing/architecture.mdx?collection=docs"
-import * as __fd_glob_32 from "../../../docs/contributing/api-routes.mdx?collection=docs"
-import * as __fd_glob_31 from "../../../docs/contributing/api-container.mdx?collection=docs"
-import * as __fd_glob_30 from "../../../docs/concepts/tags.mdx?collection=docs"
-import * as __fd_glob_29 from "../../../docs/concepts/reminders.mdx?collection=docs"
-import * as __fd_glob_28 from "../../../docs/concepts/relationships.mdx?collection=docs"
-import * as __fd_glob_27 from "../../../docs/concepts/people.mdx?collection=docs"
-import * as __fd_glob_26 from "../../../docs/concepts/myself.mdx?collection=docs"
-import * as __fd_glob_25 from "../../../docs/concepts/merge.mdx?collection=docs"
-import * as __fd_glob_24 from "../../../docs/concepts/map.mdx?collection=docs"
-import * as __fd_glob_23 from "../../../docs/concepts/interactions.mdx?collection=docs"
-import * as __fd_glob_22 from "../../../docs/concepts/groups.mdx?collection=docs"
-import * as __fd_glob_21 from "../../../docs/concepts/chat.mdx?collection=docs"
-import * as __fd_glob_20 from "../../../docs/bondery/import.mdx?collection=docs"
-import * as __fd_glob_19 from "../../../docs/apps/webapp.mdx?collection=docs"
-import * as __fd_glob_18 from "../../../docs/apps/mobile-app.mdx?collection=docs"
-import * as __fd_glob_17 from "../../../docs/apps/chrome-extension.mdx?collection=docs"
-import * as __fd_glob_16 from "../../../docs/apps/api.mdx?collection=docs"
-import * as __fd_glob_15 from "../../../docs/api/index.mdx?collection=docs"
-import * as __fd_glob_14 from "../../../docs/api/authentication.mdx?collection=docs"
-import * as __fd_glob_13 from "../../../docs/index.mdx?collection=docs"
-import * as __fd_glob_12 from "../../../docs/getting-started.mdx?collection=docs"
-import * as __fd_glob_11 from "../../../docs/getting-help-and-troubleshooting.mdx?collection=docs"
-import * as __fd_glob_10 from "../../../docs/changelog.mdx?collection=docs"
-import { default as __fd_glob_9 } from "../../../docs/contributing/guides/meta.json?collection=docs"
-import { default as __fd_glob_8 } from "../../../docs/api/guides/meta.json?collection=docs"
-import { default as __fd_glob_7 } from "../../../docs/api/errors/meta.json?collection=docs"
-import { default as __fd_glob_6 } from "../../../docs/api/api-reference/meta.json?collection=docs"
-import { default as __fd_glob_5 } from "../../../docs/deploy/meta.json?collection=docs"
-import { default as __fd_glob_4 } from "../../../docs/contributing/meta.json?collection=docs"
-import { default as __fd_glob_3 } from "../../../docs/concepts/meta.json?collection=docs"
-import { default as __fd_glob_2 } from "../../../docs/bondery/meta.json?collection=docs"
-import { default as __fd_glob_1 } from "../../../docs/apps/meta.json?collection=docs"
-import { default as __fd_glob_0 } from "../../../docs/meta.json?collection=docs"
-import { server } from 'fumadocs-mdx/runtime/server';
-import type * as Config from '../source.config';
 
-const create = server<typeof Config, import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
-  DocData: {
-    docs: {
-      /**
-       * Last modified date of document file, obtained from version control.
-       */
-      lastModified?: Date;
-    },
+import { server } from "fumadocs-mdx/runtime/server";
+import * as __fd_glob_48 from "../../../docs/api/api-reference/index.mdx?collection=docs";
+import { default as __fd_glob_6 } from "../../../docs/api/api-reference/meta.json?collection=docs";
+import * as __fd_glob_14 from "../../../docs/api/authentication.mdx?collection=docs";
+import * as __fd_glob_49 from "../../../docs/api/errors/account_failed_to_delete_account.mdx?collection=docs";
+import * as __fd_glob_50 from "../../../docs/api/errors/account_failed_to_generate_avatar_url.mdx?collection=docs";
+import * as __fd_glob_51 from "../../../docs/api/errors/account_failed_to_update_account.mdx?collection=docs";
+import * as __fd_glob_52 from "../../../docs/api/errors/account_failed_to_upload_profile_photo.mdx?collection=docs";
+import * as __fd_glob_53 from "../../../docs/api/errors/account_invalid.mdx?collection=docs";
+import * as __fd_glob_54 from "../../../docs/api/errors/account_photo_invalid_format.mdx?collection=docs";
+import * as __fd_glob_55 from "../../../docs/api/errors/admin_required.mdx?collection=docs";
+import * as __fd_glob_56 from "../../../docs/api/errors/api_key_failed.mdx?collection=docs";
+import * as __fd_glob_57 from "../../../docs/api/errors/api_key_limit_exceeded.mdx?collection=docs";
+import * as __fd_glob_58 from "../../../docs/api/errors/api_key_method_forbidden.mdx?collection=docs";
+import * as __fd_glob_59 from "../../../docs/api/errors/api_key_not_found.mdx?collection=docs";
+import * as __fd_glob_60 from "../../../docs/api/errors/api_key_route_forbidden.mdx?collection=docs";
+import * as __fd_glob_61 from "../../../docs/api/errors/auth_required.mdx?collection=docs";
+import * as __fd_glob_62 from "../../../docs/api/errors/bad_gateway.mdx?collection=docs";
+import * as __fd_glob_63 from "../../../docs/api/errors/bad_request.mdx?collection=docs";
+import * as __fd_glob_64 from "../../../docs/api/errors/billing_pending_subscription_store_failed.mdx?collection=docs";
+import * as __fd_glob_65 from "../../../docs/api/errors/billing_subscription_upsert_failed.mdx?collection=docs";
+import * as __fd_glob_66 from "../../../docs/api/errors/billing_user_lookup_failed.mdx?collection=docs";
+import * as __fd_glob_67 from "../../../docs/api/errors/chat_quota_exceeded.mdx?collection=docs";
+import * as __fd_glob_68 from "../../../docs/api/errors/chat_session_failed_to_create_session.mdx?collection=docs";
+import * as __fd_glob_69 from "../../../docs/api/errors/chat_session_failed_to_delete_session.mdx?collection=docs";
+import * as __fd_glob_70 from "../../../docs/api/errors/chat_session_failed_to_update_session.mdx?collection=docs";
+import * as __fd_glob_71 from "../../../docs/api/errors/checkout_not_configured.mdx?collection=docs";
+import * as __fd_glob_72 from "../../../docs/api/errors/conflict.mdx?collection=docs";
+import * as __fd_glob_73 from "../../../docs/api/errors/contact_contact_was_created_but_could_not_be_loa.mdx?collection=docs";
+import * as __fd_glob_74 from "../../../docs/api/errors/contact_contact_was_created_but_could_not_be_rel.mdx?collection=docs";
+import * as __fd_glob_75 from "../../../docs/api/errors/contact_contact_was_updated_but_could_not_be_loa.mdx?collection=docs";
+import * as __fd_glob_76 from "../../../docs/api/errors/contact_delete_invalid_body.mdx?collection=docs";
+import * as __fd_glob_77 from "../../../docs/api/errors/contact_delete_self_forbidden.mdx?collection=docs";
+import * as __fd_glob_78 from "../../../docs/api/errors/contact_enrich_failed.mdx?collection=docs";
+import * as __fd_glob_79 from "../../../docs/api/errors/contact_failed.mdx?collection=docs";
+import * as __fd_glob_80 from "../../../docs/api/errors/contact_failed_to_assign_default_group.mdx?collection=docs";
+import * as __fd_glob_81 from "../../../docs/api/errors/contact_failed_to_create_contact.mdx?collection=docs";
+import * as __fd_glob_82 from "../../../docs/api/errors/contact_failed_to_look_up_contact.mdx?collection=docs";
+import * as __fd_glob_83 from "../../../docs/api/errors/contact_failed_to_save_socials.mdx?collection=docs";
+import * as __fd_glob_84 from "../../../docs/api/errors/contact_failed_to_upload_photo.mdx?collection=docs";
+import * as __fd_glob_85 from "../../../docs/api/errors/contact_ids_empty.mdx?collection=docs";
+import * as __fd_glob_86 from "../../../docs/api/errors/contact_ids_filter_failed.mdx?collection=docs";
+import * as __fd_glob_87 from "../../../docs/api/errors/contact_ids_invalid_body.mdx?collection=docs";
+import * as __fd_glob_88 from "../../../docs/api/errors/contact_ids_only_myself.mdx?collection=docs";
+import * as __fd_glob_89 from "../../../docs/api/errors/contact_ids_search_failed.mdx?collection=docs";
+import * as __fd_glob_90 from "../../../docs/api/errors/contact_invalid.mdx?collection=docs";
+import * as __fd_glob_91 from "../../../docs/api/errors/contact_location_incomplete.mdx?collection=docs";
+import * as __fd_glob_92 from "../../../docs/api/errors/contact_location_invalid.mdx?collection=docs";
+import * as __fd_glob_93 from "../../../docs/api/errors/contact_merge_failed.mdx?collection=docs";
+import * as __fd_glob_94 from "../../../docs/api/errors/contact_merge_invalid.mdx?collection=docs";
+import * as __fd_glob_95 from "../../../docs/api/errors/contact_merge_same_contact.mdx?collection=docs";
+import * as __fd_glob_96 from "../../../docs/api/errors/contact_merge_socials_failed.mdx?collection=docs";
+import * as __fd_glob_97 from "../../../docs/api/errors/contact_not_found.mdx?collection=docs";
+import * as __fd_glob_98 from "../../../docs/api/errors/contact_share_email_render_failed.mdx?collection=docs";
+import * as __fd_glob_99 from "../../../docs/api/errors/contact_share_email_send_failed.mdx?collection=docs";
+import * as __fd_glob_100 from "../../../docs/api/errors/contact_share_failed.mdx?collection=docs";
+import * as __fd_glob_101 from "../../../docs/api/errors/contact_update_failed.mdx?collection=docs";
+import * as __fd_glob_102 from "../../../docs/api/errors/email_service_not_configured.mdx?collection=docs";
+import * as __fd_glob_103 from "../../../docs/api/errors/extension_outdated.mdx?collection=docs";
+import * as __fd_glob_104 from "../../../docs/api/errors/extension_username_required.mdx?collection=docs";
+import * as __fd_glob_105 from "../../../docs/api/errors/failed_to_create_checkout_session.mdx?collection=docs";
+import * as __fd_glob_106 from "../../../docs/api/errors/failed_to_fetch_funnel_stats.mdx?collection=docs";
+import * as __fd_glob_107 from "../../../docs/api/errors/failed_to_fetch_total_users_growth.mdx?collection=docs";
+import * as __fd_glob_108 from "../../../docs/api/errors/failed_to_generate_vcard.mdx?collection=docs";
+import * as __fd_glob_109 from "../../../docs/api/errors/failed_to_load_profile_contact.mdx?collection=docs";
+import * as __fd_glob_110 from "../../../docs/api/errors/failed_to_process_webhook.mdx?collection=docs";
+import * as __fd_glob_111 from "../../../docs/api/errors/failed_to_render_or_send_feedback_email_.mdx?collection=docs";
+import * as __fd_glob_112 from "../../../docs/api/errors/group_add_contacts_invalid_body.mdx?collection=docs";
+import * as __fd_glob_113 from "../../../docs/api/errors/group_failed.mdx?collection=docs";
+import * as __fd_glob_114 from "../../../docs/api/errors/group_member_ids_empty.mdx?collection=docs";
+import * as __fd_glob_115 from "../../../docs/api/errors/group_member_ids_filter_failed.mdx?collection=docs";
+import * as __fd_glob_116 from "../../../docs/api/errors/group_member_ids_invalid_body.mdx?collection=docs";
+import * as __fd_glob_117 from "../../../docs/api/errors/group_member_ids_search_failed.mdx?collection=docs";
+import * as __fd_glob_118 from "../../../docs/api/errors/group_not_found.mdx?collection=docs";
+import * as __fd_glob_119 from "../../../docs/api/errors/group_remove_members_invalid_body.mdx?collection=docs";
+import * as __fd_glob_120 from "../../../docs/api/errors/import_failed.mdx?collection=docs";
+import * as __fd_glob_121 from "../../../docs/api/errors/import_instagram_failed.mdx?collection=docs";
+import * as __fd_glob_122 from "../../../docs/api/errors/import_linkedin_failed.mdx?collection=docs";
+import * as __fd_glob_123 from "../../../docs/api/errors/import_vcard_failed.mdx?collection=docs";
+import * as __fd_glob_124 from "../../../docs/api/errors/important_date_duplicate.mdx?collection=docs";
+import * as __fd_glob_125 from "../../../docs/api/errors/index.mdx?collection=docs";
+import * as __fd_glob_126 from "../../../docs/api/errors/interaction_failed.mdx?collection=docs";
+import * as __fd_glob_127 from "../../../docs/api/errors/interaction_failed_to_add_participants_inserterror_m.mdx?collection=docs";
+import * as __fd_glob_128 from "../../../docs/api/errors/interaction_failed_to_remove_participants_deleteerro.mdx?collection=docs";
+import * as __fd_glob_129 from "../../../docs/api/errors/interaction_interaction_was_created_but_could_not_be.mdx?collection=docs";
+import * as __fd_glob_130 from "../../../docs/api/errors/interaction_no_fields.mdx?collection=docs";
+import * as __fd_glob_131 from "../../../docs/api/errors/interaction_not_found.mdx?collection=docs";
+import * as __fd_glob_132 from "../../../docs/api/errors/interaction_participants_failed.mdx?collection=docs";
+import * as __fd_glob_133 from "../../../docs/api/errors/interaction_update_failed.mdx?collection=docs";
+import * as __fd_glob_134 from "../../../docs/api/errors/internal_server_error.mdx?collection=docs";
+import * as __fd_glob_135 from "../../../docs/api/errors/invalid_api_key.mdx?collection=docs";
+import * as __fd_glob_136 from "../../../docs/api/errors/merge_recommendation_id_required.mdx?collection=docs";
+import * as __fd_glob_137 from "../../../docs/api/errors/merge_recommendation_not_found.mdx?collection=docs";
+import { default as __fd_glob_7 } from "../../../docs/api/errors/meta.json?collection=docs";
+import * as __fd_glob_138 from "../../../docs/api/errors/not_found.mdx?collection=docs";
+import * as __fd_glob_139 from "../../../docs/api/errors/onboarding_failed_to_complete_onboarding.mdx?collection=docs";
+import * as __fd_glob_140 from "../../../docs/api/errors/onboarding_failed_to_dismiss_getting_started.mdx?collection=docs";
+import * as __fd_glob_141 from "../../../docs/api/errors/onboarding_failed_to_update_import_follow_up.mdx?collection=docs";
+import * as __fd_glob_142 from "../../../docs/api/errors/rate_limit_exceeded.mdx?collection=docs";
+import * as __fd_glob_143 from "../../../docs/api/errors/relationship_already_exists.mdx?collection=docs";
+import * as __fd_glob_144 from "../../../docs/api/errors/relationship_failed.mdx?collection=docs";
+import * as __fd_glob_145 from "../../../docs/api/errors/relationship_invalid.mdx?collection=docs";
+import * as __fd_glob_146 from "../../../docs/api/errors/relationship_not_found.mdx?collection=docs";
+import * as __fd_glob_147 from "../../../docs/api/errors/relationship_self_forbidden.mdx?collection=docs";
+import * as __fd_glob_148 from "../../../docs/api/errors/service_auth_invalid.mdx?collection=docs";
+import * as __fd_glob_149 from "../../../docs/api/errors/service_auth_required.mdx?collection=docs";
+import * as __fd_glob_150 from "../../../docs/api/errors/service_unavailable.mdx?collection=docs";
+import * as __fd_glob_151 from "../../../docs/api/errors/session_fetch_failed.mdx?collection=docs";
+import * as __fd_glob_152 from "../../../docs/api/errors/session_settings_missing.mdx?collection=docs";
+import * as __fd_glob_153 from "../../../docs/api/errors/settings_failed_to_create_default_settings.mdx?collection=docs";
+import * as __fd_glob_154 from "../../../docs/api/errors/settings_failed_to_create_settings.mdx?collection=docs";
+import * as __fd_glob_155 from "../../../docs/api/errors/settings_failed_to_update_settings.mdx?collection=docs";
+import * as __fd_glob_156 from "../../../docs/api/errors/settings_fetch_failed.mdx?collection=docs";
+import * as __fd_glob_157 from "../../../docs/api/errors/settings_no_fields.mdx?collection=docs";
+import * as __fd_glob_158 from "../../../docs/api/errors/sqlite_schema_mismatch.mdx?collection=docs";
+import * as __fd_glob_159 from "../../../docs/api/errors/sync_conflict.mdx?collection=docs";
+import * as __fd_glob_160 from "../../../docs/api/errors/sync_protocol_mismatch.mdx?collection=docs";
+import * as __fd_glob_161 from "../../../docs/api/errors/tag_failed.mdx?collection=docs";
+import * as __fd_glob_162 from "../../../docs/api/errors/tag_not_found.mdx?collection=docs";
+import * as __fd_glob_163 from "../../../docs/api/errors/user_lookup_failed.mdx?collection=docs";
+import * as __fd_glob_164 from "../../../docs/api/errors/validation_error.mdx?collection=docs";
+import * as __fd_glob_165 from "../../../docs/api/errors/webhook_not_configured.mdx?collection=docs";
+import * as __fd_glob_166 from "../../../docs/api/guides/bulk-import-contacts.mdx?collection=docs";
+import { default as __fd_glob_8 } from "../../../docs/api/guides/meta.json?collection=docs";
+import * as __fd_glob_15 from "../../../docs/api/index.mdx?collection=docs";
+import * as __fd_glob_16 from "../../../docs/apps/api.mdx?collection=docs";
+import * as __fd_glob_17 from "../../../docs/apps/chrome-extension.mdx?collection=docs";
+import { default as __fd_glob_1 } from "../../../docs/apps/meta.json?collection=docs";
+import * as __fd_glob_18 from "../../../docs/apps/mobile-app.mdx?collection=docs";
+import * as __fd_glob_19 from "../../../docs/apps/webapp.mdx?collection=docs";
+import * as __fd_glob_20 from "../../../docs/bondery/import.mdx?collection=docs";
+import { default as __fd_glob_2 } from "../../../docs/bondery/meta.json?collection=docs";
+import * as __fd_glob_10 from "../../../docs/changelog.mdx?collection=docs";
+import * as __fd_glob_21 from "../../../docs/concepts/chat.mdx?collection=docs";
+import * as __fd_glob_22 from "../../../docs/concepts/groups.mdx?collection=docs";
+import * as __fd_glob_23 from "../../../docs/concepts/interactions.mdx?collection=docs";
+import * as __fd_glob_24 from "../../../docs/concepts/map.mdx?collection=docs";
+import * as __fd_glob_25 from "../../../docs/concepts/merge.mdx?collection=docs";
+import { default as __fd_glob_3 } from "../../../docs/concepts/meta.json?collection=docs";
+import * as __fd_glob_26 from "../../../docs/concepts/myself.mdx?collection=docs";
+import * as __fd_glob_27 from "../../../docs/concepts/people.mdx?collection=docs";
+import * as __fd_glob_28 from "../../../docs/concepts/relationships.mdx?collection=docs";
+import * as __fd_glob_29 from "../../../docs/concepts/reminders.mdx?collection=docs";
+import * as __fd_glob_30 from "../../../docs/concepts/tags.mdx?collection=docs";
+import * as __fd_glob_31 from "../../../docs/contributing/api-container.mdx?collection=docs";
+import * as __fd_glob_32 from "../../../docs/contributing/api-routes.mdx?collection=docs";
+import * as __fd_glob_33 from "../../../docs/contributing/architecture.mdx?collection=docs";
+import * as __fd_glob_34 from "../../../docs/contributing/auth.mdx?collection=docs";
+import * as __fd_glob_35 from "../../../docs/contributing/dokploy.mdx?collection=docs";
+import * as __fd_glob_36 from "../../../docs/contributing/environment.mdx?collection=docs";
+import * as __fd_glob_167 from "../../../docs/contributing/guides/add-new-language.mdx?collection=docs";
+import { default as __fd_glob_9 } from "../../../docs/contributing/guides/meta.json?collection=docs";
+import * as __fd_glob_37 from "../../../docs/contributing/how-to-write-docs.mdx?collection=docs";
+import * as __fd_glob_38 from "../../../docs/contributing/i18n.mdx?collection=docs";
+import * as __fd_glob_39 from "../../../docs/contributing/index.mdx?collection=docs";
+import * as __fd_glob_40 from "../../../docs/contributing/local-setup.mdx?collection=docs";
+import { default as __fd_glob_4 } from "../../../docs/contributing/meta.json?collection=docs";
+import * as __fd_glob_41 from "../../../docs/contributing/schemas.mdx?collection=docs";
+import * as __fd_glob_42 from "../../../docs/contributing/sync-architecture.mdx?collection=docs";
+import * as __fd_glob_43 from "../../../docs/deploy/configuration.mdx?collection=docs";
+import * as __fd_glob_44 from "../../../docs/deploy/get-started.mdx?collection=docs";
+import { default as __fd_glob_5 } from "../../../docs/deploy/meta.json?collection=docs";
+import * as __fd_glob_45 from "../../../docs/deploy/requirements.mdx?collection=docs";
+import * as __fd_glob_46 from "../../../docs/deploy/secrets.mdx?collection=docs";
+import * as __fd_glob_47 from "../../../docs/deploy/update.mdx?collection=docs";
+import * as __fd_glob_11 from "../../../docs/getting-help-and-troubleshooting.mdx?collection=docs";
+import * as __fd_glob_12 from "../../../docs/getting-started.mdx?collection=docs";
+import * as __fd_glob_13 from "../../../docs/index.mdx?collection=docs";
+import { default as __fd_glob_0 } from "../../../docs/meta.json?collection=docs";
+import type * as Config from "../source.config";
+
+const create = server<
+  typeof Config,
+  import("fumadocs-mdx/runtime/types").InternalTypeConfig & {
+    DocData: {
+      docs: {
+        /**
+         * Last modified date of document file, obtained from version control.
+         */
+        lastModified?: Date;
+      };
+    };
   }
-}>();
+>();
 
-export const docs = await create.docs("docs", "../../docs", {"meta.json": __fd_glob_0, "apps/meta.json": __fd_glob_1, "bondery/meta.json": __fd_glob_2, "concepts/meta.json": __fd_glob_3, "contributing/meta.json": __fd_glob_4, "deploy/meta.json": __fd_glob_5, "api/api-reference/meta.json": __fd_glob_6, "api/errors/meta.json": __fd_glob_7, "api/guides/meta.json": __fd_glob_8, "contributing/guides/meta.json": __fd_glob_9, }, {"changelog.mdx": __fd_glob_10, "getting-help-and-troubleshooting.mdx": __fd_glob_11, "getting-started.mdx": __fd_glob_12, "index.mdx": __fd_glob_13, "api/authentication.mdx": __fd_glob_14, "api/index.mdx": __fd_glob_15, "apps/api.mdx": __fd_glob_16, "apps/chrome-extension.mdx": __fd_glob_17, "apps/mobile-app.mdx": __fd_glob_18, "apps/webapp.mdx": __fd_glob_19, "bondery/import.mdx": __fd_glob_20, "concepts/chat.mdx": __fd_glob_21, "concepts/groups.mdx": __fd_glob_22, "concepts/interactions.mdx": __fd_glob_23, "concepts/map.mdx": __fd_glob_24, "concepts/merge.mdx": __fd_glob_25, "concepts/myself.mdx": __fd_glob_26, "concepts/people.mdx": __fd_glob_27, "concepts/relationships.mdx": __fd_glob_28, "concepts/reminders.mdx": __fd_glob_29, "concepts/tags.mdx": __fd_glob_30, "contributing/api-container.mdx": __fd_glob_31, "contributing/api-routes.mdx": __fd_glob_32, "contributing/architecture.mdx": __fd_glob_33, "contributing/auth.mdx": __fd_glob_34, "contributing/dokploy.mdx": __fd_glob_35, "contributing/environment.mdx": __fd_glob_36, "contributing/how-to-write-docs.mdx": __fd_glob_37, "contributing/i18n.mdx": __fd_glob_38, "contributing/index.mdx": __fd_glob_39, "contributing/local-setup.mdx": __fd_glob_40, "contributing/schemas.mdx": __fd_glob_41, "contributing/sync-architecture.mdx": __fd_glob_42, "deploy/configuration.mdx": __fd_glob_43, "deploy/get-started.mdx": __fd_glob_44, "deploy/requirements.mdx": __fd_glob_45, "deploy/secrets.mdx": __fd_glob_46, "deploy/update.mdx": __fd_glob_47, "api/api-reference/index.mdx": __fd_glob_48, "api/errors/account_failed_to_delete_account.mdx": __fd_glob_49, "api/errors/account_failed_to_generate_avatar_url.mdx": __fd_glob_50, "api/errors/account_failed_to_update_account.mdx": __fd_glob_51, "api/errors/account_failed_to_upload_profile_photo.mdx": __fd_glob_52, "api/errors/account_invalid.mdx": __fd_glob_53, "api/errors/account_photo_invalid_format.mdx": __fd_glob_54, "api/errors/admin_required.mdx": __fd_glob_55, "api/errors/api_key_failed.mdx": __fd_glob_56, "api/errors/api_key_limit_exceeded.mdx": __fd_glob_57, "api/errors/api_key_method_forbidden.mdx": __fd_glob_58, "api/errors/api_key_not_found.mdx": __fd_glob_59, "api/errors/api_key_route_forbidden.mdx": __fd_glob_60, "api/errors/auth_required.mdx": __fd_glob_61, "api/errors/bad_gateway.mdx": __fd_glob_62, "api/errors/bad_request.mdx": __fd_glob_63, "api/errors/billing_pending_subscription_store_failed.mdx": __fd_glob_64, "api/errors/billing_subscription_upsert_failed.mdx": __fd_glob_65, "api/errors/billing_user_lookup_failed.mdx": __fd_glob_66, "api/errors/chat_quota_exceeded.mdx": __fd_glob_67, "api/errors/chat_session_failed_to_create_session.mdx": __fd_glob_68, "api/errors/chat_session_failed_to_delete_session.mdx": __fd_glob_69, "api/errors/chat_session_failed_to_update_session.mdx": __fd_glob_70, "api/errors/checkout_not_configured.mdx": __fd_glob_71, "api/errors/conflict.mdx": __fd_glob_72, "api/errors/contact_contact_was_created_but_could_not_be_loa.mdx": __fd_glob_73, "api/errors/contact_contact_was_created_but_could_not_be_rel.mdx": __fd_glob_74, "api/errors/contact_contact_was_updated_but_could_not_be_loa.mdx": __fd_glob_75, "api/errors/contact_delete_invalid_body.mdx": __fd_glob_76, "api/errors/contact_delete_self_forbidden.mdx": __fd_glob_77, "api/errors/contact_enrich_failed.mdx": __fd_glob_78, "api/errors/contact_failed.mdx": __fd_glob_79, "api/errors/contact_failed_to_assign_default_group.mdx": __fd_glob_80, "api/errors/contact_failed_to_create_contact.mdx": __fd_glob_81, "api/errors/contact_failed_to_look_up_contact.mdx": __fd_glob_82, "api/errors/contact_failed_to_save_socials.mdx": __fd_glob_83, "api/errors/contact_failed_to_upload_photo.mdx": __fd_glob_84, "api/errors/contact_ids_empty.mdx": __fd_glob_85, "api/errors/contact_ids_filter_failed.mdx": __fd_glob_86, "api/errors/contact_ids_invalid_body.mdx": __fd_glob_87, "api/errors/contact_ids_only_myself.mdx": __fd_glob_88, "api/errors/contact_ids_search_failed.mdx": __fd_glob_89, "api/errors/contact_invalid.mdx": __fd_glob_90, "api/errors/contact_location_incomplete.mdx": __fd_glob_91, "api/errors/contact_location_invalid.mdx": __fd_glob_92, "api/errors/contact_merge_failed.mdx": __fd_glob_93, "api/errors/contact_merge_invalid.mdx": __fd_glob_94, "api/errors/contact_merge_same_contact.mdx": __fd_glob_95, "api/errors/contact_merge_socials_failed.mdx": __fd_glob_96, "api/errors/contact_not_found.mdx": __fd_glob_97, "api/errors/contact_share_email_render_failed.mdx": __fd_glob_98, "api/errors/contact_share_email_send_failed.mdx": __fd_glob_99, "api/errors/contact_share_failed.mdx": __fd_glob_100, "api/errors/contact_update_failed.mdx": __fd_glob_101, "api/errors/email_service_not_configured.mdx": __fd_glob_102, "api/errors/extension_outdated.mdx": __fd_glob_103, "api/errors/extension_username_required.mdx": __fd_glob_104, "api/errors/failed_to_create_checkout_session.mdx": __fd_glob_105, "api/errors/failed_to_fetch_funnel_stats.mdx": __fd_glob_106, "api/errors/failed_to_fetch_total_users_growth.mdx": __fd_glob_107, "api/errors/failed_to_generate_vcard.mdx": __fd_glob_108, "api/errors/failed_to_load_profile_contact.mdx": __fd_glob_109, "api/errors/failed_to_process_webhook.mdx": __fd_glob_110, "api/errors/failed_to_render_or_send_feedback_email_.mdx": __fd_glob_111, "api/errors/group_add_contacts_invalid_body.mdx": __fd_glob_112, "api/errors/group_failed.mdx": __fd_glob_113, "api/errors/group_member_ids_empty.mdx": __fd_glob_114, "api/errors/group_member_ids_filter_failed.mdx": __fd_glob_115, "api/errors/group_member_ids_invalid_body.mdx": __fd_glob_116, "api/errors/group_member_ids_search_failed.mdx": __fd_glob_117, "api/errors/group_not_found.mdx": __fd_glob_118, "api/errors/group_remove_members_invalid_body.mdx": __fd_glob_119, "api/errors/import_failed.mdx": __fd_glob_120, "api/errors/import_instagram_failed.mdx": __fd_glob_121, "api/errors/import_linkedin_failed.mdx": __fd_glob_122, "api/errors/import_vcard_failed.mdx": __fd_glob_123, "api/errors/important_date_duplicate.mdx": __fd_glob_124, "api/errors/index.mdx": __fd_glob_125, "api/errors/interaction_failed.mdx": __fd_glob_126, "api/errors/interaction_failed_to_add_participants_inserterror_m.mdx": __fd_glob_127, "api/errors/interaction_failed_to_remove_participants_deleteerro.mdx": __fd_glob_128, "api/errors/interaction_interaction_was_created_but_could_not_be.mdx": __fd_glob_129, "api/errors/interaction_no_fields.mdx": __fd_glob_130, "api/errors/interaction_not_found.mdx": __fd_glob_131, "api/errors/interaction_participants_failed.mdx": __fd_glob_132, "api/errors/interaction_update_failed.mdx": __fd_glob_133, "api/errors/internal_server_error.mdx": __fd_glob_134, "api/errors/invalid_api_key.mdx": __fd_glob_135, "api/errors/merge_recommendation_id_required.mdx": __fd_glob_136, "api/errors/merge_recommendation_not_found.mdx": __fd_glob_137, "api/errors/not_found.mdx": __fd_glob_138, "api/errors/onboarding_failed_to_complete_onboarding.mdx": __fd_glob_139, "api/errors/onboarding_failed_to_dismiss_getting_started.mdx": __fd_glob_140, "api/errors/onboarding_failed_to_update_import_follow_up.mdx": __fd_glob_141, "api/errors/rate_limit_exceeded.mdx": __fd_glob_142, "api/errors/relationship_already_exists.mdx": __fd_glob_143, "api/errors/relationship_failed.mdx": __fd_glob_144, "api/errors/relationship_invalid.mdx": __fd_glob_145, "api/errors/relationship_not_found.mdx": __fd_glob_146, "api/errors/relationship_self_forbidden.mdx": __fd_glob_147, "api/errors/service_auth_invalid.mdx": __fd_glob_148, "api/errors/service_auth_required.mdx": __fd_glob_149, "api/errors/service_unavailable.mdx": __fd_glob_150, "api/errors/session_fetch_failed.mdx": __fd_glob_151, "api/errors/session_settings_missing.mdx": __fd_glob_152, "api/errors/settings_failed_to_create_default_settings.mdx": __fd_glob_153, "api/errors/settings_failed_to_create_settings.mdx": __fd_glob_154, "api/errors/settings_failed_to_update_settings.mdx": __fd_glob_155, "api/errors/settings_fetch_failed.mdx": __fd_glob_156, "api/errors/settings_no_fields.mdx": __fd_glob_157, "api/errors/sqlite_schema_mismatch.mdx": __fd_glob_158, "api/errors/sync_conflict.mdx": __fd_glob_159, "api/errors/sync_protocol_mismatch.mdx": __fd_glob_160, "api/errors/tag_failed.mdx": __fd_glob_161, "api/errors/tag_not_found.mdx": __fd_glob_162, "api/errors/user_lookup_failed.mdx": __fd_glob_163, "api/errors/validation_error.mdx": __fd_glob_164, "api/errors/webhook_not_configured.mdx": __fd_glob_165, "api/guides/bulk-import-contacts.mdx": __fd_glob_166, "contributing/guides/add-new-language.mdx": __fd_glob_167, });
+export const docs = await create.docs(
+  "docs",
+  "../../docs",
+  {
+    "api/api-reference/meta.json": __fd_glob_6,
+    "api/errors/meta.json": __fd_glob_7,
+    "api/guides/meta.json": __fd_glob_8,
+    "apps/meta.json": __fd_glob_1,
+    "bondery/meta.json": __fd_glob_2,
+    "concepts/meta.json": __fd_glob_3,
+    "contributing/guides/meta.json": __fd_glob_9,
+    "contributing/meta.json": __fd_glob_4,
+    "deploy/meta.json": __fd_glob_5,
+    "meta.json": __fd_glob_0,
+  },
+  {
+    "api/api-reference/index.mdx": __fd_glob_48,
+    "api/authentication.mdx": __fd_glob_14,
+    "api/errors/account_failed_to_delete_account.mdx": __fd_glob_49,
+    "api/errors/account_failed_to_generate_avatar_url.mdx": __fd_glob_50,
+    "api/errors/account_failed_to_update_account.mdx": __fd_glob_51,
+    "api/errors/account_failed_to_upload_profile_photo.mdx": __fd_glob_52,
+    "api/errors/account_invalid.mdx": __fd_glob_53,
+    "api/errors/account_photo_invalid_format.mdx": __fd_glob_54,
+    "api/errors/admin_required.mdx": __fd_glob_55,
+    "api/errors/api_key_failed.mdx": __fd_glob_56,
+    "api/errors/api_key_limit_exceeded.mdx": __fd_glob_57,
+    "api/errors/api_key_method_forbidden.mdx": __fd_glob_58,
+    "api/errors/api_key_not_found.mdx": __fd_glob_59,
+    "api/errors/api_key_route_forbidden.mdx": __fd_glob_60,
+    "api/errors/auth_required.mdx": __fd_glob_61,
+    "api/errors/bad_gateway.mdx": __fd_glob_62,
+    "api/errors/bad_request.mdx": __fd_glob_63,
+    "api/errors/billing_pending_subscription_store_failed.mdx": __fd_glob_64,
+    "api/errors/billing_subscription_upsert_failed.mdx": __fd_glob_65,
+    "api/errors/billing_user_lookup_failed.mdx": __fd_glob_66,
+    "api/errors/chat_quota_exceeded.mdx": __fd_glob_67,
+    "api/errors/chat_session_failed_to_create_session.mdx": __fd_glob_68,
+    "api/errors/chat_session_failed_to_delete_session.mdx": __fd_glob_69,
+    "api/errors/chat_session_failed_to_update_session.mdx": __fd_glob_70,
+    "api/errors/checkout_not_configured.mdx": __fd_glob_71,
+    "api/errors/conflict.mdx": __fd_glob_72,
+    "api/errors/contact_contact_was_created_but_could_not_be_loa.mdx": __fd_glob_73,
+    "api/errors/contact_contact_was_created_but_could_not_be_rel.mdx": __fd_glob_74,
+    "api/errors/contact_contact_was_updated_but_could_not_be_loa.mdx": __fd_glob_75,
+    "api/errors/contact_delete_invalid_body.mdx": __fd_glob_76,
+    "api/errors/contact_delete_self_forbidden.mdx": __fd_glob_77,
+    "api/errors/contact_enrich_failed.mdx": __fd_glob_78,
+    "api/errors/contact_failed_to_assign_default_group.mdx": __fd_glob_80,
+    "api/errors/contact_failed_to_create_contact.mdx": __fd_glob_81,
+    "api/errors/contact_failed_to_look_up_contact.mdx": __fd_glob_82,
+    "api/errors/contact_failed_to_save_socials.mdx": __fd_glob_83,
+    "api/errors/contact_failed_to_upload_photo.mdx": __fd_glob_84,
+    "api/errors/contact_failed.mdx": __fd_glob_79,
+    "api/errors/contact_ids_empty.mdx": __fd_glob_85,
+    "api/errors/contact_ids_filter_failed.mdx": __fd_glob_86,
+    "api/errors/contact_ids_invalid_body.mdx": __fd_glob_87,
+    "api/errors/contact_ids_only_myself.mdx": __fd_glob_88,
+    "api/errors/contact_ids_search_failed.mdx": __fd_glob_89,
+    "api/errors/contact_invalid.mdx": __fd_glob_90,
+    "api/errors/contact_location_incomplete.mdx": __fd_glob_91,
+    "api/errors/contact_location_invalid.mdx": __fd_glob_92,
+    "api/errors/contact_merge_failed.mdx": __fd_glob_93,
+    "api/errors/contact_merge_invalid.mdx": __fd_glob_94,
+    "api/errors/contact_merge_same_contact.mdx": __fd_glob_95,
+    "api/errors/contact_merge_socials_failed.mdx": __fd_glob_96,
+    "api/errors/contact_not_found.mdx": __fd_glob_97,
+    "api/errors/contact_share_email_render_failed.mdx": __fd_glob_98,
+    "api/errors/contact_share_email_send_failed.mdx": __fd_glob_99,
+    "api/errors/contact_share_failed.mdx": __fd_glob_100,
+    "api/errors/contact_update_failed.mdx": __fd_glob_101,
+    "api/errors/email_service_not_configured.mdx": __fd_glob_102,
+    "api/errors/extension_outdated.mdx": __fd_glob_103,
+    "api/errors/extension_username_required.mdx": __fd_glob_104,
+    "api/errors/failed_to_create_checkout_session.mdx": __fd_glob_105,
+    "api/errors/failed_to_fetch_funnel_stats.mdx": __fd_glob_106,
+    "api/errors/failed_to_fetch_total_users_growth.mdx": __fd_glob_107,
+    "api/errors/failed_to_generate_vcard.mdx": __fd_glob_108,
+    "api/errors/failed_to_load_profile_contact.mdx": __fd_glob_109,
+    "api/errors/failed_to_process_webhook.mdx": __fd_glob_110,
+    "api/errors/failed_to_render_or_send_feedback_email_.mdx": __fd_glob_111,
+    "api/errors/group_add_contacts_invalid_body.mdx": __fd_glob_112,
+    "api/errors/group_failed.mdx": __fd_glob_113,
+    "api/errors/group_member_ids_empty.mdx": __fd_glob_114,
+    "api/errors/group_member_ids_filter_failed.mdx": __fd_glob_115,
+    "api/errors/group_member_ids_invalid_body.mdx": __fd_glob_116,
+    "api/errors/group_member_ids_search_failed.mdx": __fd_glob_117,
+    "api/errors/group_not_found.mdx": __fd_glob_118,
+    "api/errors/group_remove_members_invalid_body.mdx": __fd_glob_119,
+    "api/errors/import_failed.mdx": __fd_glob_120,
+    "api/errors/import_instagram_failed.mdx": __fd_glob_121,
+    "api/errors/import_linkedin_failed.mdx": __fd_glob_122,
+    "api/errors/import_vcard_failed.mdx": __fd_glob_123,
+    "api/errors/important_date_duplicate.mdx": __fd_glob_124,
+    "api/errors/index.mdx": __fd_glob_125,
+    "api/errors/interaction_failed_to_add_participants_inserterror_m.mdx": __fd_glob_127,
+    "api/errors/interaction_failed_to_remove_participants_deleteerro.mdx": __fd_glob_128,
+    "api/errors/interaction_failed.mdx": __fd_glob_126,
+    "api/errors/interaction_interaction_was_created_but_could_not_be.mdx": __fd_glob_129,
+    "api/errors/interaction_no_fields.mdx": __fd_glob_130,
+    "api/errors/interaction_not_found.mdx": __fd_glob_131,
+    "api/errors/interaction_participants_failed.mdx": __fd_glob_132,
+    "api/errors/interaction_update_failed.mdx": __fd_glob_133,
+    "api/errors/internal_server_error.mdx": __fd_glob_134,
+    "api/errors/invalid_api_key.mdx": __fd_glob_135,
+    "api/errors/merge_recommendation_id_required.mdx": __fd_glob_136,
+    "api/errors/merge_recommendation_not_found.mdx": __fd_glob_137,
+    "api/errors/not_found.mdx": __fd_glob_138,
+    "api/errors/onboarding_failed_to_complete_onboarding.mdx": __fd_glob_139,
+    "api/errors/onboarding_failed_to_dismiss_getting_started.mdx": __fd_glob_140,
+    "api/errors/onboarding_failed_to_update_import_follow_up.mdx": __fd_glob_141,
+    "api/errors/rate_limit_exceeded.mdx": __fd_glob_142,
+    "api/errors/relationship_already_exists.mdx": __fd_glob_143,
+    "api/errors/relationship_failed.mdx": __fd_glob_144,
+    "api/errors/relationship_invalid.mdx": __fd_glob_145,
+    "api/errors/relationship_not_found.mdx": __fd_glob_146,
+    "api/errors/relationship_self_forbidden.mdx": __fd_glob_147,
+    "api/errors/service_auth_invalid.mdx": __fd_glob_148,
+    "api/errors/service_auth_required.mdx": __fd_glob_149,
+    "api/errors/service_unavailable.mdx": __fd_glob_150,
+    "api/errors/session_fetch_failed.mdx": __fd_glob_151,
+    "api/errors/session_settings_missing.mdx": __fd_glob_152,
+    "api/errors/settings_failed_to_create_default_settings.mdx": __fd_glob_153,
+    "api/errors/settings_failed_to_create_settings.mdx": __fd_glob_154,
+    "api/errors/settings_failed_to_update_settings.mdx": __fd_glob_155,
+    "api/errors/settings_fetch_failed.mdx": __fd_glob_156,
+    "api/errors/settings_no_fields.mdx": __fd_glob_157,
+    "api/errors/sqlite_schema_mismatch.mdx": __fd_glob_158,
+    "api/errors/sync_conflict.mdx": __fd_glob_159,
+    "api/errors/sync_protocol_mismatch.mdx": __fd_glob_160,
+    "api/errors/tag_failed.mdx": __fd_glob_161,
+    "api/errors/tag_not_found.mdx": __fd_glob_162,
+    "api/errors/user_lookup_failed.mdx": __fd_glob_163,
+    "api/errors/validation_error.mdx": __fd_glob_164,
+    "api/errors/webhook_not_configured.mdx": __fd_glob_165,
+    "api/guides/bulk-import-contacts.mdx": __fd_glob_166,
+    "api/index.mdx": __fd_glob_15,
+    "apps/api.mdx": __fd_glob_16,
+    "apps/chrome-extension.mdx": __fd_glob_17,
+    "apps/mobile-app.mdx": __fd_glob_18,
+    "apps/webapp.mdx": __fd_glob_19,
+    "bondery/import.mdx": __fd_glob_20,
+    "changelog.mdx": __fd_glob_10,
+    "concepts/chat.mdx": __fd_glob_21,
+    "concepts/groups.mdx": __fd_glob_22,
+    "concepts/interactions.mdx": __fd_glob_23,
+    "concepts/map.mdx": __fd_glob_24,
+    "concepts/merge.mdx": __fd_glob_25,
+    "concepts/myself.mdx": __fd_glob_26,
+    "concepts/people.mdx": __fd_glob_27,
+    "concepts/relationships.mdx": __fd_glob_28,
+    "concepts/reminders.mdx": __fd_glob_29,
+    "concepts/tags.mdx": __fd_glob_30,
+    "contributing/api-container.mdx": __fd_glob_31,
+    "contributing/api-routes.mdx": __fd_glob_32,
+    "contributing/architecture.mdx": __fd_glob_33,
+    "contributing/auth.mdx": __fd_glob_34,
+    "contributing/dokploy.mdx": __fd_glob_35,
+    "contributing/environment.mdx": __fd_glob_36,
+    "contributing/guides/add-new-language.mdx": __fd_glob_167,
+    "contributing/how-to-write-docs.mdx": __fd_glob_37,
+    "contributing/i18n.mdx": __fd_glob_38,
+    "contributing/index.mdx": __fd_glob_39,
+    "contributing/local-setup.mdx": __fd_glob_40,
+    "contributing/schemas.mdx": __fd_glob_41,
+    "contributing/sync-architecture.mdx": __fd_glob_42,
+    "deploy/configuration.mdx": __fd_glob_43,
+    "deploy/get-started.mdx": __fd_glob_44,
+    "deploy/requirements.mdx": __fd_glob_45,
+    "deploy/secrets.mdx": __fd_glob_46,
+    "deploy/update.mdx": __fd_glob_47,
+    "getting-help-and-troubleshooting.mdx": __fd_glob_11,
+    "getting-started.mdx": __fd_glob_12,
+    "index.mdx": __fd_glob_13,
+  },
+);

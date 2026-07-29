@@ -1,12 +1,12 @@
-import type Stripe from "stripe";
 import type { FastifyBaseLogger } from "fastify";
+import type Stripe from "stripe";
 import { mapStripeStatus } from "../map-status.js";
 import { getSubscriptionPeriod } from "../stripe-helpers.js";
 import {
   findUserIdByEmail,
+  type SubscriptionMirrorFields,
   storePendingSubscription,
   upsertSubscription,
-  type SubscriptionMirrorFields,
 } from "../subscription.js";
 
 function customerId(customer: string | Stripe.Customer | Stripe.DeletedCustomer): string {
@@ -54,9 +54,7 @@ export async function upsertSubscriptionFromStripe(
   const email =
     subscription.metadata.email ??
     customerEmail(
-      typeof subscription.customer === "string"
-        ? null
-        : (subscription.customer as Stripe.Customer),
+      typeof subscription.customer === "string" ? null : (subscription.customer as Stripe.Customer),
     );
 
   const externalId = subscription.metadata.bondery_user_id;
@@ -108,7 +106,10 @@ export async function upsertSubscriptionFromStripe(
     mirror,
   );
 
-  log?.info({ status, stripeSubscriptionId: subscription.id, userId }, "stripe-webhook: subscription updated");
+  log?.info(
+    { status, stripeSubscriptionId: subscription.id, userId },
+    "stripe-webhook: subscription updated",
+  );
 }
 
 export async function handleCheckoutSessionCompleted(

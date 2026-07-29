@@ -5,7 +5,11 @@ import {
   normalizeApiBaseUrl,
   resolveServerApiBaseUrl,
 } from "../api/resolveServerApiUrl.js";
-import { WEBAPP_INTERNAL_API_URL_ENV, WEBAPP_RUNTIME_BUILD_PLACEHOLDERS, WEBAPP_RUNTIME_ENV } from "./runtimeConfig.env.js";
+import {
+  WEBAPP_INTERNAL_API_URL_ENV,
+  WEBAPP_RUNTIME_BUILD_PLACEHOLDERS,
+  WEBAPP_RUNTIME_ENV,
+} from "./runtimeConfig.env.js";
 import {
   buildWebappRuntimeConfigFromEnv,
   validateWebappRuntimeConfigAtStartup,

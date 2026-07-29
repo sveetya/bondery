@@ -1,23 +1,23 @@
 import "leaflet/dist/leaflet.css";
+import { WEBAPP_NAME, WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import type { Metadata } from "next";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { PaymentFailureModal } from "@/components/billing/PaymentFailureModal";
+import { EnrichResumeDetector } from "@/components/extension/EnrichResumeDetector";
+import { EnrichStatusNotificationManager } from "@/components/extension/EnrichStatusNotificationManager";
+import { ExtensionUpdateNotificationManager } from "@/components/extension/ExtensionUpdateNotificationManager";
 import { AppShellRefreshRegistrar } from "@/components/shell/AppShellRefreshRegistrar";
 import { AppShellWithQueryBadges } from "@/components/shell/AppShellWithQueryBadges";
 import { AppShellWrapper } from "@/components/shell/AppShellWrapper";
 import { ColorSchemeSync } from "@/components/shell/ColorSchemeSync";
-import { SessionResyncOnFocus } from "@/components/shell/SessionResyncOnFocus";
-import { UserSessionProvider } from "@/components/shell/UserSessionProvider";
-import { getRequestSession } from "@/lib/auth/getRequestSession";
-import { BYPASS_ONBOARDING_ONCE_COOKIE } from "@/lib/auth/constants";
-import { WEBAPP_ROUTES, WEBAPP_NAME } from "@bondery/helpers/globals/paths";
-import { cookies, headers } from "next/headers";
-import { Suspense } from "react";
-import { EnrichResumeDetector } from "@/components/extension/EnrichResumeDetector";
-import { EnrichStatusNotificationManager } from "@/components/extension/EnrichStatusNotificationManager";
-import { ExtensionUpdateNotificationManager } from "@/components/extension/ExtensionUpdateNotificationManager";
 import { ServiceWorkerRegistration } from "@/components/shell/ServiceWorkerRegistration";
+import { SessionResyncOnFocus } from "@/components/shell/SessionResyncOnFocus";
 import { SyncWakeRegistrar } from "@/components/shell/SyncWakeRegistrar";
+import { UserSessionProvider } from "@/components/shell/UserSessionProvider";
+import { BYPASS_ONBOARDING_ONCE_COOKIE } from "@/lib/auth/constants";
+import { getRequestSession } from "@/lib/auth/getRequestSession";
 import { SIDEBAR_COOKIE_NAME } from "@/lib/cookies/constants";
 
 export const metadata: Metadata = {

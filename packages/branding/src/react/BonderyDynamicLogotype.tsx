@@ -1,10 +1,7 @@
 import type { HTMLAttributes } from "react";
-import {
-  BRAND_FONT_FAMILY,
-  BRAND_LOGOTYPE_FONT_WEIGHT,
-} from "#typography.js";
 import { BonderyIcon } from "#react/BonderyIcon.js";
 import { BonderyIconWhite } from "#react/BonderyIconWhite.js";
+import { BRAND_FONT_FAMILY, BRAND_LOGOTYPE_FONT_WEIGHT } from "#typography.js";
 
 export type BonderyDynamicLogotypeProps = {
   /** Full label text (e.g. `"Bondery Docs"`). */
@@ -13,11 +10,11 @@ export type BonderyDynamicLogotypeProps = {
   theme: "light" | "dark";
   /** Icon height in pixels. Label font size scales with this. */
   height?: number;
-} & Pick<HTMLAttributes<HTMLSpanElement>, "className" | "aria-label">;
+} & Pick<HTMLAttributes<HTMLSpanElement>, "className">;
 
 const TEXT_COLORS = {
-  light: "#18181b",
   dark: "#fafafa",
+  light: "#18181b",
 } as const;
 
 /**
@@ -28,7 +25,6 @@ export function BonderyDynamicLogotype({
   theme,
   height = 20,
   className,
-  "aria-label": ariaLabel,
 }: BonderyDynamicLogotypeProps) {
   const iconSize = height;
   const fontSize = Math.round(height * 0.7);
@@ -37,7 +33,6 @@ export function BonderyDynamicLogotype({
 
   return (
     <span
-      aria-label={ariaLabel ?? text}
       className={["inline-flex items-center gap-1.5", className].filter(Boolean).join(" ")}
       style={{ color }}
     >

@@ -9,8 +9,7 @@ export const OG_GRADIENT_FROM = "#7C3AED";
 export const OG_GRADIENT_TO = "#C026D3";
 
 /** Shared light brand wash used by all OG layouts. */
-export const OG_BACKGROUND =
-  "linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #fce7f3 100%)";
+export const OG_BACKGROUND = "linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #fce7f3 100%)";
 
 export const OG_SITE_NAME = "Bondery";
 

@@ -16,9 +16,7 @@ export async function GET(_req: Request, context: RouteContext) {
     notFound();
   }
 
-  return createOgImageResponse(
-    <OgTitled subtype="Blog" title={meta.title} />,
-  );
+  return createOgImageResponse(<OgTitled subtype="Blog" title={meta.title} />);
 }
 
 export function generateStaticParams() {

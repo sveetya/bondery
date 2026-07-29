@@ -1,7 +1,5 @@
 {
-  "title": "Guides",
   "icon": "BookOpen",
-  "pages": [
-    "add-new-language"
-  ]
+  "pages": ["add-new-language"],
+  "title": "Guides"
 }

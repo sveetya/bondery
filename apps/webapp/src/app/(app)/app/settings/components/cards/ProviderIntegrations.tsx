@@ -19,11 +19,11 @@ import {
 import { useEffect, useState } from "react";
 import { openStandardConfirmModal } from "@/components/modals/openStandardConfirmModal";
 import { usePWAInstall } from "@/hooks/usePWAInstall";
+import { createWebappAuthClient } from "@/lib/auth/client";
 import { detectBonderyChromeExtension } from "@/lib/extension/detectBonderyChromeExtension";
 import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { TypedTrans } from "@/lib/i18n/TypedTrans";
 import { INTEGRATION_PROVIDERS } from "@/lib/platform/config";
-import { createWebappAuthClient } from "@/lib/auth/client";
 import { openChromeExtensionModal } from "../modals/openChromeExtensionModal";
 import { IntegrationCard } from "./IntegrationCard";
 

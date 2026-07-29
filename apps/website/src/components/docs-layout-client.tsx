@@ -1,8 +1,8 @@
 "use client";
 
+import { usePathname } from "fumadocs-core/framework";
 import { DocsLayout, type DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 import type { LayoutTab } from "fumadocs-ui/layouts/shared";
-import { usePathname } from "fumadocs-core/framework";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { filterPageTreeForPathname, getActiveTabKey } from "@/lib/docs-tree";
@@ -15,10 +15,7 @@ export function DocsLayoutClient({
 }: DocsLayoutProps & { tabs: LayoutTab[]; children: ReactNode }) {
   const pathname = usePathname();
   const tabKey = getActiveTabKey(pathname);
-  const filteredTree = useMemo(
-    () => filterPageTreeForPathname(tree, pathname),
-    [tree, pathname],
-  );
+  const filteredTree = useMemo(() => filterPageTreeForPathname(tree, pathname), [tree, pathname]);
 
   return (
     <DocsLayout key={tabKey} tabs={tabs} tree={filteredTree} {...props}>

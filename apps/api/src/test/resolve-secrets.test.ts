@@ -7,9 +7,7 @@ import {
 
 describe("resolveBetterAuthSecrets", () => {
   it("parses a single versioned secret", () => {
-    const secrets = parseBetterAuthSecretsString(
-      "1:abcdefghijklmnopqrstuvwxyz0123456789abcd",
-    );
+    const secrets = parseBetterAuthSecretsString("1:abcdefghijklmnopqrstuvwxyz0123456789abcd");
     assert.equal(secrets.length, 1);
     assert.equal(secrets[0]?.version, 1);
     assert.equal(secrets[0]?.value, "abcdefghijklmnopqrstuvwxyz0123456789abcd");
@@ -37,8 +35,7 @@ describe("resolveBetterAuthSecrets", () => {
 
   it("reads BONDERY_PRIVATE_BETTER_AUTH_SECRETS from env", () => {
     const secrets = resolveBetterAuthSecrets({
-      BONDERY_PRIVATE_BETTER_AUTH_SECRETS:
-        "1:abcdefghijklmnopqrstuvwxyz0123456789abcd",
+      BONDERY_PRIVATE_BETTER_AUTH_SECRETS: "1:abcdefghijklmnopqrstuvwxyz0123456789abcd",
     });
     assert.equal(secrets[0]?.version, 1);
   });

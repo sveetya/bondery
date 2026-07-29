@@ -1,5 +1,11 @@
 import { browser } from "wxt/browser";
-import { config, getOAuthAuthorizeUrl, getOAuthResource, getOAuthTokenUrl, OAUTH_SCOPE } from "../../config";
+import {
+  config,
+  getOAuthAuthorizeUrl,
+  getOAuthResource,
+  getOAuthTokenUrl,
+  OAUTH_SCOPE,
+} from "../../config";
 import {
   clearTokens,
   exchangeCodeForTokens,

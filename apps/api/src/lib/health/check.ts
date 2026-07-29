@@ -1,9 +1,4 @@
-import {
-  probeConfigured,
-  probeObjectStorage,
-  probePostgres,
-  probeRedis,
-} from "./probes.js";
+import { probeConfigured, probeObjectStorage, probePostgres, probeRedis } from "./probes.js";
 import type { HealthCheckConfig, HealthReport, HealthServices, HealthStatus } from "./types.js";
 
 const CACHE_TTL_MS = 60_000;
@@ -64,12 +59,12 @@ async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
   return {
     anthropic: probeConfigured(Boolean(config.anthropicApiKey.trim())),
     mapy: probeConfigured(Boolean(config.mapsApiKey.trim())),
-    stripe: probeConfigured(isStripeConfigured(config)),
-    posthog: probeConfigured(isPosthogConfigured(config)),
     postgres,
+    posthog: probeConfigured(isPosthogConfigured(config)),
     redis,
     smtp: probeConfigured(isSmtpConfigured(config), { required: true }),
     storage,
+    stripe: probeConfigured(isStripeConfigured(config)),
   };
 }
 

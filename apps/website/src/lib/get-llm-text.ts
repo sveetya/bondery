@@ -1,5 +1,5 @@
-import type { source } from "@/lib/source";
 import { WEBSITE_URL } from "@/lib/config";
+import type { source } from "@/lib/source";
 
 const GITHUB_BLOB_BASE = "https://github.com/usebondery/bondery/blob/main/docs";
 

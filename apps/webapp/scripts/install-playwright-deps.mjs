@@ -9,14 +9,13 @@ import { fileURLToPath } from "node:url";
 
 const webappRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-const command =
-  'sudo env "PATH=$PATH" npx playwright install-deps chromium';
+const command = 'sudo env "PATH=$PATH" npx playwright install-deps chromium';
 
 console.log("Installing Playwright system dependencies (sudo required)...");
 console.log(`> ${command}\n`);
 
 try {
-  execSync(command, { cwd: webappRoot, stdio: "inherit", shell: "/bin/bash" });
+  execSync(command, { cwd: webappRoot, shell: "/bin/bash", stdio: "inherit" });
 } catch {
   console.error(
     "\nIf sudo/playwright install-deps fails, install packages manually:\n" +

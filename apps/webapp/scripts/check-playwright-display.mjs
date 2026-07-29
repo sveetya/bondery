@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-/**
- * Headed Playwright (manual GitHub login) needs a graphical display.
- */
-import { existsSync } from "node:fs";
 import { ensureWslgDisplay } from "./ensure-wslg-display.mjs";
 
 function hasDisplay() {

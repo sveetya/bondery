@@ -28,7 +28,6 @@ export async function applySqlFunctions(databaseUrl: string): Promise<void> {
     // to already exist in the catalog.
     await client.query(EXTENSIONS_SQL);
     await client.query(sql);
-    // biome-ignore lint/suspicious/noConsole: CLI script output
     console.log(`Applied ${sqlPath}`);
   } finally {
     await client.end();
@@ -46,7 +45,6 @@ async function main() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch((error) => {
-    // biome-ignore lint/suspicious/noConsole: CLI script output
     console.error(error);
     process.exit(1);
   });

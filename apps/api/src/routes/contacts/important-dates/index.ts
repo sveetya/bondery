@@ -19,7 +19,6 @@ import { domainDb } from "../../../domains/_shared/domain-db.js";
 import { replaceImportantDates } from "../../../domains/contacts/important-dates.js";
 import {
   deriveReminderDateKey,
-  toImportantDate,
   toImportantDateFromPrisma,
 } from "../../../lib/contacts/important-dates.js";
 import { extractAvatarOptions } from "../../../lib/data/select-fragments.js";

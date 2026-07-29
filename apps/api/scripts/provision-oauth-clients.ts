@@ -34,10 +34,7 @@
 import { createHash } from "node:crypto";
 import { prisma } from "@bondery/db";
 import { generateId } from "@bondery/helpers/ids";
-import {
-  OAUTH_PROVIDER_SCOPES,
-  resolveApiResourceIdentifier,
-} from "../src/lib/auth/index.js";
+import { OAUTH_PROVIDER_SCOPES, resolveApiResourceIdentifier } from "../src/lib/auth/index.js";
 
 export function hashOAuthClientSecret(secret: string): string {
   return createHash("sha256").update(Buffer.from(secret, "utf8")).digest("base64url");
@@ -136,8 +133,9 @@ export async function provisionWebappClient(resourceId: string): Promise<void> {
   });
 
   await upsertResourceLink(clientId, resourceId);
-  // biome-ignore lint/suspicious/noConsole: CLI script output
-  console.log(`Provisioned webapp OAuth client ${clientId} (redirect_uris: ${redirectUris.join(", ")})`);
+  console.log(
+    `Provisioned webapp OAuth client ${clientId} (redirect_uris: ${redirectUris.join(", ")})`,
+  );
 }
 
 export async function provisionExtensionClient(resourceId: string): Promise<void> {
@@ -180,7 +178,6 @@ export async function provisionExtensionClient(resourceId: string): Promise<void
   });
 
   await upsertResourceLink(clientId, resourceId);
-  // biome-ignore lint/suspicious/noConsole: CLI script output
   console.log(
     `Provisioned extension OAuth client ${clientId} (redirect_uris: ${redirectUris.join(", ")})`,
   );
@@ -232,7 +229,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   main()
     .then(() => process.exit(0))
     .catch((error) => {
-      // biome-ignore lint/suspicious/noConsole: CLI script output
       console.error(error);
       process.exit(1);
     });

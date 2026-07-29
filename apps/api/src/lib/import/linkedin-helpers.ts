@@ -11,10 +11,7 @@ import { uploadContactAvatarAndSetFlag } from "../contacts/avatar-storage.js";
 import { validateImageMagicBytes, validateImageUpload } from "../platform/config.js";
 import logger from "../platform/logger.js";
 import { getStorage, LINKEDIN_LOGOS_BUCKET } from "../storage/get-storage.js";
-import {
-  LINKEDIN_LOGO_MAX_EDGE,
-  normalizeImageToJpeg,
-} from "../storage/normalize-image.js";
+import { LINKEDIN_LOGO_MAX_EDGE, normalizeImageToJpeg } from "../storage/normalize-image.js";
 
 /**
  * Converts a loose date string (YYYY, YYYY-MM, or YYYY-MM-DD) into a

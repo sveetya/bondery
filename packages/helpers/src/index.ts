@@ -17,7 +17,6 @@ export {
   getContactChannelTypeEmoji,
 } from "#contact/index.js";
 export { formatDateRange, formatDuration } from "#date/index.js";
-export { generateId, isUuidV7, isValidUuid } from "#ids/index.js";
 export { DOC_LINKS, type DocId, docHref } from "#docs/index.js";
 export type {
   CreateContactFromFullNameInput,
@@ -56,6 +55,7 @@ export {
   WEBAPP_ROUTES,
   WEBSITE_ROUTES,
 } from "#globals/index.js";
+export { generateId, isUuidV7, isValidUuid } from "#ids/index.js";
 export { INTERACTION_TYPES } from "#interactions/index.js";
 export {
   cleanPersonName,

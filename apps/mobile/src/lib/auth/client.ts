@@ -14,8 +14,8 @@ const webStorage = {
 
 export const authClient = HAS_MOBILE_CONFIG
   ? createAuthClient({
-      baseURL: API_URL,
       basePath: BETTER_AUTH_BASE_PATH,
+      baseURL: API_URL,
       plugins: [
         expoClient({
           scheme: "bondery",

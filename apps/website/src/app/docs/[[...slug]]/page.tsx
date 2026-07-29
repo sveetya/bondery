@@ -43,9 +43,7 @@ export default async function DocPage(props: PageProps) {
   }
 
   const lastEdit =
-    page.type !== "openapi" && page.data.lastModified
-      ? new Date(page.data.lastModified)
-      : null;
+    page.type !== "openapi" && page.data.lastModified ? new Date(page.data.lastModified) : null;
 
   if (page.type === "openapi") {
     return (
@@ -55,7 +53,7 @@ export default async function DocPage(props: PageProps) {
         <DocsBody>
           <OpenAPIPage {...page.data.getOpenAPIPageProps()} />
         </DocsBody>
-        {lastEdit ? <PageLastUpdate date={lastEdit} className="mt-8" /> : null}
+        {lastEdit ? <PageLastUpdate className="mt-8" date={lastEdit} /> : null}
       </DocsPage>
     );
   }
@@ -76,7 +74,7 @@ export default async function DocPage(props: PageProps) {
           })}
         />
       </DocsBody>
-      {lastEdit ? <PageLastUpdate date={lastEdit} className="mt-8" /> : null}
+      {lastEdit ? <PageLastUpdate className="mt-8" date={lastEdit} /> : null}
     </DocsPage>
   );
 }

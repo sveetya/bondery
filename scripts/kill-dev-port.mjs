@@ -40,10 +40,7 @@ function portListeners(port) {
  */
 export function killDevPort(port, { patterns = [], quiet = false } = {}) {
   const log = quiet ? () => {} : console.log.bind(console);
-  const mergedPatterns = [
-    ...patterns,
-    ...(DEFAULT_PATTERNS_BY_PORT[port] ?? []),
-  ];
+  const mergedPatterns = [...patterns, ...(DEFAULT_PATTERNS_BY_PORT[port] ?? [])];
 
   const before = portListeners(port);
   if (!before) {

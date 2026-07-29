@@ -1,5 +1,4 @@
 {
-  "title": "Bondery",
   "pages": [
     "index",
     "---Getting started---",
@@ -36,5 +35,6 @@
     "---Production deployment---",
     "contributing/dokploy",
     "contributing/api-container"
-  ]
+  ],
+  "title": "Bondery"
 }

@@ -274,7 +274,8 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
-    description: "SeaweedFS S3 secret access key (API client + rendered into seaweedfs-s3 at startup).",
+    description:
+      "SeaweedFS S3 secret access key (API client + rendered into seaweedfs-s3 at startup).",
     exampleValue: "",
     group: "Storage",
     requiredIn: ["development", "production"],

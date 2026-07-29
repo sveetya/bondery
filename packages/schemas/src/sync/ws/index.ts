@@ -52,7 +52,10 @@ export function buildSyncWsUrl(apiBaseUrl: string, ticket: string): string {
 
 /** Same-origin BFF WebSocket URL for the webapp (proxied to the API). */
 export function buildBffSyncWsUrl(origin: string, ticket: string): string {
-  const wsBase = origin.replace(/\/+$/, "").replace(/^http:/, "ws:").replace(/^https:/, "wss:");
+  const wsBase = origin
+    .replace(/\/+$/, "")
+    .replace(/^http:/, "ws:")
+    .replace(/^https:/, "wss:");
   const url = new URL(`${wsBase}/api/sync/ws`);
   url.searchParams.set("ticket", ticket);
   return url.toString();

@@ -40,13 +40,11 @@ export function parseBetterAuthSecretsString(raw: string): BetterAuthSecretVersi
       throw new Error(`Duplicate secret version: ${version}`);
     }
     if (value.length < MIN_SECRET_LENGTH) {
-      throw new Error(
-        `Secret version ${version} must be at least ${MIN_SECRET_LENGTH} characters`,
-      );
+      throw new Error(`Secret version ${version} must be at least ${MIN_SECRET_LENGTH} characters`);
     }
 
     seenVersions.add(version);
-    secrets.push({ version, value });
+    secrets.push({ value, version });
   }
 
   const maxVersion = Math.max(...secrets.map((secret) => secret.version));

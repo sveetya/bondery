@@ -48,11 +48,7 @@ export function UpgradeButton({ onSuccess, ...rest }: UpgradeButtonProps) {
         onChange={(value) => setInterval(value as BillingInterval)}
         value={interval}
       />
-      {upgradesEnabled ? (
-        button
-      ) : (
-        <Tooltip label={t("upgradesDisabledTooltip")}>{button}</Tooltip>
-      )}
+      {upgradesEnabled ? button : <Tooltip label={t("upgradesDisabledTooltip")}>{button}</Tooltip>}
       <Modal centered onClose={closeCheckout} opened={isModalOpen} size="lg" title="Checkout">
         <div id={checkoutMountId} />
       </Modal>

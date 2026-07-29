@@ -4,13 +4,13 @@ import { API_ROUTES, toBffApiPath, WEBAPP_ROUTES } from "@bondery/helpers/global
 import { Box, Button, Collapse, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { clientApiFetch } from "@/lib/api/client";
 import {
   deriveUserHealthStatus,
   fetchApiHealthReport,
   type HealthCheckResult,
   type UserHealthStatus,
 } from "@/lib/api/health";
-import { clientApiFetch } from "@/lib/api/client";
 import { OUTAGE_RESUME_DELAY_MS } from "@/lib/auth/constants";
 import { resetApiUnavailableNavigation } from "@/lib/auth/handleApiUnavailable";
 import { parseReturnIntent } from "@/lib/auth/returnIntent";

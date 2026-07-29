@@ -1,4 +1,4 @@
-import { validate as uuidValidate, v7 as uuidv7, version as uuidVersion } from "uuid";
+import { validate as uuidValidate, version as uuidVersion, v7 as uuidv7 } from "uuid";
 
 /** RFC 9562 v7 — time-sortable, used for all new Bondery entity IDs. */
 export function generateId(): string {

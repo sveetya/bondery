@@ -15,12 +15,12 @@ export const serviceProbeResultSchema = z.object({
 export const healthServicesSchema = z.object({
   anthropic: serviceProbeResultSchema,
   mapy: serviceProbeResultSchema,
-  stripe: serviceProbeResultSchema,
-  posthog: serviceProbeResultSchema,
   postgres: serviceProbeResultSchema,
+  posthog: serviceProbeResultSchema,
   redis: serviceProbeResultSchema,
   smtp: serviceProbeResultSchema,
   storage: serviceProbeResultSchema,
+  stripe: serviceProbeResultSchema,
 });
 
 export const healthReportSchema = z

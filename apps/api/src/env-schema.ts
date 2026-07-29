@@ -35,14 +35,6 @@ export const envSchema = {
       default: "",
       type: "string",
     },
-    BONDERY_PRIVATE_STRIPE_SECRET_KEY: {
-      default: "",
-      type: "string",
-    },
-    BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET: {
-      default: "",
-      type: "string",
-    },
     BONDERY_PRIVATE_POSTHOG_API_SECRET: {
       default: "",
       type: "string",
@@ -72,7 +64,19 @@ export const envSchema = {
       default: "",
       type: "string",
     },
+    BONDERY_PRIVATE_STRIPE_SECRET_KEY: {
+      default: "",
+      type: "string",
+    },
+    BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET: {
+      default: "",
+      type: "string",
+    },
     BONDERY_PUBLIC_API_URL: {
+      type: "string",
+    },
+    BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED: {
+      default: "false",
       type: "string",
     },
     BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS: {
@@ -83,8 +87,7 @@ export const envSchema = {
       default: "https://api.mapy.com",
       type: "string",
     },
-    BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED: {
-      default: "false",
+    BONDERY_PUBLIC_STORAGE_URL: {
       type: "string",
     },
     BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL: {
@@ -97,9 +100,6 @@ export const envSchema = {
     },
     BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY: {
       default: "",
-      type: "string",
-    },
-    BONDERY_PUBLIC_STORAGE_URL: {
       type: "string",
     },
     BONDERY_PUBLIC_WEBAPP_URL: {

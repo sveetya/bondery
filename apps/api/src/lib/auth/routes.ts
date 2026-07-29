@@ -24,18 +24,15 @@ import {
   oauthProviderAuthServerMetadata,
   oauthProviderOpenIdConfigMetadata,
 } from "@better-auth/oauth-provider";
-import { getRequest, setResponse } from "better-call/node";
-import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { auth, resolveBetterAuthIssuerUrl } from "./index.js";
 import {
-  resolveRuntimeTrustedOrigins,
-  withCorsHeaders,
-} from "../platform/trusted-origins.js";
-import {
+  BETTER_AUTH_BASE_PATH,
   betterAuthAuthorizationServerMetadataPath,
   betterAuthPath,
-  BETTER_AUTH_BASE_PATH,
 } from "@bondery/helpers/globals/paths";
+import { getRequest, setResponse } from "better-call/node";
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { resolveRuntimeTrustedOrigins, withCorsHeaders } from "../platform/trusted-origins.js";
+import { auth, resolveBetterAuthIssuerUrl } from "./index.js";
 
 const AUTH_ALLOWED_ORIGINS = resolveRuntimeTrustedOrigins();
 
@@ -55,7 +52,9 @@ const CANONICAL_ORIGIN = resolveBetterAuthIssuerUrl();
 
 function getContentType(headers: FastifyRequest["headers"]): string | undefined {
   const value = headers["content-type"];
-  if (Array.isArray(value)) return value[0];
+  if (Array.isArray(value)) {
+    return value[0];
+  }
   return value;
 }
 
@@ -75,16 +74,28 @@ function isFormBodyRecord(value: unknown): value is Record<string, unknown> {
 
 /** Re-serialize Fastify's already-parsed body in the wire format Better Auth expects. */
 function serializeFastifyBody(body: unknown, contentType: string | undefined): string | undefined {
-  if (body === undefined || body === null) return undefined;
-  if (typeof body === "string") return body;
-  if (Buffer.isBuffer(body)) return body.toString("utf8");
-  if (body instanceof URLSearchParams) return body.toString();
+  if (body === undefined || body === null) {
+    return undefined;
+  }
+  if (typeof body === "string") {
+    return body;
+  }
+  if (Buffer.isBuffer(body)) {
+    return body.toString("utf8");
+  }
+  if (body instanceof URLSearchParams) {
+    return body.toString();
+  }
   if (isFormUrlEncoded(contentType) && isFormBodyRecord(body)) {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(body)) {
-      if (value === undefined) continue;
+      if (value === undefined) {
+        continue;
+      }
       if (Array.isArray(value)) {
-        for (const item of value) params.append(key, String(item));
+        for (const item of value) {
+          params.append(key, String(item));
+        }
       } else {
         params.append(key, String(value));
       }
@@ -138,10 +149,7 @@ async function sendFetchResponse(
   // which would throw "reply already sent" — but hijacking also skips
   // @fastify/cors headers added earlier in the hook chain.
   reply.hijack();
-  await setResponse(
-    reply.raw,
-    withCorsHeaders(request, response, AUTH_ALLOWED_ORIGINS),
-  );
+  await setResponse(reply.raw, withCorsHeaders(request, response, AUTH_ALLOWED_ORIGINS));
 }
 
 export async function registerAuthRoutes(fastify: FastifyInstance): Promise<void> {
@@ -157,11 +165,11 @@ export async function registerAuthRoutes(fastify: FastifyInstance): Promise<void
   });
 
   fastify.route({
-    method: ["GET", "POST"],
-    url: `${BETTER_AUTH_BASE_PATH}/*`,
     async handler(request, reply) {
       const response = await auth.handler(toFetchRequest(request));
       await sendFetchResponse(request, reply, response);
     },
+    method: ["GET", "POST"],
+    url: `${BETTER_AUTH_BASE_PATH}/*`,
   });
 }

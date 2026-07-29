@@ -1,9 +1,5 @@
 import { bonderyTheme } from "@bondery/mantine-next";
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  v8CssVariablesResolver,
-} from "@mantine/core";
+import { ColorSchemeScript, MantineProvider, v8CssVariablesResolver } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Footer, Header } from "@/components/landing";
 import { JsonLd } from "@/lib/seo/json-ld";

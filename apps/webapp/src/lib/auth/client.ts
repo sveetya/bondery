@@ -1,7 +1,7 @@
-import type { WebappRuntimeConfig } from "@bondery/schemas";
+import { oauthProviderClient } from "@better-auth/oauth-provider/client";
 import { resolveCookieDomain } from "@bondery/helpers/auth/resolve-cookie-domain";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
-import { oauthProviderClient } from "@better-auth/oauth-provider/client";
+import type { WebappRuntimeConfig } from "@bondery/schemas";
 import { createAuthClient } from "better-auth/client";
 import { lastLoginMethodClient } from "better-auth/client/plugins";
 import { getWebappRuntimeConfigSync } from "@/lib/platform/runtimeConfig.client";
@@ -26,8 +26,8 @@ export function createWebappAuthClient(config?: WebappRuntimeConfig) {
   const cookieDomain = resolveCookieDomain(cfg.webappUrl);
 
   return createAuthClient({
-    baseURL: apiBaseUrl,
     basePath: BETTER_AUTH_BASE_PATH,
+    baseURL: apiBaseUrl,
     fetchOptions: {
       credentials: "include",
     },

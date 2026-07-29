@@ -282,7 +282,7 @@ function writeTurbo(dryRun) {
   log.success("Updated turbo.json env sections from manifest");
 }
 
-function upsertEnvFile(path, updates) {
+function _upsertEnvFile(path, updates) {
   if (!existsSync(path)) {
     const lines = Object.entries(updates).map(([k, v]) => `${k}=${quoteEnvValue(v)}`);
     writeFileSync(path, `${lines.join("\n")}\n`, "utf-8");

@@ -14,7 +14,7 @@ function useDocsColorScheme(): "light" | "dark" {
 
     read();
     const observer = new MutationObserver(read);
-    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(root, { attributeFilter: ["class"], attributes: true });
     return () => observer.disconnect();
   }, []);
 

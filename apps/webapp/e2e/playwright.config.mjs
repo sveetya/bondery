@@ -63,14 +63,49 @@ const e2ePublicEnv = {
 };
 
 export default defineConfig({
+  forbidOnly: Boolean(process.env.CI),
+  fullyParallel: false,
+  globalSetup: "./global-setup.mjs",
+  projects: [
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+      timeout: 300_000,
+      use: {
+        headless: false,
+      },
+    },
+    {
+      name: "github-login",
+      testMatch: /login\.github\.spec\.ts/,
+      timeout: 300_000,
+      use: {
+        screenshot: "only-on-failure",
+        storageState: { cookies: [], origins: [] },
+        video: "retain-on-failure",
+      },
+    },
+    {
+      dependencies: ["setup"],
+      name: "auth",
+      testMatch: /login\.authenticated\.spec\.ts/,
+      use: {
+        storageState: ".auth/user.json",
+      },
+    },
+    {
+      name: "unauth",
+      testMatch: /login\.unauth\.spec\.ts/,
+    },
+    {
+      name: "oauth-callback",
+      testMatch: /oauth-callback\.spec\.ts/,
+    },
+  ],
+  reporter: [["list"]],
+  retries: process.env.CI ? 1 : 0,
   testDir: ".",
   tsconfig: "./tsconfig.json",
-  globalSetup: "./global-setup.mjs",
-  fullyParallel: false,
-  forbidOnly: Boolean(process.env.CI),
-  retries: process.env.CI ? 1 : 0,
-  workers: 1,
-  reporter: [["list"]],
   use: {
     ...devices["Desktop Chrome"],
     baseURL: E2E_WEBAPP_URL,
@@ -94,40 +129,5 @@ export default defineConfig({
       url: `${E2E_WEBAPP_URL}/api/status`,
     },
   ],
-  projects: [
-    {
-      name: "setup",
-      testMatch: /auth\.setup\.ts/,
-      timeout: 300_000,
-      use: {
-        headless: false,
-      },
-    },
-    {
-      name: "github-login",
-      testMatch: /login\.github\.spec\.ts/,
-      timeout: 300_000,
-      use: {
-        storageState: { cookies: [], origins: [] },
-        screenshot: "only-on-failure",
-        video: "retain-on-failure",
-      },
-    },
-    {
-      name: "auth",
-      testMatch: /login\.authenticated\.spec\.ts/,
-      dependencies: ["setup"],
-      use: {
-        storageState: ".auth/user.json",
-      },
-    },
-    {
-      name: "unauth",
-      testMatch: /login\.unauth\.spec\.ts/,
-    },
-    {
-      name: "oauth-callback",
-      testMatch: /oauth-callback\.spec\.ts/,
-    },
-  ],
+  workers: 1,
 });

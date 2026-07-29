@@ -6,8 +6,8 @@ import { Card, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { createWebappAuthClient } from "@/lib/auth/client";
+import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
@@ -37,7 +37,7 @@ export function LoginClient() {
       }
 
       window.location.assign(startUrl.toString());
-    } catch (err) {
+    } catch (_err) {
       notifications.show(
         errorNotificationTemplate({
           description: tCommon("errors.unknown"),

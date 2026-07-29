@@ -1,6 +1,5 @@
 "use client";
 
-import { buildSignedOAuthQuery } from "@/lib/auth/signedOAuthQuery";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import { errorNotificationTemplate } from "@bondery/mantine-next";
 import {
@@ -22,6 +21,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
+import { buildSignedOAuthQuery } from "@/lib/auth/signedOAuthQuery";
 import { useOAuthConsentTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 

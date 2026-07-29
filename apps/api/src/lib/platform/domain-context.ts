@@ -12,6 +12,9 @@ export function domainContextFromRequest(request: FastifyRequest): DomainContext
   };
 }
 
-export function domainContextFromUser(user: DomainAuthUser, log?: FastifyBaseLogger): DomainContext {
+export function domainContextFromUser(
+  user: DomainAuthUser,
+  log?: FastifyBaseLogger,
+): DomainContext {
   return { db: prisma, log, user };
 }

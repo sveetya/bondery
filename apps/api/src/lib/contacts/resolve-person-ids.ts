@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@bondery/db";
-import { countSearchPeopleIdsWithDb, searchPeopleIdsWithDb } from "../data/search-prisma.js";
+import { searchPeopleIdsWithDb } from "../data/search-prisma.js";
 import { badRequest, internal } from "../platform/errors/http-errors.js";
 
 export type ResolveContactPersonIdsExplicitBody = {
