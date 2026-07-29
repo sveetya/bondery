@@ -1,6 +1,7 @@
 {
   "allowScripts": {
     "@parcel/watcher@2.5.6": true,
+    "@prisma/engines@7.9.1": true,
     "@swc/core@1.15.43": true,
     "core-js-pure@3.49.0": true,
     "core-js@3.49.0": true,
@@ -9,6 +10,7 @@
     "esbuild@0.28.0": true,
     "esbuild@0.28.1": true,
     "protobufjs@7.6.4": true,
+    "prisma@7.9.1": true,
     "sharp@0.34.5": true,
     "spawn-sync@1.0.15": true
   },
