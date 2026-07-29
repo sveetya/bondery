@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@bondery/helpers/globals/paths";
 import type { ChatSession } from "@bondery/schemas";
 import type { UIMessage } from "ai";
 import { clientApiJson } from "@/lib/api/client";
@@ -16,7 +17,7 @@ import {
 export type { ChatMessageRow };
 
 export async function createChatSession(): Promise<string> {
-  const { session } = await clientApiJson<{ session: ChatSession }>("/api/chat/sessions", {
+  const { session } = await clientApiJson<{ session: ChatSession }>(API_ROUTES.CHAT_SESSIONS, {
     method: "POST",
   });
 
@@ -28,7 +29,7 @@ export async function createChatSession(): Promise<string> {
 }
 
 export async function deleteChatSession(sessionId: string): Promise<void> {
-  await clientApiJson(`/api/chat/sessions/${sessionId}`, { method: "DELETE" });
+  await clientApiJson(`${API_ROUTES.CHAT_SESSIONS}/${sessionId}`, { method: "DELETE" });
 }
 
 export async function getChatSessions(): Promise<ChatSession[]> {

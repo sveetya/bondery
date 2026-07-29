@@ -1,3 +1,4 @@
+import { toBffApiPath } from "@bondery/helpers/globals/paths";
 import { applyTransportErrorPolicy } from "@/lib/api/applyTransportErrorPolicy";
 import {
   handleUnauthorizedSession,
@@ -12,7 +13,7 @@ export {
 } from "./applyTransportErrorPolicy";
 
 export async function clientApiFetch(path: string, init?: RequestInit): Promise<Response> {
-  return fetch(path, {
+  return fetch(toBffApiPath(path), {
     ...init,
     credentials: init?.credentials ?? "include",
   });

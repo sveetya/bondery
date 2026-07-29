@@ -1,6 +1,7 @@
 "use client";
 
-import { Badge, Button, Stack } from "@mantine/core";
+import { CornerLabeledButton } from "@bondery/mantine-next";
+import { Stack } from "@mantine/core";
 import { IconBrandGithubFilled, IconBrandLinkedin } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import type { WebappAuthClient } from "@/lib/auth/client";
@@ -62,25 +63,20 @@ export function LoginProviderButtons({
         const isLastUsed = showLastUsedBadge && lastMethod === provider.providerKey;
 
         return (
-          <Button
+          <CornerLabeledButton
             color={provider.backgroundColor}
+            cornerLabel={isLastUsed ? t("LastUsed") : undefined}
+            cornerLabelTestId="login-last-used-badge"
             data-testid={getProviderTestId?.(provider.providerKey)}
             fullWidth
             key={provider.provider}
             leftSection={<IconComponent size={20} />}
             loading={loading}
             onClick={() => onProviderClick(provider.provider as OAuthProvider)}
-            rightSection={
-              isLastUsed ? (
-                <Badge color="gray" data-testid="login-last-used-badge" size="sm" variant="light">
-                  {t("LastUsed")}
-                </Badge>
-              ) : undefined
-            }
             size="lg"
           >
             {t("ContinueWith", { provider: provider.displayName })}
-          </Button>
+          </CornerLabeledButton>
         );
       })}
     </Stack>

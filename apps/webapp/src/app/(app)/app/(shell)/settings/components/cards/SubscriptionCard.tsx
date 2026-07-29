@@ -1,6 +1,6 @@
 "use client";
 
-import { API_ROUTES } from "@bondery/helpers/globals/paths";
+import { API_ROUTES, toBffApiPath } from "@bondery/helpers/globals/paths";
 import type { SubscriptionStatus } from "@bondery/schemas";
 import { Badge, Button, CardSection, Group, Progress, Stack, Text } from "@mantine/core";
 import { IconCreditCard, IconExternalLink } from "@tabler/icons-react";
@@ -18,7 +18,7 @@ function SubscriptionCardContent({
   const t = useSettingsPageTranslations("Subscription");
   const format = useFormatter();
   const isPremium = subscriptionStatus.plan === "premium";
-  const portalUrl = API_ROUTES.SUBSCRIPTIONS_PORTAL;
+  const portalUrl = toBffApiPath(API_ROUTES.SUBSCRIPTIONS_PORTAL);
 
   const formatDate = (value: string | null): string | null => {
     if (!value) {
@@ -204,12 +204,7 @@ function SubscriptionCardContent({
                 {t("ManageSubscription")}
               </Button>
             ) : (
-              <Stack gap={4}>
-                <UpgradeButton />
-                <Text c="dimmed" size="xs">
-                  {t("StudentPromoHint")}
-                </Text>
-              </Stack>
+              <UpgradeButton />
             )}
           </Group>
           {isPremium && subscriptionStatus.aiMessageLimit > 0 && (

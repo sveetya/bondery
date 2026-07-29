@@ -6,7 +6,7 @@ import {
   successNotificationTemplate,
   warningNotificationTemplate,
 } from "@bondery/mantine-next";
-import type { BillingInterval, SubscriptionStatus } from "@bondery/schemas";
+import type { SubscriptionStatus } from "@bondery/schemas";
 import { notifications } from "@mantine/notifications";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ interface UseEmbeddedCheckoutResult {
   closeCheckout: () => void;
   isLoading: boolean;
   isModalOpen: boolean;
-  openCheckout: (interval: BillingInterval) => Promise<void>;
+  openCheckout: () => Promise<void>;
 }
 
 function isCheckoutConfirmed(status: SubscriptionStatus | null): boolean {
@@ -75,124 +75,120 @@ export function useEmbeddedCheckout({
     };
   }, [closeCheckout]);
 
-  const openCheckout = useCallback(
-    async (interval: BillingInterval) => {
-      if (!stripePublishableKey) {
+  const openCheckout = useCallback(async () => {
+    if (!stripePublishableKey) {
+      notifications.show(
+        errorNotificationTemplate({
+          description: t("errorMessage"),
+          title: t("errorTitle"),
+        }),
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    confirmationCancelledRef.current = false;
+
+    let clientSecret: string;
+    try {
+      const checkoutSession = await clientApiJson<{ clientSecret: string }>(
+        API_ROUTES.SUBSCRIPTIONS_CHECKOUT,
+        {
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+        },
+      );
+      clientSecret = checkoutSession.clientSecret;
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
         notifications.show(
-          errorNotificationTemplate({
-            description: t("errorMessage"),
-            title: t("errorTitle"),
-          }),
-        );
-        return;
-      }
-
-      setIsLoading(true);
-      confirmationCancelledRef.current = false;
-
-      let clientSecret: string;
-      try {
-        const checkoutSession = await clientApiJson<{ clientSecret: string }>(
-          API_ROUTES.SUBSCRIPTIONS_CHECKOUT,
-          {
-            body: JSON.stringify({ interval }),
-            headers: { "Content-Type": "application/json" },
-            method: "POST",
-          },
-        );
-        clientSecret = checkoutSession.clientSecret;
-      } catch (error) {
-        if (error instanceof ApiError && error.status === 409) {
-          notifications.show(
-            warningNotificationTemplate({
-              description: t("alreadySubscribedMessage"),
-              title: t("alreadySubscribedTitle"),
-            }),
-          );
-          setIsLoading(false);
-          return;
-        }
-
-        if (isUnauthorizedApiError(error)) {
-          setIsLoading(false);
-          return;
-        }
-
-        notifications.show(
-          errorNotificationTemplate({
-            description: t("errorMessage"),
-            title: t("errorTitle"),
+          warningNotificationTemplate({
+            description: t("alreadySubscribedMessage"),
+            title: t("alreadySubscribedTitle"),
           }),
         );
         setIsLoading(false);
         return;
       }
 
-      const { loadStripe } = await import("@stripe/stripe-js");
-      const stripe = await loadStripe(stripePublishableKey);
-
-      if (!stripe) {
-        notifications.show(
-          errorNotificationTemplate({
-            description: t("errorMessage"),
-            title: t("errorTitle"),
-          }),
-        );
+      if (isUnauthorizedApiError(error)) {
         setIsLoading(false);
         return;
       }
 
-      setIsModalOpen(true);
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+      notifications.show(
+        errorNotificationTemplate({
+          description: t("errorMessage"),
+          title: t("errorTitle"),
+        }),
+      );
+      setIsLoading(false);
+      return;
+    }
 
-      try {
-        const checkout = await stripe.createEmbeddedCheckoutPage({ clientSecret });
-        checkoutRef.current = checkout;
-        checkout.mount(`#${checkoutMountId}`);
-        setIsLoading(false);
+    const { loadStripe } = await import("@stripe/stripe-js");
+    const stripe = await loadStripe(stripePublishableKey);
 
-        const started = Date.now();
-        pollTimerRef.current = window.setInterval(() => {
-          void (async () => {
-            if (confirmationCancelledRef.current) {
+    if (!stripe) {
+      notifications.show(
+        errorNotificationTemplate({
+          description: t("errorMessage"),
+          title: t("errorTitle"),
+        }),
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    setIsModalOpen(true);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    try {
+      const checkout = await stripe.createEmbeddedCheckoutPage({ clientSecret });
+      checkoutRef.current = checkout;
+      checkout.mount(`#${checkoutMountId}`);
+      setIsLoading(false);
+
+      const started = Date.now();
+      pollTimerRef.current = window.setInterval(() => {
+        void (async () => {
+          if (confirmationCancelledRef.current) {
+            return;
+          }
+
+          if (Date.now() - started > WEBHOOK_CONFIRM_TIMEOUT_MS) {
+            return;
+          }
+
+          try {
+            const status = await getSubscriptionStatus();
+            if (!isCheckoutConfirmed(status)) {
               return;
             }
 
-            if (Date.now() - started > WEBHOOK_CONFIRM_TIMEOUT_MS) {
-              return;
-            }
-
-            try {
-              const status = await getSubscriptionStatus();
-              if (!isCheckoutConfirmed(status)) {
-                return;
-              }
-
-              closeCheckout();
-              notifications.show(
-                successNotificationTemplate({
-                  description: t("successMessage"),
-                  title: t("successTitle"),
-                }),
-              );
-              handleCheckoutConfirmed();
-            } catch {
-              // Keep polling while checkout is open.
-            }
-          })();
-        }, CHECKOUT_POLL_INTERVAL_MS);
-      } catch {
-        closeCheckout();
-        notifications.show(
-          errorNotificationTemplate({
-            description: t("errorMessage"),
-            title: t("errorTitle"),
-          }),
-        );
-      }
-    },
-    [checkoutMountId, closeCheckout, handleCheckoutConfirmed, stripePublishableKey, t],
-  );
+            closeCheckout();
+            notifications.show(
+              successNotificationTemplate({
+                description: t("successMessage"),
+                title: t("successTitle"),
+              }),
+            );
+            handleCheckoutConfirmed();
+          } catch {
+            // Keep polling while checkout is open.
+          }
+        })();
+      }, CHECKOUT_POLL_INTERVAL_MS);
+    } catch {
+      closeCheckout();
+      notifications.show(
+        errorNotificationTemplate({
+          description: t("errorMessage"),
+          title: t("errorTitle"),
+        }),
+      );
+    }
+  }, [checkoutMountId, closeCheckout, handleCheckoutConfirmed, stripePublishableKey, t]);
 
   return { closeCheckout, isLoading, isModalOpen, openCheckout };
 }

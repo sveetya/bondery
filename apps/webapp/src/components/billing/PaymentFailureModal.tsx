@@ -1,6 +1,6 @@
 "use client";
 
-import { API_ROUTES } from "@bondery/helpers/globals/paths";
+import { API_ROUTES, toBffApiPath } from "@bondery/helpers/globals/paths";
 import { Button, Modal, Stack, Text } from "@mantine/core";
 import { useCheckoutTranslations } from "@/lib/i18n/generated/hooks";
 import { useSubscriptionQuery } from "@/lib/query/hooks/useSubscription";
@@ -10,7 +10,7 @@ export function PaymentFailureModal() {
   const { data: subscriptionStatus } = useSubscriptionQuery();
 
   const paymentBlocked = subscriptionStatus?.paymentBlocked ?? false;
-  const portalUrl = API_ROUTES.SUBSCRIPTIONS_PORTAL;
+  const portalUrl = toBffApiPath(API_ROUTES.SUBSCRIPTIONS_PORTAL);
 
   return (
     <Modal

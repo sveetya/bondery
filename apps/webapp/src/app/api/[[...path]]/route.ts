@@ -21,7 +21,7 @@ async function proxyToApi(request: NextRequest, pathSegments: string[]) {
   }
 
   const path = pathSegments.length > 0 ? `/${pathSegments.join("/")}` : "";
-  const apiPath = `/api${path}${request.nextUrl.search}`;
+  const apiPath = `${path}${request.nextUrl.search}`;
 
   const headers = new Headers();
 

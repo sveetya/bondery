@@ -11,16 +11,16 @@ export function useApiKeyPermissionOptions(): DescribedSelectOption[] {
   return useMemo(
     () => [
       {
-        description: t("PermissionFullDescription"),
-        icon: <IconShieldCheck size={16} stroke={1.5} />,
-        label: t("PermissionFullLabel"),
-        value: "full",
-      },
-      {
         description: t("PermissionReadDescription"),
         icon: <IconEye size={16} stroke={1.5} />,
         label: t("PermissionReadLabel"),
         value: "read",
+      },
+      {
+        description: t("PermissionFullDescription"),
+        icon: <IconShieldCheck size={16} stroke={1.5} />,
+        label: t("PermissionFullLabel"),
+        value: "full",
       },
     ],
     [t],

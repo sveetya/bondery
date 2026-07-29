@@ -1,5 +1,6 @@
 "use client";
 
+import { API_ROUTES } from "@bondery/helpers/globals/paths";
 import type { CodeBlockSnippet } from "@bondery/mantine-next";
 import Image from "next/image";
 import type { ReactNode } from "react";
@@ -50,7 +51,7 @@ export function useApiKeyTestSnippets(apiBaseUrl: string, fullKey: string): Code
   const t = useSettingsPageTranslations("ApiKeys");
 
   return useMemo(() => {
-    const url = `${apiBaseUrl}/api/contacts`;
+    const url = `${apiBaseUrl.replace(/\/+$/, "")}${API_ROUTES.CONTACTS}`;
 
     return [
       {

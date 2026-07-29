@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  BonderyIcon,
-  BonderyIconWhite,
-  BonderyLogotypeBlack,
-  BonderyLogotypeWhite,
-} from "@bondery/branding/react";
-import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
+import { BonderyDynamicLogotype } from "@bondery/branding/react";
+import { WEBAPP_NAME, WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { AnchorLink, Kbd, parseShortcutKeys } from "@bondery/mantine-next";
 import { Avatar, Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
@@ -100,28 +95,23 @@ export function NavigationSidebarContent({
 
   return (
     <Box style={{ display: "flex", flexDirection: "column", height: "100%" }}>
-      {/* Logo */}
-      <Group justify={collapsed ? "center" : "flex-start"} mb="md">
+      {/* Logo — SVG clip keeps the icon anchored when collapsing */}
+      <Group justify="flex-start" mb="md">
         <AnchorLink href={WEBAPP_ROUTES.DEFAULT_PAGE_AFTER_LOGIN} underline="never">
-          {collapsed ? (
-            <>
-              <Box darkHidden>
-                <BonderyIcon height={36} width={36} />
-              </Box>
-              <Box lightHidden>
-                <BonderyIconWhite height={36} width={36} />
-              </Box>
-            </>
-          ) : (
-            <>
-              <Box darkHidden>
-                <BonderyLogotypeBlack height={36} width={140} />
-              </Box>
-              <Box lightHidden>
-                <BonderyLogotypeWhite height={36} width={140} />
-              </Box>
-            </>
-          )}
+          <Box darkHidden>
+            <BonderyDynamicLogotype
+              height={36}
+              text={collapsed ? undefined : WEBAPP_NAME}
+              theme="light"
+            />
+          </Box>
+          <Box lightHidden>
+            <BonderyDynamicLogotype
+              height={36}
+              text={collapsed ? undefined : WEBAPP_NAME}
+              theme="dark"
+            />
+          </Box>
         </AnchorLink>
       </Group>
 
