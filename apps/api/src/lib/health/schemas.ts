@@ -12,19 +12,15 @@ export const serviceProbeResultSchema = z.object({
   ok: z.boolean(),
 });
 
-export const supabaseServiceStatusSchema = z.object({
-  database: serviceProbeResultSchema,
-  storage: serviceProbeResultSchema,
-});
-
 export const healthServicesSchema = z.object({
   anthropic: serviceProbeResultSchema,
   mapy: serviceProbeResultSchema,
-  polar: serviceProbeResultSchema,
+  stripe: serviceProbeResultSchema,
   posthog: serviceProbeResultSchema,
+  postgres: serviceProbeResultSchema,
   redis: serviceProbeResultSchema,
   smtp: serviceProbeResultSchema,
-  supabase: supabaseServiceStatusSchema,
+  storage: serviceProbeResultSchema,
 });
 
 export const healthReportSchema = z

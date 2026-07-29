@@ -10,15 +10,14 @@ import { healthReportSchema, livenessStatusSchema } from "./schemas.js";
 const LIVENESS_DESCRIPTION =
   "Liveness probe. Returns 200 when the API process is running. " +
   "Does not check external dependencies. " +
-  "Use `GET /health` for a readiness probe that checks Supabase, Redis, and other configured integrations.";
+  "Use `GET /health` for a readiness probe that checks Postgres, storage, Redis, and other configured integrations.";
 
 const READINESS_DESCRIPTION =
   "Readiness probe. Checks configured dependencies and returns per-service status. " +
   "Results are cached in memory for one minute. Rate limited to one request per minute per client. " +
   "Returns HTTP 503 when critical dependencies are unavailable (`status: unhealthy`). " +
   "Returns HTTP 200 when all critical dependencies are healthy (`status: ok` or `status: degraded`). " +
-  "Supabase database (PostgREST) via `GET /rest-admin/v1/ready`; " +
-  "Supabase storage via `GET /storage/v1/health`.";
+  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status`.";
 
 export function registerHealthRoutes(fastify: AppFastifyInstance): void {
   fastify.get(
@@ -49,9 +48,10 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
       const report = await getHealthReport({
         anthropicApiKey: fastify.config.BONDERY_PRIVATE_ANTHROPIC_API_KEY,
         mapsApiKey: fastify.config.BONDERY_PRIVATE_MAPS_KEY,
-        polarAccessToken: fastify.config.BONDERY_PRIVATE_POLAR_ACCESS_TOKEN,
-        polarProductId: fastify.config.BONDERY_PUBLIC_POLAR_PRODUCT_ID,
-        polarWebhookSecret: fastify.config.BONDERY_PRIVATE_POLAR_WEBHOOK_SECRET,
+        stripePriceIdAnnual: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL,
+        stripePriceIdMonthly: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY,
+        stripeSecretKey: fastify.config.BONDERY_PRIVATE_STRIPE_SECRET_KEY,
+        stripeWebhookSecret: fastify.config.BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET,
         posthogApiSecret: fastify.config.BONDERY_PRIVATE_POSTHOG_API_SECRET,
         posthogProjectId: fastify.config.BONDERY_PRIVATE_POSTHOG_PROJECT_ID,
         redisUrl: fastify.config.BONDERY_PRIVATE_REDIS_URL,
@@ -60,8 +60,7 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
         smtpPass: fastify.config.BONDERY_PRIVATE_EMAIL_PASS,
         smtpPort: fastify.config.BONDERY_PRIVATE_EMAIL_PORT,
         smtpUser: fastify.config.BONDERY_PRIVATE_EMAIL_USER,
-        supabasePublishableKey: fastify.config.BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-        supabaseUrl: fastify.config.BONDERY_PUBLIC_SUPABASE_URL,
+        storageS3Endpoint: fastify.config.BONDERY_PRIVATE_S3_ENDPOINT,
       });
 
       const statusCode = report.status === "unhealthy" ? 503 : 200;

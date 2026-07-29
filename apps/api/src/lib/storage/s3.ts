@@ -1,6 +1,7 @@
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -23,42 +24,37 @@ async function streamToBuffer(body: unknown): Promise<Buffer> {
   return Buffer.concat(chunks);
 }
 
+export type S3StorageConfig = {
+  accessKeyId: string;
+  endpoint: string;
+  forcePathStyle?: boolean;
+  publicBaseUrl: string;
+  region: string;
+  secretAccessKey: string;
+};
+
 export class S3Storage implements StorageAdapter {
   private readonly client: S3Client;
 
-  constructor(
-    private readonly bucket: string,
-    private readonly publicBaseUrl: string,
-    config: {
-      endpoint?: string;
-      region: string;
-      accessKeyId: string;
-      secretAccessKey: string;
-      forcePathStyle?: boolean;
-    },
-  ) {
+  constructor(private readonly config: S3StorageConfig) {
     this.client = new S3Client({
       credentials: {
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,
       },
       endpoint: config.endpoint,
-      forcePathStyle: config.forcePathStyle ?? Boolean(config.endpoint),
+      forcePathStyle: config.forcePathStyle ?? true,
       region: config.region,
     });
-  }
-
-  private objectKey(bucket: string, key: string): string {
-    return `${bucket}/${key.replace(/^\/+/, "")}`;
   }
 
   async put(bucket: string, key: string, data: Buffer, opts?: StoragePutOptions): Promise<void> {
     await this.client.send(
       new PutObjectCommand({
         Body: data,
-        Bucket: this.bucket,
+        Bucket: bucket,
         ContentType: opts?.contentType,
-        Key: this.objectKey(bucket, key),
+        Key: key.replace(/^\/+/, ""),
       }),
     );
   }
@@ -67,8 +63,8 @@ export class S3Storage implements StorageAdapter {
     try {
       const response = await this.client.send(
         new GetObjectCommand({
-          Bucket: this.bucket,
-          Key: this.objectKey(bucket, key),
+          Bucket: bucket,
+          Key: key.replace(/^\/+/, ""),
         }),
       );
       return await streamToBuffer(response.Body);
@@ -80,14 +76,36 @@ export class S3Storage implements StorageAdapter {
   async delete(bucket: string, key: string): Promise<void> {
     await this.client.send(
       new DeleteObjectCommand({
-        Bucket: this.bucket,
-        Key: this.objectKey(bucket, key),
+        Bucket: bucket,
+        Key: key.replace(/^\/+/, ""),
       }),
     );
   }
 
   getPublicUrl(bucket: string, key: string): string {
     const normalizedKey = key.replace(/^\/+/, "");
-    return `${this.publicBaseUrl.replace(/\/$/, "")}/${bucket}/${normalizedKey}`;
+    return `${this.config.publicBaseUrl.replace(/\/$/, "")}/${bucket}/${normalizedKey}`;
+  }
+
+  async listKeys(bucket: string, prefix: string): Promise<string[]> {
+    const normalizedPrefix = prefix.replace(/^\/+|\/+$/g, "");
+    const listPrefix = normalizedPrefix ? `${normalizedPrefix}/` : "";
+
+    const response = await this.client.send(
+      new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: listPrefix,
+      }),
+    );
+
+    const keys: string[] = [];
+    for (const object of response.Contents ?? []) {
+      if (!object.Key) {
+        continue;
+      }
+      keys.push(object.Key);
+    }
+
+    return keys;
   }
 }

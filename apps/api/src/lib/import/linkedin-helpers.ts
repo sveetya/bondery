@@ -5,12 +5,16 @@
  * and the enrich route (force-update existing contacts from webapp).
  */
 
-import type { Database, ScrapedEducationEntry, ScrapedWorkHistoryEntry } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { prisma } from "@bondery/db";
+import type { ScrapedEducationEntry, ScrapedWorkHistoryEntry } from "@bondery/schemas";
 import { uploadContactAvatarAndSetFlag } from "../contacts/avatar-storage.js";
 import { validateImageMagicBytes, validateImageUpload } from "../platform/config.js";
 import logger from "../platform/logger.js";
-import { createAdminClient } from "../storage/supabase-client.js";
+import { getStorage, LINKEDIN_LOGOS_BUCKET } from "../storage/get-storage.js";
+import {
+  LINKEDIN_LOGO_MAX_EDGE,
+  normalizeImageToJpeg,
+} from "../storage/normalize-image.js";
 
 /**
  * Converts a loose date string (YYYY, YYYY-MM, or YYYY-MM-DD) into a
@@ -41,14 +45,8 @@ export function toPostgresDate(val: string | null | undefined): string | null {
 
 /**
  * Downloads an image from a URL and uploads it as the contact's avatar.
- *
- * @param supabase Authenticated Supabase client.
- * @param contactId The contact's UUID.
- * @param userId The current user's UUID.
- * @param imageUrl The source URL of the profile image.
  */
 export async function updateContactPhoto(
-  supabase: SupabaseClient<Database>,
   contactId: string,
   userId: string,
   imageUrl: string,
@@ -76,15 +74,7 @@ export async function updateContactPhoto(
       return;
     }
 
-    const adminClient = createAdminClient();
-    await uploadContactAvatarAndSetFlag(
-      supabase,
-      adminClient,
-      userId,
-      contactId,
-      buffer,
-      blob.type,
-    );
+    await uploadContactAvatarAndSetFlag(prisma, userId, contactId, buffer, blob.type);
   } catch (error) {
     logger.error({ err: error }, "Error in updateContactPhoto");
   }
@@ -94,14 +84,9 @@ export async function updateContactPhoto(
  * Downloads an image from a URL and uploads it to the linkedin_logos storage bucket.
  * Uses upsert so re-imports overwrite the existing file without duplicates.
  *
- * @param supabase Authenticated Supabase client.
- * @param userId The current user's UUID (used as the folder name).
- * @param linkedInId The LinkedIn identifier (handle or numeric ID) used as the filename.
- * @param imageUrl The CDN URL of the logo image to download.
  * @returns The public URL of the stored logo, or null on failure.
  */
 async function uploadLinkedInLogo(
-  supabase: SupabaseClient<Database>,
   userId: string,
   linkedInId: string,
   imageUrl: string,
@@ -130,20 +115,10 @@ async function uploadLinkedInLogo(
     }
 
     const fileName = `${userId}/${linkedInId}.jpg`;
-    const { error: uploadError } = await supabase.storage
-      .from("linkedin_logos")
-      .upload(fileName, buffer, {
-        contentType: blob.type,
-        upsert: true,
-      });
-
-    if (uploadError) {
-      logger.error({ err: uploadError }, "[linkedin-helpers] Failed to upload linkedin logo");
-      return null;
-    }
-
-    const { data: urlData } = supabase.storage.from("linkedin_logos").getPublicUrl(fileName);
-    return urlData?.publicUrl ?? null;
+    const storage = getStorage();
+    const normalized = await normalizeImageToJpeg(buffer, { maxEdge: LINKEDIN_LOGO_MAX_EDGE });
+    await storage.put(LINKEDIN_LOGOS_BUCKET, fileName, normalized, { contentType: "image/jpeg" });
+    return storage.getPublicUrl(LINKEDIN_LOGOS_BUCKET, fileName);
   } catch (error) {
     logger.error({ err: error }, "[linkedin-helpers] Error in uploadLinkedInLogo");
     return null;
@@ -153,15 +128,8 @@ async function uploadLinkedInLogo(
 /**
  * Downloads and stores all unique LinkedIn logos from work history and education entries.
  * Returns a map of linkedInId → stored public URL for use when inserting DB rows.
- *
- * @param supabase Authenticated Supabase client.
- * @param userId The current user's UUID.
- * @param workHistory Array of scraped work history entries.
- * @param educationHistory Array of scraped education entries.
- * @returns Map of LinkedIn identifier → stored public URL.
  */
 export async function uploadAllLinkedInLogos(
-  supabase: SupabaseClient<Database>,
   userId: string,
   workHistory: ScrapedWorkHistoryEntry[] | undefined,
   educationHistory: ScrapedEducationEntry[] | undefined,
@@ -199,7 +167,7 @@ export async function uploadAllLinkedInLogos(
 
   const results = await Promise.all(
     tasks.map(async ({ linkedInId, imageUrl }) => {
-      const publicUrl = await uploadLinkedInLogo(supabase, userId, linkedInId, imageUrl);
+      const publicUrl = await uploadLinkedInLogo(userId, linkedInId, imageUrl);
       return { linkedInId, publicUrl };
     }),
   );

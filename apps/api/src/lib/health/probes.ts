@@ -1,17 +1,11 @@
+import { prisma } from "@bondery/db";
 import { Redis } from "ioredis";
 import type { ServiceProbeResult } from "./types.js";
 
 const DEFAULT_PROBE_TIMEOUT_MS = 5_000;
 
-function normalizeSupabaseBaseUrl(url: string): string {
+function normalizeBaseUrl(url: string): string {
   return url.replace(/\/+$/, "");
-}
-
-function supabaseRequestHeaders(publishableKey: string): Record<string, string> {
-  return {
-    Authorization: `Bearer ${publishableKey}`,
-    apikey: publishableKey,
-  };
 }
 
 function classifyProbeError(error: unknown): string {
@@ -27,67 +21,30 @@ function classifyProbeError(error: unknown): string {
   return "unknown";
 }
 
-async function probeHttp(
-  url: string,
-  init: RequestInit & { timeoutMs?: number; okStatuses?: number[] } = {},
-): Promise<ServiceProbeResult> {
+/** Prisma ping against the app's primary Postgres database. */
+export async function probePostgres(): Promise<ServiceProbeResult> {
   const started = Date.now();
-  const timeoutMs = init.timeoutMs ?? DEFAULT_PROBE_TIMEOUT_MS;
-  const okStatuses = init.okStatuses ?? [200];
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-
   try {
-    const { okStatuses: _okStatuses, timeoutMs: _timeoutMs, ...fetchInit } = init;
-    const response = await fetch(url, {
-      ...fetchInit,
-      signal: controller.signal,
-    });
-
-    const latencyMs = Date.now() - started;
-    if (!okStatuses.includes(response.status)) {
-      return {
-        error: `http_${response.status}`,
-        latencyMs,
-        ok: false,
-      };
-    }
-
-    return { latencyMs, ok: true };
+    await prisma.$queryRaw`SELECT 1`;
+    return { latencyMs: Date.now() - started, ok: true };
   } catch (error) {
     return {
       error: classifyProbeError(error),
       latencyMs: Date.now() - started,
       ok: false,
     };
-  } finally {
-    clearTimeout(timer);
   }
 }
 
-export async function probeSupabaseDatabase(
-  supabaseUrl: string,
-  publishableKey: string,
-): Promise<ServiceProbeResult> {
-  const baseUrl = normalizeSupabaseBaseUrl(supabaseUrl);
-  return probeHttp(`${baseUrl}/rest-admin/v1/ready`, {
-    headers: supabaseRequestHeaders(publishableKey),
-    method: "GET",
-  });
-}
-
-export async function probeSupabaseStorage(
-  supabaseUrl: string,
-  publishableKey: string,
-): Promise<ServiceProbeResult> {
-  const baseUrl = normalizeSupabaseBaseUrl(supabaseUrl);
+/** SeaweedFS S3 gateway health (`GET /status`). */
+export async function probeObjectStorage(storageS3Endpoint: string): Promise<ServiceProbeResult> {
+  const baseUrl = normalizeBaseUrl(storageS3Endpoint);
   const started = Date.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DEFAULT_PROBE_TIMEOUT_MS);
 
   try {
-    const response = await fetch(`${baseUrl}/storage/v1/health`, {
-      headers: supabaseRequestHeaders(publishableKey),
+    const response = await fetch(`${baseUrl}/status`, {
       method: "GET",
       signal: controller.signal,
     });
@@ -96,23 +53,6 @@ export async function probeSupabaseStorage(
     if (!response.ok) {
       return {
         error: `http_${response.status}`,
-        latencyMs,
-        ok: false,
-      };
-    }
-
-    try {
-      const payload = (await response.json()) as { healthy?: boolean };
-      if (payload.healthy === false) {
-        return {
-          error: "unhealthy",
-          latencyMs,
-          ok: false,
-        };
-      }
-    } catch {
-      return {
-        error: "invalid_response",
         latencyMs,
         ok: false,
       };

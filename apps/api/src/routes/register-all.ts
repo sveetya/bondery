@@ -42,7 +42,7 @@ import { subscriptionPortalRoutes } from "./subscriptions/portal.js";
 import { subscriptionSyncRoutes } from "./subscriptions/sync.js";
 import { syncRoutes } from "./sync/index.js";
 import { tagRoutes } from "./tags/index.js";
-import { polarWebhookRoutes } from "./webhooks/polar.js";
+import { stripeWebhookRoutes } from "./webhooks/stripe.js";
 
 type RouteMountArea = "integration" | "session" | "admin" | "internal" | "webhook" | "composite";
 
@@ -107,7 +107,7 @@ const ROUTE_MOUNTS: RouteMount[] = [
   { area: "session", plugin: subscriptionPortalRoutes, prefix: API_ROUTES.SUBSCRIPTIONS_PORTAL },
   { area: "session", plugin: subscriptionSyncRoutes, prefix: API_ROUTES.SUBSCRIPTIONS_SYNC },
   { area: "admin", plugin: statsRoutes, prefix: API_ROUTES.ADMIN_STATS },
-  { area: "webhook", plugin: polarWebhookRoutes, prefix: API_ROUTES.WEBHOOKS_POLAR },
+  { area: "webhook", plugin: stripeWebhookRoutes, prefix: API_ROUTES.WEBHOOKS_STRIPE },
   {
     area: "internal",
     plugin: reminderDigestRoutes,

@@ -5,17 +5,13 @@ export type ServiceProbeResult = {
   configured?: boolean;
 };
 
-export type SupabaseServiceStatus = {
-  database: ServiceProbeResult;
-  storage: ServiceProbeResult;
-};
-
 export type HealthServices = {
-  supabase: SupabaseServiceStatus;
+  postgres: ServiceProbeResult;
+  storage: ServiceProbeResult;
   redis: ServiceProbeResult;
   smtp: ServiceProbeResult;
   anthropic: ServiceProbeResult;
-  polar: ServiceProbeResult;
+  stripe: ServiceProbeResult;
   mapy: ServiceProbeResult;
   posthog: ServiceProbeResult;
 };
@@ -31,8 +27,7 @@ export type HealthReport = {
 };
 
 export type HealthCheckConfig = {
-  supabaseUrl: string;
-  supabasePublishableKey: string;
+  storageS3Endpoint: string;
   redisUrl: string;
   smtpHost: string;
   smtpUser: string;
@@ -40,9 +35,10 @@ export type HealthCheckConfig = {
   smtpAddress: string;
   smtpPort: number;
   anthropicApiKey: string;
-  polarAccessToken: string;
-  polarProductId: string;
-  polarWebhookSecret: string;
+  stripeSecretKey: string;
+  stripePriceIdMonthly: string;
+  stripePriceIdAnnual: string;
+  stripeWebhookSecret: string;
   mapsApiKey: string;
   posthogApiSecret: string;
   posthogProjectId: string;

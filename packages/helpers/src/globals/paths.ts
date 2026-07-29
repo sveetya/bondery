@@ -72,7 +72,7 @@ export const API_ROUTES = {
   SYNC_WS: "/sync/ws",
   SYNC_WS_TICKET: "/sync/ws-ticket",
   TAGS: "/tags",
-  WEBHOOKS_POLAR: "/webhooks/polar",
+  WEBHOOKS_STRIPE: "/webhooks/stripe",
 } as const;
 
 /** Browser-facing BFF path on the webapp origin (`/api/...`). */

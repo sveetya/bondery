@@ -2,51 +2,25 @@
  * Best-effort import of OAuth provider avatar into storage for the myself contact.
  */
 
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { uploadContactAvatarAndSetFlag } from "../../lib/contacts/avatar-storage.js";
+import { prisma } from "@bondery/db";
+import {
+  getContactAvatarStoragePath,
+  uploadContactAvatarAndSetFlag,
+} from "../../lib/contacts/avatar-storage.js";
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import logger from "../../lib/platform/logger.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
-
-const AVATARS_BUCKET = "avatars";
+import { AVATARS_BUCKET, getStorage } from "../../lib/storage/get-storage.js";
 
 type UserMetadata = {
   avatar_url?: string;
   picture?: string;
 };
 
-type SupabaseUserWithMetadata = {
-  user_metadata?: UserMetadata;
-  identities?: Array<{
-    provider?: string;
-    identity_data?: UserMetadata;
-  }>;
-};
-
-function getAccountAvatarFileName(userId: string): string {
-  return `${userId}/${userId}.jpg`;
-}
-
-function getEffectiveUserMetadata(user: SupabaseUserWithMetadata | undefined): UserMetadata {
-  const baseMetadata = user?.user_metadata || {};
-  const linkedInIdentity = (user?.identities || []).find(
-    (identity) => identity.provider === "linkedin_oidc",
-  );
-  const identityMetadata = linkedInIdentity?.identity_data || {};
-
-  return {
-    ...identityMetadata,
-    ...baseMetadata,
-  };
-}
-
 function getMetadataAvatarUrl(userMetadata: UserMetadata | undefined): string | null {
   return userMetadata?.avatar_url || userMetadata?.picture || null;
 }
 
 async function importMetadataAvatarToStorage(
-  client: SupabaseClient<Database>,
   userId: string,
   avatarUrl: string,
 ): Promise<string | null> {
@@ -92,22 +66,14 @@ async function importMetadataAvatarToStorage(
       return null;
     }
 
-    const adminClient = createAdminClient();
+    await uploadContactAvatarAndSetFlag(prisma, userId, userId, buffer, validationType);
 
-    await uploadContactAvatarAndSetFlag(
-      client,
-      adminClient,
-      userId,
-      userId,
-      buffer,
-      validationType,
+    const publicUrl = getStorage().getPublicUrl(
+      AVATARS_BUCKET,
+      getContactAvatarStoragePath(userId, userId),
     );
 
-    const { data: publicUrlData } = adminClient.storage
-      .from(AVATARS_BUCKET)
-      .getPublicUrl(getAccountAvatarFileName(userId));
-
-    return publicUrlData?.publicUrl ? `${publicUrlData.publicUrl}?t=${Date.now()}` : null;
+    return publicUrl ? `${publicUrl}?t=${Date.now()}` : null;
   } catch (error) {
     logger.warn(
       {
@@ -122,24 +88,22 @@ async function importMetadataAvatarToStorage(
 }
 
 /** Import provider avatar when myself contact has no stored avatar yet. */
-export async function syncProviderAvatarIfNeeded(
-  client: SupabaseClient<Database>,
-  userId: string,
-): Promise<void> {
-  const { data: userData } = await client.auth.getUser();
-  const userMetadata = getEffectiveUserMetadata(userData?.user as SupabaseUserWithMetadata);
-  const metadataAvatarUrl = getMetadataAvatarUrl(userMetadata);
+export async function syncProviderAvatarIfNeeded(userId: string): Promise<void> {
+  const user = await prisma.user.findUnique({
+    select: { image: true },
+    where: { id: userId },
+  });
 
-  const { data: myselfRow } = await client
-    .from("people")
-    .select("has_avatar")
-    .eq("user_id", userId)
-    .eq("myself", true)
-    .single();
+  const metadataAvatarUrl = getMetadataAvatarUrl({ picture: user?.image ?? undefined });
 
-  const hasStoredAvatar = myselfRow?.has_avatar ?? false;
+  const myselfRow = await prisma.people.findFirst({
+    select: { hasAvatar: true },
+    where: { myself: true, userId },
+  });
+
+  const hasStoredAvatar = myselfRow?.hasAvatar ?? false;
 
   if (!hasStoredAvatar && metadataAvatarUrl) {
-    await importMetadataAvatarToStorage(client, userId, metadataAvatarUrl);
+    await importMetadataAvatarToStorage(userId, metadataAvatarUrl);
   }
 }

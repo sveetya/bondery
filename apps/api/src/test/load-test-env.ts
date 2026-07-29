@@ -3,9 +3,6 @@
 import { DEV_REDIS_URL } from "@bondery/schemas/constants/dev-ports";
 
 export function loadTestEnv(): void {
-  process.env.BONDERY_PUBLIC_SUPABASE_URL ??= "http://localhost:54321";
-  process.env.BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??= "dummy";
-  process.env.BONDERY_PRIVATE_SUPABASE_SECRET_KEY ??= "dummy";
   process.env.BONDERY_PUBLIC_API_URL ??= "http://localhost:26631";
   process.env.BONDERY_PUBLIC_WEBAPP_URL ??= "http://localhost:26632";
   process.env.BONDERY_PUBLIC_WEBSITE_URL ??= "http://localhost:26630";
@@ -23,6 +20,9 @@ export function loadTestEnv(): void {
     "test-webapp-oauth-client-secret-32chars-min";
   process.env.BONDERY_PUBLIC_OAUTH_CLIENT_ID ??= "test-extension-oauth-client";
   process.env.BONDERY_INFRA_CHROME_EXTENSION_ID ??= "abcdefghijklmnopqrstuvwxyzabcdef";
-  process.env.BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK ??=
-    '{"kty":"EC","x":"-ztnrq2xtqWzVslfvYg9Ehds97TWbhD6pFWcYJJKFLA","y":"foLtmAT7OJud7d9ltwZuF9podzkTEhyD56tiDRZFSZQ","crv":"P-256","d":"_bKhwEFYFXeOH3IOBLtT0PS7NSDkWP6xbrqWtj37u2A","alg":"ES256","kid":"test","use":"sig"}';
+  process.env.BONDERY_PUBLIC_STORAGE_URL ??= "http://127.0.0.1:8333";
+  process.env.BONDERY_PRIVATE_S3_ENDPOINT ??= "http://127.0.0.1:8333";
+  process.env.BONDERY_PRIVATE_S3_REGION ??= "eu-central-1";
+  process.env.BONDERY_PRIVATE_S3_ACCESS_KEY_ID ??= "bondery_access_key";
+  process.env.BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY ??= "bondery_secret_key_change_me";
 }

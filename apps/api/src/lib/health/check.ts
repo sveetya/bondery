@@ -1,8 +1,8 @@
 import {
   probeConfigured,
+  probeObjectStorage,
+  probePostgres,
   probeRedis,
-  probeSupabaseDatabase,
-  probeSupabaseStorage,
 } from "./probes.js";
 import type { HealthCheckConfig, HealthReport, HealthServices, HealthStatus } from "./types.js";
 
@@ -21,11 +21,12 @@ function isSmtpConfigured(config: HealthCheckConfig): boolean {
   );
 }
 
-function isPolarConfigured(config: HealthCheckConfig): boolean {
+function isStripeConfigured(config: HealthCheckConfig): boolean {
   return Boolean(
-    config.polarAccessToken.trim() &&
-      config.polarProductId.trim() &&
-      config.polarWebhookSecret.trim(),
+    config.stripeSecretKey.trim() &&
+      config.stripePriceIdMonthly.trim() &&
+      config.stripePriceIdAnnual.trim() &&
+      config.stripeWebhookSecret.trim(),
   );
 }
 
@@ -34,14 +35,14 @@ function isPosthogConfigured(config: HealthCheckConfig): boolean {
 }
 
 function deriveOverallStatus(services: HealthServices): HealthStatus {
-  const critical = [services.supabase.database, services.supabase.storage, services.smtp];
+  const critical = [services.postgres, services.storage, services.smtp];
 
   if (critical.some((service) => !service.ok)) {
     return "unhealthy";
   }
 
   const optionalLive = [services.redis];
-  const optionalConfigured = [services.anthropic, services.polar, services.mapy, services.posthog];
+  const optionalConfigured = [services.anthropic, services.stripe, services.mapy, services.posthog];
 
   if (
     optionalLive.some((service) => service.configured !== false && !service.ok) ||
@@ -54,20 +55,21 @@ function deriveOverallStatus(services: HealthServices): HealthStatus {
 }
 
 async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
-  const [database, storage, redis] = await Promise.all([
-    probeSupabaseDatabase(config.supabaseUrl, config.supabasePublishableKey),
-    probeSupabaseStorage(config.supabaseUrl, config.supabasePublishableKey),
+  const [postgres, storage, redis] = await Promise.all([
+    probePostgres(),
+    probeObjectStorage(config.storageS3Endpoint),
     probeRedis(config.redisUrl),
   ]);
 
   return {
     anthropic: probeConfigured(Boolean(config.anthropicApiKey.trim())),
     mapy: probeConfigured(Boolean(config.mapsApiKey.trim())),
-    polar: probeConfigured(isPolarConfigured(config)),
+    stripe: probeConfigured(isStripeConfigured(config)),
     posthog: probeConfigured(isPosthogConfigured(config)),
+    postgres,
     redis,
     smtp: probeConfigured(isSmtpConfigured(config), { required: true }),
-    supabase: { database, storage },
+    storage,
   };
 }
 
