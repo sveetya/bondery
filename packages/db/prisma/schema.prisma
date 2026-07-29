@@ -1,7 +1,7 @@
 // Bondery Prisma schema.
 //
 // Table/column names intentionally match the existing Postgres schema
-// (see apps/supabase-db/supabase/migrations, superseded by this package)
+// (see archive/supabase-db/supabase/migrations for historical SQL; schema lives in this package)
 // so that the identity + data migration only needs to move rows, not
 // rename columns. Auth tables (User/Session/Account/Verification/Jwks)
 // follow Better Auth's Prisma adapter conventions — regenerate them with
@@ -760,32 +760,49 @@ model ChatMessage {
 }
 
 model Subscription {
-  id                    String    @id @default(uuid()) @db.Uuid
-  userId                String    @map("user_id") @db.Uuid
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  polarCustomerId       String    @map("polar_customer_id")
-  polarSubscriptionId   String    @unique @map("polar_subscription_id")
-  status                String
-  currentPeriodStart    DateTime? @map("current_period_start")
-  currentPeriodEnd      DateTime? @map("current_period_end")
-  cancelAtPeriodEnd     Boolean   @default(false) @map("cancel_at_period_end")
-  createdAt             DateTime  @default(now()) @map("created_at")
-  updatedAt              DateTime  @updatedAt @map("updated_at")
+  id                      String    @id @default(uuid()) @db.Uuid
+  userId                  String    @map("user_id") @db.Uuid
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId        String    @map("stripe_customer_id")
+  stripeSubscriptionId    String    @unique @map("stripe_subscription_id")
+  status                  String
+  stripeStatus            String?   @map("stripe_status")
+  currentPeriodStart      DateTime? @map("current_period_start")
+  currentPeriodEnd        DateTime? @map("current_period_end")
+  trialEndsAt             DateTime? @map("trial_ends_at")
+  billingInterval         String?   @map("billing_interval")
+  priceId                 String?   @map("price_id")
+  unitAmount              Int?      @map("unit_amount")
+  currency                String?
+  productName             String?   @map("product_name")
+  paymentFailureCount     Int       @default(0) @map("payment_failure_count")
+  trialEndingEmailSentAt  DateTime? @map("trial_ending_email_sent_at")
+  cancelAtPeriodEnd       Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
 
   @@map("subscriptions")
 }
 
 model PendingSubscription {
-  polarSubscriptionId   String    @id @map("polar_subscription_id")
-  polarCustomerId       String    @map("polar_customer_id")
-  email                 String
-  status                String
-  currentPeriodEnd      DateTime? @map("current_period_end")
-  cancelAtPeriodEnd     Boolean   @default(false) @map("cancel_at_period_end")
-  createdAt              DateTime  @default(now()) @map("created_at")
-  updatedAt               DateTime  @updatedAt @map("updated_at")
+  email                String    @id
+  stripeCustomerId     String    @map("stripe_customer_id")
+  stripeSubscriptionId String    @map("stripe_subscription_id")
+  status               String
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
 
   @@map("pending_subscriptions")
+}
+
+model StripeWebhookEvent {
+  eventId     String   @id @map("event_id")
+  eventType   String   @map("event_type")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("stripe_webhook_events")
 }
 
 model ReminderDispatchLog {

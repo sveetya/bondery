@@ -2,7 +2,7 @@
   "name": "@bondery/db",
   "version": "1.7.4",
   "private": true,
-  "description": "Prisma schema, generated client, and raw SQL functions for the Bondery Postgres database. Replaces @bondery/schemas/supabase.types and apps/supabase-db.",
+  "description": "Prisma schema, generated client, and raw SQL functions for the Bondery Postgres database.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./src/index.ts",
@@ -29,6 +29,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1097.0",
     "@bondery/helpers": "*",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",

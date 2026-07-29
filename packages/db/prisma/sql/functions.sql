@@ -185,6 +185,26 @@ begin
 end;
 $$;
 
+create or replace function bump_person_updated_at_for_sync(
+  p_person_id uuid,
+  p_user_id uuid
+)
+returns text
+language plpgsql
+as $$
+begin
+  update people
+  set updated_at = now()
+  where id = p_person_id and user_id = p_user_id;
+
+  if not found then
+    raise exception 'person not found';
+  end if;
+
+  return pg_current_xact_id()::text;
+end;
+$$;
+
 create or replace function get_current_sync_txid()
 returns bigint
 language sql
@@ -384,8 +404,242 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------
+-- Contact extras (batch list enrichment)
+-- ---------------------------------------------------------------------------
+
+create or replace function get_contact_extras(
+  p_user_id uuid,
+  p_person_ids uuid[]
+)
+returns jsonb
+language plpgsql
+stable
+as $$
+declare
+  result jsonb;
+begin
+  if p_person_ids is null or cardinality(p_person_ids) = 0 then
+    return '{}'::jsonb;
+  end if;
+
+  with ids as (
+    select unnest(p_person_ids) as person_id
+  ),
+  phones as (
+    select
+      pp.person_id,
+      coalesce(
+        jsonb_agg(
+          jsonb_build_object(
+            'preferred', pp.preferred,
+            'prefix', pp.prefix,
+            'type', case when pp.type = 'work' then 'work' else 'home' end,
+            'value', pp.value
+          )
+          order by pp.sort_order asc, pp.created_at asc
+        ),
+        '[]'::jsonb
+      ) as items
+    from people_phones pp
+    where pp.user_id = p_user_id
+      and pp.person_id = any(p_person_ids)
+    group by pp.person_id
+  ),
+  emails as (
+    select
+      pe.person_id,
+      coalesce(
+        jsonb_agg(
+          jsonb_build_object(
+            'preferred', pe.preferred,
+            'type', case when pe.type = 'work' then 'work' else 'home' end,
+            'value', pe.value
+          )
+          order by pe.sort_order asc, pe.created_at asc
+        ),
+        '[]'::jsonb
+      ) as items
+    from people_emails pe
+    where pe.user_id = p_user_id
+      and pe.person_id = any(p_person_ids)
+    group by pe.person_id
+  ),
+  addresses as (
+    select
+      pa.person_id,
+      coalesce(
+        jsonb_agg(
+          jsonb_build_object(
+            'type', case
+              when pa.type = 'work' then 'work'
+              when pa.type = 'other' then 'other'
+              else 'home'
+            end,
+            'label', pa.label,
+            'value', pa.value,
+            'latitude', pa.latitude,
+            'longitude', pa.longitude,
+            'addressLine1', pa.address_line1,
+            'addressLine2', pa.address_line2,
+            'addressCity', pa.address_city,
+            'addressPostalCode', pa.address_postal_code,
+            'addressState', pa.address_state,
+            'addressStateCode', pa.address_state_code,
+            'addressCountry', pa.address_country,
+            'addressCountryCode', pa.address_country_code,
+            'addressGranularity', case
+              when pa.address_granularity = 'city' then 'city'
+              when pa.address_granularity = 'state' then 'state'
+              when pa.address_granularity = 'country' then 'country'
+              else 'address'
+            end,
+            'addressFormatted', pa.address_formatted,
+            'addressGeocodeSource', pa.address_geocode_source,
+            'geocodeConfidence', pa.geocode_confidence,
+            'timezone', pa.timezone
+          )
+          order by pa.sort_order asc, pa.created_at asc
+        ),
+        '[]'::jsonb
+      ) as items
+    from people_addresses pa
+    where pa.user_id = p_user_id
+      and pa.person_id = any(p_person_ids)
+    group by pa.person_id
+  ),
+  socials as (
+    select
+      ps.person_id,
+      max(ps.handle) filter (where ps.platform = 'linkedin') as linkedin,
+      max(ps.handle) filter (where ps.platform = 'instagram') as instagram,
+      max(ps.handle) filter (where ps.platform = 'whatsapp') as whatsapp,
+      max(ps.handle) filter (where ps.platform = 'facebook') as facebook,
+      max(ps.handle) filter (where ps.platform = 'website') as website,
+      max(ps.handle) filter (where ps.platform = 'signal') as signal
+    from people_socials ps
+    where ps.user_id = p_user_id
+      and ps.person_id = any(p_person_ids)
+    group by ps.person_id
+  )
+  select coalesce(
+    jsonb_object_agg(
+      i.person_id::text,
+      jsonb_build_object(
+        'phones', coalesce(p.items, '[]'::jsonb),
+        'emails', coalesce(e.items, '[]'::jsonb),
+        'addresses', coalesce(a.items, '[]'::jsonb),
+        'linkedin', soc.linkedin,
+        'instagram', soc.instagram,
+        'whatsapp', soc.whatsapp,
+        'facebook', soc.facebook,
+        'website', soc.website,
+        'signal', soc.signal
+      )
+    ),
+    '{}'::jsonb
+  )
+  into result
+  from ids i
+  left join phones p on p.person_id = i.person_id
+  left join emails e on e.person_id = i.person_id
+  left join addresses a on a.person_id = i.person_id
+  left join socials soc on soc.person_id = i.person_id;
+
+  return coalesce(result, '{}'::jsonb);
+end;
+$$;
+
+-- ---------------------------------------------------------------------------
 -- Admin stats (used by /admin routes; low traffic, fine as raw SQL)
 -- ---------------------------------------------------------------------------
+
+create or replace function get_funnel_periods()
+returns table (
+  period_key text,
+  period_label text,
+  signups bigint,
+  contacts bigint,
+  interactions bigint,
+  signups_to_contacts_pct numeric,
+  contacts_to_interactions_pct numeric
+)
+language sql
+stable
+as $$
+  with periods as (
+    select
+      'last_14_days'::text as period_key,
+      'Last 14 days'::text as period_label,
+      (current_date - interval '13 day')::timestamptz as start_at,
+      (current_date + interval '1 day')::timestamptz as end_at
+    union all
+    select
+      'days_14_to_28_ago'::text,
+      '14-28 days ago'::text,
+      (current_date - interval '28 day')::timestamptz,
+      (current_date - interval '13 day')::timestamptz
+    union all
+    select
+      'last_30_days'::text,
+      'Last 30 days'::text,
+      (current_date - interval '29 day')::timestamptz,
+      (current_date + interval '1 day')::timestamptz
+  ),
+  base as (
+    select
+      p.period_key,
+      p.period_label,
+      (
+        select count(*)
+        from "user" u
+        where u.created_at >= p.start_at
+          and u.created_at < p.end_at
+      ) as signups,
+      (
+        select count(*)
+        from "user" u
+        where u.created_at >= p.start_at
+          and u.created_at < p.end_at
+          and (
+            select count(*)
+            from people pe
+            where pe.user_id = u.id
+          ) >= 10
+      ) as contacts,
+      (
+        select count(*)
+        from interactions i
+        where i.created_at >= p.start_at
+          and i.created_at < p.end_at
+      ) as interactions
+    from periods p
+  )
+  select
+    b.period_key,
+    b.period_label,
+    b.signups,
+    b.contacts,
+    b.interactions,
+    round(
+      case when b.signups = 0 then 0
+           else (b.contacts::numeric / b.signups::numeric) * 100
+      end,
+      1
+    ) as signups_to_contacts_pct,
+    round(
+      case when b.contacts = 0 then 0
+           else (b.interactions::numeric / b.contacts::numeric) * 100
+      end,
+      1
+    ) as contacts_to_interactions_pct
+  from base b
+  order by case b.period_key
+    when 'last_14_days' then 1
+    when 'days_14_to_28_ago' then 2
+    when 'last_30_days' then 3
+    else 99
+  end;
+$$;
 
 create or replace function get_total_users_growth()
 returns table (date date, total bigint)

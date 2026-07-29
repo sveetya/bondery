@@ -88,6 +88,7 @@ export const ModelName = {
   ChatMessage: 'ChatMessage',
   Subscription: 'Subscription',
   PendingSubscription: 'PendingSubscription',
+  StripeWebhookEvent: 'StripeWebhookEvent',
   ReminderDispatchLog: 'ReminderDispatchLog',
   SyncChangeLog: 'SyncChangeLog',
   SyncMutationReceipt: 'SyncMutationReceipt',
@@ -709,11 +710,20 @@ export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[key
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  polarCustomerId: 'polarCustomerId',
-  polarSubscriptionId: 'polarSubscriptionId',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
   status: 'status',
+  stripeStatus: 'stripeStatus',
   currentPeriodStart: 'currentPeriodStart',
   currentPeriodEnd: 'currentPeriodEnd',
+  trialEndsAt: 'trialEndsAt',
+  billingInterval: 'billingInterval',
+  priceId: 'priceId',
+  unitAmount: 'unitAmount',
+  currency: 'currency',
+  productName: 'productName',
+  paymentFailureCount: 'paymentFailureCount',
+  trialEndingEmailSentAt: 'trialEndingEmailSentAt',
   cancelAtPeriodEnd: 'cancelAtPeriodEnd',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -723,9 +733,9 @@ export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[k
 
 
 export const PendingSubscriptionScalarFieldEnum = {
-  polarSubscriptionId: 'polarSubscriptionId',
-  polarCustomerId: 'polarCustomerId',
   email: 'email',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
   status: 'status',
   currentPeriodEnd: 'currentPeriodEnd',
   cancelAtPeriodEnd: 'cancelAtPeriodEnd',
@@ -734,6 +744,15 @@ export const PendingSubscriptionScalarFieldEnum = {
 } as const
 
 export type PendingSubscriptionScalarFieldEnum = (typeof PendingSubscriptionScalarFieldEnum)[keyof typeof PendingSubscriptionScalarFieldEnum]
+
+
+export const StripeWebhookEventScalarFieldEnum = {
+  eventId: 'eventId',
+  eventType: 'eventType',
+  processedAt: 'processedAt'
+} as const
+
+export type StripeWebhookEventScalarFieldEnum = (typeof StripeWebhookEventScalarFieldEnum)[keyof typeof StripeWebhookEventScalarFieldEnum]
 
 
 export const ReminderDispatchLogScalarFieldEnum = {

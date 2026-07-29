@@ -242,6 +242,11 @@ export type Subscription = Prisma.SubscriptionModel
  */
 export type PendingSubscription = Prisma.PendingSubscriptionModel
 /**
+ * Model StripeWebhookEvent
+ * 
+ */
+export type StripeWebhookEvent = Prisma.StripeWebhookEventModel
+/**
  * Model ReminderDispatchLog
  * 
  */

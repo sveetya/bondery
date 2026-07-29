@@ -18,7 +18,7 @@ function usesCompositePrimaryKey(record: Record<string, unknown>): boolean {
   if ("userId" in record && "lastSequence" in record && Object.keys(record).length === 2) {
     return true;
   }
-  if ("polarSubscriptionId" in record && "email" in record && !("userId" in record)) {
+  if ("stripeSubscriptionId" in record && "email" in record && !("userId" in record)) {
     return true;
   }
   return false;

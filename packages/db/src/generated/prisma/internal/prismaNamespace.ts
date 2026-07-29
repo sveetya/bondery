@@ -434,6 +434,7 @@ export const ModelName = {
   ChatMessage: 'ChatMessage',
   Subscription: 'Subscription',
   PendingSubscription: 'PendingSubscription',
+  StripeWebhookEvent: 'StripeWebhookEvent',
   ReminderDispatchLog: 'ReminderDispatchLog',
   SyncChangeLog: 'SyncChangeLog',
   SyncMutationReceipt: 'SyncMutationReceipt',
@@ -453,7 +454,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "jwks" | "oauthClient" | "oauthResource" | "oauthClientResource" | "oauthRefreshToken" | "oauthAccessToken" | "oauthConsent" | "oauthClientAssertion" | "userSettings" | "people" | "peoplePhone" | "peopleEmail" | "peopleSocial" | "peopleAddress" | "peopleImportantDate" | "peopleRelationship" | "group" | "peopleGroup" | "tag" | "peopleTag" | "interaction" | "interactionParticipant" | "peopleLinkedin" | "peopleWorkHistory" | "peopleEducationHistory" | "peopleMergeRecommendation" | "linkedinEnrichQueue" | "geocodeCache" | "apikey" | "chatSession" | "chatMessage" | "subscription" | "pendingSubscription" | "reminderDispatchLog" | "syncChangeLog" | "syncMutationReceipt" | "syncUserSequence"
+    modelProps: "user" | "session" | "account" | "verification" | "jwks" | "oauthClient" | "oauthResource" | "oauthClientResource" | "oauthRefreshToken" | "oauthAccessToken" | "oauthConsent" | "oauthClientAssertion" | "userSettings" | "people" | "peoplePhone" | "peopleEmail" | "peopleSocial" | "peopleAddress" | "peopleImportantDate" | "peopleRelationship" | "group" | "peopleGroup" | "tag" | "peopleTag" | "interaction" | "interactionParticipant" | "peopleLinkedin" | "peopleWorkHistory" | "peopleEducationHistory" | "peopleMergeRecommendation" | "linkedinEnrichQueue" | "geocodeCache" | "apikey" | "chatSession" | "chatMessage" | "subscription" | "pendingSubscription" | "stripeWebhookEvent" | "reminderDispatchLog" | "syncChangeLog" | "syncMutationReceipt" | "syncUserSequence"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3195,6 +3196,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    StripeWebhookEvent: {
+      payload: Prisma.$StripeWebhookEventPayload<ExtArgs>
+      fields: Prisma.StripeWebhookEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StripeWebhookEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StripeWebhookEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        findFirst: {
+          args: Prisma.StripeWebhookEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StripeWebhookEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        findMany: {
+          args: Prisma.StripeWebhookEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>[]
+        }
+        create: {
+          args: Prisma.StripeWebhookEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        createMany: {
+          args: Prisma.StripeWebhookEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StripeWebhookEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>[]
+        }
+        delete: {
+          args: Prisma.StripeWebhookEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        update: {
+          args: Prisma.StripeWebhookEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.StripeWebhookEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StripeWebhookEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StripeWebhookEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.StripeWebhookEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StripeWebhookEventPayload>
+        }
+        aggregate: {
+          args: Prisma.StripeWebhookEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStripeWebhookEvent>
+        }
+        groupBy: {
+          args: Prisma.StripeWebhookEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StripeWebhookEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StripeWebhookEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StripeWebhookEventCountAggregateOutputType> | number
+        }
+      }
+    }
     ReminderDispatchLog: {
       payload: Prisma.$ReminderDispatchLogPayload<ExtArgs>
       fields: Prisma.ReminderDispatchLogFieldRefs
@@ -4129,11 +4204,20 @@ export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[key
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  polarCustomerId: 'polarCustomerId',
-  polarSubscriptionId: 'polarSubscriptionId',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
   status: 'status',
+  stripeStatus: 'stripeStatus',
   currentPeriodStart: 'currentPeriodStart',
   currentPeriodEnd: 'currentPeriodEnd',
+  trialEndsAt: 'trialEndsAt',
+  billingInterval: 'billingInterval',
+  priceId: 'priceId',
+  unitAmount: 'unitAmount',
+  currency: 'currency',
+  productName: 'productName',
+  paymentFailureCount: 'paymentFailureCount',
+  trialEndingEmailSentAt: 'trialEndingEmailSentAt',
   cancelAtPeriodEnd: 'cancelAtPeriodEnd',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -4143,9 +4227,9 @@ export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[k
 
 
 export const PendingSubscriptionScalarFieldEnum = {
-  polarSubscriptionId: 'polarSubscriptionId',
-  polarCustomerId: 'polarCustomerId',
   email: 'email',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
   status: 'status',
   currentPeriodEnd: 'currentPeriodEnd',
   cancelAtPeriodEnd: 'cancelAtPeriodEnd',
@@ -4154,6 +4238,15 @@ export const PendingSubscriptionScalarFieldEnum = {
 } as const
 
 export type PendingSubscriptionScalarFieldEnum = (typeof PendingSubscriptionScalarFieldEnum)[keyof typeof PendingSubscriptionScalarFieldEnum]
+
+
+export const StripeWebhookEventScalarFieldEnum = {
+  eventId: 'eventId',
+  eventType: 'eventType',
+  processedAt: 'processedAt'
+} as const
+
+export type StripeWebhookEventScalarFieldEnum = (typeof StripeWebhookEventScalarFieldEnum)[keyof typeof StripeWebhookEventScalarFieldEnum]
 
 
 export const ReminderDispatchLogScalarFieldEnum = {
@@ -4562,6 +4655,7 @@ export type GlobalOmitConfig = {
   chatMessage?: Prisma.ChatMessageOmit
   subscription?: Prisma.SubscriptionOmit
   pendingSubscription?: Prisma.PendingSubscriptionOmit
+  stripeWebhookEvent?: Prisma.StripeWebhookEventOmit
   reminderDispatchLog?: Prisma.ReminderDispatchLogOmit
   syncChangeLog?: Prisma.SyncChangeLogOmit
   syncMutationReceipt?: Prisma.SyncMutationReceiptOmit

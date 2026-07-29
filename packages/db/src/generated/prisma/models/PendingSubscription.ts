@@ -25,9 +25,9 @@ export type AggregatePendingSubscription = {
 }
 
 export type PendingSubscriptionMinAggregateOutputType = {
-  polarSubscriptionId: string | null
-  polarCustomerId: string | null
   email: string | null
+  stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
   status: string | null
   currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean | null
@@ -36,9 +36,9 @@ export type PendingSubscriptionMinAggregateOutputType = {
 }
 
 export type PendingSubscriptionMaxAggregateOutputType = {
-  polarSubscriptionId: string | null
-  polarCustomerId: string | null
   email: string | null
+  stripeCustomerId: string | null
+  stripeSubscriptionId: string | null
   status: string | null
   currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean | null
@@ -47,9 +47,9 @@ export type PendingSubscriptionMaxAggregateOutputType = {
 }
 
 export type PendingSubscriptionCountAggregateOutputType = {
-  polarSubscriptionId: number
-  polarCustomerId: number
   email: number
+  stripeCustomerId: number
+  stripeSubscriptionId: number
   status: number
   currentPeriodEnd: number
   cancelAtPeriodEnd: number
@@ -60,9 +60,9 @@ export type PendingSubscriptionCountAggregateOutputType = {
 
 
 export type PendingSubscriptionMinAggregateInputType = {
-  polarSubscriptionId?: true
-  polarCustomerId?: true
   email?: true
+  stripeCustomerId?: true
+  stripeSubscriptionId?: true
   status?: true
   currentPeriodEnd?: true
   cancelAtPeriodEnd?: true
@@ -71,9 +71,9 @@ export type PendingSubscriptionMinAggregateInputType = {
 }
 
 export type PendingSubscriptionMaxAggregateInputType = {
-  polarSubscriptionId?: true
-  polarCustomerId?: true
   email?: true
+  stripeCustomerId?: true
+  stripeSubscriptionId?: true
   status?: true
   currentPeriodEnd?: true
   cancelAtPeriodEnd?: true
@@ -82,9 +82,9 @@ export type PendingSubscriptionMaxAggregateInputType = {
 }
 
 export type PendingSubscriptionCountAggregateInputType = {
-  polarSubscriptionId?: true
-  polarCustomerId?: true
   email?: true
+  stripeCustomerId?: true
+  stripeSubscriptionId?: true
   status?: true
   currentPeriodEnd?: true
   cancelAtPeriodEnd?: true
@@ -166,9 +166,9 @@ export type PendingSubscriptionGroupByArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 export type PendingSubscriptionGroupByOutputType = {
-  polarSubscriptionId: string
-  polarCustomerId: string
   email: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
   status: string
   currentPeriodEnd: Date | null
   cancelAtPeriodEnd: boolean
@@ -198,9 +198,9 @@ export type PendingSubscriptionWhereInput = {
   AND?: Prisma.PendingSubscriptionWhereInput | Prisma.PendingSubscriptionWhereInput[]
   OR?: Prisma.PendingSubscriptionWhereInput[]
   NOT?: Prisma.PendingSubscriptionWhereInput | Prisma.PendingSubscriptionWhereInput[]
-  polarSubscriptionId?: Prisma.StringFilter<"PendingSubscription"> | string
-  polarCustomerId?: Prisma.StringFilter<"PendingSubscription"> | string
   email?: Prisma.StringFilter<"PendingSubscription"> | string
+  stripeCustomerId?: Prisma.StringFilter<"PendingSubscription"> | string
+  stripeSubscriptionId?: Prisma.StringFilter<"PendingSubscription"> | string
   status?: Prisma.StringFilter<"PendingSubscription"> | string
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"PendingSubscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"PendingSubscription"> | boolean
@@ -209,9 +209,9 @@ export type PendingSubscriptionWhereInput = {
 }
 
 export type PendingSubscriptionOrderByWithRelationInput = {
-  polarSubscriptionId?: Prisma.SortOrder
-  polarCustomerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
@@ -220,23 +220,23 @@ export type PendingSubscriptionOrderByWithRelationInput = {
 }
 
 export type PendingSubscriptionWhereUniqueInput = Prisma.AtLeast<{
-  polarSubscriptionId?: string
+  email?: string
   AND?: Prisma.PendingSubscriptionWhereInput | Prisma.PendingSubscriptionWhereInput[]
   OR?: Prisma.PendingSubscriptionWhereInput[]
   NOT?: Prisma.PendingSubscriptionWhereInput | Prisma.PendingSubscriptionWhereInput[]
-  polarCustomerId?: Prisma.StringFilter<"PendingSubscription"> | string
-  email?: Prisma.StringFilter<"PendingSubscription"> | string
+  stripeCustomerId?: Prisma.StringFilter<"PendingSubscription"> | string
+  stripeSubscriptionId?: Prisma.StringFilter<"PendingSubscription"> | string
   status?: Prisma.StringFilter<"PendingSubscription"> | string
   currentPeriodEnd?: Prisma.DateTimeNullableFilter<"PendingSubscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFilter<"PendingSubscription"> | boolean
   createdAt?: Prisma.DateTimeFilter<"PendingSubscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PendingSubscription"> | Date | string
-}, "polarSubscriptionId">
+}, "email">
 
 export type PendingSubscriptionOrderByWithAggregationInput = {
-  polarSubscriptionId?: Prisma.SortOrder
-  polarCustomerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
@@ -251,9 +251,9 @@ export type PendingSubscriptionScalarWhereWithAggregatesInput = {
   AND?: Prisma.PendingSubscriptionScalarWhereWithAggregatesInput | Prisma.PendingSubscriptionScalarWhereWithAggregatesInput[]
   OR?: Prisma.PendingSubscriptionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PendingSubscriptionScalarWhereWithAggregatesInput | Prisma.PendingSubscriptionScalarWhereWithAggregatesInput[]
-  polarSubscriptionId?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
-  polarCustomerId?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
   email?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
+  stripeCustomerId?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
+  stripeSubscriptionId?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
   status?: Prisma.StringWithAggregatesFilter<"PendingSubscription"> | string
   currentPeriodEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"PendingSubscription"> | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolWithAggregatesFilter<"PendingSubscription"> | boolean
@@ -262,9 +262,9 @@ export type PendingSubscriptionScalarWhereWithAggregatesInput = {
 }
 
 export type PendingSubscriptionCreateInput = {
-  polarSubscriptionId: string
-  polarCustomerId: string
   email: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
   status: string
   currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
@@ -273,9 +273,9 @@ export type PendingSubscriptionCreateInput = {
 }
 
 export type PendingSubscriptionUncheckedCreateInput = {
-  polarSubscriptionId: string
-  polarCustomerId: string
   email: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
   status: string
   currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
@@ -284,9 +284,9 @@ export type PendingSubscriptionUncheckedCreateInput = {
 }
 
 export type PendingSubscriptionUpdateInput = {
-  polarSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  polarCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -295,9 +295,9 @@ export type PendingSubscriptionUpdateInput = {
 }
 
 export type PendingSubscriptionUncheckedUpdateInput = {
-  polarSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  polarCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -306,9 +306,9 @@ export type PendingSubscriptionUncheckedUpdateInput = {
 }
 
 export type PendingSubscriptionCreateManyInput = {
-  polarSubscriptionId: string
-  polarCustomerId: string
   email: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
   status: string
   currentPeriodEnd?: Date | string | null
   cancelAtPeriodEnd?: boolean
@@ -317,9 +317,9 @@ export type PendingSubscriptionCreateManyInput = {
 }
 
 export type PendingSubscriptionUpdateManyMutationInput = {
-  polarSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  polarCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -328,9 +328,9 @@ export type PendingSubscriptionUpdateManyMutationInput = {
 }
 
 export type PendingSubscriptionUncheckedUpdateManyInput = {
-  polarSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
-  polarCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeSubscriptionId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   currentPeriodEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   cancelAtPeriodEnd?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -339,9 +339,9 @@ export type PendingSubscriptionUncheckedUpdateManyInput = {
 }
 
 export type PendingSubscriptionCountOrderByAggregateInput = {
-  polarSubscriptionId?: Prisma.SortOrder
-  polarCustomerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
@@ -350,9 +350,9 @@ export type PendingSubscriptionCountOrderByAggregateInput = {
 }
 
 export type PendingSubscriptionMaxOrderByAggregateInput = {
-  polarSubscriptionId?: Prisma.SortOrder
-  polarCustomerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
@@ -361,9 +361,9 @@ export type PendingSubscriptionMaxOrderByAggregateInput = {
 }
 
 export type PendingSubscriptionMinOrderByAggregateInput = {
-  polarSubscriptionId?: Prisma.SortOrder
-  polarCustomerId?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  stripeSubscriptionId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   currentPeriodEnd?: Prisma.SortOrder
   cancelAtPeriodEnd?: Prisma.SortOrder
@@ -374,9 +374,9 @@ export type PendingSubscriptionMinOrderByAggregateInput = {
 
 
 export type PendingSubscriptionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  polarSubscriptionId?: boolean
-  polarCustomerId?: boolean
   email?: boolean
+  stripeCustomerId?: boolean
+  stripeSubscriptionId?: boolean
   status?: boolean
   currentPeriodEnd?: boolean
   cancelAtPeriodEnd?: boolean
@@ -385,9 +385,9 @@ export type PendingSubscriptionSelect<ExtArgs extends runtime.Types.Extensions.I
 }, ExtArgs["result"]["pendingSubscription"]>
 
 export type PendingSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  polarSubscriptionId?: boolean
-  polarCustomerId?: boolean
   email?: boolean
+  stripeCustomerId?: boolean
+  stripeSubscriptionId?: boolean
   status?: boolean
   currentPeriodEnd?: boolean
   cancelAtPeriodEnd?: boolean
@@ -396,9 +396,9 @@ export type PendingSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime
 }, ExtArgs["result"]["pendingSubscription"]>
 
 export type PendingSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  polarSubscriptionId?: boolean
-  polarCustomerId?: boolean
   email?: boolean
+  stripeCustomerId?: boolean
+  stripeSubscriptionId?: boolean
   status?: boolean
   currentPeriodEnd?: boolean
   cancelAtPeriodEnd?: boolean
@@ -407,9 +407,9 @@ export type PendingSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime
 }, ExtArgs["result"]["pendingSubscription"]>
 
 export type PendingSubscriptionSelectScalar = {
-  polarSubscriptionId?: boolean
-  polarCustomerId?: boolean
   email?: boolean
+  stripeCustomerId?: boolean
+  stripeSubscriptionId?: boolean
   status?: boolean
   currentPeriodEnd?: boolean
   cancelAtPeriodEnd?: boolean
@@ -417,15 +417,15 @@ export type PendingSubscriptionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PendingSubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"polarSubscriptionId" | "polarCustomerId" | "email" | "status" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["pendingSubscription"]>
+export type PendingSubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"email" | "stripeCustomerId" | "stripeSubscriptionId" | "status" | "currentPeriodEnd" | "cancelAtPeriodEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["pendingSubscription"]>
 
 export type $PendingSubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PendingSubscription"
   objects: {}
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    polarSubscriptionId: string
-    polarCustomerId: string
     email: string
+    stripeCustomerId: string
+    stripeSubscriptionId: string
     status: string
     currentPeriodEnd: Date | null
     cancelAtPeriodEnd: boolean
@@ -514,8 +514,8 @@ export interface PendingSubscriptionDelegate<ExtArgs extends runtime.Types.Exten
    * // Get first 10 PendingSubscriptions
    * const pendingSubscriptions = await prisma.pendingSubscription.findMany({ take: 10 })
    * 
-   * // Only select the `polarSubscriptionId`
-   * const pendingSubscriptionWithPolarSubscriptionIdOnly = await prisma.pendingSubscription.findMany({ select: { polarSubscriptionId: true } })
+   * // Only select the `email`
+   * const pendingSubscriptionWithEmailOnly = await prisma.pendingSubscription.findMany({ select: { email: true } })
    * 
    */
   findMany<T extends PendingSubscriptionFindManyArgs>(args?: Prisma.SelectSubset<T, PendingSubscriptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PendingSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -559,9 +559,9 @@ export interface PendingSubscriptionDelegate<ExtArgs extends runtime.Types.Exten
    *   ]
    * })
    * 
-   * // Create many PendingSubscriptions and only return the `polarSubscriptionId`
-   * const pendingSubscriptionWithPolarSubscriptionIdOnly = await prisma.pendingSubscription.createManyAndReturn({
-   *   select: { polarSubscriptionId: true },
+   * // Create many PendingSubscriptions and only return the `email`
+   * const pendingSubscriptionWithEmailOnly = await prisma.pendingSubscription.createManyAndReturn({
+   *   select: { email: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -650,9 +650,9 @@ export interface PendingSubscriptionDelegate<ExtArgs extends runtime.Types.Exten
    *   ]
    * })
    * 
-   * // Update zero or more PendingSubscriptions and only return the `polarSubscriptionId`
-   * const pendingSubscriptionWithPolarSubscriptionIdOnly = await prisma.pendingSubscription.updateManyAndReturn({
-   *   select: { polarSubscriptionId: true },
+   * // Update zero or more PendingSubscriptions and only return the `email`
+   * const pendingSubscriptionWithEmailOnly = await prisma.pendingSubscription.updateManyAndReturn({
+   *   select: { email: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -854,9 +854,9 @@ export interface Prisma__PendingSubscriptionClient<T, Null = never, ExtArgs exte
  * Fields of the PendingSubscription model
  */
 export interface PendingSubscriptionFieldRefs {
-  readonly polarSubscriptionId: Prisma.FieldRef<"PendingSubscription", 'String'>
-  readonly polarCustomerId: Prisma.FieldRef<"PendingSubscription", 'String'>
   readonly email: Prisma.FieldRef<"PendingSubscription", 'String'>
+  readonly stripeCustomerId: Prisma.FieldRef<"PendingSubscription", 'String'>
+  readonly stripeSubscriptionId: Prisma.FieldRef<"PendingSubscription", 'String'>
   readonly status: Prisma.FieldRef<"PendingSubscription", 'String'>
   readonly currentPeriodEnd: Prisma.FieldRef<"PendingSubscription", 'DateTime'>
   readonly cancelAtPeriodEnd: Prisma.FieldRef<"PendingSubscription", 'Boolean'>
