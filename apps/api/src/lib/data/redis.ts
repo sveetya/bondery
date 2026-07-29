@@ -53,6 +53,17 @@ export function getRedisCommands(redisUrl?: string): Redis | undefined {
   return commandsClient;
 }
 
+/** Command connection — throws when Redis URL is unset (required in all environments). */
+export function requireRedisCommands(redisUrl?: string): Redis {
+  const client = getRedisCommands(redisUrl);
+  if (!client) {
+    throw new Error(
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+    );
+  }
+  return client;
+}
+
 /** Process-scoped subscriber connection. Undefined when URL empty. */
 export function getRedisSubscriber(redisUrl?: string): Redis | undefined {
   const url = ensureUrl(redisUrl);
@@ -63,6 +74,17 @@ export function getRedisSubscriber(redisUrl?: string): Redis | undefined {
     subscriberClient = createRedisClient(url);
   }
   return subscriberClient;
+}
+
+/** Subscriber connection — throws when Redis URL is unset (required in all environments). */
+export function requireRedisSubscriber(redisUrl?: string): Redis {
+  const client = getRedisSubscriber(redisUrl);
+  if (!client) {
+    throw new Error(
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+    );
+  }
+  return client;
 }
 
 async function quitClient(client: Redis | null): Promise<void> {

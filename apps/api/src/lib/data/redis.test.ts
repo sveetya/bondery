@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   getRedisCommands,
   getRedisSubscriber,
+  requireRedisCommands,
   resetRedisClientsForTests,
   shutdownRedis,
 } from "./redis.js";
@@ -16,6 +17,23 @@ describe("redis shared clients", () => {
     try {
       assert.equal(getRedisCommands(), undefined);
       assert.equal(getRedisSubscriber(), undefined);
+    } finally {
+      if (previous === undefined) {
+        delete process.env.BONDERY_PRIVATE_REDIS_URL;
+      } else {
+        process.env.BONDERY_PRIVATE_REDIS_URL = previous;
+      }
+      resetRedisClientsForTests();
+    }
+  });
+
+  it("requireRedisCommands throws when BONDERY_PRIVATE_REDIS_URL is unset", () => {
+    const previous = process.env.BONDERY_PRIVATE_REDIS_URL;
+    delete process.env.BONDERY_PRIVATE_REDIS_URL;
+    resetRedisClientsForTests();
+
+    try {
+      assert.throws(() => requireRedisCommands(), /BONDERY_PRIVATE_REDIS_URL must be set/);
     } finally {
       if (previous === undefined) {
         delete process.env.BONDERY_PRIVATE_REDIS_URL;

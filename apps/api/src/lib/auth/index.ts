@@ -14,21 +14,39 @@
  * `databaseHooks.user.create.after` replaces the old `handle_new_user()`
  * Postgres trigger: seeds `user_settings` + the "myself" `people` row.
  */
-import { prisma } from "@bondery/db";
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { bearer, jwt, lastLoginMethod } from "better-auth/plugins";
+
+import { apiKey } from "@better-auth/api-key";
 import { expo } from "@better-auth/expo";
+import { i18n } from "@better-auth/i18n";
 import { oauthProvider } from "@better-auth/oauth-provider";
+import { prisma } from "@bondery/db";
+import { PLATFORM_ADMIN_ROLE, PLATFORM_USER_ROLE } from "@bondery/helpers/auth/platform-admin";
 import { resolveCookieDomain } from "@bondery/helpers/auth/resolve-cookie-domain";
-import { generateId } from "@bondery/helpers/ids";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
+import { generateId } from "@bondery/helpers/ids";
+import { API_KEY_PREFIX } from "@bondery/schemas";
+import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { betterAuth } from "better-auth/minimal";
+import { lastLoginMethod } from "better-auth/plugins";
+import { admin } from "better-auth/plugins/admin";
+import { bearer } from "better-auth/plugins/bearer";
+import { jwt } from "better-auth/plugins/jwt";
 import { resolveRuntimeTrustedOrigins } from "../platform/trusted-origins.js";
-import { provisionNewUser, resolveDefaultLocale } from "./provision-new-user.js";
+import { buildAuthTranslations } from "./build-auth-translations.js";
+import { isPlatformAdmin } from "./is-platform-admin.js";
+import { platformAdminAc, platformAdminRoles } from "./platform-admin-access.js";
+import { provisionNewUser } from "./provision-new-user.js";
+import { resolveAuthLocale } from "./resolve-auth-locale.js";
+import { resolveProvisionLocaleFromContext } from "./resolve-provision-locale.js";
 import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
+import { createBetterAuthSecondaryStorage } from "./secondary-storage.js";
 import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
 
+export { isPlatformAdmin };
+
 const betterAuthSecrets = resolveBetterAuthSecrets();
+const authTranslations = buildAuthTranslations();
 
 function resolveWebappUrl(): string {
   return (process.env.BONDERY_PUBLIC_WEBAPP_URL ?? "").replace(/\/+$/, "");
@@ -98,15 +116,139 @@ function resolveUseSecureCookies(): boolean {
 const crossSubdomainCookieDomain = resolveCookieDomain(process.env.BONDERY_PUBLIC_WEBAPP_URL);
 
 export const auth = betterAuth({
-  baseURL: resolveBetterAuthIssuerUrl(),
+  account: {
+    // AES-256-GCM for GitHub/LinkedIn tokens in `Account`. Better Auth
+    // encrypts on write and decrypts in getAccessToken / account-info /
+    // refresh. Existing plaintext rows still work until the next
+    // refresh/re-link (decryptOAuthToken passes non-encrypted values through).
+    // App code must not read Account.accessToken/refreshToken/idToken via
+    // Prisma — use auth.api.getAccessToken if a plaintext provider token is needed.
+    encryptOAuthTokens: true,
+  },
+
+  advanced: {
+    useSecureCookies: resolveUseSecureCookies(),
+    ...(crossSubdomainCookieDomain && {
+      crossSubDomainCookies: {
+        domain: crossSubdomainCookieDomain,
+        enabled: true,
+      },
+    }),
+    // Preserve Postgres uuid columns already referenced by every app table.
+    database: { generateId: () => generateId() },
+  },
   basePath: BETTER_AUTH_BASE_PATH,
-  secrets: betterAuthSecrets,
+  baseURL: resolveBetterAuthIssuerUrl(),
+
+  database: prismaAdapter(prisma, { provider: "postgresql" }),
+
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user, ctx) => {
+          await provisionNewUser({
+            locale: resolveProvisionLocaleFromContext(ctx),
+            name: user.name,
+            userId: user.id,
+          });
+        },
+      },
+      delete: {
+        after: async (user) => {
+          await runUserDeleteAfter({
+            email: user.email,
+            id: user.id,
+            name: user.name,
+          });
+        },
+        before: async (user) => {
+          await runUserDeleteBefore({
+            email: user.email,
+            id: user.id,
+            name: user.name,
+          });
+        },
+      },
+    },
+  },
   onAPIError: {
     errorURL: resolveAuthErrorPageUrl() || undefined,
   },
-  trustedOrigins: resolveRuntimeTrustedOrigins(),
 
-  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  plugins: [
+    bearer(),
+    jwt(),
+    expo(),
+    admin({
+      ac: platformAdminAc,
+      adminRoles: [PLATFORM_ADMIN_ROLE],
+      defaultRole: PLATFORM_USER_ROLE,
+      roles: platformAdminRoles,
+    }),
+    i18n({
+      defaultLocale: DEFAULT_LOCALE,
+      detection: ["callback"],
+      getLocale: resolveAuthLocale,
+      translations: authTranslations,
+    }),
+    oauthProvider({
+      cachedTrustedClients: resolveTrustedOAuthClientIds(),
+      consentPage: `${resolveWebappUrl()}/oauth/consent`,
+      // Default true: a client must be linked to this resource
+      // (oauthClientResource) to receive a token for it — see provisioning.
+      enforcePerClientResources: true,
+      // Deliberately NOT `/login`: that page's server-side gate checks the
+      // webapp's own independent OAuth-BFF session (see
+      // resolveServerSession()) and redirects straight past the login UI
+      // when it's valid. This page is reached by /oauth2/authorize only
+      // when the API's own native session is missing, which the webapp
+      // session says nothing about — reusing `/login` here caused a
+      // redirect loop whenever a caller had a valid webapp session but no
+      // native AS session. `/oauth/login` is a dedicated AS-only login
+      // gate that always starts fresh social sign-in.
+      loginPage: `${resolveWebappUrl()}/oauth/login`,
+      // Boot-time seed only — never overwrites an admin-edited row
+      // (resourceSeedMode defaults to "insertOnly"). The actual
+      // client -> resource links are created by
+      // scripts/provision-oauth-clients.ts, which also owns the client rows.
+      resources: resolveApiResourceIdentifier()
+        ? [
+            {
+              // oauth-provider intersects requested scopes with each resource's
+              // allowedScopes. OIDC scopes must survive that intersection for
+              // the token endpoint to issue an ID token and permit UserInfo.
+              allowedScopes: [...OAUTH_PROVIDER_SCOPES],
+              identifier: resolveApiResourceIdentifier(),
+              name: "Bondery API",
+            },
+          ]
+        : [],
+      scopes: [...OAUTH_PROVIDER_SCOPES],
+    }),
+    apiKey({
+      defaultPrefix: API_KEY_PREFIX,
+      enableSessionForAPIKeys: false,
+      maximumNameLength: 100,
+      permissions: {
+        defaultPermissions: { api: ["read"] },
+      },
+      rateLimit: { enabled: false },
+      references: "user",
+      requireName: true,
+    }),
+    lastLoginMethod({ storeInDatabase: false }),
+  ],
+  secondaryStorage: createBetterAuthSecondaryStorage(),
+  secrets: betterAuthSecrets,
+
+  session: {
+    // Match previous Supabase access-token lifetime; refreshed transparently
+    // by the client plugins (web cookie refresh, expoClient, bearer).
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    // Dual-write Postgres + Redis (see docs/adr/0001-better-auth-redis-secondary-storage.md).
+    storeSessionInDatabase: true,
+    updateAge: 60 * 60 * 24, // refresh cookie once per day of activity
+  },
 
   socialProviders: {
     github: {
@@ -121,106 +263,7 @@ export const auth = betterAuth({
       clientSecret: process.env.BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET ?? "",
     },
   },
-
-  session: {
-    // Match previous Supabase access-token lifetime; refreshed transparently
-    // by the client plugins (web cookie refresh, expoClient, bearer).
-    expiresIn: 60 * 60 * 24 * 30, // 30 days
-    updateAge: 60 * 60 * 24, // refresh cookie once per day of activity
-  },
-
-  account: {
-    // AES-256-GCM for GitHub/LinkedIn tokens in `Account`. Better Auth
-    // encrypts on write and decrypts in getAccessToken / account-info /
-    // refresh. Existing plaintext rows still work until the next
-    // refresh/re-link (decryptOAuthToken passes non-encrypted values through).
-    // App code must not read Account.accessToken/refreshToken/idToken via
-    // Prisma — use auth.api.getAccessToken if a plaintext provider token is needed.
-    encryptOAuthTokens: true,
-  },
-
-  plugins: [
-    bearer(),
-    jwt(),
-    expo(),
-    lastLoginMethod({ storeInDatabase: false }),
-    oauthProvider({
-      // Deliberately NOT `/login`: that page's server-side gate checks the
-      // webapp's own independent OAuth-BFF session (see
-      // resolveServerSession()) and redirects straight past the login UI
-      // when it's valid. This page is reached by /oauth2/authorize only
-      // when the API's own native session is missing, which the webapp
-      // session says nothing about — reusing `/login` here caused a
-      // redirect loop whenever a caller had a valid webapp session but no
-      // native AS session. `/oauth/login` is a dedicated AS-only login
-      // gate that always starts fresh social sign-in.
-      loginPage: `${resolveWebappUrl()}/oauth/login`,
-      consentPage: `${resolveWebappUrl()}/oauth/consent`,
-      cachedTrustedClients: resolveTrustedOAuthClientIds(),
-      scopes: [...OAUTH_PROVIDER_SCOPES],
-      // Boot-time seed only — never overwrites an admin-edited row
-      // (resourceSeedMode defaults to "insertOnly"). The actual
-      // client -> resource links are created by
-      // scripts/provision-oauth-clients.ts, which also owns the client rows.
-      resources: resolveApiResourceIdentifier()
-        ? [
-            {
-              identifier: resolveApiResourceIdentifier(),
-              name: "Bondery API",
-              // oauth-provider intersects requested scopes with each resource's
-              // allowedScopes. OIDC scopes must survive that intersection for
-              // the token endpoint to issue an ID token and permit UserInfo.
-              allowedScopes: [...OAUTH_PROVIDER_SCOPES],
-            },
-          ]
-        : [],
-      // Default true: a client must be linked to this resource
-      // (oauthClientResource) to receive a token for it — see provisioning.
-      enforcePerClientResources: true,
-    }),
-  ],
-
-  databaseHooks: {
-    user: {
-      create: {
-        after: async (user) => {
-          await provisionNewUser({
-            locale: resolveDefaultLocale(new Headers()),
-            name: user.name,
-            userId: user.id,
-          });
-        },
-      },
-      delete: {
-        before: async (user) => {
-          await runUserDeleteBefore({
-            email: user.email,
-            id: user.id,
-            name: user.name,
-          });
-        },
-        after: async (user) => {
-          await runUserDeleteAfter({
-            email: user.email,
-            id: user.id,
-            name: user.name,
-          });
-        },
-      },
-    },
-  },
-
-  advanced: {
-    useSecureCookies: resolveUseSecureCookies(),
-    ...(crossSubdomainCookieDomain && {
-      crossSubDomainCookies: {
-        domain: crossSubdomainCookieDomain,
-        enabled: true,
-      },
-    }),
-    // Preserve Postgres uuid columns already referenced by every app table.
-    database: { generateId: () => generateId() },
-  },
+  trustedOrigins: resolveRuntimeTrustedOrigins(),
 });
 
 export type Auth = typeof auth;

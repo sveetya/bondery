@@ -7,6 +7,7 @@
  * mid-transaction.
  */
 import { prisma, type SupportedLocale } from "@bondery/db";
+import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 
 function splitDisplayName(name: string | null | undefined): {
   firstName: string;
@@ -22,20 +23,13 @@ function splitDisplayName(name: string | null | undefined): {
   return { firstName, lastName: lastName || null };
 }
 
-export function resolveDefaultLocale(headers: Headers): SupportedLocale {
-  const acceptLanguage = headers.get("accept-language") ?? "";
-  if (acceptLanguage.startsWith("cs")) return "cs";
-  if (acceptLanguage.startsWith("de")) return "de";
-  return "en";
-}
-
 export async function provisionNewUser(params: {
   userId: string;
   name?: string | null;
   locale?: SupportedLocale;
 }): Promise<void> {
   const { userId, name } = params;
-  const locale: SupportedLocale = params.locale ?? "en";
+  const locale: SupportedLocale = params.locale ?? DEFAULT_LOCALE;
   const now = new Date();
   const { firstName, lastName } = splitDisplayName(name);
 
@@ -67,8 +61,8 @@ export async function provisionNewUser(params: {
       data: {
         firstName,
         id: userId,
-        lastName,
         lastInteraction: now,
+        lastName,
         myself: true,
         userId,
       },

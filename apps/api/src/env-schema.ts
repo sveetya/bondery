@@ -20,9 +20,6 @@ export const envSchema = {
       default: "",
       type: "string",
     },
-    BONDERY_PRIVATE_API_KEY_PEPPER: {
-      type: "string",
-    },
     BONDERY_PRIVATE_EMAIL_ADDRESS: {
       type: "string",
     },
@@ -142,7 +139,6 @@ declare module "fastify" {
       BONDERY_PUBLIC_MAPS_URL: string;
       BONDERY_PRIVATE_MAPS_KEY: string;
       BONDERY_PRIVATE_REDIS_URL: string;
-      BONDERY_PRIVATE_API_KEY_PEPPER: string;
       BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK: string;
       SYNC_WAKE_ENABLED: string;
     };
