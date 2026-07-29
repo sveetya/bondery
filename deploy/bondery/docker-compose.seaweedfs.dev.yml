@@ -6,10 +6,10 @@
 services:
   seaweedfs-s3:
     labels: !reset []
-    networks: !reset
-      - internal
     ports:
       - "8333:8333"
+    networks:
+      - internal
 
 networks:
   dokploy-network:
