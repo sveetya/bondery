@@ -111,6 +111,10 @@
       "includes": [
         "**/scripts/**",
         "**/scripts/*",
+        "apps/api/src/cli/**",
+        "apps/api/src/lib/bootstrap/**",
+        "apps/api/src/lib/storage/ensure-buckets.ts",
+        "packages/db/src/apply-sql-functions.ts",
         "packages/helpers/src/env/check-env.ts",
         "apps/chrome-extension/wxt.config.ts"
       ],

@@ -7,6 +7,7 @@
  * - db (Postgres) must not carry Traefik labels or join dokploy-network
  * - api must wait for db healthy (not legacy kong)
  */
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,6 +20,49 @@ const postgresText = readFileSync(postgresPath, "utf8");
 const text = `${mainText}\n${postgresText}`;
 
 const errors = [];
+
+const MIN_COMPOSE_VERSION = [2, 38, 0];
+
+function parseComposeVersion(output) {
+  const match = output.match(/v?(\d+)\.(\d+)\.(\d+)/);
+  if (!match) {
+    return null;
+  }
+  return [Number(match[1]), Number(match[2]), Number(match[3])];
+}
+
+function isComposeVersionAtLeast(version, minimum) {
+  for (let index = 0; index < minimum.length; index++) {
+    const current = version[index] ?? 0;
+    const min = minimum[index] ?? 0;
+    if (current > min) {
+      return true;
+    }
+    if (current < min) {
+      return false;
+    }
+  }
+  return true;
+}
+
+try {
+  const composeVersionOutput = execFileSync("docker", ["compose", "version"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const composeVersion = parseComposeVersion(composeVersionOutput);
+  if (!composeVersion) {
+    errors.push("Could not parse docker compose version output");
+  } else if (!isComposeVersionAtLeast(composeVersion, MIN_COMPOSE_VERSION)) {
+    errors.push(
+      `docker compose v${composeVersion.join(".")} is too old — need v${MIN_COMPOSE_VERSION.join(".")}+ for api pre_start`,
+    );
+  }
+} catch {
+  errors.push(
+    `docker compose v${MIN_COMPOSE_VERSION.join(".")}+ required for api pre_start — install or upgrade Docker Compose`,
+  );
+}
 
 if (!/^\s*include:\s*$/m.test(mainText) || !mainText.includes("docker-compose.postgres.yml")) {
   errors.push("docker-compose.yml must include path: docker-compose.postgres.yml");
@@ -128,6 +172,15 @@ if (api) {
   }
   if (/kong:\s*\n\s*condition:\s*service_healthy/.test(api)) {
     errors.push("api must not depends_on kong (Supabase stack removed)");
+  }
+  if (!/pre_start:/m.test(api)) {
+    errors.push("api must define pre_start init containers");
+  }
+  if (!api.includes("apps/api/dist/cli/release-migrate.js")) {
+    errors.push("api pre_start must run release-migrate CLI");
+  }
+  if (!api.includes("apps/api/dist/cli/ensure-storage-buckets.js")) {
+    errors.push("api pre_start must run ensure-storage-buckets CLI");
   }
 }
 

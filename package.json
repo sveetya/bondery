@@ -72,7 +72,7 @@
   "packageManager": "npm@11.12.0",
   "private": true,
   "scripts": {
-    "bootstrap:seaweedfs": "node --env-file=.env.local deploy/bondery/scripts/bootstrap-seaweedfs-buckets.mjs",
+    "bootstrap:seaweedfs": "npm run build:api && node --env-file=.env.local apps/api/dist/cli/ensure-storage-buckets.js",
     "build": "turbo build",
     "build:api": "turbo build --filter=api",
     "build:chrome-extension": "turbo build --filter=chrome-extension",

@@ -36,18 +36,9 @@ cp .env.example .env
 # Fill domains, generate secrets (see below), OAuth client IDs
 
 docker compose up -d
-
-# Publish Postgres for migrations (host-port mode) if not using Traefik-only:
-cp docker-compose.override.yml.example docker-compose.override.yml
-docker compose up -d db
-
-# From repo root — apply Prisma migrations
-DATABASE_URL="postgresql://postgres:$BONDERY_PRIVATE_POSTGRES_PASSWORD@127.0.0.1:54322/bondery" \
-  npm run db:migrate:deploy -w @bondery/db
-
-# Provision OAuth clients (webapp BFF + chrome extension)
-cd apps/api && npx tsx --env-file=../../deploy/bondery/.env scripts/provision-oauth-clients.ts
 ```
+
+Requires Docker Compose **v2.38+**. First boot applies migrations, OAuth client provisioning, platform admin promotion, and SeaweedFS buckets via `api` `pre_start` init containers — no manual steps.
 
 Without Traefik (laptop / smoke):
 
@@ -79,13 +70,13 @@ Operators use **`BONDERY_*` only**. See [`deploy/bondery/.env.example`](../../de
 2. In GitHub / LinkedIn apps, callback URL: `https://<BONDERY_INFRA_API_DOMAIN>/auth/callback/<provider>`.
 3. Set `BONDERY_INFRA_CHROME_EXTENSION_ID` — provision script adds `https://{id}.chromiumapp.org/` redirect.
 
-## Bootstrap commands
+## Bootstrap commands (local dev only)
 
 | Command | When |
 |---------|------|
-| `npm run db:migrate:deploy -w @bondery/db` | Empty or upgraded DB: apply Prisma migrations |
-| `provision-oauth-clients.ts` | First boot or after rotating OAuth client secrets |
-| `deploy/bondery/scripts/bootstrap-seaweedfs-buckets.mjs` | First boot: create S3 buckets |
+| `npm run db:migrate:deploy -w @bondery/db` | Host-run API against local Postgres (Compose deploys migrate via `api` `pre_start`) |
+| `npm run provision-oauth-clients:dev -w api` | After changing OAuth client env vars locally |
+| `npm run bootstrap:seaweedfs` | Host-run dev without starting the `api` container (optional; API dev boot also ensures buckets) |
 
 ## Health gate
 
@@ -100,20 +91,22 @@ Manual: OAuth login, API key auth, avatar upload, reminder dispatch (`pg_cron`).
 
 ## Schema migrations after go-live
 
-**Migrations never run automatically** when you `docker compose up`. SQL in `packages/db/prisma/migrations/` is applied separately.
+Schema changes ship in `packages/db/prisma/migrations/`. On Compose deployments, `api` `pre_start` runs `prisma migrate deploy` and `functions.sql` automatically when the `api` service is recreated (typically when you pull a new API image).
+
+For host-run migrations outside Compose (e.g. manual ops against exposed Postgres):
 
 ```bash
 DATABASE_URL="postgresql://postgres:$BONDERY_PRIVATE_POSTGRES_PASSWORD@127.0.0.1:54322/bondery" \
-  npm run db:migrate:deploy -w @bondery/db
+  npm run release-migrate -w @bondery/db
 ```
 
-Then redeploy api/webapp if application code changed.
+`/health` does **not** check for pending migrations — it probes live dependencies only.
 
 ## Upgrades
 
 1. Test new api/webapp image tags on staging.
-2. Redeploy Dokploy compose app.
-3. Apply new SQL migrations with `db:migrate:deploy`.
+2. Redeploy Dokploy compose app (pulls new images; recreates `api` → `pre_start` applies pending migrations).
+3. Verify `/health` and `/api/ready`.
 
 ## Backups
 

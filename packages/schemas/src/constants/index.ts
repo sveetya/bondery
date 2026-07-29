@@ -48,6 +48,13 @@ export const API_KEY_LIMITS = {
 
 export const API_KEY_PREFIX = "bondery_key_" as const;
 
+/** Secret chars shown in list UI after the prefix (`bondery_key_abc…`). */
+export const API_KEY_START_DISPLAY_SECRET_CHARS = 3;
+
+/** Better Auth `start` field length: prefix + {@link API_KEY_START_DISPLAY_SECRET_CHARS}. */
+export const API_KEY_START_DISPLAY_LENGTH =
+  API_KEY_PREFIX.length + API_KEY_START_DISPLAY_SECRET_CHARS;
+
 /** Better Auth api-key permission resource (see @better-auth/api-key permissions). */
 export const API_KEY_BA_RESOURCE = "api" as const;
 

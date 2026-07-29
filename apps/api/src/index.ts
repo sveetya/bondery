@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { checkEnvVariables } from "@bondery/helpers/env";
 import { buildApp } from "./build-app.js";
 import { buildServer } from "./build-server.js";
+import { runDevelopmentBootstrap } from "./lib/bootstrap/dev-startup.js";
 import { verifyAuthAtStartup } from "./lib/platform/auth/strategies.js";
 import logger from "./lib/platform/logger.js";
 import { getApiRequiredEnvVars } from "./lib/platform/required-env.js";
@@ -49,12 +50,16 @@ async function start() {
   // Docker CMD stays `node apps/api/dist/index.js` — validation runs in-process.
   assertRequiredEnvAtStartup();
 
+  if (process.env.NODE_ENV === "development") {
+    await runDevelopmentBootstrap();
+  }
+
   const server = await buildServer();
   const { port, host } = resolveListenAddress(server.config);
 
   try {
     await server.listen({ host, port });
-    await verifyAuthAtStartup(server);
+    await verifyAuthAtStartup(server, { listenPort: port });
     server.log.info(`Bondery API running at http://${host}:${port}`);
   } catch (err) {
     server.log.error(err);

@@ -57,7 +57,7 @@ services:
     healthcheck:
       interval: 30s
       retries: 3
-      start_period: 20s
+      start_period: 45s
       test:
         [
           "CMD",
@@ -67,6 +67,13 @@ services:
         ]
       timeout: 5s
     image: ghcr.io/usebondery/api:${BONDERY_INFRA_API_IMAGE_TAG:-production}
+    pre_start:
+      - command:
+          - node
+          - apps/api/dist/cli/release-migrate.js
+      - command:
+          - node
+          - apps/api/dist/cli/ensure-storage-buckets.js
     pull_policy: always
     labels:
       - traefik.enable=true

@@ -55,7 +55,7 @@ export const swaggerOpenApiConfig = {
   tags: [
     {
       description:
-        "Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to one request per minute per client; returns 503 when critical dependencies are unavailable.",
+        "Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to five requests per minute per client; returns 503 when critical dependencies are unavailable.",
       name: "Health",
     },
     { description: "Contact management operations", name: "Contacts" },

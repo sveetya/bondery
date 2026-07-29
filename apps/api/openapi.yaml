@@ -790,10 +790,10 @@ paths:
       tags:
         - Health
       description: "Readiness probe. Checks configured dependencies and returns per-service status. Results are cached in
-        memory for one minute. Rate limited to one request per minute per client. Returns HTTP 503 when critical
+        memory for one minute. Rate limited to five requests per minute per client. Returns HTTP 503 when critical
         dependencies are unavailable (`status: unhealthy`). Returns HTTP 200 when all critical dependencies are healthy
         (`status: ok` or `status: degraded`). Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway
-        `GET /status`."
+        `GET /status` and required bucket `HeadBucket` checks."
       responses:
         "200":
           description: Readiness report when dependencies are healthy or degraded
@@ -15600,7 +15600,7 @@ paths:
                   minLength: 1
                   maxLength: 100
                 permission:
-                  default: full
+                  default: read
                   type: string
                   enum:
                     - read
@@ -18663,21 +18663,7 @@ paths:
     post:
       tags:
         - Subscriptions
-      description: Create a Stripe embedded Checkout session for upgrade.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                interval:
-                  type: string
-                  enum:
-                    - month
-                    - year
-              required:
-                - interval
+      description: Create a Stripe embedded Checkout session for upgrade (monthly plan; change billing in Stripe portal).
       security: *a2
       responses:
         "200":
@@ -19860,7 +19846,7 @@ servers:
 tags:
   - description: Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency
       checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate
-      limited to one request per minute per client; returns 503 when critical dependencies are unavailable.
+      limited to five requests per minute per client; returns 503 when critical dependencies are unavailable.
     name: Health
   - description: Contact management operations
     name: Contacts

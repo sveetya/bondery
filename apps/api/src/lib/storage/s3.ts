@@ -7,6 +7,16 @@ import {
 } from "@aws-sdk/client-s3";
 import type { StorageAdapter, StoragePutOptions } from "./adapter.js";
 
+function isStorageObjectMissingError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const record = error as { Code?: string; name?: string };
+  const code = record.Code ?? record.name;
+  return code === "NoSuchKey" || code === "NoSuchBucket" || code === "NotFound";
+}
+
 async function streamToBuffer(body: unknown): Promise<Buffer> {
   if (!body) {
     return Buffer.alloc(0);
@@ -74,12 +84,19 @@ export class S3Storage implements StorageAdapter {
   }
 
   async delete(bucket: string, key: string): Promise<void> {
-    await this.client.send(
-      new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: key.replace(/^\/+/, ""),
-      }),
-    );
+    try {
+      await this.client.send(
+        new DeleteObjectCommand({
+          Bucket: bucket,
+          Key: key.replace(/^\/+/, ""),
+        }),
+      );
+    } catch (error) {
+      if (isStorageObjectMissingError(error)) {
+        return;
+      }
+      throw error;
+    }
   }
 
   getPublicUrl(bucket: string, key: string): string {

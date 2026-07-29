@@ -1,5 +1,7 @@
+import { HeadBucketCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@bondery/db";
 import { Redis } from "ioredis";
+import { STORAGE_BUCKETS } from "../storage/ensure-buckets.js";
 import type { ServiceProbeResult } from "./types.js";
 
 const DEFAULT_PROBE_TIMEOUT_MS = 5_000;
@@ -67,6 +69,45 @@ export async function probeObjectStorage(storageS3Endpoint: string): Promise<Ser
     };
   } finally {
     clearTimeout(timer);
+  }
+}
+
+type StorageBucketProbeConfig = {
+  accessKeyId: string;
+  endpoint: string;
+  region: string;
+  secretAccessKey: string;
+};
+
+/** Required S3 buckets exist (HeadBucket only — does not create buckets). */
+export async function probeStorageBuckets(
+  config: StorageBucketProbeConfig,
+): Promise<ServiceProbeResult> {
+  const started = Date.now();
+  const client = new S3Client({
+    credentials: {
+      accessKeyId: config.accessKeyId,
+      secretAccessKey: config.secretAccessKey,
+    },
+    endpoint: config.endpoint,
+    forcePathStyle: true,
+    region: config.region,
+  });
+
+  try {
+    for (const bucket of STORAGE_BUCKETS) {
+      await client.send(new HeadBucketCommand({ Bucket: bucket }));
+    }
+
+    return { latencyMs: Date.now() - started, ok: true };
+  } catch (error) {
+    return {
+      error: classifyProbeError(error),
+      latencyMs: Date.now() - started,
+      ok: false,
+    };
+  } finally {
+    client.destroy();
   }
 }
 

@@ -8,6 +8,7 @@
  * - BONDERY_PUBLIC_*  — safe for clients
  * - BONDERY_PRIVATE_* — secrets (API / auth setup)
  * - BONDERY_INFRA_*   — deploy / runtime plumbing
+ * - BONDERY_DEV_*     — local API dev boot only (never set in Compose/production)
  * - BONDERY_OPS_*     — CI only (never synced into app local files)
  */
 
@@ -569,6 +570,29 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     targets: [t("mobile")],
+  },
+
+  // --- Local dev (API boot only; not used in Compose pre_start) ---
+  {
+    canonical: "BONDERY_DEV_SKIP_RELEASE_MIGRATE",
+    description:
+      "When true, skip release-migrate (prisma deploy + functions.sql + OAuth + platform admins) on API dev boot",
+    exampleValue: "",
+    group: "Local dev (API)",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+    turboAffectsCache: false,
+  },
+  {
+    canonical: "BONDERY_DEV_SKIP_STORAGE_BUCKETS",
+    description: "When true, skip SeaweedFS bucket ensure on API dev boot",
+    exampleValue: "",
+    group: "Local dev (API)",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
+    turboAffectsCache: false,
   },
 ];
 

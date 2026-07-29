@@ -21,11 +21,9 @@ cd deploy/bondery
 cp .env.example .env
 # Fill domains + secrets (see docs/deploy/self-host.md)
 docker compose up -d
-
-# First boot only — empty database
-npm run db:migrate:deploy -w @bondery/db
-cd apps/api && npx tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts
 ```
+
+Requires Docker Compose **v2.38+** (`pre_start` on `api`). First boot applies migrations, OAuth provisioning, and SeaweedFS buckets automatically via `api` init containers — no manual steps.
 
 Without Traefik (host ports):
 
@@ -61,11 +59,11 @@ Compose entrypoint: **`docker-compose.yml`** includes **`docker-compose.postgres
 # Upgrade only webapp (API + Redis + Postgres stay up)
 BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.3 docker compose up -d --no-deps webapp
 
-# Upgrade only API
+# Upgrade only API (re-runs api pre_start when image changes)
 BONDERY_INFRA_API_IMAGE_TAG=1.7.3 docker compose up -d --no-deps api
 ```
 
-After releasing schema migrations, run `npm run db:migrate:deploy -w @bondery/db` against production Postgres (see [self-host.md](../../docs/deploy/self-host.md)).
+Schema migrations run automatically via `api` `pre_start` on deploy — no separate `db:migrate:deploy` step for Compose deployments.
 
 ### Image tags (api / webapp)
 
@@ -82,3 +80,43 @@ After releasing schema migrations, run `npm run db:migrate:deploy -w @bondery/db
 
 - Never expose Redis or Postgres to the public internet.
 - API secrets (`BONDERY_PRIVATE_*`) load only into the `api` service (`env_file`). Webapp receives an explicit allowlist.
+
+## Resource limits (recommended)
+
+On a **8 GB VPS** (recommended self-host profile), add `deploy.resources` to cap noisy neighbors. Tune for your host — these are starting points, not guarantees under Docker Compose without Swarm:
+
+```yaml
+# Example overrides — merge into docker-compose.override.yml
+services:
+  api:
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          memory: 512M
+  webapp:
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+  db:
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 3G
+        reservations:
+          memory: 1G
+  redis:
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+```
+
+SeaweedFS (`seaweedfs-*`) is I/O-heavy — allow 512M–1G per component on storage-heavy installs.
+
+Requires Docker Compose **v2.38+** (`api` `pre_start`). CI enforces this via `node deploy/bondery/scripts/check-compose.mjs`.

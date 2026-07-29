@@ -69,6 +69,13 @@ jobs:
       - name: Typecheck
         run: npm run check-types
 
+      - name: Build API bootstrap CLIs
+        run: |
+          npm run build -w @bondery/db
+          npm run build -w api
+          test -f apps/api/dist/cli/release-migrate.js
+          test -f apps/api/dist/cli/ensure-storage-buckets.js
+
       - name: Translation checks
         run: |
           npm run check-translations

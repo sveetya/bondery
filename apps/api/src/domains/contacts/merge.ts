@@ -162,14 +162,6 @@ export async function mergeContacts(
   await mergeContactImportantDates(db, user.id, leftPersonId, rightPersonId, conflictResolutions);
   await mergeContactRelationships(db, user.id, leftPersonId, rightPersonId);
 
-  const deleted = await db.people.deleteMany({
-    where: { id: rightPersonId, userId: user.id },
-  });
-
-  if (deleted.count === 0) {
-    throw internal("contact_merge_failed", "Failed to delete merged contact");
-  }
-
   await mergeContactAvatar(
     db,
     user.id,
@@ -179,6 +171,14 @@ export async function mergeContacts(
     rightPerson.hasAvatar,
     conflictResolutions,
   );
+
+  const deleted = await db.people.deleteMany({
+    where: { id: rightPersonId, userId: user.id },
+  });
+
+  if (deleted.count === 0) {
+    throw internal("contact_merge_failed", "Failed to delete merged contact");
+  }
 
   const contact = await loadEnrichedContact(db, user.id, leftPersonId, undefined, log);
 

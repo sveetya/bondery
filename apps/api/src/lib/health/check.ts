@@ -1,4 +1,10 @@
-import { probeConfigured, probeObjectStorage, probePostgres, probeRedis } from "./probes.js";
+import {
+  probeConfigured,
+  probeObjectStorage,
+  probePostgres,
+  probeRedis,
+  probeStorageBuckets,
+} from "./probes.js";
 import type { HealthCheckConfig, HealthReport, HealthServices, HealthStatus } from "./types.js";
 
 const CACHE_TTL_MS = 60_000;
@@ -50,11 +56,28 @@ function deriveOverallStatus(services: HealthServices): HealthStatus {
 }
 
 async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
-  const [postgres, storage, redis] = await Promise.all([
+  const [postgres, storageGateway, redis] = await Promise.all([
     probePostgres(),
     probeObjectStorage(config.storageS3Endpoint),
     probeRedis(config.redisUrl),
   ]);
+
+  let storage = storageGateway;
+  if (
+    storageGateway.ok &&
+    config.storageS3AccessKeyId.trim() &&
+    config.storageS3SecretAccessKey.trim()
+  ) {
+    const buckets = await probeStorageBuckets({
+      accessKeyId: config.storageS3AccessKeyId,
+      endpoint: config.storageS3Endpoint,
+      region: config.storageS3Region,
+      secretAccessKey: config.storageS3SecretAccessKey,
+    });
+    if (!buckets.ok) {
+      storage = buckets;
+    }
+  }
 
   return {
     anthropic: probeConfigured(Boolean(config.anthropicApiKey.trim())),

@@ -28,7 +28,7 @@ User → client (webapp / mobile / extension)
      → client calls API with Bearer JWT (or native session on mobile)
 ```
 
-OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/scripts/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI and self-host deploys (`packages/db/scripts/release-migrate.ts`).
+OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/src/lib/bootstrap/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI (`npm run release-migrate -w @bondery/db`) and self-host deploys (`api` `pre_start` → `release-migrate` CLI).
 
 ## Local bootstrap
 

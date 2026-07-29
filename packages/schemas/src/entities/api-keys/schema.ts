@@ -17,7 +17,7 @@ export const apiKeyPermissionSchema: z.ZodType<ApiKeyPermission> = z.enum(API_KE
 
 export const createApiKeyInputSchema: z.ZodType<CreateApiKeyInput> = z.object({
   label: labelFieldSchema(API_KEY_LIMITS.labelMaxLength),
-  permission: apiKeyPermissionSchema.default("full"),
+  permission: apiKeyPermissionSchema.default("read"),
 });
 
 export const updateApiKeyLabelInputSchema: z.ZodType<UpdateApiKeyLabelInput> = z.object({

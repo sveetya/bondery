@@ -80,7 +80,8 @@ npm run provision-oauth-clients:dev -w api
 
 | Command | Description |
 |---|---|
-| `npm run db:migrate:deploy -w @bondery/db` | Apply pending migrations (normal local setup, CI, self-host) |
+| `npm run db:migrate:deploy -w @bondery/db` | Apply pending Prisma migrations (local dev, CI) |
+| `npm run release-migrate -w @bondery/db` | Full release gate: migrate + functions.sql + OAuth + platform admins (CI) |
 | `npm run db:migrate:dev -w @bondery/db` | Author new migrations interactively (requires shadow DB with PostGIS) |
 | `npm run db:studio -w @bondery/db` | Open Prisma Studio against `DATABASE_URL` |
 | `npm run db:functions -w @bondery/db` | Apply raw SQL functions (self-host first boot) |

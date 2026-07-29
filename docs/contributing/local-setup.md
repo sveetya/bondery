@@ -100,7 +100,7 @@ From the repo root:
 
 ```bash
 npm run start:seaweedfs          # S3 gateway on http://127.0.0.1:8333
-npm run bootstrap:seaweedfs      # first boot only — creates avatars + linkedin_logos buckets (needs AWS CLI v2)
+npm run bootstrap:seaweedfs      # optional — API dev boot also ensures buckets on start
 ```
 
 Verify: `curl -s http://127.0.0.1:8333/status`

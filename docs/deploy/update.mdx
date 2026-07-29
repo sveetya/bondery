@@ -4,7 +4,11 @@ title: Update & backups
 
 ## Schema migrations
 
-The `migrate` service (same API image) runs `prisma migrate deploy` + `functions.sql` before `api`/`webapp` start — schema changes apply automatically on every `docker compose up -d`. There is no manual migration step.
+The `api` service's `pre_start` init containers apply `prisma migrate deploy`, `functions.sql`, OAuth provisioning, and S3 bucket bootstrap **before** the main API container starts.
+
+`pre_start` runs when the API service is created or recreated — for example after pulling a new image tag, changing the init definition, or an explicit `docker compose up` that recreates `api`. Compose **skips** unchanged `pre_start` steps on ordinary container restarts. There is no separate `migrate` service.
+
+Requires Docker Compose **v2.38+**.
 
 ## Image upgrades
 
@@ -14,7 +18,7 @@ By default both services use the floating **`production`** image tag with **`pul
 ./scripts/upgrade.sh
 ```
 
-This pulls the latest `api`/`webapp` images and runs `docker compose up -d`, which recreates `migrate` (gating schema changes) before `api`/`webapp`.
+This pulls the latest `api`/`webapp` images and runs `docker compose up -d`. When the `api` image changes, Compose recreates `api` and re-runs `pre_start`.
 
 ### Pinning a version
 
@@ -24,21 +28,21 @@ Pin semver tags when you want a frozen rollback target instead of tracking `prod
 BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.4 BONDERY_INFRA_API_IMAGE_TAG=1.7.4 docker compose up -d
 ```
 
-Avoid `--no-deps api`/`--no-deps webapp` on releases that ship schema changes — it skips the `migrate` dependency check, so the service could start against an un-migrated database.
+Avoid `--no-deps api` on releases that ship schema changes — it can skip dependency ordering so `webapp` starts before `api` is healthy.
 
 ## Backups
 
 | Data | How |
 |------|-----|
 | Postgres | `docker compose exec -T db pg_dump -U postgres bondery > backup-$(date +%F).sql` |
-| Local / S3 storage | Snapshot files under your storage driver (`BONDERY_STORAGE_DRIVER`) |
+| SeaweedFS buckets | Snapshot `avatars` and `linkedin_logos` via S3 tools against `BONDERY_PRIVATE_S3_ENDPOINT` |
 | Redis | Volume `redis-data` — rate limits and sync wake only; safe to recreate |
 
 ### Restore checklist
 
 1. Stop `api` and `webapp`.
 2. Restore the dump into `db` (`psql` via `docker compose exec -T db`).
-3. Restore storage files if needed.
+3. Restore storage objects if needed.
 4. Start apps; verify `/health` and `/api/ready`.
 
 Schedule daily dumps off-box. Rehearse a restore at least once per quarter.

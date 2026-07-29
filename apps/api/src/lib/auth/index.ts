@@ -21,7 +21,7 @@ import { PLATFORM_ADMIN_ROLE, PLATFORM_USER_ROLE } from "@bondery/helpers/auth/p
 import { resolveCookieDomain } from "@bondery/helpers/auth/resolve-cookie-domain";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import { generateId } from "@bondery/helpers/ids";
-import { API_KEY_PREFIX } from "@bondery/schemas";
+import { API_KEY_PREFIX, API_KEY_START_DISPLAY_LENGTH } from "@bondery/schemas";
 import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
@@ -232,6 +232,10 @@ export const auth = betterAuth({
       rateLimit: { enabled: false },
       references: "user",
       requireName: true,
+      startingCharactersConfig: {
+        charactersLength: API_KEY_START_DISPLAY_LENGTH,
+        shouldStore: true,
+      },
     }),
     lastLoginMethod({ storeInDatabase: false }),
   ],

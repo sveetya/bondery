@@ -1,4 +1,9 @@
-import { API_KEY_BA_RESOURCE, type ApiKeyBaAction, type ApiKeyPermission } from "@bondery/schemas";
+import {
+  API_KEY_BA_RESOURCE,
+  API_KEY_PREFIX,
+  type ApiKeyBaAction,
+  type ApiKeyPermission,
+} from "@bondery/schemas";
 
 export type BaApiKeyPermissions = Record<string, ApiKeyBaAction[]>;
 
@@ -36,15 +41,11 @@ export function productPermissionFromBa(permissions: unknown): ApiKeyPermission 
   return actions.includes("full") ? "full" : "read";
 }
 
-export function formatApiKeyPrefixDisplay(
-  start: string | null | undefined,
-  prefix: string | null,
-): string {
+/** Format stored `start` for list UI (e.g. `bondery_key_abc…`). */
+export function formatApiKeyPrefixDisplay(start: string | null | undefined): string {
   if (start) {
-    return start;
+    return `${start}…`;
   }
-  if (prefix) {
-    return `${prefix}…`;
-  }
-  return "";
+
+  return `${API_KEY_PREFIX}…`;
 }

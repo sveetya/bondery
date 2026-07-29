@@ -34,6 +34,10 @@
     "./client": {
       "default": "./dist/client.js",
       "types": "./src/client.ts"
+    },
+    "./release-migrate": {
+      "default": "./dist/release-migrate.js",
+      "types": "./src/release-migrate.ts"
     }
   },
   "main": "./dist/index.js",

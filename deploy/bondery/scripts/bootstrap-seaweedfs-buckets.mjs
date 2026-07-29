@@ -1,46 +1,16 @@
 #!/usr/bin/env node
 /**
- * Create SeaweedFS S3 buckets (avatars, linkedin_logos) if missing.
- *
- * Usage (from repo root):
- *   npm run bootstrap:seaweedfs
- *
- * Requires AWS CLI v2 and env (from root .env.local):
- *   BONDERY_PRIVATE_S3_ENDPOINT, BONDERY_PRIVATE_S3_REGION,
- *   BONDERY_PRIVATE_S3_ACCESS_KEY_ID, BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY
+ * @deprecated Use `npm run bootstrap:seaweedfs` (compiled API CLI) instead.
  */
-import { execFileSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const endpoint = process.env.BONDERY_PRIVATE_S3_ENDPOINT;
-const region = process.env.BONDERY_PRIVATE_S3_REGION ?? "eu-central-1";
-const accessKeyId = process.env.BONDERY_PRIVATE_S3_ACCESS_KEY_ID;
-const secretAccessKey = process.env.BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY;
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+const result = spawnSync("npm", ["run", "bootstrap:seaweedfs"], {
+  cwd: repoRoot,
+  env: process.env,
+  stdio: "inherit",
+});
 
-if (!endpoint || !accessKeyId || !secretAccessKey) {
-  console.error("Missing BONDERY_PRIVATE_S3_ENDPOINT / ACCESS_KEY_ID / SECRET_ACCESS_KEY");
-  process.exit(1);
-}
-
-const buckets = ["avatars", "linkedin_logos"];
-
-function aws(args) {
-  execFileSync("aws", ["--endpoint-url", endpoint, "s3", ...args, "--region", region], {
-    env: {
-      ...process.env,
-      AWS_ACCESS_KEY_ID: accessKeyId,
-      AWS_SECRET_ACCESS_KEY: secretAccessKey,
-    },
-    stdio: "inherit",
-  });
-}
-
-for (const bucket of buckets) {
-  try {
-    aws(["mb", `s3://${bucket}`]);
-    console.log(`Created bucket: ${bucket}`);
-  } catch {
-    console.log(`Bucket exists or create skipped: ${bucket}`);
-  }
-}
-
-console.log("SeaweedFS bucket bootstrap complete.");
+process.exit(result.status ?? 1);

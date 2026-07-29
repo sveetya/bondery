@@ -18,10 +18,10 @@ Package scripts in `packages/db/package.json`:
 Release order is mandatory:
 
 ```text
-prisma migrate deploy → apply functions.sql → provision OAuth clients
+prisma migrate deploy → apply functions.sql → provision OAuth clients → provision platform admins
 ```
 
-The Docker `migrate` service and CI use `release-migrate`. `docker compose up` alone is not a migration strategy.
+Compose `api` `pre_start`, CI (`npm run release-migrate -w @bondery/db`), and host-run `npm run dev` (development) use this pipeline. `docker compose up` alone does not migrate unless `api` is recreated and `pre_start` runs.
 
 ## Migration rules
 

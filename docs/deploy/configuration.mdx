@@ -52,9 +52,9 @@ Auth runs on the API (`/auth/*`). The API is its own OAuth issuer (`baseURL` = `
 3. Generate and set values for `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID`, `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET`, `BONDERY_PUBLIC_OAUTH_CLIENT_ID` (extension), and `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` (≥32 chars) — e.g. `openssl rand -hex 32`. These are arbitrary values you choose, not issued by anything.
 4. Set `BONDERY_INFRA_CHROME_EXTENSION_ID` so the API allows the extension redirect URI.
 
-   `apps/api/scripts/provision-oauth-clients.ts` upserts the matching webapp and extension `OauthClient` rows in Postgres automatically — it runs as part of `packages/db/scripts/release-migrate.ts` right after `prisma migrate deploy` on every deploy. There is no separate registration step or session cookie required.
+   OAuth clients are upserted automatically when `api` `pre_start` runs `release-migrate` (right after `prisma migrate deploy`). There is no separate registration step or session cookie required.
 
-5. Set `BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS` to a comma-separated list of operator account emails. `apps/api/scripts/provision-platform-admins.ts` promotes matching users to `user.role = admin` on every deploy (same `release-migrate` step). Optional break-glass: `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS` (comma-separated UUIDs).
+5. Set `BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS` to a comma-separated list of operator account emails. Matching users are promoted to `user.role = admin` when `api` `pre_start` runs `release-migrate`. Optional break-glass: `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS` (comma-separated UUIDs).
 
 See [Secrets management](./secrets.mdx) for production secret storage and rotation runbooks.
 

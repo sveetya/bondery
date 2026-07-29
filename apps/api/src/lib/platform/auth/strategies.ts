@@ -211,22 +211,35 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
 
 /**
  * Verifies Better Auth JWKS is reachable at startup. Call after listen().
+ *
+ * Uses loopback by default so container startup does not depend on Traefik/DNS
+ * hairpin to BONDERY_PUBLIC_API_URL. The public issuer URL is still logged.
  */
-export async function verifyAuthAtStartup(fastify: AppFastifyInstance): Promise<void> {
-  const baseUrl = fastify.config.BONDERY_PUBLIC_API_URL.replace(/\/+$/, "");
-  const jwksUrl = `${baseUrl}${betterAuthPath("/jwks")}`;
+export async function verifyAuthAtStartup(
+  fastify: AppFastifyInstance,
+  options?: { listenPort: number },
+): Promise<void> {
+  const publicBaseUrl = fastify.config.BONDERY_PUBLIC_API_URL.replace(/\/+$/, "");
+  const publicJwksUrl = `${publicBaseUrl}${betterAuthPath("/jwks")}`;
+
+  const probeBaseUrl =
+    options?.listenPort !== undefined ? `http://127.0.0.1:${options.listenPort}` : publicBaseUrl;
+  const probeJwksUrl = `${probeBaseUrl}${betterAuthPath("/jwks")}`;
 
   try {
-    const response = await fetch(jwksUrl);
+    const response = await fetch(probeJwksUrl);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
   } catch (error) {
-    fastify.log.error({ err: error, jwksUrl }, "Better Auth JWKS is not reachable");
-    throw new Error(`Better Auth JWKS is not reachable at ${jwksUrl}`);
+    fastify.log.error(
+      { err: error, probeJwksUrl, publicJwksUrl },
+      "Better Auth JWKS is not reachable",
+    );
+    throw new Error(`Better Auth JWKS is not reachable at ${probeJwksUrl}`);
   }
 
-  fastify.log.info({ jwksUrl }, "Better Auth JWKS reachable");
+  fastify.log.info({ probeJwksUrl, publicJwksUrl }, "Better Auth JWKS reachable");
 }
 
 // ── Helper for handlers ──────────────────────────────────────────────────────

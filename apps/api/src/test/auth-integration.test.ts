@@ -29,7 +29,7 @@ const { resolveApiResourceIdentifier, resolveOAuthIssuerIdentifier } = await imp
   "../lib/auth/index.js"
 );
 const { resolveResourceId, provisionWebappClient } = await import(
-  "../../scripts/provision-oauth-clients.js"
+  "../lib/bootstrap/provision-oauth-clients.js"
 );
 
 function base64url(input: Buffer): string {

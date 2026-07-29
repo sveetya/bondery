@@ -39,7 +39,11 @@ curl -sf http://localhost:26632/api/live
 
 ## First-boot database
 
-`docker compose up` runs the `migrate` service first — it applies `prisma migrate deploy` and `functions.sql` against the empty database before `api`/`webapp` start. No manual step needed.
+`docker compose up` runs `api` `pre_start` init containers before the main API container starts — they apply `prisma migrate deploy`, `functions.sql`, OAuth client provisioning, platform admin promotion, and SeaweedFS bucket creation. No manual step needed on first boot.
+
+`pre_start` is skipped on ordinary `api` restarts when the init definition is unchanged. It runs again when `api` is recreated (new image, config change, or explicit recreate).
+
+Requires Docker Compose **v2.38+** (`pre_start` support). Check with `docker compose version`.
 
 </Step>
 <Step>

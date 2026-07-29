@@ -55,11 +55,11 @@ Plus Postgres password, `DATABASE_URL` for the API, Better Auth secrets, and OAu
 | `webapp` | `GET /api/live` | Do **not** use `/api/status` (proxies API) |
 | `webapp` readiness | `GET /api/ready` | Runtime config valid |
 | `api` | `GET /status` | Process up |
-| `api` deps | `GET /health` | Redis / Postgres / pending migrations / integrations |
+| `api` deps | `GET /health` | Postgres, SeaweedFS gateway `/status`, required S3 buckets (`HeadBucket`), Redis, SMTP, optional integrations |
+| `api` bootstrap | `api` `pre_start` init containers | Before main API starts: `release-migrate` (schema + functions + OAuth + platform admins) then `ensure-storage-buckets` |
 | `db` | Compose healthcheck | `api` waits for `service_healthy` |
-| `migrate` | Compose one-shot | `api`/`webapp` wait for `service_completed_successfully`; runs `prisma migrate deploy` + `functions.sql` |
 
-Redeploy the **full** Compose app (Dokploy's default) so `migrate` runs before `api`/`webapp` on schema-changing releases — don't redeploy `api`/`webapp` in isolation.
+Redeploy the **full** Compose app (Dokploy's default) so `api` `pre_start` runs when the API image or init definition changes — don't redeploy `webapp` alone on schema-changing releases.
 
 ### Isolated Deployments
 
@@ -122,7 +122,7 @@ openssl rand -hex 32   # -> BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET
 openssl rand -hex 16   # -> BONDERY_PUBLIC_OAUTH_CLIENT_ID (extension)
 ```
 
-Set `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID` (api + webapp), `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET` (webapp), `BONDERY_PUBLIC_OAUTH_CLIENT_ID` (api + extension), plus a `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` (≥32 chars) for the webapp's own encrypted session cookie. `apps/api/scripts/provision-oauth-clients.ts` upserts the matching `OauthClient` rows in Postgres automatically as part of `packages/db/scripts/release-migrate.ts`, right after migrations run on every deploy.
+Set `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID` (api + webapp), `BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET` (webapp), `BONDERY_PUBLIC_OAUTH_CLIENT_ID` (api + extension), plus a `BONDERY_PRIVATE_WEBAPP_SESSION_SECRET` (≥32 chars) for the webapp's own encrypted session cookie. OAuth clients are upserted automatically when `api` `pre_start` runs `release-migrate` (after `prisma migrate deploy`).
 
 ## Environment migration (pre-1.7.x → `BONDERY_*`)
 

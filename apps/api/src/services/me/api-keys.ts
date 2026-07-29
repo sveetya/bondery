@@ -21,7 +21,7 @@ function mapApiKeyRow(row: {
   return {
     createdAt: row.createdAt.toISOString(),
     id: row.id,
-    keyPrefix: formatApiKeyPrefixDisplay(row.start, row.prefix),
+    keyPrefix: formatApiKeyPrefixDisplay(row.start),
     label: row.name ?? "",
     lastUsedAt: row.lastRequest?.toISOString() ?? null,
     permission: productPermissionFromBa(row.permissions),

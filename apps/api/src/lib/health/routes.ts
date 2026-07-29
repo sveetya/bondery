@@ -14,10 +14,10 @@ const LIVENESS_DESCRIPTION =
 
 const READINESS_DESCRIPTION =
   "Readiness probe. Checks configured dependencies and returns per-service status. " +
-  "Results are cached in memory for one minute. Rate limited to one request per minute per client. " +
+  "Results are cached in memory for one minute. Rate limited to five requests per minute per client. " +
   "Returns HTTP 503 when critical dependencies are unavailable (`status: unhealthy`). " +
   "Returns HTTP 200 when all critical dependencies are healthy (`status: ok` or `status: degraded`). " +
-  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status`.";
+  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status` and required bucket `HeadBucket` checks.";
 
 export function registerHealthRoutes(fastify: AppFastifyInstance): void {
   fastify.get(
@@ -56,7 +56,10 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
         smtpPass: fastify.config.BONDERY_PRIVATE_EMAIL_PASS,
         smtpPort: fastify.config.BONDERY_PRIVATE_EMAIL_PORT,
         smtpUser: fastify.config.BONDERY_PRIVATE_EMAIL_USER,
+        storageS3AccessKeyId: fastify.config.BONDERY_PRIVATE_S3_ACCESS_KEY_ID,
         storageS3Endpoint: fastify.config.BONDERY_PRIVATE_S3_ENDPOINT,
+        storageS3Region: fastify.config.BONDERY_PRIVATE_S3_REGION,
+        storageS3SecretAccessKey: fastify.config.BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY,
         stripePriceIdAnnual: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL,
         stripePriceIdMonthly: fastify.config.BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY,
         stripeSecretKey: fastify.config.BONDERY_PRIVATE_STRIPE_SECRET_KEY,

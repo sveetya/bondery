@@ -12,6 +12,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 | `BONDERY_PUBLIC_*` | Safe for browsers / mobile / extension | Any product surface |
 | `BONDERY_PRIVATE_*` | Secrets | API (and webapp session encryption keys) |
 | `BONDERY_INFRA_*` | Domains, image tags, internal DNS, build metadata | Deploy + webapp runtime |
+| `BONDERY_DEV_*` | Local API dev boot toggles (`npm run dev` only) | API — never set in Compose/production |
 | `BONDERY_OPS_*` | CI / release tooling | GitHub Actions only — not synced into app local files |
 
 **Same fact → same key name** in every app (e.g. `BONDERY_PUBLIC_API_URL` on api, webapp, extension, and mobile).
@@ -27,6 +28,15 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 | **Webapp** | Nothing — the webapp calls the API over HTTP |
 
 Used in `apps/api`, `packages/db` (migrations), and `packages/db/scripts/*`.
+
+### `BONDERY_DEV_*` (API local boot)
+
+Optional flags read only when `NODE_ENV=development` during `npm run dev`. Compose `api` `pre_start` ignores them — production always runs the full bootstrap CLIs.
+
+| Variable | When `true` |
+|----------|-------------|
+| `BONDERY_DEV_SKIP_RELEASE_MIGRATE` | Skip migrate + `functions.sql` + OAuth + platform admin promotion on API dev boot |
+| `BONDERY_DEV_SKIP_STORAGE_BUCKETS` | Skip SeaweedFS bucket ensure on API dev boot |
 
 ## Local happy path
 

@@ -9,6 +9,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 | `BONDERY_PUBLIC_*` | Safe for browsers / mobile / extension | Any product surface |
 | `BONDERY_PRIVATE_*` | Secrets | API (+ local Postgres password for dev DB compose) |
 | `BONDERY_INFRA_*` | Domains, image tags, internal DNS, build metadata | Deploy + webapp runtime |
+| `BONDERY_DEV_*` | Local API dev boot toggles (`npm run dev` only) | API — never set in Compose/production |
 | `BONDERY_OPS_*` | CI / release tooling | GitHub Actions only — not synced into app local files |
 
 **Same fact → same key name** in every app (e.g. `BONDERY_PUBLIC_API_URL` on api, webapp, extension, and mobile).

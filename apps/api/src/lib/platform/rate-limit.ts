@@ -32,9 +32,9 @@ export const NOT_FOUND_TIER = {
   timeWindow: "60 seconds",
 } as const;
 
-/** Readiness probe — one request per minute per client. */
+/** Readiness probe — five requests per minute per client. */
 export const HEALTH_TIER = {
-  max: 1,
+  max: 5,
   timeWindow: "1 minute",
 } as const;
 

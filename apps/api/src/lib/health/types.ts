@@ -28,6 +28,9 @@ export type HealthReport = {
 
 export type HealthCheckConfig = {
   storageS3Endpoint: string;
+  storageS3Region: string;
+  storageS3AccessKeyId: string;
+  storageS3SecretAccessKey: string;
   redisUrl: string;
   smtpHost: string;
   smtpUser: string;

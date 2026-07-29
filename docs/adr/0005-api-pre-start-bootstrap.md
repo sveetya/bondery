@@ -1,0 +1,53 @@
+# ADR 0005: API `pre_start` bootstrap
+
+## Status
+
+Accepted (2026-07-29)
+
+## Context
+
+Self-host `docker compose up` must bring a greenfield stack to a working state without manual host tooling (AWS CLI, repo checkout, `tsx` scripts). Today:
+
+- Prisma migrations, SQL functions, OAuth client provisioning, and platform admin promotion run only via manual steps or CI `release-migrate`.
+- SeaweedFS S3 buckets (`avatars`, `linkedin_logos`) are created by a host script requiring AWS CLI.
+- Documentation incorrectly references a separate `migrate` Compose service that does not exist.
+
+The production API image ships compiled `apps/api/dist` and `packages/` only — no `tsx`, no `apps/api/scripts/`. Any bootstrap logic must run as compiled Node entrypoints inside the API image.
+
+## Decision
+
+1. **Unified `api.pre_start`** (Docker Compose v2.38+) runs two init containers before the main API container, in order:
+   - `node apps/api/dist/cli/release-migrate.js` — `prisma migrate deploy`, `functions.sql`, OAuth clients, platform admins
+   - `node apps/api/dist/cli/ensure-storage-buckets.js` — create required S3 buckets if missing
+
+2. **Main API process** handles only runtime concerns:
+   - Env validation → Fastify build → `listen()` → `verifyAuthAtStartup()` (JWKS self-check over HTTP)
+
+3. **No separate `migrate` Compose service** — upgrades re-run `pre_start` when the API image or init definition changes.
+
+4. **Host-run dev** (`npm run dev`) calls the same bootstrap helpers before `buildServer()` when `NODE_ENV=development`. Optional `BONDERY_DEV_*` flags (see environment docs) — never used in Compose.
+
+5. **`/health` storage probe** (phase 2) adds `HeadBucket` on required buckets — probe only, never create buckets from health checks.
+
+## Why JWKS stays in the main process
+
+`verifyAuthAtStartup` fetches JWKS on loopback (`http://127.0.0.1:{port}/api/auth/jwks`) after `listen()` — validates the in-process auth stack without Traefik/DNS hairpin. The public issuer URL is logged for operators. Running this in `pre_start` is circular (no server yet).
+
+## Why not `pre_start` on `seaweedfs-s3`
+
+`pre_start` runs before the service starts — it cannot wait for the S3 gateway healthcheck. The API service already `depends_on: seaweedfs-s3: service_healthy`.
+
+## Consequences
+
+- **Positive:** One `docker compose up -d` for greenfield self-host; no AWS CLI on the host; idempotent deploy pipeline; single image for app + bootstrap.
+- **Positive:** `webapp` remains gated on `api: service_healthy` — init completes before HTTP traffic.
+- **Trade-off:** Requires Docker Compose v2.38+ (`pre_start` support).
+- **Trade-off:** API image must ship compiled CLI entrypoints and `packages/db/prisma` migrations.
+- **Out of scope:** pg-boss worker wiring; JWKS check in init; legacy Compose fallback files.
+
+## References
+
+- [Docker Compose init containers](https://docs.docker.com/compose/how-tos/init-containers/)
+- [ADR 0003: SeaweedFS object storage](./0003-seaweedfs-storage.md)
+- [`packages/db/scripts/release-migrate.ts`](../../packages/db/scripts/release-migrate.ts)
+- [`apps/api/src/index.ts`](../../apps/api/src/index.ts)
