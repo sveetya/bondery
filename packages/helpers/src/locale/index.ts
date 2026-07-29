@@ -11,13 +11,17 @@ export {
   getAppLanguageExonymKey,
   resolveAppLanguageExonym,
 } from "#locale/languages.js";
+export {
+  resolveLocaleFromAcceptLanguage,
+  resolveLocaleFromAcceptLanguageHeader,
+  resolveRequestLocale,
+} from "#locale/resolve-request-locale.js";
 export type {
   GroupedTimezoneGroup,
   GroupedTimezoneItem,
   TimezoneData,
   TimezoneSelectOption,
 } from "#locale/timezones.js";
-
 export {
   countryCodeToFlagEmoji,
   formatOffset,

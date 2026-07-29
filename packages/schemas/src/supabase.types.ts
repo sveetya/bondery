@@ -1200,7 +1200,6 @@ export type Database = {
           import_completed_at: string | null;
           import_followup_platform: string | null;
           import_followup_status: string | null;
-          is_admin: boolean;
           language: Database["public"]["Enums"]["supported_locale"];
           left_swipe_action: string;
           next_reminder_at_utc: string;
@@ -1225,7 +1224,6 @@ export type Database = {
           import_completed_at?: string | null;
           import_followup_platform?: string | null;
           import_followup_status?: string | null;
-          is_admin?: boolean;
           language?: Database["public"]["Enums"]["supported_locale"];
           left_swipe_action?: string;
           next_reminder_at_utc: string;
@@ -1250,7 +1248,6 @@ export type Database = {
           import_completed_at?: string | null;
           import_followup_platform?: string | null;
           import_followup_status?: string | null;
-          is_admin?: boolean;
           language?: Database["public"]["Enums"]["supported_locale"];
           left_swipe_action?: string;
           next_reminder_at_utc?: string;
@@ -1412,10 +1409,6 @@ export type Database = {
         }[];
       };
       get_user_id_by_email: { Args: { p_email: string }; Returns: string };
-      get_user_settings_is_admin: {
-        Args: { p_row_id: string };
-        Returns: boolean;
-      };
       immutable_unaccent: { Args: { "": string }; Returns: string };
       increment_ai_messages_used: {
         Args: { p_user_id: string };

@@ -76,6 +76,15 @@
     },
     "apiTemporarilyUnavailable": "The API is temporarily unavailable. Please try again.",
     "apiUnreachable": "Can't reach the Bondery server. Try again in a moment.",
+    "auth": {
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "No password sign-in found for this account.",
+      "EMAIL_NOT_VERIFIED": "Please verify your email before signing in.",
+      "INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
+      "INVALID_PASSWORD": "Invalid password.",
+      "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+      "SOCIAL_ACCOUNT_ALREADY_LINKED": "This social account is already linked to another user.",
+      "USER_NOT_FOUND": "User not found."
+    },
     "connection": "Check your connection and try again.",
     "requestFailed": "Request failed. Please try again.",
     "serverGeneric": "Something went wrong on the server. Please try again.",

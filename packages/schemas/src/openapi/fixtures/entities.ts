@@ -276,6 +276,7 @@ export const EXAMPLE_USER_SESSION = {
   avatarUrl: null,
   colorScheme: "auto" as const,
   displayName: "Ada Lovelace",
+  isPlatformAdmin: false,
   language: "en",
   onboardingCompletedAt: EXAMPLE_ISO_TIMESTAMP,
   timeFormat: "24h" as const,

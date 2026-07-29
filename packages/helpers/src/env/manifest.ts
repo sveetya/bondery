@@ -13,13 +13,7 @@
 
 export type EnvEnvironment = "development" | "production";
 
-export type TargetId =
-  | "api"
-  | "webapp"
-  | "website"
-  | "mobile"
-  | "chrome-extension"
-  | "db";
+export type TargetId = "api" | "webapp" | "website" | "mobile" | "chrome-extension" | "db";
 
 export type EnvTargetWrite = {
   /** App / package id */
@@ -213,7 +207,8 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
-    description: "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)",
+    description:
+      "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)",
     exampleValue: "",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -327,11 +322,22 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api")],
   },
   {
-    canonical: "BONDERY_PRIVATE_API_KEY_PEPPER",
-    description: "Pepper for hashing API keys",
-    exampleValue: "<your-api-key-pepper>",
+    canonical: "BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS",
+    description:
+      "Comma-separated operator emails promoted to user.role=admin by provision-platform-admins at deploy",
+    exampleValue: "ops@example.com",
     group: "API secrets",
-    requiredIn: ["development", "production"],
+    requiredIn: [],
+    secret: true,
+    targets: [t("api")],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS",
+    description:
+      "Optional break-glass comma-separated user UUIDs with platform admin access (Better Auth adminUserIds)",
+    exampleValue: "",
+    group: "API secrets",
+    requiredIn: [],
     secret: true,
     targets: [t("api")],
   },
@@ -385,7 +391,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     description: "Redis connection URL",
     exampleValue: "redis://127.0.0.1:26636",
     group: "Redis",
-    requiredIn: ["production"],
+    requiredIn: ["development", "production"],
     secret: true,
     targets: [t("api")],
   },

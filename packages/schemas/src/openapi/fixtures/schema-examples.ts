@@ -514,7 +514,6 @@ export const EXAMPLE_HEALTH_OK_RESPONSE = {
     redis: { latencyMs: 2, ok: true },
     smtp: { configured: true, ok: true },
     supabase: {
-      auth: { latencyMs: 12, ok: true },
       database: { latencyMs: 18, ok: true },
       storage: { latencyMs: 15, ok: true },
     },
@@ -528,7 +527,6 @@ export const EXAMPLE_HEALTH_UNHEALTHY_RESPONSE = {
   services: {
     ...EXAMPLE_HEALTH_OK_RESPONSE.services,
     supabase: {
-      auth: { error: "Connection refused", ok: false },
       database: { error: "Connection refused", ok: false },
       storage: { error: "Connection refused", ok: false },
     },

@@ -9,6 +9,7 @@ export const userSessionDataSchema = z.object({
   avatarUrl: z.string().nullable(),
   colorScheme: colorSchemePreferenceSchema,
   displayName: z.string(),
+  isPlatformAdmin: z.boolean(),
   language: supportedLocaleSchema,
   onboardingCompletedAt: nullableDateTimeSchema.nullable(),
   timeFormat: timeFormatPreferenceSchema,

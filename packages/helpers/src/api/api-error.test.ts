@@ -4,6 +4,8 @@ import {
   ApiError,
   buildApiErrorFromResponse,
   extractApiErrorFields,
+  getAuthUserFacingError,
+  getBetterAuthUserMessage,
   getUserFacingError,
   isUnauthorizedApiError,
 } from "./index.js";
@@ -177,5 +179,42 @@ describe("isUnauthorizedApiError", () => {
     });
 
     assert.equal(isUnauthorizedApiError(error), false);
+  });
+});
+
+describe("getBetterAuthUserMessage", () => {
+  it("maps known auth code to translation key", () => {
+    const message = getBetterAuthUserMessage(
+      "INVALID_EMAIL_OR_PASSWORD",
+      mockT({
+        "errors.auth.INVALID_EMAIL_OR_PASSWORD": "Invalid email or password.",
+      }),
+    );
+
+    assert.equal(message, "Invalid email or password.");
+  });
+
+  it("falls back to unknown for unrecognized auth code", () => {
+    const message = getBetterAuthUserMessage(
+      "NOT_A_REAL_AUTH_CODE",
+      mockT({
+        "errors.unknown": "Something went wrong.",
+      }),
+    );
+
+    assert.equal(message, "Something went wrong.");
+  });
+});
+
+describe("getAuthUserFacingError", () => {
+  it("maps Better Auth client error by code", () => {
+    const message = getAuthUserFacingError(
+      { code: "SESSION_EXPIRED" },
+      mockT({
+        "errors.auth.SESSION_EXPIRED": "Session expired.",
+      }),
+    );
+
+    assert.equal(message, "Session expired.");
   });
 });

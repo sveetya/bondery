@@ -5,6 +5,7 @@ export interface UserSessionData {
   avatarUrl: string | null;
   colorScheme: ColorSchemePreference;
   displayName: string;
+  isPlatformAdmin: boolean;
   language: SupportedLocale;
   onboardingCompletedAt: string | null;
   timeFormat: TimeFormatPreference;

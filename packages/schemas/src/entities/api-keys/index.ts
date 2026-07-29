@@ -1,4 +1,5 @@
 export {
+  apiKeyBaActionSchema,
   apiKeyCreatedSchema,
   apiKeyListItemSchema,
   apiKeyPermissionSchema,
@@ -7,6 +8,7 @@ export {
   updateApiKeyLabelInputSchema,
 } from "./schema.js";
 export type {
+  ApiKeyBaAction,
   ApiKeyCreated,
   ApiKeyListItem,
   ApiKeyPermission,

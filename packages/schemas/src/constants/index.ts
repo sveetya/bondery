@@ -48,6 +48,13 @@ export const API_KEY_LIMITS = {
 
 export const API_KEY_PREFIX = "bondery_key_" as const;
 
+/** Better Auth api-key permission resource (see @better-auth/api-key permissions). */
+export const API_KEY_BA_RESOURCE = "api" as const;
+
+/** Allowed Better Auth permission actions for API keys (validation layer). */
+export const API_KEY_BA_ACTIONS = ["read", "write", "delete", "full"] as const;
+
+/** Product-facing API key scopes exposed in UI and /me/api-keys. */
 export const API_KEY_PERMISSIONS = ["read", "full"] as const;
 
 export * from "#constants/dev-ports.js";

@@ -76,6 +76,15 @@
     },
     "apiTemporarilyUnavailable": "Die API ist vorübergehend nicht verfügbar. Bitte versuch es erneut.",
     "apiUnreachable": "Der Bondery-Server ist nicht erreichbar. Versuch es gleich nochmal.",
+    "auth": {
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Für dieses Konto wurde keine Passwort-Anmeldung gefunden.",
+      "EMAIL_NOT_VERIFIED": "Bitte bestätige deine E-Mail, bevor du dich anmeldest.",
+      "INVALID_EMAIL_OR_PASSWORD": "Ungültige E-Mail oder Passwort.",
+      "INVALID_PASSWORD": "Ungültiges Passwort.",
+      "SESSION_EXPIRED": "Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.",
+      "SOCIAL_ACCOUNT_ALREADY_LINKED": "Dieses Social-Media-Konto ist bereits mit einem anderen Benutzer verknüpft.",
+      "USER_NOT_FOUND": "Benutzer nicht gefunden."
+    },
     "connection": "Prüf deine Verbindung und versuch es erneut.",
     "requestFailed": "Anfrage fehlgeschlagen. Bitte versuch es erneut.",
     "serverGeneric": "Auf dem Server ist etwas schiefgelaufen. Bitte versuch es erneut.",

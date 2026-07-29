@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { API_KEY_LIMITS, API_KEY_PERMISSIONS } from "#constants/index.js";
+import { API_KEY_BA_ACTIONS, API_KEY_LIMITS, API_KEY_PERMISSIONS } from "#constants/index.js";
 import { createdAtSchema, labelFieldSchema, nullableDateTimeSchema } from "../_shared/schema.js";
 import type {
+  ApiKeyBaAction,
   ApiKeyCreated,
   ApiKeyListItem,
   ApiKeyPermission,
@@ -9,6 +10,8 @@ import type {
   CreateApiKeyInput,
   UpdateApiKeyLabelInput,
 } from "./types.js";
+
+export const apiKeyBaActionSchema: z.ZodType<ApiKeyBaAction> = z.enum(API_KEY_BA_ACTIONS);
 
 export const apiKeyPermissionSchema: z.ZodType<ApiKeyPermission> = z.enum(API_KEY_PERMISSIONS);
 

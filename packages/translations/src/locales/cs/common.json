@@ -76,6 +76,15 @@
     },
     "apiTemporarilyUnavailable": "API je dočasně nedostupné. Zkuste to prosím znovu.",
     "apiUnreachable": "Server Bondery není dostupný. Zkuste to za chvíli znovu.",
+    "auth": {
+      "CREDENTIAL_ACCOUNT_NOT_FOUND": "Pro tento účet nebylo nalezeno přihlášení heslem.",
+      "EMAIL_NOT_VERIFIED": "Před přihlášením prosím ověřte svůj e-mail.",
+      "INVALID_EMAIL_OR_PASSWORD": "Neplatný e-mail nebo heslo.",
+      "INVALID_PASSWORD": "Neplatné heslo.",
+      "SESSION_EXPIRED": "Vaše relace vypršela. Přihlaste se prosím znovu.",
+      "SOCIAL_ACCOUNT_ALREADY_LINKED": "Tento sociální účet je již propojen s jiným uživatelem.",
+      "USER_NOT_FOUND": "Uživatel nebyl nalezen."
+    },
     "connection": "Zkontrolujte připojení a zkuste to znovu.",
     "requestFailed": "Požadavek selhal. Zkuste to prosím znovu.",
     "serverGeneric": "Na serveru se něco pokazilo. Zkuste to prosím znovu.",

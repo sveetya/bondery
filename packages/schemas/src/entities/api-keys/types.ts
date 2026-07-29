@@ -1,3 +1,7 @@
+import type { API_KEY_BA_ACTIONS } from "#constants/index.js";
+
+export type ApiKeyBaAction = (typeof API_KEY_BA_ACTIONS)[number];
+
 export type ApiKeyPermission = "read" | "full";
 
 export interface CreateApiKeyInput {
