@@ -9,13 +9,13 @@ The Bondery API supports two authentication methods depending on how you call it
 
 ## Session authentication
 
-Use this when building on top of the webapp or mobile app, or when you have a user's Supabase access token.
+Use this when building on top of the webapp or mobile app, or when you have a Better Auth access token.
 
 1. Sign in at [app.usebondery.com](https://app.usebondery.com).
-2. The browser sends session cookies automatically, or you can send the Supabase access token in the `Authorization` header.
+2. The browser sends session cookies automatically, or you can send the access token in the `Authorization` header.
 
 ```bash
-curl -H "Authorization: Bearer YOUR_SUPABASE_ACCESS_TOKEN" \
+curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
   https://api.usebondery.com/api/contacts
 ```
 
@@ -38,7 +38,7 @@ The full key is shown **once**. Store it somewhere safe (e.g. a secrets manager)
 Each account can have up to **5** API keys. Deleting a key takes effect immediately.
 
 {% hint style="info" %}
-**Local development:** API env setup (`BONDERY_PRIVATE_API_KEY_PEPPER`, `BONDERY_PRIVATE_SUPABASE_JWT_SIGNING_JWK`, local `signing_keys.json`) is documented in [Local development setup → API keys](../contributing/local-setup.md#api-keys-long-lived-integration-tokens).
+**Local development:** ensure Postgres, Redis, and `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` are configured — see [Local development setup](../contributing/local-setup.md).
 {% endhint %}
 
 ### Send the key

@@ -10,7 +10,7 @@ See `.agents/skills/bondery-specific/references/api/sync-architecture.md` for th
 
 | Component | Role |
 |---|---|
-| **Postgres (Supabase)** | Source of truth |
+| **Postgres** | Source of truth |
 | **sync_change_log** | Per-user batched changelog (domain emission) |
 | **Fastify API** | Push mutations + pull/bootstrap |
 | **expo-sqlite** | On-device store for tier-1 domain data |

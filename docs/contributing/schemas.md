@@ -6,7 +6,7 @@
 
 | Consumer | Allowed imports |
 |----------|-----------------|
-| webapp | `@bondery/schemas` (types + entity schemas + constants), `@bondery/schemas/constants`, `@bondery/schemas/entities/*`, `@bondery/schemas/supabase.types` — not `@bondery/schemas/http` |
+| webapp | `@bondery/schemas` (types + entity schemas + constants), `@bondery/schemas/constants`, `@bondery/schemas/entities/*` — not `@bondery/schemas/http` |
 | mobile | `@bondery/schemas`, `@bondery/schemas/sync`, entity subpaths, constants |
 | API | Any subpath, including `@bondery/schemas/openapi/*`, `@bondery/schemas/http/responses` |
 

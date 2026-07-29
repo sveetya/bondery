@@ -1,0 +1,47 @@
+# ADR 0002: Stripe billing (custom Fastify)
+
+## Status
+
+Accepted (2026-07-29)
+
+## Context
+
+Bondery billing was integrated with Polar.sh via a webhook-maintained `subscriptions`
+mirror, Fastify routes at `/api/subscriptions`, and embedded checkout in the webapp.
+We are migrating to Stripe Billing for production readiness, student promotion codes,
+Smart Retries, and a richer subscription lifecycle.
+
+Better Auth ships a [Stripe plugin](https://better-auth.com/docs/plugins/stripe) that
+couples checkout, webhooks, and parallel subscription tables to the auth layer.
+
+## Decision
+
+- Use **Stripe Billing** as the system of record; keep the existing Postgres
+  `subscriptions` table as a **webhook-maintained mirror** for fast access control.
+- Integrate with a **custom Fastify layer** (`apps/api/src/services/billing/*`,
+  `/api/webhooks/stripe`) — not the Better Auth Stripe plugin.
+- Use **Stripe Embedded Checkout** (`ui_mode: embedded`) in the webapp via
+  `@stripe/stripe-js` `initEmbeddedCheckout`.
+- Student discounts via Stripe Promotion Codes (`allow_promotion_codes: true`).
+- **15-day trial** on both monthly and annual Prices (`trial_period_days: 15`).
+- Trial-ending email on `customer.subscription.trial_will_end`.
+- Gate new upgrades behind `BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED` (default `false`)
+  until production Stripe is configured.
+
+## Why not Better Auth Stripe plugin
+
+1. Bondery already owns billing at `/api/subscriptions` and `/api/webhooks/*`.
+2. Mobile and OpenAPI clients depend on resource-keyed subscription responses.
+3. `pending_subscriptions` supports checkout-before-signup; plugin tables would duplicate
+   or conflict with the mirror model.
+4. Webhooks belong on `/api/webhooks/stripe` with raw-body HMAC verification, matching
+   existing integration patterns.
+
+## Consequences
+
+- Polar code, env vars, and schema names are removed in the same migration.
+- `GET /api/subscriptions` reads the mirror only — no live Stripe API calls.
+- `payment_failure_count` and `hasPremiumAccess()` implement a 3-attempt grace period
+  before blocking premium features.
+- Operators configure Product, Prices, Coupon/Promo, Smart Retries, and webhook endpoint
+  in the Stripe Dashboard.

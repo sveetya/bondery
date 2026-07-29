@@ -18,11 +18,11 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ### 🔄 Changed
 
+- Billing migrated from Polar.sh to Stripe Billing (embedded Checkout, webhooks, DB mirror). Polar env vars and SDK removed.
 - Platform operator access now uses Better Auth `user.role = admin` (and break-glass env IDs) instead of `user_settings.is_admin`.
 - API request auth verifies Better Auth sessions and OAuth resource JWTs instead of Supabase Auth tokens.
 - API keys authenticate via `auth.api.verifyApiKey` without minting Supabase JWTs.
 - Webapp and mobile login, session refresh, and API transport use Better Auth only; Supabase JS clients removed from those apps.
-- Webapp Polar embedded checkout confirms subscription upgrades by polling the API instead of Supabase Realtime.
 - Self-host Compose stack uses bundled Postgres (Prisma migrations) instead of the Supabase sidecar.
 - Webapp app routes reorganized into `(shell)` and `(chromeless)` route groups.
 

@@ -3,7 +3,7 @@
  * Does not import `config.ts` (that module throws at load if vars are missing).
  */
 
-const PLACEHOLDER_HOST_MARKERS = ["example.com", "example.supabase.co"];
+const PLACEHOLDER_HOST_MARKERS = ["example.com"];
 
 function isPlaceholder(value: string): boolean {
   const lower = value.toLowerCase();

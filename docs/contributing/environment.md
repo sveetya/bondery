@@ -7,7 +7,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 | Prefix | Meaning | Who may read it |
 | --- | --- | --- |
 | `BONDERY_PUBLIC_*` | Safe for browsers / mobile / extension | Any product surface |
-| `BONDERY_PRIVATE_*` | Secrets | API (and local Supabase Auth OAuth secrets) |
+| `BONDERY_PRIVATE_*` | Secrets | API (+ local Postgres password for dev DB compose) |
 | `BONDERY_INFRA_*` | Domains, image tags, internal DNS, build metadata | Deploy + webapp runtime |
 | `BONDERY_OPS_*` | CI / release tooling | GitHub Actions only — not synced into app local files |
 
@@ -19,7 +19,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 npm install
 npm run setup:dev
 # edit .env.local (OAuth clients, optional integrations)
-cd apps/supabase-db && npm run dev
+# start Postgres (see local-setup.md)
 npm run env
 npm run dev
 ```
@@ -27,7 +27,7 @@ npm run dev
 | Script | Purpose |
 | --- | --- |
 | `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
-| `npm run env` | Pull Supabase keys (if up) → sync apps → check root |
+| `npm run env` | Sync app env files from root → check root |
 
 Codegen / CI (not day-to-day DX):
 
@@ -36,7 +36,7 @@ npm run env -- --write-examples --write-turbo   # regenerate committed examples 
 npm run env -- --check                          # regenerate + fail if git dirty
 ```
 
-Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
+Optional flags on `env`: `--skip-check`, `--dry-run`, `--only=api,webapp`.
 
 ## Authoring vs generated files
 
@@ -53,7 +53,6 @@ Template: [`.env.local.example`](../../.env.local.example).
 - **Website** — Server Components / route handlers read `BONDERY_PUBLIC_*` from `process.env`. Client leaves receive values as RSC props (no `next.config` `env`, no `NEXT_PUBLIC_*`).
 - **Mobile** — Expo only auto-inlines `EXPO_PUBLIC_*`. We load `BONDERY_PUBLIC_*` in `app.config.ts` into `extra`, and [`apps/mobile/src/lib/config.ts`](../../apps/mobile/src/lib/config.ts) reads `Constants.expoConfig.extra`.
 - **Chrome extension** — Vite `envPrefix: ["BONDERY_PUBLIC_", "WXT_"]`.
-- **supabase-db** — Auth redirect/OAuth still use `BONDERY_SUPABASE_*` names required by `config.toml` (the only intentional exception to `BONDERY_PRIVATE_*` for OAuth client secrets). Sync derives `BONDERY_SUPABASE_WEBAPP_URL` / webapp callback from `BONDERY_PUBLIC_WEBAPP_URL`, and `BONDERY_SUPABASE_AUTH_CALLBACK_URL` from `BONDERY_PUBLIC_SUPABASE_URL` (`{url}/auth/v1/callback`).
 
 Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from `@next/env` so load order matches `next dev` / `next build`.
 

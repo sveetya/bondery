@@ -25,13 +25,6 @@ const subprocessors = [
   },
   {
     location: "EU",
-    name: "Supabase",
-    notes: "",
-    privacy: "https://supabase.com/privacy",
-    useCase: "Authentication, database, file storage",
-  },
-  {
-    location: "EU",
     name: "PostHog",
     notes: "",
     privacy: "https://posthog.com/privacy",
@@ -53,10 +46,10 @@ const subprocessors = [
     useCase: "AI Assistant",
   },
   {
-    location: "",
-    name: "Polar",
+    location: "US / EU",
+    name: "Stripe",
     notes: "Used when you subscribe to or manage a paid plan.",
-    privacy: "https://polar.sh/legal/privacy",
+    privacy: "https://stripe.com/privacy",
     useCase: "Subscriptions and billing",
   },
   {

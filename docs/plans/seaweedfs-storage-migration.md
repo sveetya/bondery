@@ -1,0 +1,242 @@
+# Bondery Storage Migration to SeaweedFS
+
+**Status:** Implemented (2026-07-29)  
+**Related ADR:** [0003-seaweedfs-storage](../adr/0003-seaweedfs-storage.md)  
+**Plane epic:** MAIN-306 (tasks MAIN-307 through MAIN-314)
+
+---
+
+## Executive Summary
+
+Bondery currently stores contact avatars and LinkedIn logos in **Supabase Storage** (`avatars`, `linkedin_logos` public buckets), with optional **local disk** and **generic S3** adapters behind a `StorageAdapter` factory. Supabase imgproxy serves on-the-fly resize/quality transforms via query parameters on avatar URLs.
+
+This migration moves **all object storage** to **bundled SeaweedFS** in the default Docker Compose stack (production and self-host). The API keeps the existing service layer (`StorageAdapter`, `getStorage()`, bucket/key helpers) but **only** implements S3 via `@aws-sdk/client-s3` talking to SeaweedFS’s S3 gateway.
+
+**Public reads** use **`BONDERY_PUBLIC_STORAGE_URL`** (Traefik → SeaweedFS S3 gateway with anonymous read policy). **No image proxy route** is added. Upload paths normalize images with **Sharp** (resize + JPEG on write).
+
+**Breaking changes:** `BONDERY_STORAGE_DRIVER`, local disk paths, and Supabase storage URLs are removed. Self-hosters must add SeaweedFS services and required S3 env vars. Existing objects require a one-time migration script.
+
+---
+
+## User Constraints (confirmed)
+
+1. **No image proxy** — Sharp may normalize on upload; no transform proxy route.
+2. **Bundled SeaweedFS only** — default Bondery compose; no external S3 providers in this phase.
+3. **S3 adapter only** — remove local and Supabase storage adapters; keep the storage module service layer.
+
+---
+
+## Current State
+
+### Storage module (`apps/api/src/lib/storage/`)
+
+| File | Role |
+|------|------|
+| `adapter.ts` | `StorageAdapter`: `put`, `get`, `delete`, `getPublicUrl`, `listKeys` |
+| `get-storage.ts` | Factory with `BONDERY_STORAGE_DRIVER` (`local` \| `s3` \| `supabase`) |
+| `s3.ts` | `S3Storage` — single physical bucket, keys prefixed `{logicalBucket}/{key}` |
+| `local-disk.ts` | Filesystem adapter; public URLs → `{API_URL}/files/{bucket}/{key}` |
+| `supabase-storage.ts` | Supabase JS storage adapter |
+| `supabase-client.ts` | `createAnonClient` / `createAdminClient` for storage |
+| `avatar-urls.ts` | Public URLs + **imgproxy transform query params** |
+
+**Gap:** `s3.ts` imports `@aws-sdk/client-s3` but `apps/api/package.json` does not declare the dependency.
+
+### Public file route
+
+- `apps/api/src/routes/files/index.ts` — `GET /files/:bucket/*` (local disk only)
+- Registered in `routes/register-all.ts` — **remove** with local adapter
+
+### Buckets
+
+- `avatars` — `{userId}/{contactId}.jpg`
+- `linkedin_logos` — `{userId}/{linkedinId}.jpg`
+
+### Call sites
+
+`avatar-storage.ts`, `linkedin-helpers.ts`, `avatar-urls.ts`, `merge-related-data.ts`, `teardown-user.ts`, `delete-cleanup.ts`, `provider-avatar-import.ts`, `photo.ts`, and query layers using `resolveContactAvatarUrl` / `buildLinkedinLogoUrl`.
+
+### Mobile
+
+`apps/mobile/src/lib/sync/avatar.ts` builds URLs via Supabase `storage.from("avatars").getPublicUrl` — must switch to `BONDERY_PUBLIC_STORAGE_URL`.
+
+### Compose (`deploy/bondery/`)
+
+Supabase stack includes **storage-api** + **imgproxy**. No SeaweedFS today. `deploy/bondery/.env.example` has no storage/S3 vars.
+
+### Migration scripts
+
+- `packages/db/scripts/migrate-storage-from-supabase.ts` — stub
+- `apps/supabase-db/scripts/migrate-storage-from-cloud.ts` — Supabase → Supabase (reference only)
+
+---
+
+## Target Architecture
+
+### Compose (add `deploy/bondery/docker-compose.seaweedfs.yml`)
+
+Services: **master**, **volume**, **filer**, **s3** (gateway on `:8333`).
+
+- Internal network for API → `http://seaweedfs-s3:8333`
+- Traefik exposes `BONDERY_INFRA_STORAGE_DOMAIN` → S3 gateway for public reads
+- Volumes: `seaweedfs-master-data`, `seaweedfs-volume-data`, `seaweedfs-filer-data`
+- Config: `deploy/bondery/seaweedfs/entrypoint.sh` (renders S3 credentials from `BONDERY_PRIVATE_S3_*` at container start)
+- Bootstrap: `deploy/bondery/scripts/bootstrap-seaweedfs-buckets.mjs`
+
+### S3 layout
+
+Use **real S3 buckets** `avatars` and `linkedin_logos` (refactor away from single-bucket key-prefix pattern in `s3.ts`).
+
+### Public URLs
+
+`getPublicUrl` → `{BONDERY_PUBLIC_STORAGE_URL}/{bucket}/{key}` with `forcePathStyle: true`.
+
+Anonymous **GetObject** on both buckets via SeaweedFS S3 policy.
+
+### Upload normalization (`apps/api/src/lib/storage/normalize-image.ts`)
+
+Sharp: auto-orient, resize `fit: inside` (512px avatars, 256px logos), JPEG ~85, strip metadata.
+
+### Avatar URLs (`avatar-urls.ts`)
+
+Remove imgproxy transform params. Keep `?t={updatedAt}` cache-busting. API `avatar_size` / `avatar_quality` query params become no-ops (deprecate later).
+
+### Factory (`get-storage.ts`)
+
+```typescript
+export function getStorage(): StorageAdapter {
+  // require BONDERY_PRIVATE_S3_* + BONDERY_PUBLIC_STORAGE_URL
+  return new S3Storage({ endpoint, region, accessKeyId, secretAccessKey, publicBaseUrl, forcePathStyle: true });
+}
+```
+
+---
+
+## Files to Change
+
+### Delete
+
+| Path |
+|------|
+| `apps/api/src/lib/storage/local-disk.ts` |
+| `apps/api/src/lib/storage/supabase-storage.ts` |
+| `apps/api/src/lib/storage/supabase-client.ts` |
+| `apps/api/src/routes/files/` |
+
+### Modify
+
+` s3.ts`, `get-storage.ts`, `avatar-urls.ts`, `index.ts`, `register-all.ts`, `packages/helpers/src/env/manifest.ts`, `apps/api/.env.*.example`, `deploy/bondery/.env.example`, `deploy/bondery/docker-compose.yml`, `turbo.json`, `apps/api/package.json`, `apps/mobile/src/lib/sync/avatar.ts`, `migrate-storage-from-supabase.ts`, auth/context cleanup (`strategies.ts`, `resolve-request-auth.ts`, `with-txid.ts`)
+
+### Add
+
+| Path | Purpose |
+|------|---------|
+| `docs/adr/0003-seaweedfs-storage.md` | ADR |
+| `deploy/bondery/docker-compose.seaweedfs.yml` | SeaweedFS services |
+| `deploy/bondery/seaweedfs/entrypoint.sh` | S3 config render (from env) |
+| `deploy/bondery/scripts/bootstrap-seaweedfs-buckets.mjs` | Bucket bootstrap |
+| `apps/api/src/lib/storage/normalize-image.ts` | Sharp helper |
+| `apps/api/src/test/storage-s3.test.ts` | Unit tests |
+| `docs/deploy/storage-migration-runbook.md` | Operator runbook |
+
+---
+
+## Phased Implementation
+
+### Phase 1 — Minimal slice
+
+SeaweedFS in compose; S3-only API adapter; env manifest; remove `/files` route.
+
+**Verify:** upload avatar → object in SeaweedFS; public URL loads in browser.
+
+### Phase 2 — Core
+
+Delete local/Supabase adapters; Sharp on upload; avatar URLs without transforms; mobile URL builder; teardown/merge unchanged (already use `getStorage()`).
+
+**Verify:** LinkedIn logos, merge avatar copy, account delete storage cleanup.
+
+### Phase 3 — Migration & rollout
+
+Implement `migrate-storage-from-supabase.ts`; production cutover runbook; trim Supabase `storage` + `imgproxy` from compose; optional `DomainContext.client` removal.
+
+**Verify:** migration idempotent; spot-check avatars; stack starts without Supabase storage-api.
+
+---
+
+## Environment Variables
+
+### Required (API)
+
+| Variable | Compose default |
+|----------|-----------------|
+| `BONDERY_PRIVATE_S3_ENDPOINT` | `http://seaweedfs-s3:8333` |
+| `BONDERY_PRIVATE_S3_REGION` | `eu-central-1` |
+| `BONDERY_PRIVATE_S3_ACCESS_KEY_ID` | generated |
+| `BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY` | generated |
+| `BONDERY_PUBLIC_STORAGE_URL` | `https://${BONDERY_INFRA_STORAGE_DOMAIN}` |
+
+### Removed (breaking)
+
+`BONDERY_STORAGE_DRIVER`, `BONDERY_PRIVATE_STORAGE_LOCAL_PATH`, `BONDERY_PRIVATE_S3_BUCKET` (single-bucket mode).
+
+### Compose / Traefik
+
+`BONDERY_INFRA_STORAGE_DOMAIN` — public storage hostname.
+
+---
+
+## Deployment Order (self-host upgrade)
+
+1. Deploy compose with SeaweedFS (additive).
+2. Bootstrap buckets + anonymous read policies.
+3. Run migration script (Supabase → SeaweedFS).
+4. Deploy API with S3-only storage + new env.
+5. Verify uploads and public reads.
+6. Deploy mobile if it embeds storage URL locally.
+7. Remove Supabase `storage` + `imgproxy` services.
+
+**Rollback:** keep Supabase storage volume until verified; API rollback only before adapter deletion ships.
+
+---
+
+## Risks & Decisions
+
+| Decision | Choice |
+|----------|--------|
+| Public reads | `BONDERY_PUBLIC_STORAGE_URL` + anonymous bucket policy |
+| No image proxy | Sharp on write; CSS `object-fit` for display sizes |
+| Dev storage | SeaweedFS in compose (not local disk) |
+| S3 client | `@aws-sdk/client-s3` only |
+
+| Risk | Mitigation |
+|------|------------|
+| URL domain change | Migration preserves keys; `?t=` cache bust |
+| Single-node SeaweedFS | Volume backups; replication `000` for v1 self-host |
+| Large migration | Idempotent batch script; off-peak run |
+
+---
+
+## Out of Scope
+
+- External S3 (AWS, R2, standalone MinIO config)
+- Image proxy / imgproxy / presigned read URLs
+- CDN beyond Traefik TLS
+- New buckets beyond `avatars` / `linkedin_logos`
+- Removing Supabase Postgres/Auth/Kong (only storage-api/imgproxy)
+- DB schema changes
+
+---
+
+## Open Questions
+
+1. Storage subdomain convention (`storage.` vs `assets.`).
+2. Stored avatar max edge: 512px vs 256px (recommend 512).
+3. Deprecate `avatarTransformQuerySchema` in same release vs later.
+4. Remove `DomainContext.client` in this epic vs follow-up PR.
+5. Minimal compose profile for dev without full stack.
+
+---
+
+## Handoff
+
+Recommended order: **ADR (MAIN-307)** → **Compose (MAIN-308)** → **API adapter (MAIN-309)** → **Sharp (MAIN-310)** → **Migration (MAIN-311)** → **Mobile (MAIN-312)** → **Env/docs (MAIN-313)** → **Tests (MAIN-314)**.

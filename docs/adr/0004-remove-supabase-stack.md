@@ -1,0 +1,31 @@
+# ADR 0004: Remove Supabase stack
+
+**Status:** Accepted  
+**Date:** 2026-07-29  
+**Supersedes:** Partial — storage migration is documented in [0003-seaweedfs-storage](./0003-seaweedfs-storage.md)
+
+## Context
+
+Bondery originally used Supabase for Auth (GoTrue), PostgREST data access, and object storage. Webapp and mobile migrated to **Better Auth** on the Fastify API. The API data layer moved to **Prisma**. Object storage moved to **SeaweedFS** (S3-compatible) via `getStorage()`.
+
+Remaining Supabase references were env vars, the chrome extension OAuth client, generated `supabase.types.ts`, and self-host `docker-compose.supabase.yml`.
+
+## Decision
+
+1. **Auth:** All clients use Better Auth on the API (`/auth/*`, `/auth/oauth2/*`). Chrome extension uses public OAuth client (`BONDERY_PUBLIC_OAUTH_CLIENT_ID`) with PKCE + `resource` = API URL.
+2. **Data:** Prisma + Postgres only. SQL functions called via `$queryRaw`.
+3. **Storage:** SeaweedFS S3 gateway only (`BONDERY_PRIVATE_S3_*`, `BONDERY_PUBLIC_STORAGE_URL`).
+4. **Types:** Drop `@bondery/schemas/supabase.types`; use `@bondery/db` Prisma types.
+5. **Infra:** Default compose includes `docker-compose.postgres.yml` + `docker-compose.seaweedfs.yml` (no Kong/GoTrue/PostgREST).
+6. **Legacy:** Move `apps/supabase-db` → `archive/supabase-db` (reference only, not deleted).
+
+## Consequences
+
+- Extension users must re-login once after OAuth endpoint change.
+- Self-hosters drop `BONDERY_*_SUPABASE_*` env vars and Supabase domain.
+- Legacy Supabase compose and migration scripts live under `archive/supabase-db/` only.
+
+## Related
+
+- [0003-seaweedfs-storage](./0003-seaweedfs-storage.md)
+- `archive/supabase-db/scripts/migrate-storage-from-supabase.ts` (one-off cloud migration)

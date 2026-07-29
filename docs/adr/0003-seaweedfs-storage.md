@@ -1,0 +1,56 @@
+# ADR 0003: SeaweedFS object storage (S3-compatible)
+
+## Status
+
+Accepted (2026-07-29)
+
+## Context
+
+Contact avatars and LinkedIn logos were stored in **Supabase Storage** with **imgproxy** for on-the-fly resize/quality transforms. The API recently gained a `StorageAdapter` abstraction with optional local disk, S3, and Supabase drivers.
+
+Requirements for the next storage generation:
+
+- **Bundled SeaweedFS** in the default Bondery Docker Compose stack (production and self-host).
+- **S3 API only** via `@aws-sdk/client-s3` — no local disk adapter, no Supabase storage adapter.
+- **Keep** the storage module service layer (`StorageAdapter`, `getStorage()`, bucket helpers).
+- **No image proxy route** — normalize images on upload with Sharp instead.
+- **No external S3** providers in this phase.
+
+## Decision
+
+1. Run **SeaweedFS** (master, volume, filer, S3 gateway) in `deploy/bondery/` compose.
+2. API uses a single **`S3Storage`** implementation; `getStorage()` requires S3 env vars (no `BONDERY_STORAGE_DRIVER`).
+3. Use **real S3 buckets** `avatars` and `linkedin_logos` (not one physical bucket with key prefixes).
+4. **Public reads:** `BONDERY_PUBLIC_STORAGE_URL` points at Traefik → SeaweedFS S3 gateway with **anonymous GetObject** on those buckets. `getPublicUrl` returns `{publicBaseUrl}/{bucket}/{key}`.
+5. **Uploads:** Sharp normalizes to JPEG (max edge ~512px avatars, ~256px logos) before `PutObject`.
+6. **Remove** `GET /files/*`, local disk adapter, Supabase storage adapter, and imgproxy transform query params on avatar URLs.
+7. **Migrate** existing objects with `packages/db/scripts/migrate-storage-from-supabase.ts`; decommission Supabase `storage-api` and `imgproxy` after cutover.
+
+## Why not an image proxy
+
+- Avoids extra API CPU, caching, and SSRF surface for a self-host stack that already serves static objects efficiently.
+- Sharp on write delivers consistent JPEGs; clients use CSS for display sizing.
+- Trade-off: no on-the-fly variants — acceptable for avatar-sized assets.
+
+## Why not presigned URLs for reads
+
+Avatars appear in lists, sync payloads, and email with long-lived URLs. Presigned reads add expiry and refresh complexity without security benefit over UUID-scoped public paths (same model as today’s public Supabase buckets).
+
+## Consequences
+
+- **Breaking env:** remove `BONDERY_STORAGE_DRIVER`, `BONDERY_PRIVATE_STORAGE_LOCAL_PATH`; require five S3 + public URL vars.
+- **Breaking URLs:** avatar/logo domains change to `BONDERY_PUBLIC_STORAGE_URL`.
+- **API:** add `@aws-sdk/client-s3` and `sharp` to `apps/api`.
+- **Mobile:** stop using Supabase storage client for avatar URL construction.
+- **Avatar transform query params** (`width`, `height`, `quality`) become no-ops until schema deprecation.
+- Supabase Postgres/Auth remain; only storage services are removed from compose.
+
+## Alternatives considered
+
+| Alternative | Rejected because |
+|-------------|------------------|
+| Keep local disk for dev | User requirement: SeaweedFS only |
+| Single S3 bucket + key prefix | Awkward public URLs; native buckets are simpler |
+| Filer HTTP API | S3 gateway matches existing adapter direction |
+| External AWS/R2 | Out of scope for this phase |
+| Image proxy route | Explicitly out of scope |
