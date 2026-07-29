@@ -6,6 +6,10 @@ export {
   type CodeBlockSnippet,
 } from "#CodeBlock/index.js";
 export { CopyButton, type CopyButtonProps } from "#CopyButton/index.js";
+export {
+  CornerLabeledButton,
+  type CornerLabeledButtonProps,
+} from "#CornerLabeledButton/index.js";
 // DataTable
 export {
   type BulkAction,

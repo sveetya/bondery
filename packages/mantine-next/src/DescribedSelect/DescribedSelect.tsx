@@ -51,6 +51,11 @@ export function DescribedSelect({
           </Box>
         ) : undefined
       }
+      onChange={(next) => {
+        if (next != null) {
+          onChange(next);
+        }
+      }}
       renderOption={({ option }) => {
         const match = data.find((entry) => entry.value === option.value);
         return (
