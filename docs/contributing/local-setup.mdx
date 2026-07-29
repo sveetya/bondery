@@ -115,12 +115,11 @@ BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS=http://localhost:26634
 
 #### Redis
 
-Redis powers **rate limiting**, **mobile sync wake** (pub/sub), and **WebSocket ticket** storage in the API.
+Redis powers **rate limiting**, **Better Auth secondary storage** (`bondery:auth:*`), **mobile sync wake** (pub/sub), and **WebSocket ticket** storage in the API. **Required** for local API development.
 
 | Mode | `BONDERY_PRIVATE_REDIS_URL` | When to use |
 |------|---------------------|-------------|
-| **Local Docker (default)** | `redis://127.0.0.1:26636` | Normal local API work |
-| **In-memory** | empty / unset | Quick feature work without Redis |
+| **Local Docker (required)** | `redis://127.0.0.1:26636` | Normal local API work |
 
 From the repo root (Docker must be running):
 
@@ -134,7 +133,7 @@ Wire the API in `apps/api/.env.development.local`:
 BONDERY_PRIVATE_REDIS_URL="redis://127.0.0.1:26636"
 ```
 
-In **production**, `BONDERY_PRIVATE_REDIS_URL` is **required**. See [Self-hosting](../deploy/get-started.mdx).
+`BONDERY_PRIVATE_REDIS_URL` is **required** in development and production. See [Self-hosting](../deploy/get-started.mdx).
 
 #### API keys (long-lived integration tokens)
 

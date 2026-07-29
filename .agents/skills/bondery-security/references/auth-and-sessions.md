@@ -7,7 +7,7 @@ Authentication and session patterns across API and clients.
 Config: `apps/api/src/lib/auth/index.ts`
 
 - Social providers: GitHub, LinkedIn OIDC
-- Session: 30-day expiry, daily refresh
+- Session: 30-day expiry, daily refresh; dual-write Postgres + Redis (`secondaryStorage`, `storeSessionInDatabase: true`, key prefix `bondery:auth:`). Redis miss falls back to Postgres — see `docs/adr/0001-better-auth-redis-secondary-storage.md`.
 - `account.encryptOAuthTokens: true` — IdP tokens in `Account` encrypted at rest (AES-256-GCM via Better Auth secret). Do not read those columns via Prisma; use `auth.api.getAccessToken` when a plaintext provider token is required.
 - OAuth 2.1 / OIDC provider with PKCE required
 - Canonical resource: `BONDERY_PUBLIC_API_URL` with scope `api:access`
@@ -23,7 +23,7 @@ Registered in `apps/api/src/lib/platform/auth/strategies.ts`:
 |----------|-----|
 | `verifySession` | Session or OAuth resource JWT |
 | `verifyAuth` | Session, OAuth JWT, or API key |
-| `verifyAdmin` | Session + `user_settings.is_admin` |
+| `verifyAdmin` | Session + `user.role = admin` (Better Auth platform admin) |
 | `verifyServiceSecret` | `BONDERY_PRIVATE_SERVICE_SECRET` bearer |
 
 ### JWT vs opaque bearer (no fallback)
@@ -46,11 +46,12 @@ Integration tests: `apps/api/src/test/auth-integration.test.ts`.
 
 ## API keys
 
-`apps/api/src/lib/platform/auth/api-keys.ts`:
-- Format: `bondery_key_{keyId}_{secret}`
-- Hash: SHA3-256(`pepper + fullKey`) with `timingSafeEqual`
-- Pepper: `BONDERY_PRIVATE_API_KEY_PEPPER`
+`@better-auth/api-key` plugin (`apps/api/src/lib/auth/index.ts`):
+- Prefix: `bondery_key_` (`defaultPrefix`)
+- Verification: `auth.api.verifyApiKey` in `verifyAuth` (`strategies.ts`)
+- Permissions stored as BA JSON (`api: ["read"]` or `api: ["full"]`); product UI/API only exposes `read` and `full`
 - Route allowlist: `api-key-access.ts` — integration area only
+- Hard cutover: legacy `api_keys` table dropped; users must re-issue keys
 
 API keys shown once at creation in UI — never stored in client localStorage.
 
@@ -113,6 +114,6 @@ Deep link scheme: `bondery://` (trusted origin on API).
 - [ ] JWT bearer never falls back to session lookup
 - [ ] OAuth JWT checks `iss`, `aud`, `api:access` scope, trusted `client_id`
 - [ ] Webapp secrets stay server-only; mobile/extension use PKCE
-- [ ] API key hashed with pepper; route allowlist respected
+- [ ] API key verified via Better Auth; route allowlist respected
 - [ ] Session cookies: `httpOnly`, appropriate `sameSite`, `secure` in prod
 - [ ] OAuth `state` validated on callback flows

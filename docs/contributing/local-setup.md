@@ -109,14 +109,13 @@ See [Mobile sync (Postgres changelog)](#mobile-sync-postgres-changelog). `BONDER
 
 #### Redis
 
-Redis powers **rate limiting**, **mobile sync wake** (pub/sub), and **WebSocket ticket** storage in the API. Local Docker Redis is the **default** for development (same Docker prerequisite as Supabase).
+Redis powers **rate limiting**, **Better Auth secondary storage** (`bondery:auth:*`), **mobile sync wake** (pub/sub), and **WebSocket ticket** storage in the API. Local Docker Redis is **required** for API development (same Docker prerequisite as Supabase).
 
 | Mode | `BONDERY_PRIVATE_REDIS_URL` | When to use |
 |------|---------------------|-------------|
-| **Local Docker (default)** | `redis://127.0.0.1:26636` | Normal local API work — matches production behavior |
-| **In-memory** | empty / unset | Quick feature work without starting Redis |
+| **Local Docker (required)** | `redis://127.0.0.1:26636` | Normal local API work — matches production behavior |
 
-In **production** (Hetzner), `BONDERY_PRIVATE_REDIS_URL` is **required**. The health probe at `GET /health` reports Redis status when configured.
+`BONDERY_PRIVATE_REDIS_URL` is **required** in development and production. The health probe at `GET /health` reports Redis status.
 
 ##### Quick start — local Docker Redis
 
@@ -141,10 +140,6 @@ BONDERY_PRIVATE_REDIS_URL="redis://127.0.0.1:26636"
 ```
 
 Port **26636** is `DEV_PORTS.REDIS` / `DEV_REDIS_URL` in [`packages/schemas/src/constants/dev-ports.ts`](../../packages/schemas/src/constants/dev-ports.ts). Stop with `npm run stop -w redis`.
-
-##### In-memory mode (no Redis)
-
-Set `BONDERY_PRIVATE_REDIS_URL=""` (or remove the line). The API uses in-memory rate-limit and sync-wake stores — fine for single-process webapp work when you skip starting Redis.
 
 > **Do not** leave a dead cloud URL (e.g. deleted Upstash) in `.env.development.local`. The API will try to connect on startup and fail with `ENOTFOUND` / `Connection is closed`.
 

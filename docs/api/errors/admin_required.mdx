@@ -9,7 +9,7 @@ A non-admin session hit an admin-only route (`verifyAdmin`).
 
 ## What your integration should do
 
-Use a session token for an account with `is_admin` on user settings. API keys cannot call admin routes.
+Use a session for an account with `user.role = admin` (Better Auth platform admin). API keys cannot call admin routes.
 
 ## What end users should see
 

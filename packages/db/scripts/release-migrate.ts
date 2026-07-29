@@ -17,7 +17,6 @@ import { execFileSync } from "node:child_process";
 import { applySqlFunctions } from "./apply-sql-functions.js";
 
 async function main() {
-  // biome-ignore lint/suspicious/noUndeclaredEnvVars: release migration requires DATABASE_URL
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     throw new Error("DATABASE_URL is not set");

@@ -1,0 +1,53 @@
+# ADR 0001: Better Auth Redis Secondary Storage
+
+**Status:** Accepted  
+**Date:** 2026-07-28
+
+## Context
+
+Better Auth native sessions and verification records are stored in Postgres. Every `getSession` / bearer validation hits the database. Bondery already operates Redis for rate limiting, sync wake pub/sub, and WebSocket tickets via `apps/api/src/lib/data/redis.ts`.
+
+Better Auth 1.7 supports `secondaryStorage` for sessions, verification codes, and internal rate-limit counters ([database secondary storage](https://better-auth.com/docs/concepts/database#secondary-storage), [sessions in secondary storage](https://better-auth.com/docs/concepts/session-management#sessions-in-secondary-storage)).
+
+**Scope boundary:** Webapp BFF (`bondery_webapp_session`), OAuth resource JWTs, and Supabase RLS auth are unchanged. Only BA-native sessions (mobile bearer, API-domain cookies for social sign-in / OAuth AS) are affected.
+
+## Decision
+
+1. Add `@better-auth/redis-storage` using the existing `getRedisCommands()` singleton with key prefix `bondery:auth:`.
+2. Enable `secondaryStorage` on every API boot (Redis is mandatory in development and production).
+3. Set `session.storeSessionInDatabase: true` for dual-write Postgres + Redis.
+4. Keep `session.cookieCache` disabled (v1).
+5. Wrap Redis storage with a resilience layer: `get` errors return `null` (Postgres fallback); `set`/`delete` errors are warn-logged but do not fail the request when the DB write succeeded.
+6. **Redis always on in local development** — remove in-memory fallbacks for rate limit and sync wake; `BONDERY_PRIVATE_REDIS_URL` is required in development and production.
+
+## Postgres fallback (verified)
+
+Better Auth `findSession` ([`internal-adapter.mjs`](../../node_modules/better-auth/dist/db/internal-adapter.mjs)) reads Redis first; when `storeSessionInDatabase: true` and the Redis key is missing, it falls through to Postgres. Pre-rollout sessions and DB-only rows remain valid without a custom read-through wrapper.
+
+## Consequences
+
+**Positive**
+
+- Lower session read latency; reduced Postgres churn on session refresh.
+- Shared session state across API replicas.
+- Dev/prod parity — no silent in-memory fallbacks.
+
+**Negative**
+
+- Redis is a soft runtime dependency for optimal auth (hard config dependency at boot).
+- Verification records default to Redis when secondary storage is enabled (acceptable for social OAuth flows).
+
+**Operational**
+
+- Redis keys: `bondery:auth:*` (sessions, verification, active-session lists).
+- Redis flush: sessions remain valid via Postgres until the next write repopulates Redis.
+- Rollback: revert API deploy; Postgres remains source of truth.
+
+## Alternatives considered
+
+| Alternative | Rejected because |
+|-------------|------------------|
+| Redis-only sessions (`storeSessionInDatabase: false`) | Redis flush/eviction mass-logouts users |
+| Optional Redis in dev | Hides production behavior; plan requires always-on Redis |
+| `cookieCache` enabled | Delayed revoke on other devices; limited benefit for bearer-heavy clients |
+| Manual `SecondaryStorage` only | `@better-auth/redis-storage` is official and version-locked |

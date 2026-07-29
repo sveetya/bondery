@@ -11,12 +11,18 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 - `@bondery/db` Prisma package with schema, migrations, and generated client as the shared database layer.
 - API: Better Auth with OAuth providers, first-party OAuth clients for webapp/mobile/extension, and file storage routes.
+- API: Better Auth `@better-auth/api-key` plugin with hashed keys and route allowlists; platform operator role on `user.role`.
+- API: Redis-backed Better Auth `secondaryStorage` for session hot-path caching.
 - Webapp: Playwright e2e scaffolding for auth and core app flows.
 - Website: self-hosted product docs with Fumadocs search and LLM export routes.
 
 ### 🔄 Changed
 
-- API, webapp, mobile, and Chrome extension now authenticate through Better Auth instead of Supabase Auth.
+- Platform operator access now uses Better Auth `user.role = admin` (and break-glass env IDs) instead of `user_settings.is_admin`.
+- API request auth verifies Better Auth sessions and OAuth resource JWTs instead of Supabase Auth tokens.
+- API keys authenticate via `auth.api.verifyApiKey` without minting Supabase JWTs.
+- Webapp and mobile login, session refresh, and API transport use Better Auth only; Supabase JS clients removed from those apps.
+- Webapp Polar embedded checkout confirms subscription upgrades by polling the API instead of Supabase Realtime.
 - Self-host Compose stack uses bundled Postgres (Prisma migrations) instead of the Supabase sidecar.
 - Webapp app routes reorganized into `(shell)` and `(chromeless)` route groups.
 
@@ -29,7 +35,8 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ### Breaking
 
-- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed. Self-hosters must run `npm run setup:dev`, apply Prisma migrations, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
+- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `npm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
+- **Platform admin:** `user_settings.is_admin` is dropped; grant operator access via `user.role = admin` or `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS`.
 - **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](deploy/get-started.mdx) for the new bootstrap flow.
 
 ## [1.7.4] - 20.07.2026

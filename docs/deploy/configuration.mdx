@@ -11,7 +11,7 @@ Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/
 | `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` | Better Auth versioned signing secrets (`version:secret`, highest version first) |
 | `BONDERY_PRIVATE_POSTGRES_PASSWORD` | Postgres password (compose `db` service) |
 | `BONDERY_PRIVATE_API_KEY_PEPPER` | API key hashing pepper |
-| `BONDERY_PRIVATE_REDIS_URL` | `redis://redis:6379` in the default stack |
+| `BONDERY_PRIVATE_REDIS_URL` | `redis://redis:6379` in the default stack. Stores rate-limit counters, sync wake pub/sub, WebSocket tickets (`sync:ws-ticket:*`), and Better Auth secondary storage (`bondery:auth:*` — sessions and verification records, dual-written with Postgres). |
 
 ### `DATABASE_URL`
 
@@ -53,6 +53,8 @@ Auth runs on the API (`/auth/*`). The API is its own OAuth issuer (`baseURL` = `
 4. Set `BONDERY_INFRA_CHROME_EXTENSION_ID` so the API allows the extension redirect URI.
 
    `apps/api/scripts/provision-oauth-clients.ts` upserts the matching webapp and extension `OauthClient` rows in Postgres automatically — it runs as part of `packages/db/scripts/release-migrate.ts` right after `prisma migrate deploy` on every deploy. There is no separate registration step or session cookie required.
+
+5. Set `BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS` to a comma-separated list of operator account emails. `apps/api/scripts/provision-platform-admins.ts` promotes matching users to `user.role = admin` on every deploy (same `release-migrate` step). Optional break-glass: `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS` (comma-separated UUIDs).
 
 See [Secrets management](./secrets.mdx) for production secret storage and rotation runbooks.
 

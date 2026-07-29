@@ -1,6 +1,6 @@
 # Rate limiting
 
-Config: `apps/api/src/lib/platform/rate-limit.ts`. Redis required in production (`BONDERY_PRIVATE_REDIS_URL`).
+Config: `apps/api/src/lib/platform/rate-limit.ts`. Redis required in all environments (`BONDERY_PRIVATE_REDIS_URL`).
 
 ## Key resolution
 
