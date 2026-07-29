@@ -49,7 +49,6 @@ export type UserSettingsMinAggregateOutputType = {
   tagSortOrder: string | null
   reminderSendHour: string | null
   nextReminderAtUtc: Date | null
-  isAdmin: boolean | null
   onboardingCompletedAt: Date | null
   gettingStartedDismissedAt: Date | null
   importCompletedAt: Date | null
@@ -75,7 +74,6 @@ export type UserSettingsMaxAggregateOutputType = {
   tagSortOrder: string | null
   reminderSendHour: string | null
   nextReminderAtUtc: Date | null
-  isAdmin: boolean | null
   onboardingCompletedAt: Date | null
   gettingStartedDismissedAt: Date | null
   importCompletedAt: Date | null
@@ -101,7 +99,6 @@ export type UserSettingsCountAggregateOutputType = {
   tagSortOrder: number
   reminderSendHour: number
   nextReminderAtUtc: number
-  isAdmin: number
   onboardingCompletedAt: number
   gettingStartedDismissedAt: number
   importCompletedAt: number
@@ -139,7 +136,6 @@ export type UserSettingsMinAggregateInputType = {
   tagSortOrder?: true
   reminderSendHour?: true
   nextReminderAtUtc?: true
-  isAdmin?: true
   onboardingCompletedAt?: true
   gettingStartedDismissedAt?: true
   importCompletedAt?: true
@@ -165,7 +161,6 @@ export type UserSettingsMaxAggregateInputType = {
   tagSortOrder?: true
   reminderSendHour?: true
   nextReminderAtUtc?: true
-  isAdmin?: true
   onboardingCompletedAt?: true
   gettingStartedDismissedAt?: true
   importCompletedAt?: true
@@ -191,7 +186,6 @@ export type UserSettingsCountAggregateInputType = {
   tagSortOrder?: true
   reminderSendHour?: true
   nextReminderAtUtc?: true
-  isAdmin?: true
   onboardingCompletedAt?: true
   gettingStartedDismissedAt?: true
   importCompletedAt?: true
@@ -304,7 +298,6 @@ export type UserSettingsGroupByOutputType = {
   tagSortOrder: string
   reminderSendHour: string
   nextReminderAtUtc: Date
-  isAdmin: boolean
   onboardingCompletedAt: Date | null
   gettingStartedDismissedAt: Date | null
   importCompletedAt: Date | null
@@ -353,7 +346,6 @@ export type UserSettingsWhereInput = {
   tagSortOrder?: Prisma.StringFilter<"UserSettings"> | string
   reminderSendHour?: Prisma.StringFilter<"UserSettings"> | string
   nextReminderAtUtc?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
-  isAdmin?: Prisma.BoolFilter<"UserSettings"> | boolean
   onboardingCompletedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
   gettingStartedDismissedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
   importCompletedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
@@ -380,7 +372,6 @@ export type UserSettingsOrderByWithRelationInput = {
   tagSortOrder?: Prisma.SortOrder
   reminderSendHour?: Prisma.SortOrder
   nextReminderAtUtc?: Prisma.SortOrder
-  isAdmin?: Prisma.SortOrder
   onboardingCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   gettingStartedDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   importCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -410,7 +401,6 @@ export type UserSettingsWhereUniqueInput = Prisma.AtLeast<{
   tagSortOrder?: Prisma.StringFilter<"UserSettings"> | string
   reminderSendHour?: Prisma.StringFilter<"UserSettings"> | string
   nextReminderAtUtc?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
-  isAdmin?: Prisma.BoolFilter<"UserSettings"> | boolean
   onboardingCompletedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
   gettingStartedDismissedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
   importCompletedAt?: Prisma.DateTimeNullableFilter<"UserSettings"> | Date | string | null
@@ -437,7 +427,6 @@ export type UserSettingsOrderByWithAggregationInput = {
   tagSortOrder?: Prisma.SortOrder
   reminderSendHour?: Prisma.SortOrder
   nextReminderAtUtc?: Prisma.SortOrder
-  isAdmin?: Prisma.SortOrder
   onboardingCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   gettingStartedDismissedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   importCompletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -471,7 +460,6 @@ export type UserSettingsScalarWhereWithAggregatesInput = {
   tagSortOrder?: Prisma.StringWithAggregatesFilter<"UserSettings"> | string
   reminderSendHour?: Prisma.StringWithAggregatesFilter<"UserSettings"> | string
   nextReminderAtUtc?: Prisma.DateTimeWithAggregatesFilter<"UserSettings"> | Date | string
-  isAdmin?: Prisma.BoolWithAggregatesFilter<"UserSettings"> | boolean
   onboardingCompletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserSettings"> | Date | string | null
   gettingStartedDismissedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserSettings"> | Date | string | null
   importCompletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserSettings"> | Date | string | null
@@ -496,7 +484,6 @@ export type UserSettingsCreateInput = {
   tagSortOrder?: string
   reminderSendHour?: string
   nextReminderAtUtc: Date | string
-  isAdmin?: boolean
   onboardingCompletedAt?: Date | string | null
   gettingStartedDismissedAt?: Date | string | null
   importCompletedAt?: Date | string | null
@@ -523,7 +510,6 @@ export type UserSettingsUncheckedCreateInput = {
   tagSortOrder?: string
   reminderSendHour?: string
   nextReminderAtUtc: Date | string
-  isAdmin?: boolean
   onboardingCompletedAt?: Date | string | null
   gettingStartedDismissedAt?: Date | string | null
   importCompletedAt?: Date | string | null
@@ -548,7 +534,6 @@ export type UserSettingsUpdateInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -575,7 +560,6 @@ export type UserSettingsUncheckedUpdateInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -601,7 +585,6 @@ export type UserSettingsCreateManyInput = {
   tagSortOrder?: string
   reminderSendHour?: string
   nextReminderAtUtc: Date | string
-  isAdmin?: boolean
   onboardingCompletedAt?: Date | string | null
   gettingStartedDismissedAt?: Date | string | null
   importCompletedAt?: Date | string | null
@@ -626,7 +609,6 @@ export type UserSettingsUpdateManyMutationInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -652,7 +634,6 @@ export type UserSettingsUncheckedUpdateManyInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -683,7 +664,6 @@ export type UserSettingsCountOrderByAggregateInput = {
   tagSortOrder?: Prisma.SortOrder
   reminderSendHour?: Prisma.SortOrder
   nextReminderAtUtc?: Prisma.SortOrder
-  isAdmin?: Prisma.SortOrder
   onboardingCompletedAt?: Prisma.SortOrder
   gettingStartedDismissedAt?: Prisma.SortOrder
   importCompletedAt?: Prisma.SortOrder
@@ -714,7 +694,6 @@ export type UserSettingsMaxOrderByAggregateInput = {
   tagSortOrder?: Prisma.SortOrder
   reminderSendHour?: Prisma.SortOrder
   nextReminderAtUtc?: Prisma.SortOrder
-  isAdmin?: Prisma.SortOrder
   onboardingCompletedAt?: Prisma.SortOrder
   gettingStartedDismissedAt?: Prisma.SortOrder
   importCompletedAt?: Prisma.SortOrder
@@ -740,7 +719,6 @@ export type UserSettingsMinOrderByAggregateInput = {
   tagSortOrder?: Prisma.SortOrder
   reminderSendHour?: Prisma.SortOrder
   nextReminderAtUtc?: Prisma.SortOrder
-  isAdmin?: Prisma.SortOrder
   onboardingCompletedAt?: Prisma.SortOrder
   gettingStartedDismissedAt?: Prisma.SortOrder
   importCompletedAt?: Prisma.SortOrder
@@ -810,7 +788,6 @@ export type UserSettingsCreateWithoutUserInput = {
   tagSortOrder?: string
   reminderSendHour?: string
   nextReminderAtUtc: Date | string
-  isAdmin?: boolean
   onboardingCompletedAt?: Date | string | null
   gettingStartedDismissedAt?: Date | string | null
   importCompletedAt?: Date | string | null
@@ -835,7 +812,6 @@ export type UserSettingsUncheckedCreateWithoutUserInput = {
   tagSortOrder?: string
   reminderSendHour?: string
   nextReminderAtUtc: Date | string
-  isAdmin?: boolean
   onboardingCompletedAt?: Date | string | null
   gettingStartedDismissedAt?: Date | string | null
   importCompletedAt?: Date | string | null
@@ -876,7 +852,6 @@ export type UserSettingsUpdateWithoutUserInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -901,7 +876,6 @@ export type UserSettingsUncheckedUpdateWithoutUserInput = {
   tagSortOrder?: Prisma.StringFieldUpdateOperationsInput | string
   reminderSendHour?: Prisma.StringFieldUpdateOperationsInput | string
   nextReminderAtUtc?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   gettingStartedDismissedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   importCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -929,7 +903,6 @@ export type UserSettingsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   tagSortOrder?: boolean
   reminderSendHour?: boolean
   nextReminderAtUtc?: boolean
-  isAdmin?: boolean
   onboardingCompletedAt?: boolean
   gettingStartedDismissedAt?: boolean
   importCompletedAt?: boolean
@@ -956,7 +929,6 @@ export type UserSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   tagSortOrder?: boolean
   reminderSendHour?: boolean
   nextReminderAtUtc?: boolean
-  isAdmin?: boolean
   onboardingCompletedAt?: boolean
   gettingStartedDismissedAt?: boolean
   importCompletedAt?: boolean
@@ -983,7 +955,6 @@ export type UserSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   tagSortOrder?: boolean
   reminderSendHour?: boolean
   nextReminderAtUtc?: boolean
-  isAdmin?: boolean
   onboardingCompletedAt?: boolean
   gettingStartedDismissedAt?: boolean
   importCompletedAt?: boolean
@@ -1010,7 +981,6 @@ export type UserSettingsSelectScalar = {
   tagSortOrder?: boolean
   reminderSendHour?: boolean
   nextReminderAtUtc?: boolean
-  isAdmin?: boolean
   onboardingCompletedAt?: boolean
   gettingStartedDismissedAt?: boolean
   importCompletedAt?: boolean
@@ -1023,7 +993,7 @@ export type UserSettingsSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "language" | "timezone" | "timeFormat" | "colorScheme" | "leftSwipeAction" | "rightSwipeAction" | "groupSortOrder" | "tagSortOrder" | "reminderSendHour" | "nextReminderAtUtc" | "isAdmin" | "onboardingCompletedAt" | "gettingStartedDismissedAt" | "importCompletedAt" | "importFollowupPlatform" | "importFollowupStatus" | "aiMessagesUsed" | "aiMessagesThisMonth" | "aiMessagesMonthResetAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userSettings"]>
+export type UserSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "language" | "timezone" | "timeFormat" | "colorScheme" | "leftSwipeAction" | "rightSwipeAction" | "groupSortOrder" | "tagSortOrder" | "reminderSendHour" | "nextReminderAtUtc" | "onboardingCompletedAt" | "gettingStartedDismissedAt" | "importCompletedAt" | "importFollowupPlatform" | "importFollowupStatus" | "aiMessagesUsed" | "aiMessagesThisMonth" | "aiMessagesMonthResetAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userSettings"]>
 export type UserSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -1052,7 +1022,6 @@ export type $UserSettingsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     tagSortOrder: string
     reminderSendHour: string
     nextReminderAtUtc: Date
-    isAdmin: boolean
     onboardingCompletedAt: Date | null
     gettingStartedDismissedAt: Date | null
     importCompletedAt: Date | null
@@ -1499,7 +1468,6 @@ export interface UserSettingsFieldRefs {
   readonly tagSortOrder: Prisma.FieldRef<"UserSettings", 'String'>
   readonly reminderSendHour: Prisma.FieldRef<"UserSettings", 'String'>
   readonly nextReminderAtUtc: Prisma.FieldRef<"UserSettings", 'DateTime'>
-  readonly isAdmin: Prisma.FieldRef<"UserSettings", 'Boolean'>
   readonly onboardingCompletedAt: Prisma.FieldRef<"UserSettings", 'DateTime'>
   readonly gettingStartedDismissedAt: Prisma.FieldRef<"UserSettings", 'DateTime'>
   readonly importCompletedAt: Prisma.FieldRef<"UserSettings", 'DateTime'>

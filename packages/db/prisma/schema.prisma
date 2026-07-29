@@ -27,6 +27,10 @@ model User {
   email         String    @unique
   emailVerified Boolean   @default(false) @map("email_verified")
   image         String?
+  role          String?   @default("user")
+  banned        Boolean?  @default(false)
+  banReason     String?   @map("ban_reason")
+  banExpires    DateTime? @map("ban_expires")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
@@ -39,7 +43,7 @@ model User {
   groups                    Group[]
   tags                      Tag[]
   interactions              Interaction[]
-  apiKeys                   ApiKey[]
+  apikeys                   Apikey[]
   chatSessions              ChatSession[]
   subscriptions             Subscription[]
   linkedinEnrichQueue       LinkedinEnrichQueue[]
@@ -63,9 +67,10 @@ model Session {
   token     String   @unique
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  userId    String   @map("user_id") @db.Uuid
+  ipAddress       String?  @map("ip_address")
+  userAgent       String?  @map("user_agent")
+  impersonatedBy  String?  @map("impersonated_by")
+  userId          String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   oauthRefreshTokens OauthRefreshToken[]
@@ -344,7 +349,6 @@ model UserSettings {
   tagSortOrder              String          @default("alphabetical") @map("tag_sort_order")
   reminderSendHour          String          @default("09:00") @map("reminder_send_hour")
   nextReminderAtUtc         DateTime        @map("next_reminder_at_utc")
-  isAdmin                   Boolean         @default(false) @map("is_admin")
   onboardingCompletedAt     DateTime?       @map("onboarding_completed_at")
   gettingStartedDismissedAt DateTime?       @map("getting_started_dismissed_at")
   importCompletedAt         DateTime?       @map("import_completed_at")
@@ -699,20 +703,36 @@ model GeocodeCache {
   @@map("geocode_cache")
 }
 
-model ApiKey {
-  id          String    @id @default(uuid()) @db.Uuid
-  userId      String    @map("user_id") @db.Uuid
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  keyId       String    @unique @map("key_id")
-  keyHash     String    @map("key_hash")
-  keyPrefix   String    @map("key_prefix")
-  label       String
-  permission  String    @default("read")
-  lastUsedAt  DateTime? @map("last_used_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+/// Better Auth `@better-auth/api-key` storage. Hard cutover from legacy `api_keys`.
+model Apikey {
+  id                  String    @id @default(uuid()) @db.Uuid
+  configId            String    @default("default") @map("config_id")
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  referenceId         String    @map("reference_id") @db.Uuid
+  user                User      @relation(fields: [referenceId], references: [id], onDelete: Cascade)
+  refillInterval      Int?      @map("refill_interval")
+  refillAmount        Int?      @map("refill_amount")
+  lastRefillAt        DateTime? @map("last_refill_at")
+  enabled             Boolean   @default(true)
+  rateLimitEnabled    Boolean   @default(false) @map("rate_limit_enabled")
+  rateLimitTimeWindow Int?      @map("rate_limit_time_window")
+  rateLimitMax        Int?      @map("rate_limit_max")
+  requestCount        Int       @default(0) @map("request_count")
+  remaining           Int?
+  lastRequest         DateTime? @map("last_request")
+  expiresAt           DateTime? @map("expires_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  permissions         String?
+  metadata            String?
 
-  @@map("api_keys")
+  @@index([referenceId])
+  @@index([configId])
+  @@index([key])
+  @@map("apikey")
 }
 
 model ChatSession {

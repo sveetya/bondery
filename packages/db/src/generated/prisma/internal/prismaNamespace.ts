@@ -429,7 +429,7 @@ export const ModelName = {
   PeopleMergeRecommendation: 'PeopleMergeRecommendation',
   LinkedinEnrichQueue: 'LinkedinEnrichQueue',
   GeocodeCache: 'GeocodeCache',
-  ApiKey: 'ApiKey',
+  Apikey: 'Apikey',
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   Subscription: 'Subscription',
@@ -453,7 +453,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "jwks" | "oauthClient" | "oauthResource" | "oauthClientResource" | "oauthRefreshToken" | "oauthAccessToken" | "oauthConsent" | "oauthClientAssertion" | "userSettings" | "people" | "peoplePhone" | "peopleEmail" | "peopleSocial" | "peopleAddress" | "peopleImportantDate" | "peopleRelationship" | "group" | "peopleGroup" | "tag" | "peopleTag" | "interaction" | "interactionParticipant" | "peopleLinkedin" | "peopleWorkHistory" | "peopleEducationHistory" | "peopleMergeRecommendation" | "linkedinEnrichQueue" | "geocodeCache" | "apiKey" | "chatSession" | "chatMessage" | "subscription" | "pendingSubscription" | "reminderDispatchLog" | "syncChangeLog" | "syncMutationReceipt" | "syncUserSequence"
+    modelProps: "user" | "session" | "account" | "verification" | "jwks" | "oauthClient" | "oauthResource" | "oauthClientResource" | "oauthRefreshToken" | "oauthAccessToken" | "oauthConsent" | "oauthClientAssertion" | "userSettings" | "people" | "peoplePhone" | "peopleEmail" | "peopleSocial" | "peopleAddress" | "peopleImportantDate" | "peopleRelationship" | "group" | "peopleGroup" | "tag" | "peopleTag" | "interaction" | "interactionParticipant" | "peopleLinkedin" | "peopleWorkHistory" | "peopleEducationHistory" | "peopleMergeRecommendation" | "linkedinEnrichQueue" | "geocodeCache" | "apikey" | "chatSession" | "chatMessage" | "subscription" | "pendingSubscription" | "reminderDispatchLog" | "syncChangeLog" | "syncMutationReceipt" | "syncUserSequence"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2825,77 +2825,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ApiKey: {
-      payload: Prisma.$ApiKeyPayload<ExtArgs>
-      fields: Prisma.ApiKeyFieldRefs
+    Apikey: {
+      payload: Prisma.$ApikeyPayload<ExtArgs>
+      fields: Prisma.ApikeyFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.ApiKeyFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
+          args: Prisma.ApikeyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.ApiKeyFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         findFirst: {
-          args: Prisma.ApiKeyFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload> | null
+          args: Prisma.ApikeyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.ApiKeyFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         findMany: {
-          args: Prisma.ApiKeyFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          args: Prisma.ApikeyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>[]
         }
         create: {
-          args: Prisma.ApiKeyCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         createMany: {
-          args: Prisma.ApiKeyCreateManyArgs<ExtArgs>
+          args: Prisma.ApikeyCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.ApiKeyCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          args: Prisma.ApikeyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>[]
         }
         delete: {
-          args: Prisma.ApiKeyDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         update: {
-          args: Prisma.ApiKeyUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         deleteMany: {
-          args: Prisma.ApiKeyDeleteManyArgs<ExtArgs>
+          args: Prisma.ApikeyDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.ApiKeyUpdateManyArgs<ExtArgs>
+          args: Prisma.ApikeyUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.ApiKeyUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>[]
+          args: Prisma.ApikeyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>[]
         }
         upsert: {
-          args: Prisma.ApiKeyUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiKeyPayload>
+          args: Prisma.ApikeyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApikeyPayload>
         }
         aggregate: {
-          args: Prisma.ApiKeyAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateApiKey>
+          args: Prisma.ApikeyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApikey>
         }
         groupBy: {
-          args: Prisma.ApiKeyGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApiKeyGroupByOutputType>[]
+          args: Prisma.ApikeyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApikeyGroupByOutputType>[]
         }
         count: {
-          args: Prisma.ApiKeyCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApiKeyCountAggregateOutputType> | number
+          args: Prisma.ApikeyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApikeyCountAggregateOutputType> | number
         }
       }
     }
@@ -3536,6 +3536,10 @@ export const UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
+  banned: 'banned',
+  banReason: 'banReason',
+  banExpires: 'banExpires',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3551,6 +3555,7 @@ export const SessionScalarFieldEnum = {
   updatedAt: 'updatedAt',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
+  impersonatedBy: 'impersonatedBy',
   userId: 'userId'
 } as const
 
@@ -3756,7 +3761,6 @@ export const UserSettingsScalarFieldEnum = {
   tagSortOrder: 'tagSortOrder',
   reminderSendHour: 'reminderSendHour',
   nextReminderAtUtc: 'nextReminderAtUtc',
-  isAdmin: 'isAdmin',
   onboardingCompletedAt: 'onboardingCompletedAt',
   gettingStartedDismissedAt: 'gettingStartedDismissedAt',
   importCompletedAt: 'importCompletedAt',
@@ -4072,20 +4076,32 @@ export const GeocodeCacheScalarFieldEnum = {
 export type GeocodeCacheScalarFieldEnum = (typeof GeocodeCacheScalarFieldEnum)[keyof typeof GeocodeCacheScalarFieldEnum]
 
 
-export const ApiKeyScalarFieldEnum = {
+export const ApikeyScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  keyId: 'keyId',
-  keyHash: 'keyHash',
-  keyPrefix: 'keyPrefix',
-  label: 'label',
-  permission: 'permission',
-  lastUsedAt: 'lastUsedAt',
+  configId: 'configId',
+  name: 'name',
+  start: 'start',
+  prefix: 'prefix',
+  key: 'key',
+  referenceId: 'referenceId',
+  refillInterval: 'refillInterval',
+  refillAmount: 'refillAmount',
+  lastRefillAt: 'lastRefillAt',
+  enabled: 'enabled',
+  rateLimitEnabled: 'rateLimitEnabled',
+  rateLimitTimeWindow: 'rateLimitTimeWindow',
+  rateLimitMax: 'rateLimitMax',
+  requestCount: 'requestCount',
+  remaining: 'remaining',
+  lastRequest: 'lastRequest',
+  expiresAt: 'expiresAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  permissions: 'permissions',
+  metadata: 'metadata'
 } as const
 
-export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+export type ApikeyScalarFieldEnum = (typeof ApikeyScalarFieldEnum)[keyof typeof ApikeyScalarFieldEnum]
 
 
 export const ChatSessionScalarFieldEnum = {
@@ -4541,7 +4557,7 @@ export type GlobalOmitConfig = {
   peopleMergeRecommendation?: Prisma.PeopleMergeRecommendationOmit
   linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueOmit
   geocodeCache?: Prisma.GeocodeCacheOmit
-  apiKey?: Prisma.ApiKeyOmit
+  apikey?: Prisma.ApikeyOmit
   chatSession?: Prisma.ChatSessionOmit
   chatMessage?: Prisma.ChatMessageOmit
   subscription?: Prisma.SubscriptionOmit

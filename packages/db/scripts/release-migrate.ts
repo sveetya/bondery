@@ -17,6 +17,7 @@ import { execFileSync } from "node:child_process";
 import { applySqlFunctions } from "./apply-sql-functions.js";
 
 async function main() {
+  // biome-ignore lint/suspicious/noUndeclaredEnvVars: release migration requires DATABASE_URL
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     throw new Error("DATABASE_URL is not set");
@@ -28,13 +29,16 @@ async function main() {
   });
   await applySqlFunctions(databaseUrl);
   execFileSync("npm", ["run", "provision-oauth-clients", "-w", "api"], {
-    stdio: "inherit",
     cwd: new URL("../../..", import.meta.url).pathname,
+    stdio: "inherit",
+  });
+  execFileSync("npm", ["run", "provision-platform-admins", "-w", "api"], {
+    cwd: new URL("../../..", import.meta.url).pathname,
+    stdio: "inherit",
   });
 }
 
 main().catch((error) => {
-  // biome-ignore lint/suspicious/noConsole: CLI script output
   console.error(error);
   process.exit(1);
 });

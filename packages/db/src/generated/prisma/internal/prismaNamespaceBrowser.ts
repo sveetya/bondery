@@ -83,7 +83,7 @@ export const ModelName = {
   PeopleMergeRecommendation: 'PeopleMergeRecommendation',
   LinkedinEnrichQueue: 'LinkedinEnrichQueue',
   GeocodeCache: 'GeocodeCache',
-  ApiKey: 'ApiKey',
+  Apikey: 'Apikey',
   ChatSession: 'ChatSession',
   ChatMessage: 'ChatMessage',
   Subscription: 'Subscription',
@@ -116,6 +116,10 @@ export const UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
+  banned: 'banned',
+  banReason: 'banReason',
+  banExpires: 'banExpires',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -131,6 +135,7 @@ export const SessionScalarFieldEnum = {
   updatedAt: 'updatedAt',
   ipAddress: 'ipAddress',
   userAgent: 'userAgent',
+  impersonatedBy: 'impersonatedBy',
   userId: 'userId'
 } as const
 
@@ -336,7 +341,6 @@ export const UserSettingsScalarFieldEnum = {
   tagSortOrder: 'tagSortOrder',
   reminderSendHour: 'reminderSendHour',
   nextReminderAtUtc: 'nextReminderAtUtc',
-  isAdmin: 'isAdmin',
   onboardingCompletedAt: 'onboardingCompletedAt',
   gettingStartedDismissedAt: 'gettingStartedDismissedAt',
   importCompletedAt: 'importCompletedAt',
@@ -652,20 +656,32 @@ export const GeocodeCacheScalarFieldEnum = {
 export type GeocodeCacheScalarFieldEnum = (typeof GeocodeCacheScalarFieldEnum)[keyof typeof GeocodeCacheScalarFieldEnum]
 
 
-export const ApiKeyScalarFieldEnum = {
+export const ApikeyScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
-  keyId: 'keyId',
-  keyHash: 'keyHash',
-  keyPrefix: 'keyPrefix',
-  label: 'label',
-  permission: 'permission',
-  lastUsedAt: 'lastUsedAt',
+  configId: 'configId',
+  name: 'name',
+  start: 'start',
+  prefix: 'prefix',
+  key: 'key',
+  referenceId: 'referenceId',
+  refillInterval: 'refillInterval',
+  refillAmount: 'refillAmount',
+  lastRefillAt: 'lastRefillAt',
+  enabled: 'enabled',
+  rateLimitEnabled: 'rateLimitEnabled',
+  rateLimitTimeWindow: 'rateLimitTimeWindow',
+  rateLimitMax: 'rateLimitMax',
+  requestCount: 'requestCount',
+  remaining: 'remaining',
+  lastRequest: 'lastRequest',
+  expiresAt: 'expiresAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  permissions: 'permissions',
+  metadata: 'metadata'
 } as const
 
-export type ApiKeyScalarFieldEnum = (typeof ApiKeyScalarFieldEnum)[keyof typeof ApiKeyScalarFieldEnum]
+export type ApikeyScalarFieldEnum = (typeof ApikeyScalarFieldEnum)[keyof typeof ApikeyScalarFieldEnum]
 
 
 export const ChatSessionScalarFieldEnum = {

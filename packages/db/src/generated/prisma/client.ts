@@ -217,10 +217,10 @@ export type LinkedinEnrichQueue = Prisma.LinkedinEnrichQueueModel
  */
 export type GeocodeCache = Prisma.GeocodeCacheModel
 /**
- * Model ApiKey
- * 
+ * Model Apikey
+ * Better Auth `@better-auth/api-key` storage. Hard cutover from legacy `api_keys`.
  */
-export type ApiKey = Prisma.ApiKeyModel
+export type Apikey = Prisma.ApikeyModel
 /**
  * Model ChatSession
  * 

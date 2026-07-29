@@ -1045,10 +1045,6 @@ export type OauthClientCreateresponseTypesInput = {
   set: string[]
 }
 
-export type NullableBoolFieldUpdateOperationsInput = {
-  set?: boolean | null
-}
-
 export type OauthClientUpdatescopesInput = {
   set?: string[]
   push?: string | string[]
