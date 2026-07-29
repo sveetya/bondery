@@ -6,7 +6,6 @@ import { oauthProviderResourceClient } from "@better-auth/oauth-provider/resourc
 import { prisma } from "@bondery/db";
 import type { FastifyRequest } from "fastify";
 import type { JWTPayload } from "jose";
-import type { DomainSupabaseClient } from "../../../domains/_shared/context.js";
 import {
   auth,
   resolveApiResourceIdentifier,
@@ -14,7 +13,6 @@ import {
   resolveTrustedOAuthClientIds,
 } from "../../auth/index.js";
 import { toFetchHeaders } from "../../auth/request-headers.js";
-import { createAnonClient } from "../../storage/supabase-client.js";
 
 export type ResolvedAuthUser = {
   email: string;
@@ -112,11 +110,6 @@ export async function resolveBetterAuthSessionUser(
     email: session.user.email,
     id: session.user.id,
   };
-}
-
-/** Unscoped Supabase client for PostgREST/storage — tenant isolation is application-layer. */
-export function createDomainDataClient(): DomainSupabaseClient {
-  return createAnonClient();
 }
 
 export async function resolveRequestAuthUser(

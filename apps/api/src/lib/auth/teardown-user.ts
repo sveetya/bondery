@@ -1,11 +1,11 @@
 import { prisma } from "@bondery/db";
 import type { FastifyBaseLogger } from "fastify";
-import { getPolarClient } from "../../services/billing/polar.js";
-import { deletePendingSubscription } from "../../services/billing/subscription.js";
-import { sendAccountDeletedEmail } from "../../services/notifications/account-deleted.js";
-import { createAdminClient } from "../storage/supabase-client.js";
-
-const LINKEDIN_LOGOS_BUCKET = "linkedin_logos";
+import {
+  AVATARS_BUCKET,
+  deleteStorageObjects,
+  LINKEDIN_LOGOS_BUCKET,
+  listStorageKeys,
+} from "../storage/get-storage.js";
 
 export type UserDeletionSnapshot = {
   email: string;
@@ -30,18 +30,14 @@ function takeDeletionSnapshot(userId: string): UserDeletionSnapshot | undefined 
 }
 
 async function deleteUserStorageFiles(userId: string): Promise<void> {
-  const adminClient = createAdminClient();
-
-  const { data: avatarFiles } = await adminClient.storage.from("avatars").list(userId);
-  if (avatarFiles && avatarFiles.length > 0) {
-    const avatarPaths = avatarFiles.map((file) => `${userId}/${file.name}`);
-    await adminClient.storage.from("avatars").remove(avatarPaths);
+  const avatarKeys = await listStorageKeys(AVATARS_BUCKET, userId);
+  if (avatarKeys.length > 0) {
+    await deleteStorageObjects(AVATARS_BUCKET, avatarKeys);
   }
 
-  const { data: logoFiles } = await adminClient.storage.from(LINKEDIN_LOGOS_BUCKET).list(userId);
-  if (logoFiles && logoFiles.length > 0) {
-    const logoPaths = logoFiles.map((file) => `${userId}/${file.name}`);
-    await adminClient.storage.from(LINKEDIN_LOGOS_BUCKET).remove(logoPaths);
+  const logoKeys = await listStorageKeys(LINKEDIN_LOGOS_BUCKET, userId);
+  if (logoKeys.length > 0) {
+    await deleteStorageObjects(LINKEDIN_LOGOS_BUCKET, logoKeys);
   }
 }
 
@@ -53,16 +49,16 @@ async function deleteOAuthArtifactsForUser(userId: string): Promise<void> {
   ]);
 }
 
-async function cancelPolarSubscriptionIfAny(
+async function cancelStripeSubscriptionIfAny(
   userId: string,
   log?: FastifyBaseLogger,
 ): Promise<void> {
   const subscription = await prisma.subscription.findFirst({
-    select: { polarSubscriptionId: true, status: true },
+    select: { status: true, stripeSubscriptionId: true },
     where: { userId },
   });
 
-  if (!subscription?.polarSubscriptionId) {
+  if (!subscription?.stripeSubscriptionId) {
     return;
   }
 
@@ -71,12 +67,13 @@ async function cancelPolarSubscriptionIfAny(
   }
 
   try {
-    const polar = getPolarClient();
-    await polar.subscriptions.revoke({ id: subscription.polarSubscriptionId });
+    const { getStripeClient } = await import("../../services/billing/stripe.js");
+    const stripe = getStripeClient();
+    await stripe.subscriptions.cancel(subscription.stripeSubscriptionId);
   } catch (error) {
     log?.warn(
-      { err: error, polarSubscriptionId: subscription.polarSubscriptionId, userId },
-      "Failed to revoke Polar subscription during account deletion",
+      { err: error, stripeSubscriptionId: subscription.stripeSubscriptionId, userId },
+      "Failed to cancel Stripe subscription during account deletion",
     );
   }
 }
@@ -88,9 +85,10 @@ export async function runUserDeleteBefore(
   snapshotUserForDeletion(user);
   await deleteUserStorageFiles(user.id);
   await deleteOAuthArtifactsForUser(user.id);
-  await cancelPolarSubscriptionIfAny(user.id, log);
+  await cancelStripeSubscriptionIfAny(user.id, log);
 
   try {
+    const { deletePendingSubscription } = await import("../../services/billing/subscription.js");
     await deletePendingSubscription(user.email);
   } catch (error) {
     log?.warn({ err: error, userId: user.id }, "Failed to delete pending subscription row");
@@ -104,6 +102,9 @@ export async function runUserDeleteAfter(
   const snapshot = takeDeletionSnapshot(user.id) ?? user;
 
   try {
+    const { sendAccountDeletedEmail } = await import(
+      "../../services/notifications/account-deleted.js"
+    );
     await sendAccountDeletedEmail(
       {
         email: snapshot.email,
@@ -122,24 +123,11 @@ export async function deleteUserWithTeardown(
 ): Promise<void> {
   await runUserDeleteBefore(user, log);
 
-  let prismaDeleted = false;
   try {
     await prisma.user.delete({ where: { id: user.id } });
-    prismaDeleted = true;
   } catch (error) {
     log?.warn({ err: error, userId: user.id }, "Prisma user delete failed during account teardown");
-  }
-
-  const adminClient = createAdminClient();
-  const { error: supabaseDeleteError } = await adminClient.auth.admin.deleteUser(user.id);
-  if (supabaseDeleteError && !prismaDeleted) {
-    throw supabaseDeleteError;
-  }
-  if (supabaseDeleteError) {
-    log?.warn(
-      { err: supabaseDeleteError, userId: user.id },
-      "Supabase auth user delete failed after Prisma user was removed",
-    );
+    throw error;
   }
 
   await runUserDeleteAfter(user, log);

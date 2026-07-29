@@ -1,18 +1,15 @@
 /**
- * Better Auth instance — replaces Supabase Auth (GoTrue).
+ * Better Auth instance.
  *
  * Mounted at /auth/* (see routes.ts). Handles:
  *  - GitHub + LinkedIn social sign-in (webapp, mobile)
  *  - Bearer sessions for mobile/API clients (`bearer` plugin)
  *  - JWT/JWKS issuance for services that need a verifiable access token
  *  - Acting as its own OAuth 2.1 / OIDC provider (`oauth-provider` plugin) for
- *    all first-party clients — webapp, mobile, chrome-extension — each doing a
- *    real Authorization Code + PKCE exchange against this API. Replaces
- *    Supabase's OAuth server.
- *  - `expo` plugin for mobile deep-link + SecureStore session handling.
+ *    all first-party clients — webapp, mobile, chrome-extension
+ *  - `expo` plugin for mobile deep-link + SecureStore session handling
  *
- * `databaseHooks.user.create.after` replaces the old `handle_new_user()`
- * Postgres trigger: seeds `user_settings` + the "myself" `people` row.
+ * `databaseHooks.user.create.after` seeds `user_settings` + the "myself" `people` row.
  */
 
 import { apiKey } from "@better-auth/api-key";
@@ -242,8 +239,7 @@ export const auth = betterAuth({
   secrets: betterAuthSecrets,
 
   session: {
-    // Match previous Supabase access-token lifetime; refreshed transparently
-    // by the client plugins (web cookie refresh, expoClient, bearer).
+    // 30-day session; refreshed by client plugins (web cookie, expoClient, bearer).
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     // Dual-write Postgres + Redis (see docs/adr/0001-better-auth-redis-secondary-storage.md).
     storeSessionInDatabase: true,
@@ -255,9 +251,7 @@ export const auth = betterAuth({
       clientId: process.env.BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID ?? "",
       clientSecret: process.env.BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET ?? "",
     },
-    // Better Auth's built-in "linkedin" provider maps to LinkedIn's OIDC
-    // flow (`openid`, `profile`, `email` scopes) — equivalent to Supabase's
-    // `linkedin_oidc` provider.
+    // LinkedIn OIDC (`openid`, `profile`, `email` scopes).
     linkedin: {
       clientId: process.env.BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID ?? "",
       clientSecret: process.env.BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET ?? "",

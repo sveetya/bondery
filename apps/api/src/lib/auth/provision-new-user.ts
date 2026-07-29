@@ -1,7 +1,7 @@
 /**
  * Seeds app-domain rows for a newly registered Better Auth user.
  *
- * Replaces the old Supabase `handle_new_user()` trigger on `auth.users`.
+ * Seeds default user settings and the "myself" contact row for new accounts.
  * Must be idempotent: partial state (e.g. `user_settings` without `people`)
  * can exist when settings were migrated or a prior hook attempt failed
  * mid-transaction.

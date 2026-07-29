@@ -8,14 +8,12 @@
  *   fastify.addHook('onRequest', fastify.auth([fastify.verifySession]));
  *
  * Then in handlers:
- *   const { client, user } = getAuth(request);
+ *   const { user } = getAuth(request);
  */
 
 import { prisma } from "@bondery/db";
 import { betterAuthPath } from "@bondery/helpers/globals/paths";
 import type { ApiKeyPermission } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { productPermissionFromBa } from "../../auth/api-key-permissions.js";
 import { auth } from "../../auth/index.js";
@@ -25,7 +23,6 @@ import type { AppFastifyInstance } from "../fastify-types.js";
 import { assertApiKeyAccess } from "./api-key-access.js";
 import { isApiKeyBearerToken } from "./api-keys.js";
 import {
-  createDomainDataClient,
   resolveOAuthBearerUser,
   resolveRequestAuthUser,
 } from "./resolve-request-auth.js";
@@ -40,8 +37,6 @@ declare module "fastify" {
       permission: ApiKeyPermission;
       label: string;
     } | null;
-    /** Supabase data client — set by verifySession / verifyAuth strategies */
-    authClient: SupabaseClient<Database> | null;
     /** Authenticated user — set by verifySession / verifyAuth strategies */
     authUser: { id: string; email: string } | null;
   }
@@ -79,7 +74,6 @@ async function applyResolvedAuth(
   apiKey: FastifyRequest["authApiKey"] = null,
 ): Promise<void> {
   request.authUser = user;
-  request.authClient = createDomainDataClient();
   request.authApiKey = apiKey;
 }
 
@@ -91,7 +85,6 @@ async function applyResolvedAuth(
  */
 export function registerAuthStrategies(fastify: AppFastifyInstance): void {
   fastify.decorateRequest("authUser", null);
-  fastify.decorateRequest("authClient", null);
   fastify.decorateRequest("authApiKey", null);
 
   fastify.decorate(
@@ -187,22 +180,15 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
         );
         throw unauthorized("Unauthorized", "service_auth_invalid");
       }
+
       if (verifiedServiceTokens.has(token)) {
         return;
       }
 
-      const client = createClient(fastify.config.BONDERY_PUBLIC_SUPABASE_URL, token, {
-        auth: { autoRefreshToken: false, detectSessionInUrl: false, persistSession: false },
-      });
-
-      const { error } = await client.auth.admin.listUsers({ page: 1, perPage: 1 });
-      if (error) {
+      const expected = fastify.config.BONDERY_PRIVATE_SERVICE_SECRET;
+      if (!expected || token !== expected) {
         request.log.warn(
-          {
-            reason: "GoTrue admin call rejected token",
-            supabaseError: error.message,
-            url: request.url,
-          },
+          { reason: "service secret mismatch", url: request.url },
           "verifyServiceSecret: rejected",
         );
         throw unauthorized("Unauthorized", "service_auth_invalid");
@@ -249,18 +235,16 @@ export async function verifyAuthAtStartup(fastify: AppFastifyInstance): Promise<
 // ── Helper for handlers ──────────────────────────────────────────────────────
 
 /**
- * Retrieve the authenticated user and data client from the request.
+ * Retrieve the authenticated user from the request.
  * Only call this inside handlers protected by verifySession.
  */
 export function getAuth(request: FastifyRequest): {
   user: { id: string; email: string };
-  client: SupabaseClient<Database>;
 } {
-  const client = request.authClient;
   const user = request.authUser;
-  if (!client || !user) {
+  if (!user) {
     throw new Error("getAuth called without verifySession");
   }
 
-  return { client, user };
+  return { user };
 }
