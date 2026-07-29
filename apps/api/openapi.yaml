@@ -10,11 +10,12 @@ info:
     ## Authentication
 
 
-    Most endpoints require authentication via a Better Auth session cookie or a Bearer token (session JWT or long-lived API
-    key).
+    Most endpoints require authentication via a Better Auth session cookie or a Bearer token (session JWT or long-lived
+    API key).
 
 
-    **Session auth:** Sign in via the webapp or mobile app; send session cookies or an OAuth access token.
+    **Session auth:** Sign in via the webapp or mobile app; send the OAuth access token as `Authorization: Bearer …` or
+    rely on the webapp session cookie.
 
 
     **API keys:** Create keys in Settings → API keys. Send `Authorization: Bearer bondery_key_…` on allowed integration
@@ -39,7 +40,8 @@ components:
       type: http
     bearerAuth:
       bearerFormat: JWT
-      description: "Better Auth session access token from the webapp or mobile app. Send as `Authorization: Bearer <access_token>`."
+      description: "Better Auth session access token (OAuth 2.1) from the webapp or mobile app. Send as `Authorization: Bearer
+        <access_token>`."
       scheme: bearer
       type: http
   schemas:
@@ -790,8 +792,8 @@ paths:
       description: "Readiness probe. Checks configured dependencies and returns per-service status. Results are cached in
         memory for one minute. Rate limited to one request per minute per client. Returns HTTP 503 when critical
         dependencies are unavailable (`status: unhealthy`). Returns HTTP 200 when all critical dependencies are healthy
-        (`status: ok` or `status: degraded`). Postgres via Prisma `SELECT 1`; object storage via `GET
-        /storage/v1/health` on the storage gateway."
+        (`status: ok` or `status: degraded`). Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway
+        `GET /status`."
       responses:
         "200":
           description: Readiness report when dependencies are healthy or degraded
@@ -866,7 +868,7 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      stripe:
+                      postgres:
                         type: object
                         properties:
                           configured:
@@ -881,20 +883,6 @@ paths:
                           - ok
                         additionalProperties: false
                       posthog:
-                        type: object
-                        properties:
-                          configured:
-                            type: boolean
-                          error:
-                            type: string
-                          latencyMs:
-                            type: number
-                          ok:
-                            type: boolean
-                        required:
-                          - ok
-                        additionalProperties: false
-                      postgres:
                         type: object
                         properties:
                           configured:
@@ -950,15 +938,29 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
+                      stripe:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
+                        required:
+                          - ok
+                        additionalProperties: false
                     required:
                       - anthropic
                       - mapy
-                      - stripe
-                      - posthog
                       - postgres
+                      - posthog
                       - redis
                       - smtp
                       - storage
+                      - stripe
                     additionalProperties: false
                   status:
                     type: string
@@ -1159,7 +1161,7 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      stripe:
+                      postgres:
                         type: object
                         properties:
                           configured:
@@ -1174,20 +1176,6 @@ paths:
                           - ok
                         additionalProperties: false
                       posthog:
-                        type: object
-                        properties:
-                          configured:
-                            type: boolean
-                          error:
-                            type: string
-                          latencyMs:
-                            type: number
-                          ok:
-                            type: boolean
-                        required:
-                          - ok
-                        additionalProperties: false
-                      postgres:
                         type: object
                         properties:
                           configured:
@@ -1243,15 +1231,29 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
+                      stripe:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
+                        required:
+                          - ok
+                        additionalProperties: false
                     required:
                       - anthropic
                       - mapy
-                      - stripe
-                      - posthog
                       - postgres
+                      - posthog
                       - redis
                       - smtp
                       - storage
+                      - stripe
                     additionalProperties: false
                   status:
                     type: string
@@ -18450,15 +18452,17 @@ paths:
                   aiMessagesUsed: 12
                   aiMonthlyResetAt: 2026-01-15T12:00:00.000Z
                   amount: 900
+                  billingStatus: active
                   cancelAtPeriodEnd: false
                   canUseChat: true
                   currency: usd
                   currentPeriodEnd: 2026-01-15T12:00:00.000Z
+                  paymentBlocked: false
                   plan: premium
-                  billingStatus: active
                   productName: Bondery Premium
                   recurringInterval: month
                   trialEndsAt: null
+                  upgradesEnabled: false
                 success: true
               schema:
                 type: object
@@ -18477,22 +18481,6 @@ paths:
                       amount:
                         nullable: true
                         type: number
-                      cancelAtPeriodEnd:
-                        type: boolean
-                      canUseChat:
-                        type: boolean
-                      currency:
-                        nullable: true
-                        type: string
-                      currentPeriodEnd:
-                        nullable: true
-                        type: string
-                        pattern: ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$
-                      plan:
-                        type: string
-                        enum:
-                          - free
-                          - premium
                       billingStatus:
                         nullable: true
                         type: string
@@ -18504,6 +18492,24 @@ paths:
                           - past_due
                           - canceled
                           - unpaid
+                      cancelAtPeriodEnd:
+                        type: boolean
+                      canUseChat:
+                        type: boolean
+                      currency:
+                        nullable: true
+                        type: string
+                      currentPeriodEnd:
+                        nullable: true
+                        type: string
+                        pattern: ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$
+                      paymentBlocked:
+                        type: boolean
+                      plan:
+                        type: string
+                        enum:
+                          - free
+                          - premium
                       productName:
                         nullable: true
                         type: string
@@ -18511,28 +18517,30 @@ paths:
                         nullable: true
                         type: string
                         enum:
-                          - day
-                          - week
                           - month
                           - year
                       trialEndsAt:
                         nullable: true
                         type: string
                         pattern: ^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$
+                      upgradesEnabled:
+                        type: boolean
                     required:
                       - aiMessageLimit
                       - aiMessagesUsed
                       - aiMonthlyResetAt
                       - amount
+                      - billingStatus
                       - cancelAtPeriodEnd
                       - canUseChat
                       - currency
                       - currentPeriodEnd
+                      - paymentBlocked
                       - plan
-                      - billingStatus
                       - productName
                       - recurringInterval
                       - trialEndsAt
+                      - upgradesEnabled
                     additionalProperties: false
                   success:
                     type: boolean
@@ -18546,15 +18554,17 @@ paths:
                     aiMessagesUsed: 12
                     aiMonthlyResetAt: 2026-01-15T12:00:00.000Z
                     amount: 900
+                    billingStatus: active
                     cancelAtPeriodEnd: false
                     canUseChat: true
                     currency: usd
                     currentPeriodEnd: 2026-01-15T12:00:00.000Z
+                    paymentBlocked: false
                     plan: premium
-                    billingStatus: active
                     productName: Bondery Premium
                     recurringInterval: month
                     trialEndsAt: null
+                    upgradesEnabled: false
                   success: true
         "400":
           description: Invalid request
@@ -18654,6 +18664,20 @@ paths:
       tags:
         - Subscriptions
       description: Create a Stripe embedded Checkout session for upgrade.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interval:
+                  type: string
+                  enum:
+                    - month
+                    - year
+              required:
+                - interval
       security: *a2
       responses:
         "200":
@@ -19835,8 +19859,8 @@ servers:
     url: https://api.usebondery.com
 tags:
   - description: Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency
-      checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to one
-      request per minute per client; returns 503 when critical dependencies are unavailable.
+      checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate
+      limited to one request per minute per client; returns 503 when critical dependencies are unavailable.
     name: Health
   - description: Contact management operations
     name: Contacts

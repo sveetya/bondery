@@ -6,8 +6,8 @@ import { ActionIcon, Group, Paper, Progress, Stack, Text, Title } from "@mantine
 import { IconX } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
-import { openNewActivityModal } from "@/app/(app)/app/interactions/components/NewActivityModal";
-import { openAddContactModal } from "@/app/(app)/app/people/components/modals/AddContactModal";
+import { openNewActivityModal } from "@/app/(app)/app/(shell)/interactions/components/NewActivityModal";
+import { openAddContactModal } from "@/app/(app)/app/(shell)/people/components/modals/AddContactModal";
 import {
   buildGettingStartedState,
   type GettingStartedTaskId,

@@ -13,8 +13,8 @@ import {
   IconUserSearch,
 } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import { openNewActivityModal } from "@/app/(app)/app/interactions/components/NewActivityModal";
-import { openAddContactModal } from "@/app/(app)/app/people/components/modals/AddContactModal";
+import { openNewActivityModal } from "@/app/(app)/app/(shell)/interactions/components/NewActivityModal";
+import { openAddContactModal } from "@/app/(app)/app/(shell)/people/components/modals/AddContactModal";
 import {
   useAppNavigationTranslations,
   useCommandPaletteTranslations,

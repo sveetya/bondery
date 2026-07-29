@@ -12,15 +12,17 @@ const STRICT = process.env.CHECK_MODAL_PATTERNS_STRICT === "1";
 
 type Violation = { file: string; rule: string; detail: string };
 
-const ALLOWED_DECLARATIVE_MODAL_FILES = new Set(["app/(app)/app/onboarding/OnboardingClient.tsx"]);
+const ALLOWED_DECLARATIVE_MODAL_FILES = new Set([
+  "app/(app)/app/(shell)/onboarding/OnboardingClient.tsx",
+]);
 
 const ALLOWED_UPDATE_MODAL_FILES = new Set([
   "lib/modals/useModalBlocking.ts",
-  "app/(app)/app/people/components/modals/AddPeopleToGroupSelectionModal.tsx",
-  "app/(app)/app/settings/components/modals/openApiKeyModal.tsx",
-  "app/(app)/app/settings/components/modals/LinkedInImportModal.tsx",
-  "app/(app)/app/settings/components/modals/InstagramImportModal.tsx",
-  "app/(app)/app/settings/components/modals/VCardImportModal.tsx",
+  "app/(app)/app/(shell)/people/components/modals/AddPeopleToGroupSelectionModal.tsx",
+  "app/(app)/app/(shell)/settings/components/modals/openApiKeyModal.tsx",
+  "app/(app)/app/(shell)/settings/components/modals/LinkedInImportModal.tsx",
+  "app/(app)/app/(shell)/settings/components/modals/InstagramImportModal.tsx",
+  "app/(app)/app/(shell)/settings/components/modals/VCardImportModal.tsx",
   "components/photo/openPhotoUploadModal.tsx",
 ]);
 
@@ -80,7 +82,7 @@ function checkFile(absPath: string): Violation[] {
 
   if (
     DISMISS_OPEN_PATTERN.test(content) &&
-    rel !== "app/(app)/app/onboarding/OnboardingClient.tsx"
+    rel !== "app/(app)/app/(shell)/onboarding/OnboardingClient.tsx"
   ) {
     violations.push({
       detail:

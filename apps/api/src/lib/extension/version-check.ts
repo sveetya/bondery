@@ -10,6 +10,10 @@
  */
 
 import { CHROME_EXTENSION_URL, isVersionBelow, MIN_EXTENSION_VERSION } from "@bondery/helpers";
+import {
+  BETTER_AUTH_BASE_PATH,
+  betterAuthAuthorizationServerMetadataPath,
+} from "@bondery/helpers/globals/paths";
 import { getErrorDocUrl } from "@bondery/schemas/errors";
 import { URLS } from "../platform/config.js";
 import { unauthorized } from "../platform/errors/http-errors.js";
@@ -17,6 +21,15 @@ import type { AppFastifyInstance } from "../platform/fastify-types.js";
 
 function websiteBaseUrl(): string {
   return (URLS.website ?? "https://usebondery.com").replace(/\/$/, "");
+}
+
+function isPublicAuthPath(url: string): boolean {
+  const path = url.split("?")[0] ?? url;
+  return (
+    path === BETTER_AUTH_BASE_PATH ||
+    path.startsWith(`${BETTER_AUTH_BASE_PATH}/`) ||
+    path === betterAuthAuthorizationServerMetadataPath()
+  );
 }
 
 /**
@@ -30,8 +43,8 @@ export function registerExtensionVersionCheck(fastify: AppFastifyInstance): void
       return;
     }
 
-    // Skip unauthenticated health-check routes
-    if (request.url === "/status" || request.url === "/health") {
+    // Skip unauthenticated health-check routes and public Better Auth / OIDC discovery
+    if (request.url === "/status" || request.url === "/health" || isPublicAuthPath(request.url)) {
       return;
     }
 

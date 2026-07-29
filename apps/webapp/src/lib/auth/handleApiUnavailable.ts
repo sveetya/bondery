@@ -21,3 +21,8 @@ export function handleApiUnavailable(): void {
   isNavigatingToUnavailable = true;
   window.location.assign(buildUnavailableUrl(captureClientReturnPath()));
 }
+
+/** Clears the one-shot navigation guard after the user leaves the unavailable page. */
+export function resetApiUnavailableNavigation(): void {
+  isNavigatingToUnavailable = false;
+}

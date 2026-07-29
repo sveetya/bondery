@@ -210,7 +210,7 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
 }
 
 /**
- * Verifies Better Auth JWKS is reachable at startup.
+ * Verifies Better Auth JWKS is reachable at startup. Call after listen().
  */
 export async function verifyAuthAtStartup(fastify: AppFastifyInstance): Promise<void> {
   const baseUrl = fastify.config.BONDERY_PUBLIC_API_URL.replace(/\/+$/, "");

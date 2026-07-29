@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 import { checkEnvVariables } from "@bondery/helpers/env";
 import { buildApp } from "./build-app.js";
 import { buildServer } from "./build-server.js";
+import { verifyAuthAtStartup } from "./lib/platform/auth/strategies.js";
 import logger from "./lib/platform/logger.js";
 import { getApiRequiredEnvVars } from "./lib/platform/required-env.js";
 
@@ -53,6 +54,7 @@ async function start() {
 
   try {
     await server.listen({ host, port });
+    await verifyAuthAtStartup(server);
     server.log.info(`Bondery API running at http://${host}:${port}`);
   } catch (err) {
     server.log.error(err);
