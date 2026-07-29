@@ -1,13 +1,7 @@
-import type {
-  AvatarTransformOptions,
-  Contact,
-  ContactAddressEntry,
-  Database,
-  EmailEntry,
-  PhoneEntry,
-} from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { CONTACT_SELECT, type ContactWithId } from "../data/select-fragments.js";
+import type { PrismaClient } from "@bondery/db";
+import type { AvatarTransformOptions, Contact } from "@bondery/schemas";
+import { contactDetailSelect, mapContactDetailRecord } from "../data/prisma-mappers.js";
+import type { ContactWithId } from "../data/select-fragments.js";
 import { resolveContactAvatarUrl } from "../storage/avatar-urls.js";
 import {
   type ContactExtrasPayload,
@@ -16,8 +10,8 @@ import {
 } from "./fetch-contact-extras.js";
 
 type ChannelsAndSocialExtras = {
-  phones: PhoneEntry[];
-  emails: EmailEntry[];
+  phones: ContactExtrasPayload["phones"];
+  emails: ContactExtrasPayload["emails"];
   avatar: string | null;
   linkedin: string | null;
   instagram: string | null;
@@ -28,7 +22,7 @@ type ChannelsAndSocialExtras = {
 };
 
 export type FullContactExtras = ChannelsAndSocialExtras & {
-  addresses: ContactAddressEntry[];
+  addresses: ContactExtrasPayload["addresses"];
 };
 
 function withEmptyChannels<T extends { id: string }>(
@@ -72,16 +66,14 @@ function withEmptySocials<
 }
 
 function mergeExtrasIntoContact<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
   userId: string,
   contact: T,
   extras: ContactExtrasPayload,
   options?: { addresses?: boolean; avatarOptions?: AvatarTransformOptions },
-): T & ChannelsAndSocialExtras & { addresses?: ContactAddressEntry[] } {
+): T & ChannelsAndSocialExtras & { addresses?: ContactExtrasPayload["addresses"] } {
   const base: T & ChannelsAndSocialExtras = {
     ...contact,
     avatar: resolveContactAvatarUrl(
-      client,
       userId,
       {
         hasAvatar: contact.hasAvatar,
@@ -115,21 +107,21 @@ function mergeExtrasIntoContact<T extends ContactWithId>(
  * and socials via a single RPC batch load.
  */
 export async function attachContactExtras<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contacts: T[],
   options: { addresses: true; avatarOptions?: AvatarTransformOptions },
 ): Promise<Array<T & FullContactExtras>>;
 
 export async function attachContactExtras<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contacts: T[],
   options?: { addresses?: false; avatarOptions?: AvatarTransformOptions },
 ): Promise<Array<T & ChannelsAndSocialExtras>>;
 
 export async function attachContactExtras<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contacts: T[],
   options?: { addresses?: boolean; avatarOptions?: AvatarTransformOptions },
@@ -140,14 +132,13 @@ export async function attachContactExtras<T extends ContactWithId>(
 
   const includeAddresses = options?.addresses === true;
   const extrasByPersonId = await fetchContactExtras(
-    client,
+    db,
     userId,
     contacts.map((contact) => contact.id),
   );
 
   return contacts.map((contact) =>
     mergeExtrasIntoContact(
-      client,
       userId,
       contact,
       extrasByPersonId.get(contact.id) ?? getEmptyContactExtras(),
@@ -157,31 +148,33 @@ export async function attachContactExtras<T extends ContactWithId>(
 }
 
 export async function loadEnrichedContact(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contactId: string,
   options?: { avatarOptions?: AvatarTransformOptions },
   log?: { error: (obj: unknown, msg: string) => void },
 ): Promise<Contact | null> {
-  const { data: contact, error } = await client
-    .from("people")
-    .select(CONTACT_SELECT)
-    .eq("id", contactId)
-    .single();
+  const contact = await db.people.findFirst({
+    select: contactDetailSelect,
+    where: { id: contactId, userId },
+  });
 
-  if (error || !contact) {
+  if (!contact) {
     return null;
   }
 
+  const mapped = mapContactDetailRecord(contact);
+
   try {
-    const [enrichedContact] = await attachContactExtras(client, userId, [contact], {
+    const [enrichedContact] = await attachContactExtras(db, userId, [mapped], {
       addresses: true,
       avatarOptions: options?.avatarOptions,
     });
     return enrichedContact as Contact;
   } catch (error) {
-    // Single-contact reads degrade gracefully so detail/vCard routes still return base identity.
     log?.error({ err: error }, "Failed to attach contact extras");
-    return withEmptySocials(withEmptyChannels([contact]))[0] as Contact;
+    return withEmptySocials(withEmptyChannels([mapped]))[0] as Contact;
   }
 }
+
+export { withEmptyChannels, withEmptySocials };

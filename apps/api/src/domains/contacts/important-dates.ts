@@ -1,5 +1,5 @@
 import type { ImportantDateType } from "@bondery/schemas";
-import { IMPORTANT_DATE_SELECT, toImportantDate } from "../../lib/contacts/important-dates.js";
+import { toImportantDate } from "../../lib/contacts/important-dates.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import {
   buildChildTableReplaceChanges,
@@ -7,6 +7,8 @@ import {
 } from "../../lib/sync/build-changes.js";
 import { persistSyncChanges } from "../../lib/sync/persist-changes.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
+import { isUniqueViolation, toSyncRow } from "../_shared/prisma-helpers.js";
 import { captureCurrentSyncTxid } from "../_shared/with-txid.js";
 
 export interface ReplaceImportantDateInput {
@@ -15,6 +17,33 @@ export interface ReplaceImportantDateInput {
   note?: string | null;
   notifyDaysBefore?: number | null;
   type: ImportantDateType;
+}
+
+function toImportantDateFromRow(row: {
+  id: string;
+  userId: string;
+  personId: string;
+  type: string;
+  date: Date;
+  note: string | null;
+  notifyOn: Date | null;
+  notifyDaysBefore: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  const sync = toSyncRow(row as unknown as Record<string, unknown>);
+  return toImportantDate({
+    created_at: String(sync.created_at),
+    date: String(sync.date).slice(0, 10),
+    id: String(sync.id),
+    note: (sync.note as string | null) ?? null,
+    notify_days_before: (sync.notify_days_before as number | null) ?? null,
+    notify_on: sync.notify_on ? String(sync.notify_on).slice(0, 10) : null,
+    person_id: String(sync.person_id),
+    type: String(sync.type),
+    updated_at: String(sync.updated_at),
+    user_id: String(sync.user_id),
+  });
 }
 
 export async function replaceImportantDates(
@@ -26,33 +55,23 @@ export async function replaceImportantDates(
   txid: string;
   serverSequence: number;
 }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: person, error: personError } = await client
-    .from("people")
-    .select("id")
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const person = await db.people.findFirst({
+    select: { id: true },
+    where: { id: personId, userId: user.id },
+  });
 
-  if (personError) {
-    throw internal("contact_failed", personError.message);
-  }
   if (!person) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
-  const priorIds = await listContactChildIds(client, user.id, personId, "people_important_dates");
+  const priorIds = await listContactChildIds(user.id, personId, "people_important_dates", db);
 
-  const { error: deleteError } = await client
-    .from("people_important_dates")
-    .delete()
-    .eq("user_id", user.id)
-    .eq("person_id", personId);
-
-  if (deleteError) {
-    throw internal("contact_failed", deleteError.message);
-  }
+  await db.peopleImportantDate.deleteMany({
+    where: { personId, userId: user.id },
+  });
 
   if (dates.length === 0) {
     const changes = priorIds.map((id) => ({
@@ -61,48 +80,63 @@ export async function replaceImportantDates(
       table: "people_important_dates" as const,
       value: null,
     }));
-    const txid = await captureCurrentSyncTxid(client);
+    const txid = await captureCurrentSyncTxid();
     const serverSequence =
       (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
     return { data: { dates: [] }, serverSequence, txid };
   }
 
-  const replaceRows = dates.map((event) => ({
-    ...(event.id ? { id: event.id } : {}),
-    date: event.date,
-    note: event.note?.trim() ? event.note.trim() : null,
-    notify_days_before: event.notifyDaysBefore ?? null,
-    person_id: personId,
-    type: event.type,
-    user_id: user.id,
-  }));
+  let insertedRows: Array<{
+    id: string;
+    userId: string;
+    personId: string;
+    type: string;
+    date: Date;
+    note: string | null;
+    notifyOn: Date | null;
+    notifyDaysBefore: number | null;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
 
-  const { data: insertedRows, error: insertError } = await client
-    .from("people_important_dates")
-    .insert(replaceRows)
-    .select(IMPORTANT_DATE_SELECT)
-    .order("created_at", { ascending: true });
-
-  if (insertError) {
-    if (insertError.code === "23505") {
+  try {
+    insertedRows = await db.$transaction(
+      dates.map((event) =>
+        db.peopleImportantDate.create({
+          data: {
+            ...(event.id ? { id: event.id } : {}),
+            date: new Date(event.date),
+            note: event.note?.trim() ? event.note.trim() : null,
+            notifyDaysBefore: event.notifyDaysBefore ?? null,
+            personId,
+            type: event.type,
+            userId: user.id,
+          },
+        }),
+      ),
+    );
+  } catch (error) {
+    if (isUniqueViolation(error)) {
       throw new DomainError("Duplicate important date", 409, "important_date_duplicate");
     }
-    throw internal("contact_failed", insertError.message);
+    throw internal("contact_failed", error instanceof Error ? error.message : "contact_failed");
   }
 
+  insertedRows.sort((left, right) => left.createdAt.getTime() - right.createdAt.getTime());
+
   const changes = await buildChildTableReplaceChanges(
-    client,
     user.id,
     personId,
     "people_important_dates",
     priorIds,
+    db,
   );
-  const txid = await captureCurrentSyncTxid(client);
+  const txid = await captureCurrentSyncTxid();
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 
   return {
-    data: { dates: (insertedRows || []).map(toImportantDate) },
+    data: { dates: insertedRows.map(toImportantDateFromRow) },
     serverSequence,
     txid,
   };

@@ -35,7 +35,7 @@ export function registerExtensionVersionCheck(fastify: AppFastifyInstance): void
       return;
     }
 
-    // Inbound webhooks from third-party services (e.g. Polar) have no Cookie
+    // Inbound webhooks from third-party services (e.g. Stripe) have no Cookie
     // header and no extension version header. They authenticate via HMAC
     // signatures verified inside their own route handlers.
     if (request.url.startsWith("/api/webhooks/")) {

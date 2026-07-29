@@ -1,20 +1,21 @@
 import { contactListItemSchema } from "@bondery/schemas";
 import type { PeopleListQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras } from "../../lib/contacts/enrichment.js";
 import { buildPaginatedResponse } from "../../lib/data/pagination.js";
-import { CONTACT_SELECT, extractAvatarOptions } from "../../lib/data/select-fragments.js";
+import { contactListSelect, mapContactListRecord } from "../../lib/data/prisma-mappers.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import type { ServiceLog } from "./queries-shared.js";
 import { buildPeopleListPagination, queryPeoplePage } from "./query-people-page.js";
 
-export async function listContacts(
-  client: SupabaseClient<Database>,
-  userId: string,
-  query: PeopleListQuery,
-  log?: ServiceLog,
-) {
+type ContactListContext = Pick<DomainContext, "db" | "user"> & { log?: ServiceLog };
+
+export async function listContacts(ctx: ContactListContext, query: PeopleListQuery) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
+  const log = ctx.log;
   const avatarOptions = extractAvatarOptions(query);
 
   const now = new Date();
@@ -23,35 +24,28 @@ export async function listContacts(
   const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
   const nextYearStart = new Date(Date.UTC(now.getUTCFullYear() + 1, 0, 1));
 
-  const [
-    { count: totalContactsCount },
-    { count: monthInteractionsCount },
-    { count: newContactsYearCount },
-    page,
-  ] = await Promise.all([
-    client
-      .from("people")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("myself", false),
-    client
-      .from("interactions")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .gte("date", monthStart.toISOString())
-      .lt("date", nextMonthStart.toISOString()),
-    client
-      .from("people")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("myself", false)
-      .not("created_at", "is", null)
-      .gte("created_at", yearStart.toISOString())
-      .lt("created_at", nextYearStart.toISOString()),
-    queryPeoplePage(client, userId, query, CONTACT_SELECT, log),
-  ]);
+  const [totalContactsCount, monthInteractionsCount, newContactsYearCount, page] =
+    await Promise.all([
+      db.people.count({
+        where: { myself: false, userId: user.id },
+      }),
+      db.interaction.count({
+        where: {
+          date: { gte: monthStart, lt: nextMonthStart },
+          userId: user.id,
+        },
+      }),
+      db.people.count({
+        where: {
+          createdAt: { gte: yearStart, lt: nextYearStart },
+          myself: false,
+          userId: user.id,
+        },
+      }),
+      queryPeoplePage(ctx, query, { map: mapContactListRecord, select: contactListSelect }, log),
+    ]);
 
-  const enrichedContacts = await attachContactExtras(client, userId, page.rows, {
+  const enrichedContacts = await attachContactExtras(db, user.id, page.rows, {
     addresses: true,
     avatarOptions,
   });
@@ -65,9 +59,9 @@ export async function listContacts(
       pagination,
     ),
     stats: {
-      newContactsThisYear: newContactsYearCount || 0,
-      thisMonthInteractions: monthInteractionsCount || 0,
-      totalContacts: totalContactsCount || 0,
+      newContactsThisYear: newContactsYearCount,
+      thisMonthInteractions: monthInteractionsCount,
+      totalContacts: totalContactsCount,
     },
   };
 }

@@ -1,12 +1,13 @@
+import { prisma } from "@bondery/db";
 import { syncPullQuerySchema } from "@bondery/schemas/http";
 import type { SyncBatch, SyncChange, SyncPullResponse } from "@bondery/schemas/sync";
 import { syncPullResponseSchema } from "@bondery/schemas/sync";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { fetchSyncChangeLogRows, type SyncChangeLogRow } from "../../lib/data/prisma-sync.js";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import { badRequest } from "../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getLastServerSequence } from "../../lib/sync/idempotency.js";
 import { logSyncPull } from "../../lib/sync/metrics.js";
 import { validateSyncProtocolHeaders } from "../../lib/sync/protocol.js";
@@ -17,16 +18,7 @@ const MAX_LIMIT = 100;
 const MAX_WAIT_MS = 30_000;
 const POLL_INTERVAL_MS = 500;
 
-type ChangeLogRow = {
-  server_sequence: number;
-  change_index: number;
-  table_name: string;
-  operation: "insert" | "update" | "delete";
-  entity_id: string;
-  row_data: Record<string, unknown> | null;
-};
-
-function groupRowsIntoBatches(rows: ChangeLogRow[]): SyncBatch[] {
+function groupRowsIntoBatches(rows: SyncChangeLogRow[]): SyncBatch[] {
   const batchMap = new Map<number, SyncBatch>();
 
   for (const row of rows) {
@@ -50,45 +42,6 @@ function groupRowsIntoBatches(rows: ChangeLogRow[]): SyncBatch[] {
   }
 
   return Array.from(batchMap.values()).sort((a, b) => a.serverSequence - b.serverSequence);
-}
-
-async function fetchChangeRows(
-  admin: ReturnType<typeof createAdminClient>,
-  userId: string,
-  since: number,
-  limit: number,
-): Promise<ChangeLogRow[]> {
-  const { data, error } = await admin
-    .from("sync_change_log")
-    .select("server_sequence, change_index, table_name, operation, entity_id, row_data")
-    .eq("user_id", userId)
-    .gt("server_sequence", since)
-    .order("server_sequence", { ascending: true })
-    .order("change_index", { ascending: true })
-    .limit(limit * 20);
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  const rows = (data ?? []) as ChangeLogRow[];
-  const sequences = new Set<number>();
-  const filtered: ChangeLogRow[] = [];
-
-  for (const row of rows) {
-    if (!sequences.has(row.server_sequence)) {
-      if (sequences.size >= limit) {
-        break;
-      }
-      sequences.add(row.server_sequence);
-    }
-
-    if (sequences.has(row.server_sequence)) {
-      filtered.push(row);
-    }
-  }
-
-  return filtered;
 }
 
 function sleep(ms: number): Promise<void> {
@@ -125,8 +78,7 @@ export const syncPullRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
       }
 
       const { user } = getAuth(request);
-      const admin = createAdminClient();
-      const head = await getLastServerSequence(admin, user.id);
+      const head = await getLastServerSequence(prisma, user.id);
 
       if (since > head) {
         const response: SyncPullResponse = {
@@ -138,10 +90,10 @@ export const syncPullRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
       }
 
       const deadline = Date.now() + waitMs;
-      let rows: ChangeLogRow[] = [];
+      let rows: SyncChangeLogRow[] = [];
 
       while (true) {
-        rows = await fetchChangeRows(admin, user.id, since, limit);
+        rows = await fetchSyncChangeLogRows(prisma, user.id, since, limit);
         if (rows.length > 0 || waitMs === 0 || Date.now() >= deadline) {
           break;
         }

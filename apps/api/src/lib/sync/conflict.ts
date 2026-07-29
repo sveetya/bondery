@@ -1,7 +1,6 @@
-import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
+import type { PrismaClient } from "@bondery/db";
 import { DomainError } from "../../domains/_shared/context.js";
 import { loadEnrichedContact } from "../contacts/enrichment.js";
-import { internal } from "../platform/errors/http-errors.js";
 
 export class SyncConflictError extends DomainError {
   constructor(
@@ -14,30 +13,21 @@ export class SyncConflictError extends DomainError {
 }
 
 export async function checkContactUpdateConflict(
-  client: DomainSupabaseClient,
+  db: PrismaClient,
   userId: string,
   personId: string,
   baseUpdatedAt: string,
 ): Promise<void> {
-  const { data, error } = await client
-    .from("people")
-    .select("updated_at")
-    .eq("id", personId)
-    .eq("user_id", userId)
-    .maybeSingle();
+  const person = await db.people.findFirst({
+    select: { updatedAt: true },
+    where: { id: personId, userId },
+  });
 
-  if (error) {
-    throw internal("sync_failed", error.message);
-  }
-
-  if (!data) {
+  if (!person) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
-  const serverUpdatedAt = data.updated_at;
-  if (!serverUpdatedAt) {
-    return;
-  }
+  const serverUpdatedAt = person.updatedAt.toISOString();
 
   const baseMs = Date.parse(baseUpdatedAt);
   const serverMs = Date.parse(serverUpdatedAt);
@@ -47,7 +37,7 @@ export async function checkContactUpdateConflict(
   }
 
   if (serverMs > baseMs) {
-    const serverContact = await loadEnrichedContact(client, userId, personId);
+    const serverContact = await loadEnrichedContact(db, userId, personId);
     if (!serverContact) {
       throw new DomainError("Contact not found", 404, "contact_not_found");
     }

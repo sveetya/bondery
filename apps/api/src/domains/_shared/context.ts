@@ -1,9 +1,6 @@
-import type { Database } from "@bondery/schemas/database";
+import type { PrismaClient } from "@bondery/db";
 import type { ApiErrorCode, ApiErrorType } from "@bondery/schemas/errors";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import type { FastifyBaseLogger } from "fastify";
-
-export type DomainSupabaseClient = SupabaseClient<Database>;
 
 export interface DomainAuthUser {
   email: string;
@@ -11,7 +8,8 @@ export interface DomainAuthUser {
 }
 
 export interface DomainContext {
-  client: DomainSupabaseClient;
+  /** Primary data access — set by `domainContextFromRequest`. */
+  db?: PrismaClient;
   log?: FastifyBaseLogger;
   user: DomainAuthUser;
   wakeMeta?: {

@@ -17,7 +17,6 @@ import {
 } from "@bondery/schemas/http";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
 import { notFound } from "../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../lib/platform/openapi/responses.js";
@@ -49,10 +48,9 @@ export const interactionRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(interactionsListResponseSchema, "Paginated interactions"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    async (request) => {
-      const { client, user } = getAuth(request);
-      return listInteractions(client, user.id, request.query, request.log);
-    },
+    withDomainRoute({ query: interactionsListQuerySchema }, async (ctx, { query, request }) =>
+      listInteractions(ctx, query, request.log),
+    ),
   );
 
   /**
@@ -94,19 +92,19 @@ export const interactionRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(interactionResponseSchema, "Interaction details"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    async (request) => {
-      const { client, user } = getAuth(request);
-      const { id } = request.params;
+    withDomainRoute(
+      { params: uuidParamSchema, query: avatarTransformQuerySchema },
+      async (ctx, { params, query }) => {
+        const avatarOptions = extractAvatarOptions(query);
+        const interaction = await loadFormattedInteraction(ctx, params.id, avatarOptions);
 
-      const avatarOptions = extractAvatarOptions(request.query);
-      const interaction = await loadFormattedInteraction(client, user.id, id, avatarOptions);
+        if (!interaction) {
+          throw notFound("Interaction not found", "not_found");
+        }
 
-      if (!interaction) {
-        throw notFound("Interaction not found", "not_found");
-      }
-
-      return { interaction };
-    },
+        return { interaction };
+      },
+    ),
   );
 
   /**

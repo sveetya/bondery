@@ -1,214 +1,126 @@
+import type { Prisma } from "@bondery/db";
 import { createSocialUrl } from "@bondery/helpers";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { tool } from "ai";
 import { z } from "zod";
+import type { DomainContext } from "../../../domains/_shared/context.js";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import { createContact } from "../../../domains/contacts/index.js";
-import { searchPeopleIds } from "../../../lib/data/search.js";
+import { searchPeopleIdsWithDb } from "../../../lib/data/search-prisma.js";
 import { resolveContactAvatarUrl } from "../../../lib/storage/avatar-urls.js";
-import { chatDomainContext, formatToolDomainError } from "../domain-context.js";
+import { formatToolDomainError } from "../domain-context.js";
 
-type GroupJoinRow = {
+const contactDetailsInclude = {
+  addresses: true,
+  emails: { select: { preferred: true, type: true, value: true } },
   groups: {
-    id: string;
-    label: string;
-    emoji: string | null;
-    color: string | null;
-  } | null;
-};
-
-type TagJoinRow = {
+    include: {
+      group: { select: { color: true, emoji: true, id: true, label: true } },
+    },
+  },
+  importantDates: true,
+  linkedin: {
+    include: {
+      educationHistory: true,
+      workHistory: true,
+    },
+  },
+  phones: { select: { preferred: true, prefix: true, type: true, value: true } },
+  socials: { select: { handle: true, platform: true } },
   tags: {
-    id: string;
-    label: string;
-    color: string | null;
-  } | null;
-};
+    include: {
+      tag: { select: { color: true, id: true, label: true } },
+    },
+  },
+} satisfies Prisma.PeopleInclude;
 
-type LinkedInEducationRow = {
-  degree: string | null;
-  description: string | null;
-  end_date: string | null;
-  school_linkedin_id: string | null;
-  school_name: string | null;
-  start_date: string | null;
-};
+async function fetchContactDetails(ctx: DomainContext, contactId: string) {
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-type LinkedInWorkRow = {
-  company_linkedin_id: string | null;
-  company_name: string | null;
-  description: string | null;
-  employment_type: string | null;
-  end_date: string | null;
-  location: string | null;
-  start_date: string | null;
-  title: string | null;
-};
+  const person = await db.people.findFirst({
+    include: contactDetailsInclude,
+    where: { id: contactId, userId: user.id },
+  });
 
-type LinkedInDetailRow = {
-  bio: string | null;
-  updated_at: string | null;
-  people_education_history?: LinkedInEducationRow[] | null;
-  people_work_history?: LinkedInWorkRow[] | null;
-};
-
-type SearchContactRow = {
-  id: string;
-  first_name: string | null;
-  middle_name: string | null;
-  last_name: string | null;
-  headline: string | null;
-  location: string | null;
-  language: string | null;
-  last_interaction: string | null;
-  keep_frequency_days: number | null;
-  created_at: string | null;
-  has_avatar: boolean;
-  updated_at: string | null;
-  people_tags?: Array<{ tags: { label: string; color: string | null } | null }> | null;
-};
-
-/**
- * Fetches full details for a single contact by ID.
- * Reused by both get_contact_details and get_myself_details tools.
- */
-async function fetchContactDetails(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  contactId: string,
-) {
-  const [
-    { data: person, error: personError },
-    { data: phones },
-    { data: emails },
-    { data: tags },
-    { data: addresses },
-    { data: socials },
-    { data: dates },
-    { data: groups },
-    { data: linkedin },
-  ] = await Promise.all([
-    supabase.from("people").select("*").eq("id", contactId).single(),
-    supabase
-      .from("people_phones")
-      .select("prefix, value, type, preferred")
-      .eq("person_id", contactId),
-    supabase.from("people_emails").select("value, type, preferred").eq("person_id", contactId),
-    supabase
-      .from("people_tags")
-      .select("tag_id, tags ( id, label, color )")
-      .eq("person_id", contactId),
-    supabase.from("people_addresses").select("*").eq("person_id", contactId),
-    supabase.from("people_socials").select("platform, handle").eq("person_id", contactId),
-    supabase.from("people_important_dates").select("*").eq("person_id", contactId),
-    supabase
-      .from("people_groups")
-      .select("group_id, groups:groups ( id, label, emoji, color )")
-      .eq("person_id", contactId),
-    supabase
-      .from("people_linkedin")
-      .select(
-        "bio, updated_at, people_work_history ( company_name, company_linkedin_id, title, employment_type, start_date, end_date, location, description ), people_education_history ( school_name, school_linkedin_id, degree, start_date, end_date, description )",
-      )
-      .eq("person_id", contactId)
-      .maybeSingle(),
-  ]);
-
-  if (personError || !person) {
+  if (!person) {
     return { error: "Contact not found" };
   }
 
   return {
-    addresses: addresses ?? [],
-    avatar: resolveContactAvatarUrl(supabase, userId, {
-      hasAvatar: person.has_avatar,
+    addresses: person.addresses,
+    avatar: resolveContactAvatarUrl(user.id, {
+      hasAvatar: person.hasAvatar,
       id: person.id,
-      updatedAt: person.updated_at,
+      updatedAt: person.updatedAt.toISOString(),
     }),
-    createdAt: person.created_at,
-    emails: emails ?? [],
-    firstName: person.first_name,
-    fullName: [person.first_name, person.middle_name, person.last_name].filter(Boolean).join(" "),
-    groups:
-      groups
-        ?.map((g: GroupJoinRow) => g.groups)
-        .filter((g): g is NonNullable<GroupJoinRow["groups"]> => g != null)
-        .map((g) => ({
-          color: g.color,
-          emoji: g.emoji,
-          id: g.id,
-          label: g.label,
-        })) ?? [],
+    createdAt: person.createdAt.toISOString(),
+    emails: person.emails,
+    firstName: person.firstName,
+    fullName: [person.firstName, person.middleName, person.lastName].filter(Boolean).join(" "),
+    groups: person.groups.map((membership) => ({
+      color: membership.group.color,
+      emoji: membership.group.emoji,
+      id: membership.group.id,
+      label: membership.group.label,
+    })),
     headline: person.headline,
     id: person.id,
-    importantDates: dates ?? [],
-    keepFrequencyDays: person.keep_frequency_days,
+    importantDates: person.importantDates,
+    keepFrequencyDays: person.keepFrequencyDays,
     language: person.language,
-    lastInteraction: person.last_interaction,
-    lastName: person.last_name,
-    linkedin: linkedin
-      ? (() => {
-          const linkedinDetail = linkedin as LinkedInDetailRow;
-          return {
-            bio: linkedin.bio,
-            educationHistory:
-              linkedinDetail.people_education_history?.map((e) => ({
-                degree: e.degree,
-                description: e.description,
-                endDate: e.end_date,
-                schoolLinkedinId: e.school_linkedin_id,
-                schoolName: e.school_name,
-                startDate: e.start_date,
-              })) ?? [],
-            updatedAt: linkedinDetail.updated_at,
-            workHistory:
-              linkedinDetail.people_work_history?.map((w) => ({
-                companyLinkedinId: w.company_linkedin_id,
-                companyName: w.company_name,
-                description: w.description,
-                employmentType: w.employment_type,
-                endDate: w.end_date,
-                location: w.location,
-                startDate: w.start_date,
-                title: w.title,
-              })) ?? [],
-          };
-        })()
+    lastInteraction: person.lastInteraction?.toISOString() ?? null,
+    lastName: person.lastName,
+    linkedin: person.linkedin
+      ? {
+          bio: person.linkedin.bio,
+          educationHistory: person.linkedin.educationHistory.map((entry) => ({
+            degree: entry.degree,
+            description: entry.description,
+            endDate: entry.endDate?.toISOString().slice(0, 10) ?? null,
+            schoolLinkedinId: entry.schoolLinkedinId,
+            schoolName: entry.schoolName,
+            startDate: entry.startDate?.toISOString().slice(0, 10) ?? null,
+          })),
+          updatedAt: person.linkedin.updatedAt.toISOString(),
+          workHistory: person.linkedin.workHistory.map((entry) => ({
+            companyLinkedinId: entry.companyLinkedinId,
+            companyName: entry.companyName,
+            description: entry.description,
+            employmentType: entry.employmentType,
+            endDate: entry.endDate?.toISOString().slice(0, 10) ?? null,
+            location: entry.location,
+            startDate: entry.startDate?.toISOString().slice(0, 10) ?? null,
+            title: entry.title,
+          })),
+        }
       : null,
     location: person.location,
-    middleName: person.middle_name,
+    middleName: person.middleName,
     notes: person.notes,
-    phones: phones ?? [],
-    socials:
-      socials?.map((s) => ({
-        handle: s.handle,
-        platform: s.platform,
-        url: createSocialUrl(s.platform, s.handle) || null,
-      })) ?? [],
-    tags:
-      tags
-        ?.map((t: TagJoinRow) => t.tags)
-        .filter((t): t is NonNullable<TagJoinRow["tags"]> => t != null)
-        .map((t) => ({ color: t.color, id: t.id, label: t.label })) ?? [],
+    phones: person.phones,
+    socials: person.socials.map((social) => ({
+      handle: social.handle,
+      platform: social.platform,
+      url: createSocialUrl(social.platform, social.handle) || null,
+    })),
+    tags: person.tags.map((membership) => ({
+      color: membership.tag.color,
+      id: membership.tag.id,
+      label: membership.tag.label,
+    })),
     timezone: person.timezone,
   };
 }
 
-/**
- * Creates contact-related tools for the AI chat agent.
- * All queries are scoped to the authenticated user via RLS.
- *
- * @param supabase - Authenticated Supabase client (RLS-enforced).
- * @param userId - The authenticated user's ID, used to build avatar URLs.
- * @returns An object of AI SDK tools for contact operations.
- */
-export function createContactTools(supabase: SupabaseClient<Database>, userId: string) {
+export function createContactTools(ctx: DomainContext) {
+  const { user } = ctx;
+  const db = domainDb(ctx);
+
   return {
     create_contact: tool({
       description:
         "Create a new contact. Returns the created contact's ID and a link to their page.",
       execute: async ({ firstName, lastName }) => {
-        const ctx = chatDomainContext(supabase, userId);
         try {
           const { data } = await createContact(ctx, {
             firstName,
@@ -238,9 +150,7 @@ export function createContactTools(supabase: SupabaseClient<Database>, userId: s
     get_contact_details: tool({
       description:
         "Get full details of a specific contact by ID, including phones, emails, addresses, tags, and social links.",
-      execute: async ({ contactId }) => {
-        return fetchContactDetails(supabase, userId, contactId);
-      },
+      execute: async ({ contactId }) => fetchContactDetails(ctx, contactId),
       inputSchema: z.object({
         contactId: z.string().uuid().describe("The contact's UUID"),
       }),
@@ -249,106 +159,107 @@ export function createContactTools(supabase: SupabaseClient<Database>, userId: s
     get_myself_details: tool({
       description:
         "Get the full profile of the current user (their own 'myself' contact), including phones, emails, addresses, LinkedIn bio, work history, education, tags, and groups. Use this when the user asks about themselves.",
-      execute: async () => {
-        // people.id === user_id for the myself contact (DB invariant)
-        return fetchContactDetails(supabase, userId, userId);
-      },
+      execute: async () => fetchContactDetails(ctx, user.id),
       inputSchema: z.object({}),
     }),
+
     search_contacts: tool({
       description:
         "Search contacts by name, location, tag, language, or headline. Returns up to 10 matches.",
       execute: async ({ query, tag, language, location, limit }) => {
-        // When a free-text query is provided, use the fuzzy search RPC (pg_trgm)
-        // for typo-tolerant, accent-insensitive name matching. Then load full data
-        // for the matched IDs.
         let matchedIds: string[] | null = null;
 
         if (query) {
-          const { ranked } = await searchPeopleIds(supabase, userId, query, limit);
+          const { ranked, error } = await searchPeopleIdsWithDb(db, user.id, query, limit);
+
+          if (error) {
+            return { error: `Failed to search contacts: ${error}` };
+          }
 
           if (ranked && ranked.length > 0) {
-            matchedIds = ranked.map((r) => r.id);
+            matchedIds = ranked.map((row) => row.id);
           } else {
-            // Fallback: ilike search across headline, location, notes
-            const searchPattern = `%${query}%`;
-            const { data: fallback } = await supabase
-              .from("people")
-              .select("id")
-              .eq("myself", false)
-              .or(
-                `headline.ilike.${searchPattern},location.ilike.${searchPattern},notes.ilike.${searchPattern}`,
-              )
-              .limit(limit);
+            const fallback = await db.people.findMany({
+              select: { id: true },
+              take: limit,
+              where: {
+                myself: false,
+                OR: [
+                  { headline: { contains: query, mode: "insensitive" } },
+                  { location: { contains: query, mode: "insensitive" } },
+                  { notes: { contains: query, mode: "insensitive" } },
+                ],
+                userId: user.id,
+              },
+            });
 
-            if (fallback && fallback.length > 0) {
-              matchedIds = fallback.map((r) => r.id);
-            } else {
-              matchedIds = [];
-            }
+            matchedIds = fallback.map((row) => row.id);
           }
         }
 
-        let dbQuery = supabase
-          .from("people")
-          .select(
-            `
-            id, first_name, middle_name, last_name, headline, location, language,
-            last_interaction, keep_frequency_days, created_at, has_avatar, updated_at,
-            people_tags ( tags ( label, color ) )
-          `,
-          )
-          .eq("myself", false)
-          .order("first_name", { ascending: true })
-          .limit(limit);
+        const where: Prisma.PeopleWhereInput = {
+          myself: false,
+          userId: user.id,
+        };
 
         if (matchedIds !== null) {
           if (matchedIds.length === 0) {
             return { contacts: [], totalFound: 0 };
           }
-          dbQuery = dbQuery.in("id", matchedIds);
+          where.id = { in: matchedIds };
         }
 
         if (language) {
-          dbQuery = dbQuery.eq("language", language);
+          where.language = language;
         }
 
         if (location) {
-          dbQuery = dbQuery.ilike("location", `%${location}%`);
+          where.location = { contains: location, mode: "insensitive" };
         }
 
-        const { data: contacts, error } = await dbQuery;
+        const contacts = await db.people.findMany({
+          include: {
+            tags: {
+              include: {
+                tag: { select: { color: true, label: true } },
+              },
+            },
+          },
+          orderBy: { firstName: "asc" },
+          take: limit,
+          where,
+        });
 
-        if (error) {
-          return { error: `Failed to search contacts: ${error.message}` };
-        }
-
-        let results = (contacts ?? []) as SearchContactRow[];
+        let results = contacts;
 
         if (tag) {
-          results = results.filter((c) =>
-            c.people_tags?.some((pt) => pt.tags?.label?.toLowerCase() === tag.toLowerCase()),
+          results = results.filter((contact) =>
+            contact.tags.some(
+              (membership) => membership.tag.label.toLowerCase() === tag.toLowerCase(),
+            ),
           );
         }
 
         return {
-          contacts: results.map((c) => ({
-            avatar: resolveContactAvatarUrl(supabase, userId, {
-              hasAvatar: c.has_avatar,
-              id: c.id,
-              updatedAt: c.updated_at,
+          contacts: results.map((contact) => ({
+            avatar: resolveContactAvatarUrl(user.id, {
+              hasAvatar: contact.hasAvatar,
+              id: contact.id,
+              updatedAt: contact.updatedAt.toISOString(),
             }),
-            firstName: c.first_name,
-            fullName: [c.first_name, c.middle_name, c.last_name].filter(Boolean).join(" "),
-            headline: c.headline,
-            id: c.id,
-            keepFrequencyDays: c.keep_frequency_days,
-            language: c.language,
-            lastInteraction: c.last_interaction,
-            lastName: c.last_name,
-            location: c.location,
-            middleName: c.middle_name,
-            tags: c.people_tags?.map((pt) => pt.tags?.label).filter(Boolean) ?? [],
+            firstName: contact.firstName,
+            fullName: [contact.firstName, contact.middleName, contact.lastName]
+              .filter(Boolean)
+              .join(" "),
+            headline: contact.headline,
+            id: contact.id,
+            keepFrequencyDays: contact.keepFrequencyDays,
+            language: contact.language,
+            lastInteraction: contact.lastInteraction?.toISOString() ?? null,
+            lastName: contact.lastName,
+            location: contact.location,
+            middleName: contact.middleName,
+            tags: contact.tags.map((membership) => membership.tag.label),
           })),
           totalFound: results.length,
         };

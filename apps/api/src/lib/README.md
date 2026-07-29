@@ -7,7 +7,7 @@ Infrastructure and shared utilities for the API. **`lib/` root has no `.ts` file
 | Folder | Responsibility |
 |--------|----------------|
 | `platform/` | Fastify glue, auth, errors, OpenAPI, route shells |
-| `data/` | Supabase, Redis, pagination, search, SQL select fragments |
+| `data/` | Prisma helpers, Redis, pagination, search, SQL select fragments |
 | `contacts/` | Stateless CRM primitives shared by domains and services |
 | `integrations/` | Stateless third-party adapters with multiple consumers |
 | `extension/` | Chrome extension helpers and version check |
@@ -16,25 +16,25 @@ Infrastructure and shared utilities for the API. **`lib/` root has no `.ts` file
 | `sync/` | Offline sync engine (do not restructure casually) |
 | `health/` | Health probes and routes |
 
-Feature-specific adapters with a single owner live under `services/` instead (e.g. `services/admin/posthog.ts`, `services/billing/polar.ts`).
+Feature-specific adapters with a single owner live under `services/` instead (e.g. `services/admin/posthog.ts`, `services/billing/stripe.ts`).
 
 ## Where do I put new code?
 
 | Task | Location |
 |------|----------|
 | Auth strategy, error helper, OpenAPI wrapper | `platform/` |
-| Supabase client, Redis, pagination, shared `SELECT` fragments | `data/` |
+| Redis, pagination, shared `SELECT` fragments | `data/` |
 | Contact channel/address parsing, enrichment, avatar storage | `contacts/` |
 | Geocoding adapter used by import + routes | `integrations/` |
 | Extension version enforcement | `extension/` |
 | vCard decode, LinkedIn import helpers | `import/` |
 | Sync push/pull, conflict resolution | `sync/` |
-| Billing-only Polar client | `services/billing/` |
+| Billing-only Stripe client | `services/billing/` |
 | Admin-only PostHog client | `services/admin/` |
 
 ### `data/select-fragments.ts` vs `services/*/queries.ts`
 
-- **`data/select-fragments.ts`** — reusable Supabase column lists and row shapes (`CONTACT_SELECT`, `GROUP_SELECT`, …). Imported by domains, sync, and enrichment helpers.
+- **`data/select-fragments.ts`** — reusable column lists and row shapes (`CONTACT_SELECT`, `GROUP_SELECT`, …). Imported by domains, sync, and enrichment helpers.
 - **`services/<area>/queries.ts`** — full read handlers: auth-scoped queries, filters, pagination, response assembly. Called from route `GET` handlers only.
 
 ## Layering

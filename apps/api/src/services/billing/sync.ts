@@ -1,56 +1,65 @@
-import type { Polar } from "@polar-sh/sdk";
+import { prisma } from "@bondery/db";
+import type Stripe from "stripe";
 import type { DomainContext } from "../../domains/_shared/context.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
-import { getPolarClient } from "../../services/billing/polar.js";
-import { deletePendingSubscription, mapStatus, upsertSubscription } from "./subscription.js";
+import { mapStripeStatus } from "./map-status.js";
+import { getStripeClient } from "./stripe.js";
+import { getSubscriptionPeriod } from "./stripe-helpers.js";
+import { deletePendingSubscription, upsertSubscription } from "./subscription.js";
 
 export type SubscriptionSyncResult =
-  | { synced: true; source: "pending" | "polar_api" }
+  | { synced: true; source: "pending" | "stripe_api" }
   | { synced: false; reason: string };
 
-export async function syncSubscriptionFromPolar(
+function extractMirrorFromStripeSubscription(subscription: Stripe.Subscription) {
+  const item = subscription.items.data[0];
+  const price = item?.price;
+  const product = price?.product;
+  const productName =
+    typeof product === "object" && product !== null && "name" in product
+      ? (product.name as string | null)
+      : null;
+
+  return {
+    billingInterval: price?.recurring?.interval ?? null,
+    currency: price?.currency ?? null,
+    priceId: price?.id ?? null,
+    productName,
+    stripeStatus: subscription.status,
+    trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+    unitAmount: price?.unit_amount ?? null,
+  };
+}
+
+export async function syncSubscriptionFromStripe(
   ctx: DomainContext,
 ): Promise<SubscriptionSyncResult> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
   const email = user.email;
 
-  const { data: existing } = await client
-    .from("subscriptions")
-    .select("status")
-    .eq("user_id", user.id)
-    .single();
+  const existing = await prisma.subscription.findFirst({
+    select: { status: true },
+    where: { userId: user.id },
+  });
 
   if (existing?.status === "active" || existing?.status === "canceling") {
     log?.info({ userId: user.id }, "subscription-sync: already active, skipping");
     return { reason: "already_active", synced: false };
   }
 
-  const admin = createAdminClient();
-
   if (email) {
-    const { data: pending } = (await admin
-      .from("pending_subscriptions" as never)
-      .select("*")
-      .eq("email", email)
-      .single()) as unknown as {
-      data: {
-        polar_customer_id: string;
-        polar_subscription_id: string;
-        status: string;
-        current_period_end: string | null;
-        cancel_at_period_end: boolean;
-      } | null;
-    };
+    const pending = await prisma.pendingSubscription.findUnique({
+      where: { email },
+    });
 
     if (pending) {
       await upsertSubscription(
         user.id,
-        pending.polar_customer_id,
-        pending.polar_subscription_id,
+        pending.stripeCustomerId,
+        pending.stripeSubscriptionId,
         pending.status,
         null,
-        pending.current_period_end ? new Date(pending.current_period_end) : null,
-        pending.cancel_at_period_end,
+        pending.currentPeriodEnd,
+        pending.cancelAtPeriodEnd,
       );
 
       await deletePendingSubscription(email);
@@ -63,56 +72,73 @@ export async function syncSubscriptionFromPolar(
     }
   }
 
-  let polar: Polar;
+  let stripe: Stripe;
   try {
-    polar = getPolarClient();
+    stripe = getStripeClient();
   } catch {
-    log?.warn({ userId: user.id }, "subscription-sync: Polar not configured");
-    return { reason: "polar_not_configured", synced: false };
+    log?.warn({ userId: user.id }, "subscription-sync: Stripe not configured");
+    return { reason: "stripe_not_configured", synced: false };
   }
 
-  let polarCustomer: Awaited<ReturnType<Polar["customers"]["getExternal"]>>;
+  let stripeCustomer: Stripe.Customer | null = null;
+
   try {
-    polarCustomer = await polar.customers.getExternal({
-      externalId: user.id,
+    const search = await stripe.customers.search({
+      limit: 1,
+      query: `metadata['bondery_user_id']:'${user.id}'`,
     });
-  } catch {
-    log?.info({ userId: user.id }, "subscription-sync: no Polar customer found");
-    return { reason: "no_polar_customer", synced: false };
+    stripeCustomer = search.data[0] ?? null;
+  } catch (err) {
+    log?.warn({ err, userId: user.id }, "subscription-sync: Stripe customer search failed");
   }
 
-  const subscriptions = await polar.subscriptions.list({
-    customerId: polarCustomer.id,
+  if (!stripeCustomer && email) {
+    const listed = await stripe.customers.list({ email, limit: 1 });
+    stripeCustomer = listed.data[0] ?? null;
+  }
+
+  if (!stripeCustomer) {
+    log?.info({ userId: user.id }, "subscription-sync: no Stripe customer found");
+    return { reason: "no_stripe_customer", synced: false };
+  }
+
+  const subscriptions = await stripe.subscriptions.list({
+    customer: stripeCustomer.id,
+    limit: 10,
+    status: "all",
   });
 
   const activeSub =
-    subscriptions.result.items.find(
-      (s) => s.status === "active" || (s.status === "canceled" && s.cancelAtPeriodEnd),
-    ) ?? subscriptions.result.items[0];
+    subscriptions.data.find(
+      (s) =>
+        s.status === "active" ||
+        s.status === "trialing" ||
+        (s.status === "canceled" && s.cancel_at_period_end),
+    ) ?? subscriptions.data[0];
 
   if (!activeSub) {
     log?.info(
-      { polarCustomerId: polarCustomer.id, userId: user.id },
-      "subscription-sync: no active Polar subscription found",
+      { stripeCustomerId: stripeCustomer.id, userId: user.id },
+      "subscription-sync: no active Stripe subscription found",
     );
     return { reason: "no_active_subscription", synced: false };
   }
 
-  const status = mapStatus(activeSub.status, activeSub.cancelAtPeriodEnd);
-  const currentPeriodStart =
-    (activeSub as { currentPeriodStart?: Date | null }).currentPeriodStart ?? null;
-  const currentPeriodEnd = activeSub.currentPeriodEnd ?? null;
+  const status = mapStripeStatus(activeSub.status, activeSub.cancel_at_period_end);
+  const { currentPeriodEnd, currentPeriodStart } = getSubscriptionPeriod(activeSub);
+  const mirror = extractMirrorFromStripeSubscription(activeSub);
 
   await upsertSubscription(
     user.id,
-    polarCustomer.id,
+    typeof activeSub.customer === "string" ? activeSub.customer : activeSub.customer.id,
     activeSub.id,
     status,
     currentPeriodStart,
     currentPeriodEnd,
-    activeSub.cancelAtPeriodEnd,
+    activeSub.cancel_at_period_end,
+    mirror,
   );
 
-  log?.info({ status, userId: user.id }, "subscription-sync: synced from Polar API");
-  return { source: "polar_api", synced: true };
+  log?.info({ status, userId: user.id }, "subscription-sync: synced from Stripe API");
+  return { source: "stripe_api", synced: true };
 }

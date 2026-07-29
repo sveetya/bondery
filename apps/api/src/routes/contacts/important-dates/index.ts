@@ -3,7 +3,7 @@
  * Handles important dates (birthdays, anniversaries, etc.) and upcoming reminders.
  */
 
-import type { Database, ImportantDateType, UpcomingReminder } from "@bondery/schemas";
+import type { ImportantDateType, UpcomingReminder } from "@bondery/schemas";
 import {
   importantDatesListResponseSchema,
   upcomingRemindersResponseSchema,
@@ -15,15 +15,16 @@ import {
 } from "@bondery/schemas/http";
 import { conflictResponse } from "@bondery/schemas/http/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import { replaceImportantDates } from "../../../domains/contacts/important-dates.js";
 import {
   deriveReminderDateKey,
-  IMPORTANT_DATE_SELECT,
   toImportantDate,
+  toImportantDateFromPrisma,
 } from "../../../lib/contacts/important-dates.js";
 import { extractAvatarOptions } from "../../../lib/data/select-fragments.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal, notFound } from "../../../lib/platform/errors/http-errors.js";
+import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
+import { notFound } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
@@ -52,16 +53,16 @@ export function isValidImportantDateNotifyDaysBefore(value: number): boolean {
 function toContactPreview(
   person: {
     id: string;
-    first_name: string;
-    last_name: string | null;
+    firstName: string;
+    lastName: string | null;
   },
   avatarUrl: string | null,
 ) {
   return {
     avatar: avatarUrl,
-    firstName: person.first_name,
+    firstName: person.firstName,
     id: person.id,
-    lastName: person.last_name,
+    lastName: person.lastName,
   };
 }
 
@@ -87,7 +88,9 @@ export function registerUpcomingImportantDateRoutes(fastify: AppFastifyInstance)
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
+      const { user } = ctx;
       const avatarOptions = extractAvatarOptions(request.query);
 
       const today = new Date();
@@ -100,20 +103,26 @@ export function registerUpcomingImportantDateRoutes(fastify: AppFastifyInstance)
       const startDateIso = startDate.toISOString().slice(0, 10);
       const endDateIso = endDate.toISOString().slice(0, 10);
 
-      const { data: rows, error } = await client
-        .from("people_important_dates")
-        .select(
-          `${IMPORTANT_DATE_SELECT}, person:people!inner(id, first_name, last_name, updated_at, has_avatar)`,
-        )
-        .eq("user_id", user.id)
-        .or("notify_days_before.not.is.null,notify_on.not.is.null")
-        .order("date", { ascending: true });
+      const rows = await db.peopleImportantDate.findMany({
+        include: {
+          person: {
+            select: {
+              firstName: true,
+              hasAvatar: true,
+              id: true,
+              lastName: true,
+              updatedAt: true,
+            },
+          },
+        },
+        orderBy: { date: "asc" },
+        where: {
+          OR: [{ notifyDaysBefore: { not: null } }, { notifyOn: { not: null } }],
+          userId: user.id,
+        },
+      });
 
-      if (error) {
-        throw internal("internal_server_error", error.message);
-      }
-
-      const reminderRows = (rows || []).filter((row) => {
+      const reminderRows = rows.filter((row) => {
         const reminderDateKey = deriveReminderDateKey(row);
         if (!reminderDateKey) {
           return false;
@@ -132,25 +141,19 @@ export function registerUpcomingImportantDateRoutes(fastify: AppFastifyInstance)
 
       let latestDispatchByReminderDate = new Map<string, string>();
       if (reminderDateKeys.length > 0) {
-        const { data: dispatchRows, error: dispatchError } = await client
-          .from("reminder_dispatch_log")
-          .select("reminder_date, created_at")
-          .eq("user_id", user.id)
-          .in("reminder_date", reminderDateKeys)
-          .order("created_at", { ascending: false });
+        const dispatchRows = await db.reminderDispatchLog.findMany({
+          orderBy: { createdAt: "desc" },
+          select: { createdAt: true, reminderDate: true },
+          where: {
+            reminderDate: { in: reminderDateKeys.map((key) => new Date(`${key}T00:00:00.000Z`)) },
+            userId: user.id,
+          },
+        });
 
-        if (dispatchError) {
-          throw internal("internal_server_error", dispatchError.message);
-        }
-
-        latestDispatchByReminderDate = (dispatchRows || []).reduce((accumulator, row) => {
-          const typedRow = row as Pick<
-            Database["public"]["Tables"]["reminder_dispatch_log"]["Row"],
-            "reminder_date" | "created_at"
-          >;
-
-          if (!accumulator.has(typedRow.reminder_date)) {
-            accumulator.set(typedRow.reminder_date, typedRow.created_at);
+        latestDispatchByReminderDate = dispatchRows.reduce((accumulator, row) => {
+          const reminderDateKey = row.reminderDate.toISOString().slice(0, 10);
+          if (!accumulator.has(reminderDateKey)) {
+            accumulator.set(reminderDateKey, row.createdAt.toISOString());
           }
 
           return accumulator;
@@ -164,24 +167,24 @@ export function registerUpcomingImportantDateRoutes(fastify: AppFastifyInstance)
             return null;
           }
 
+          const importantDate = toImportantDateFromPrisma(row);
           const reminderDateKey = deriveReminderDateKey(row);
           const notificationSentAt = reminderDateKey
             ? latestDispatchByReminderDate.get(reminderDateKey) || null
             : null;
 
           return {
-            importantDate: toImportantDate(row),
+            importantDate,
             notificationSent: Boolean(notificationSentAt),
             notificationSentAt,
             person: toContactPreview(
               person,
               resolveContactAvatarUrl(
-                client,
                 user.id,
                 {
-                  hasAvatar: person.has_avatar,
+                  hasAvatar: person.hasAvatar,
                   id: person.id,
-                  updatedAt: person.updated_at,
+                  updatedAt: person.updatedAt.toISOString(),
                 },
                 avatarOptions,
               ),
@@ -192,13 +195,13 @@ export function registerUpcomingImportantDateRoutes(fastify: AppFastifyInstance)
         .sort((a, b) => {
           const aReminderDate = deriveReminderDateKey({
             date: a.importantDate.date,
-            notify_days_before: a.importantDate.notifyDaysBefore,
-            notify_on: a.importantDate.notifyOn,
+            notifyDaysBefore: a.importantDate.notifyDaysBefore,
+            notifyOn: a.importantDate.notifyOn,
           });
           const bReminderDate = deriveReminderDateKey({
             date: b.importantDate.date,
-            notify_days_before: b.importantDate.notifyDaysBefore,
-            notify_on: b.importantDate.notifyOn,
+            notifyDaysBefore: b.importantDate.notifyDaysBefore,
+            notifyOn: b.importantDate.notifyOn,
           });
 
           if (aReminderDate && bReminderDate && aReminderDate !== bReminderDate) {
@@ -227,33 +230,27 @@ export function registerContactImportantDateRoutes(fastify: AppFastifyInstance):
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
+      const { user } = ctx;
       const { id: personId } = request.params;
 
-      const { data: person, error: personError } = await client
-        .from("people")
-        .select("id")
-        .eq("id", personId)
-        .eq("user_id", user.id)
-        .single();
+      const person = await db.people.findFirst({
+        select: { id: true },
+        where: { id: personId, userId: user.id },
+      });
 
-      if (personError || !person) {
+      if (!person) {
         throw notFound("Contact not found", "not_found");
       }
 
-      const { data: rows, error: rowsError } = await client
-        .from("people_important_dates")
-        .select(IMPORTANT_DATE_SELECT)
-        .eq("user_id", user.id)
-        .eq("person_id", personId)
-        .order("created_at", { ascending: true });
-
-      if (rowsError) {
-        throw internal("internal_server_error", rowsError.message);
-      }
+      const rows = await db.peopleImportantDate.findMany({
+        orderBy: { createdAt: "asc" },
+        where: { personId, userId: user.id },
+      });
 
       return {
-        dates: (rows || []).map(toImportantDate),
+        dates: rows.map(toImportantDateFromPrisma),
       };
     },
   );

@@ -1,6 +1,6 @@
 import { bySocialLookupResponseSchema } from "@bondery/schemas";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import type { AppFastifyInstance } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { findContactBySocial } from "../../services/contacts/queries.js";
@@ -17,8 +17,8 @@ export function registerContactLookupRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return findContactBySocial(client, user.id, request.query);
+      const ctx = domainContextFromRequest(request);
+      return findContactBySocial(ctx, request.query);
     },
   );
 }

@@ -1,8 +1,16 @@
+import { type PrismaClient, prisma } from "@bondery/db";
 import type { SyncChange, SyncTableKey } from "@bondery/schemas/sync";
-import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
-import { GROUP_SELECT } from "../data/select-fragments.js";
+import { toPeopleTagSyncRow, toSyncRow } from "../../domains/_shared/prisma-helpers.js";
 
 type Row = Record<string, unknown>;
+
+type ChildTable =
+  | "people_phones"
+  | "people_emails"
+  | "people_addresses"
+  | "people_socials"
+  | "people_important_dates"
+  | "people_tags";
 
 function upsertChange(table: SyncTableKey, row: Row): SyncChange {
   const id = String(row.id);
@@ -14,69 +22,54 @@ function deleteChange(table: SyncTableKey, entityId: string): SyncChange {
 }
 
 async function listChildIds(
-  client: DomainSupabaseClient,
-  table:
-    | "people_phones"
-    | "people_emails"
-    | "people_addresses"
-    | "people_socials"
-    | "people_important_dates"
-    | "people_tags",
+  db: PrismaClient,
+  table: ChildTable,
   userId: string,
   personId: string,
 ): Promise<string[]> {
-  const { data, error } = await client
-    .from(table)
-    .select("id")
-    .eq("user_id", userId)
-    .eq("person_id", personId);
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return (data ?? []).map((row) => String(row.id));
+  const rows = await loadChildRows(db, table, userId, personId);
+  return rows.map((row) => String(row.id));
 }
 
-async function loadRows(
-  client: DomainSupabaseClient,
-  table: SyncTableKey,
+async function loadChildRows(
+  db: PrismaClient,
+  table: ChildTable,
   userId: string,
-  filter: { column: string; value: string },
+  personId: string,
 ): Promise<Row[]> {
-  const { data, error } = await client
-    .from(table)
-    .select("*")
-    .eq("user_id", userId)
-    .eq(filter.column, filter.value);
-
-  if (error) {
-    throw new Error(error.message);
+  switch (table) {
+    case "people_phones":
+      return (await db.peoplePhone.findMany({ where: { personId, userId } })).map(toSyncRow);
+    case "people_emails":
+      return (await db.peopleEmail.findMany({ where: { personId, userId } })).map(toSyncRow);
+    case "people_addresses":
+      return (await db.peopleAddress.findMany({ where: { personId, userId } })).map(toSyncRow);
+    case "people_socials":
+      return (await db.peopleSocial.findMany({ where: { personId, userId } })).map(toSyncRow);
+    case "people_important_dates":
+      return (await db.peopleImportantDate.findMany({ where: { personId, userId } })).map(
+        toSyncRow,
+      );
+    case "people_tags":
+      return (await db.peopleTag.findMany({ where: { personId, userId } })).map(toPeopleTagSyncRow);
+    default:
+      return [];
   }
-
-  return (data ?? []) as Row[];
 }
 
 export async function buildPeopleRowChange(
-  client: DomainSupabaseClient,
   userId: string,
   personId: string,
+  db: PrismaClient = prisma,
 ): Promise<SyncChange | null> {
-  const { data, error } = await client
-    .from("people")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("id", personId)
-    .maybeSingle();
+  const row = await db.people.findFirst({
+    where: { id: personId, userId },
+  });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data) {
+  if (!row) {
     return null;
   }
-  return upsertChange("people", data as Row);
+  return upsertChange("people", toSyncRow(row));
 }
 
 export function buildPeopleDeleteChange(personId: string): SyncChange {
@@ -84,27 +77,27 @@ export function buildPeopleDeleteChange(personId: string): SyncChange {
 }
 
 export async function buildContactSnapshotChanges(
-  client: DomainSupabaseClient,
   userId: string,
   personId: string,
+  db: PrismaClient = prisma,
 ): Promise<SyncChange[]> {
   const changes: SyncChange[] = [];
-  const peopleChange = await buildPeopleRowChange(client, userId, personId);
+  const peopleChange = await buildPeopleRowChange(userId, personId, db);
   if (peopleChange) {
     changes.push(peopleChange);
   }
 
-  const childTables = [
+  const childTables: ChildTable[] = [
     "people_phones",
     "people_emails",
     "people_addresses",
     "people_socials",
     "people_important_dates",
     "people_tags",
-  ] as const;
+  ];
 
   for (const table of childTables) {
-    const rows = await loadRows(client, table, userId, { column: "person_id", value: personId });
+    const rows = await loadChildRows(db, table, userId, personId);
     for (const row of rows) {
       changes.push(upsertChange(table, row));
     }
@@ -114,18 +107,13 @@ export async function buildContactSnapshotChanges(
 }
 
 export async function buildChildTableReplaceChanges(
-  client: DomainSupabaseClient,
   userId: string,
   personId: string,
-  table:
-    | "people_phones"
-    | "people_emails"
-    | "people_addresses"
-    | "people_socials"
-    | "people_important_dates",
+  table: Exclude<ChildTable, "people_tags">,
   priorIds: string[],
+  db: PrismaClient = prisma,
 ): Promise<SyncChange[]> {
-  const rows = await loadRows(client, table, userId, { column: "person_id", value: personId });
+  const rows = await loadChildRows(db, table, userId, personId);
   const currentIds = new Set(rows.map((row) => String(row.id)));
   const changes: SyncChange[] = [];
 
@@ -143,18 +131,12 @@ export async function buildChildTableReplaceChanges(
 }
 
 export async function listContactChildIds(
-  client: DomainSupabaseClient,
   userId: string,
   personId: string,
-  table:
-    | "people_phones"
-    | "people_emails"
-    | "people_addresses"
-    | "people_socials"
-    | "people_important_dates"
-    | "people_tags",
+  table: ChildTable,
+  db: PrismaClient = prisma,
 ): Promise<string[]> {
-  return listChildIds(client, table, userId, personId);
+  return listChildIds(db, table, userId, personId);
 }
 
 export function buildGroupRowChange(group: Row): SyncChange {
@@ -166,33 +148,27 @@ export function buildGroupDeleteChange(groupId: string): SyncChange {
 }
 
 export async function buildPeopleGroupsChanges(
-  client: DomainSupabaseClient,
   userId: string,
   groupId: string,
   personIds: string[],
   operation: "insert" | "delete",
+  db: PrismaClient = prisma,
 ): Promise<SyncChange[]> {
   if (personIds.length === 0) {
     return [];
   }
 
-  const { data, error } = await client
-    .from("people_groups")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("group_id", groupId)
-    .in("person_id", personIds);
+  const rows = await db.peopleGroup.findMany({
+    where: { groupId, personId: { in: personIds }, userId },
+  });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return (data ?? []).map((row) => {
-    const id = String(row.id);
+  return rows.map((row) => {
+    const syncRow = toSyncRow(row);
+    const id = String(syncRow.id);
     if (operation === "delete") {
       return deleteChange("people_groups", id);
     }
-    return upsertChange("people_groups", row as Row);
+    return upsertChange("people_groups", syncRow);
   });
 }
 
@@ -209,65 +185,90 @@ export function buildPeopleTagChangeFromRow(row: Row): SyncChange {
 }
 
 export async function buildPeopleTagChange(
-  client: DomainSupabaseClient,
+  userId: string,
+  personId: string,
+  tagId: string,
+  db: PrismaClient = prisma,
+): Promise<SyncChange | null> {
+  const row = await db.peopleTag.findFirst({
+    where: { personId, tagId, userId },
+  });
+
+  if (!row) {
+    return null;
+  }
+  return upsertChange("people_tags", toPeopleTagSyncRow(row));
+}
+
+export async function findPeopleTagId(
+  userId: string,
+  personId: string,
+  tagId: string,
+  db: PrismaClient = prisma,
+): Promise<string | null> {
+  const row = await db.peopleTag.findFirst({
+    select: { id: true },
+    where: { personId, tagId, userId },
+  });
+  return row?.id ?? null;
+}
+
+export async function buildPeopleTagChangeWithDb(
+  db: PrismaClient,
   userId: string,
   personId: string,
   tagId: string,
 ): Promise<SyncChange | null> {
-  const { data, error } = await client
-    .from("people_tags")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("person_id", personId)
-    .eq("tag_id", tagId)
-    .maybeSingle();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  if (!data) {
-    return null;
-  }
-  return upsertChange("people_tags", data as Row);
+  return buildPeopleTagChange(userId, personId, tagId, db);
 }
 
-export async function findPeopleTagId(
-  client: DomainSupabaseClient,
+export async function findPeopleTagIdWithDb(
+  db: PrismaClient,
   userId: string,
   personId: string,
   tagId: string,
 ): Promise<string | null> {
-  const { data, error } = await client
-    .from("people_tags")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("person_id", personId)
-    .eq("tag_id", tagId)
-    .maybeSingle();
+  return findPeopleTagId(userId, personId, tagId, db);
+}
 
-  if (error) {
-    throw new Error(error.message);
+export async function buildPeopleGroupChangeWithDb(
+  db: PrismaClient,
+  userId: string,
+  personId: string,
+  groupId: string,
+): Promise<SyncChange | null> {
+  const row = await db.peopleGroup.findFirst({
+    where: { groupId, personId, userId },
+  });
+
+  if (!row) {
+    return null;
   }
 
-  return data?.id ? String(data.id) : null;
+  return upsertChange("people_groups", toSyncRow(row));
+}
+
+export async function findPeopleGroupIdWithDb(
+  db: PrismaClient,
+  userId: string,
+  personId: string,
+  groupId: string,
+): Promise<string | null> {
+  const row = await db.peopleGroup.findFirst({
+    select: { id: true },
+    where: { groupId, personId, userId },
+  });
+  return row?.id ?? null;
 }
 
 export async function buildGroupSelectRow(
-  client: DomainSupabaseClient,
   userId: string,
   groupId: string,
+  db: PrismaClient = prisma,
 ): Promise<Row | null> {
-  const { data, error } = await client
-    .from("groups")
-    .select(GROUP_SELECT)
-    .eq("user_id", userId)
-    .eq("id", groupId)
-    .maybeSingle();
+  const row = await db.group.findFirst({
+    where: { id: groupId, userId },
+  });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return (data as Row | null) ?? null;
+  return row ? toSyncRow(row) : null;
 }

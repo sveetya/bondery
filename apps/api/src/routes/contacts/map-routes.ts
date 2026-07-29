@@ -1,6 +1,6 @@
 import { mapAddressPinsResponseSchema, mapPinsResponseSchema } from "@bondery/schemas";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import type { AppFastifyInstance } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { getMapAddressPins, getMapPins } from "../../services/contacts/queries.js";
@@ -20,8 +20,8 @@ export function registerContactMapRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return getMapAddressPins(client, user.id, request.query, request.log);
+      const ctx = domainContextFromRequest(request);
+      return getMapAddressPins(ctx, request.query);
     },
   );
 
@@ -35,8 +35,8 @@ export function registerContactMapRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return getMapPins(client, user.id, request.query, request.log);
+      const ctx = domainContextFromRequest(request);
+      return getMapPins(ctx, request.query);
     },
   );
 }

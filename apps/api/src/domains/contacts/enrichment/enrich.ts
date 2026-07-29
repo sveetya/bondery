@@ -1,20 +1,26 @@
+import type { Prisma } from "@bondery/db";
 import { cleanPersonName } from "@bondery/helpers/name";
-import type { EnrichContactRequest, TablesUpdate } from "@bondery/schemas";
+import type { EnrichContactRequest } from "@bondery/schemas";
+import {
+  replaceEducationHistoryWithDb,
+  replaceWorkHistoryWithDb,
+} from "../../../lib/data/contact-rpc.js";
 import {
   toPostgresDate,
   updateContactPhoto,
   uploadAllLinkedInLogos,
 } from "../../../lib/import/linkedin-helpers.js";
 import { cachedGeocodeLinkedInLocation } from "../../../lib/integrations/mapy.js";
-import { internal } from "../../../lib/platform/errors/http-errors.js";
 import { type DomainContext, DomainError } from "../../_shared/context.js";
+import { domainDb } from "../../_shared/domain-db.js";
 
 export async function enrichContact(
   ctx: DomainContext,
   personId: string,
   input: EnrichContactRequest,
 ): Promise<{ success: true }> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
   const {
     firstName,
     middleName,
@@ -37,36 +43,35 @@ export async function enrichContact(
     "[enrich] POST received",
   );
 
-  const { data: person, error: personError } = await client
-    .from("people")
-    .select("id, headline, location")
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .single();
+  const person = await db.people.findFirst({
+    select: { headline: true, id: true, location: true },
+    where: { id: personId, userId: user.id },
+  });
 
-  if (personError || !person) {
+  if (!person) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
-  await uploadAllLinkedInLogos(client, user.id, workHistory, educationHistory);
+  await uploadAllLinkedInLogos(user.id, workHistory, educationHistory);
 
   if (profileImageUrl) {
-    await updateContactPhoto(client, personId, user.id, profileImageUrl);
+    await updateContactPhoto(personId, user.id, profileImageUrl);
   }
 
-  const fieldUpdates: TablesUpdate<"people"> = {};
+  const fieldUpdates: Prisma.PeopleUpdateManyMutationInput = {};
+  let gisPointEwkt: string | null | undefined;
 
   if (profileImageUrl) {
-    fieldUpdates.updated_at = new Date().toISOString();
+    fieldUpdates.updatedAt = new Date();
   }
   if (firstName !== undefined) {
-    fieldUpdates.first_name = cleanPersonName(firstName) || undefined;
+    fieldUpdates.firstName = cleanPersonName(firstName) || undefined;
   }
   if (middleName !== undefined) {
-    fieldUpdates.middle_name = cleanPersonName(middleName) || null;
+    fieldUpdates.middleName = cleanPersonName(middleName) || null;
   }
   if (lastName !== undefined) {
-    fieldUpdates.last_name = cleanPersonName(lastName) || null;
+    fieldUpdates.lastName = cleanPersonName(lastName) || null;
   }
 
   if (headline && !person.headline) {
@@ -82,7 +87,7 @@ export async function enrichContact(
         if (geo.formattedLabel) {
           fieldUpdates.location = geo.formattedLabel;
         }
-        fieldUpdates.gis_point = geo.locationEwkt;
+        gisPointEwkt = geo.locationEwkt;
         if (tz) {
           fieldUpdates.timezone = tz;
         }
@@ -92,29 +97,37 @@ export async function enrichContact(
     }
   }
 
-  if (Object.keys(fieldUpdates).length > 0) {
-    fieldUpdates.updated_at = new Date().toISOString();
-    await client.from("people").update(fieldUpdates).eq("id", personId);
+  if (Object.keys(fieldUpdates).length > 0 || gisPointEwkt !== undefined) {
+    fieldUpdates.updatedAt = new Date();
+    await db.people.updateMany({
+      data: fieldUpdates,
+      where: { id: personId, userId: user.id },
+    });
+
+    if (gisPointEwkt) {
+      await db.$executeRaw`
+        UPDATE people
+        SET gis_point = ST_GeogFromText(${gisPointEwkt}),
+            updated_at = NOW()
+        WHERE id = ${personId}::uuid AND user_id = ${user.id}::uuid
+      `;
+    }
   }
 
-  const { data: linkedinRow, error: linkedinUpsertError } = await client
-    .from("people_linkedin")
-    .upsert(
-      {
-        bio: linkedinBio ?? null,
-        person_id: personId,
-        updated_at: new Date().toISOString(),
-        user_id: user.id,
-      },
-      { onConflict: "user_id,person_id" },
-    )
-    .select("id")
-    .single();
-
-  if (linkedinUpsertError || !linkedinRow) {
-    log?.error({ linkedinUpsertError }, "[enrich] Failed to upsert people_linkedin");
-    throw internal("contact_enrich_failed_to_save_linkedin_profile_data");
-  }
+  const linkedinRow = await db.peopleLinkedin.upsert({
+    create: {
+      bio: linkedinBio ?? null,
+      personId,
+      userId: user.id,
+    },
+    update: {
+      bio: linkedinBio ?? null,
+      updatedAt: new Date(),
+    },
+    where: {
+      personId,
+    },
+  });
 
   const peopleLinkedinId = linkedinRow.id;
 
@@ -129,12 +142,9 @@ export async function enrichContact(
       start_date: toPostgresDate(entry.startDate),
       title: entry.title ?? null,
     }));
-    const { error: whError } = await client.rpc("replace_work_history", {
-      p_people_linkedin_id: peopleLinkedinId,
-      p_rows: rows,
-      p_user_id: user.id,
-    });
-    if (whError) {
+    try {
+      await replaceWorkHistoryWithDb(db, user.id, peopleLinkedinId, rows);
+    } catch (whError) {
       log?.error({ whError }, "[enrich] Failed to replace work history");
     }
   }
@@ -148,12 +158,9 @@ export async function enrichContact(
       school_name: entry.schoolName,
       start_date: toPostgresDate(entry.startDate),
     }));
-    const { error: ehError } = await client.rpc("replace_education_history", {
-      p_people_linkedin_id: peopleLinkedinId,
-      p_rows: rows,
-      p_user_id: user.id,
-    });
-    if (ehError) {
+    try {
+      await replaceEducationHistoryWithDb(db, user.id, peopleLinkedinId, rows);
+    } catch (ehError) {
       log?.error({ ehError }, "[enrich] Failed to replace education history");
     }
   }

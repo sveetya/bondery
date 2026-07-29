@@ -1,9 +1,10 @@
-import type { Group, TablesInsert } from "@bondery/schemas";
-import { GROUP_SELECT } from "../../lib/data/select-fragments.js";
+import type { Group } from "@bondery/schemas";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { buildGroupRowChange } from "../../lib/sync/build-changes.js";
 import { emitSyncBatch } from "../../lib/sync/emit-change.js";
 import { type DomainContext, syncEmitMetaFromContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
+import { toGroupDto, toSyncRow } from "../_shared/prisma-helpers.js";
 import { captureCurrentSyncTxid } from "../_shared/with-txid.js";
 
 export interface CreateGroupInput {
@@ -17,35 +18,31 @@ export async function createGroup(
   ctx: DomainContext,
   input: CreateGroupInput,
 ): Promise<{ data: { group: Group }; txid: string; serverSequence: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const insertData: TablesInsert<"groups"> = {
-    color: input.color.trim() || null,
-    emoji: input.emoji.trim() || null,
-    label: input.label.trim(),
-    user_id: user.id,
-  };
+  try {
+    const row = await db.group.create({
+      data: {
+        ...(input.id ? { id: input.id } : {}),
+        color: input.color.trim() || null,
+        emoji: input.emoji.trim() || null,
+        label: input.label.trim(),
+        userId: user.id,
+      },
+    });
 
-  if (input.id) {
-    insertData.id = input.id;
+    const group = toGroupDto(row);
+    const syncRow = toSyncRow(row as unknown as Record<string, unknown>);
+    const txid = await captureCurrentSyncTxid();
+    const serverSequence =
+      (await emitSyncBatch(
+        user.id,
+        [buildGroupRowChange(syncRow)],
+        syncEmitMetaFromContext(ctx),
+      )) ?? 0;
+    return { data: { group }, serverSequence, txid };
+  } catch (error) {
+    throw internal("group_failed", error instanceof Error ? error.message : "group_failed");
   }
-
-  const { data: newGroup, error } = await client
-    .from("groups")
-    .insert(insertData)
-    .select(GROUP_SELECT)
-    .single();
-
-  if (error) {
-    throw internal("group_failed", error.message);
-  }
-
-  const txid = await captureCurrentSyncTxid(client);
-  const serverSequence =
-    (await emitSyncBatch(
-      user.id,
-      [buildGroupRowChange(newGroup as Record<string, unknown>)],
-      syncEmitMetaFromContext(ctx),
-    )) ?? 0;
-  return { data: { group: newGroup as Group }, serverSequence, txid };
 }

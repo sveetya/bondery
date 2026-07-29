@@ -15,8 +15,9 @@ import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { EXAMPLE_SETTINGS_PATCH_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
+import { listUserIdentityRows, listUserProviderIds } from "../../../lib/auth/linked-accounts.js";
 import { getMyselfProfile } from "../../../lib/contacts/myself.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
 import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
 import { internal } from "../../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../../lib/platform/fastify-types.js";
@@ -89,44 +90,6 @@ type UserIdentityRow = {
   provider: string;
 };
 
-function mapUserIdentities(
-  identities:
-    | Array<{
-        id?: string;
-        user_id?: string;
-        identity_id?: string;
-        provider?: string;
-      }>
-    | null
-    | undefined,
-): UserIdentityRow[] {
-  if (!identities?.length) {
-    return [];
-  }
-
-  return identities
-    .filter(
-      (
-        identity,
-      ): identity is {
-        id: string;
-        user_id: string;
-        identity_id: string;
-        provider: string;
-      } =>
-        typeof identity.id === "string" &&
-        typeof identity.user_id === "string" &&
-        typeof identity.identity_id === "string" &&
-        typeof identity.provider === "string",
-    )
-    .map((identity) => ({
-      id: identity.id,
-      identity_id: identity.identity_id,
-      provider: identity.provider,
-      user_id: identity.user_id,
-    }));
-}
-
 function _normalizeReminderSendHour(value: string): string {
   const [hourPart, minutePart, secondPart] = value.trim().split(":");
   const normalizedHour = hourPart.padStart(2, "0");
@@ -173,43 +136,44 @@ export const meSettingsRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const { user } = ctx;
 
       try {
-        const resolvedSettings = await ensureDefaultSettings(domainContextFromRequest(request));
+        const resolvedSettings = await ensureDefaultSettings(ctx);
 
-        const { data: userData } = await client.auth.getUser();
+        const { firstName, avatarUrl: resolvedAvatarUrl } = await getMyselfProfile(
+          domainDb(ctx),
+          user.id,
+        );
 
-        const { firstName, avatarUrl: resolvedAvatarUrl } = await getMyselfProfile(client, user.id);
-
-        const { data: identitiesData } = await client.auth.getUserIdentities();
-        const identities = mapUserIdentities(identitiesData?.identities);
+        const identities: UserIdentityRow[] = await listUserIdentityRows(user.id);
+        const providers = await listUserProviderIds(user.id);
 
         return {
           data: {
-            aiMessagesUsed: resolvedSettings.ai_messages_used ?? 0,
+            aiMessagesUsed: resolvedSettings.aiMessagesUsed ?? 0,
             avatarUrl: resolvedAvatarUrl,
-            colorScheme: resolvedSettings.color_scheme,
-            email: userData?.user?.email,
-            gettingStartedDismissedAt: resolvedSettings.getting_started_dismissed_at ?? null,
-            groupSortOrder: resolvedSettings.group_sort_order ?? DEFAULT_GROUP_SORT_ORDER,
+            colorScheme: resolvedSettings.colorScheme,
+            email: user.email,
+            gettingStartedDismissedAt:
+              resolvedSettings.gettingStartedDismissedAt?.toISOString() ?? null,
+            groupSortOrder: resolvedSettings.groupSortOrder ?? DEFAULT_GROUP_SORT_ORDER,
             identities,
-            importCompletedAt: resolvedSettings.import_completed_at ?? null,
+            importCompletedAt: resolvedSettings.importCompletedAt?.toISOString() ?? null,
             importFollowupPlatform: parseImportFollowupPlatform(
-              resolvedSettings.import_followup_platform,
+              resolvedSettings.importFollowupPlatform,
             ),
-            importFollowupStatus: parseImportFollowupStatus(
-              resolvedSettings.import_followup_status,
-            ),
+            importFollowupStatus: parseImportFollowupStatus(resolvedSettings.importFollowupStatus),
             language: resolvedSettings.language ?? DEFAULT_LOCALE,
-            leftSwipeAction: resolvedSettings.left_swipe_action ?? DEFAULT_LEFT_SWIPE_ACTION,
+            leftSwipeAction: resolvedSettings.leftSwipeAction ?? DEFAULT_LEFT_SWIPE_ACTION,
             name: firstName,
-            onboardingCompletedAt: resolvedSettings.onboarding_completed_at ?? null,
-            providers: userData?.user?.app_metadata?.providers || [],
-            reminderSendHour: resolvedSettings.reminder_send_hour ?? DEFAULT_REMINDER_SEND_HOUR,
-            rightSwipeAction: resolvedSettings.right_swipe_action ?? DEFAULT_RIGHT_SWIPE_ACTION,
-            tagSortOrder: resolvedSettings.tag_sort_order ?? DEFAULT_TAG_SORT_ORDER,
-            timeFormat: resolvedSettings.time_format ?? DEFAULT_TIME_FORMAT,
+            onboardingCompletedAt: resolvedSettings.onboardingCompletedAt?.toISOString() ?? null,
+            providers,
+            reminderSendHour: resolvedSettings.reminderSendHour ?? DEFAULT_REMINDER_SEND_HOUR,
+            rightSwipeAction: resolvedSettings.rightSwipeAction ?? DEFAULT_RIGHT_SWIPE_ACTION,
+            tagSortOrder: resolvedSettings.tagSortOrder ?? DEFAULT_TAG_SORT_ORDER,
+            timeFormat: resolvedSettings.timeFormat ?? DEFAULT_TIME_FORMAT,
             timezone: resolvedSettings.timezone,
           },
           success: true,

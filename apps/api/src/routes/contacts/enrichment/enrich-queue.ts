@@ -3,6 +3,7 @@
  * Manages the LinkedIn enrichment queue (init, next-batch, status, complete/fail, cancel).
  */
 
+import { prisma } from "@bondery/db";
 import {
   apiSuccessResponseSchema,
   enrichQueueCountResponseSchema,
@@ -21,16 +22,11 @@ import {
   updateEnrichQueueItem,
 } from "../../../domains/contacts/enrichment/enrich-queue.js";
 import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
 
 export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
-  /**
-   * GET /api/contacts/enrich-queue/count
-   * Count people with a LinkedIn handle but no people_linkedin record (never synced).
-   */
   fastify.get(
     "/enrich-queue/count",
     {
@@ -42,11 +38,6 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
     withDomainRoute(async (ctx) => getEnrichQueueEligibleCount(ctx)),
   );
 
-  /**
-   * GET /api/contacts/enrich-queue/status
-   * Returns counts of queue items grouped by status.
-   * Used for resume detection on page load.
-   */
   fastify.get(
     "/enrich-queue/status",
     {
@@ -56,19 +47,15 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
 
-      const { data, error } = await client
-        .from("linkedin_enrich_queue")
-        .select("status")
-        .eq("user_id", user.id);
-
-      if (error) {
-        throw internal("internal_server_error", error.message);
-      }
+      const rows = await prisma.linkedinEnrichQueue.findMany({
+        select: { status: true },
+        where: { userId: user.id },
+      });
 
       const counts = { completed: 0, failed: 0, pending: 0 };
-      for (const row of data || []) {
+      for (const row of rows) {
         if (row.status === "pending" || row.status === "processing") {
           counts.pending++;
         } else if (row.status === "completed") {
@@ -82,21 +69,6 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
     },
   );
 
-  /**
-   * POST /api/contacts/enrich-queue/init
-   * Initialize a new enrichment run.
-   *
-   * When `personId` is provided in the body, queues only that single contact.
-   * Otherwise queues all eligible contacts (those with a LinkedIn handle but
-   * no people_linkedin record yet).
-   *
-   * 1. Deletes all existing queue rows for the user (clears previous run).
-   * 2. Finds eligible contacts (all or just one).
-   * 3. Bulk-inserts them as status='pending'.
-   * 4. Returns totalEligible.
-   *
-   * Idempotent — safe to call multiple times.
-   */
   fastify.post(
     "/enrich-queue/init",
     {
@@ -111,13 +83,6 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
     ),
   );
 
-  /**
-   * GET /api/contacts/enrich-queue/next-batch
-   * Returns the next batch of pending queue items (up to 50).
-   *
-   * No request body — the queue status IS the exclude list.
-   * Joins with people_socials (for handle) and people (for names).
-   */
   fastify.get(
     "/enrich-queue/next-batch",
     {
@@ -128,69 +93,56 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
     },
     async (request) => {
       const BATCH_LIMIT = 50;
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
 
-      // Fetch next pending queue items.
-      const { data: queueItems, error: queueError } = await client
-        .from("linkedin_enrich_queue")
-        .select("id, person_id")
-        .eq("user_id", user.id)
-        .eq("status", "pending")
-        .order("created_at", { ascending: true })
-        .limit(BATCH_LIMIT);
+      const queueItems = await prisma.linkedinEnrichQueue.findMany({
+        orderBy: { createdAt: "asc" },
+        select: { id: true, personId: true },
+        take: BATCH_LIMIT,
+        where: { status: "pending", userId: user.id },
+      });
 
-      if (queueError) {
-        throw internal("internal_server_error", queueError.message);
-      }
-
-      const items = queueItems || [];
-      if (items.length === 0) {
+      if (queueItems.length === 0) {
         return { items: [] };
       }
 
-      const personIds = items.map((i) => i.person_id);
+      const personIds = queueItems.map((item) => item.personId);
 
-      // Fetch handles and names in parallel.
-      const [socialsRes, namesRes] = await Promise.all([
-        client
-          .from("people_socials")
-          .select("person_id, handle")
-          .eq("user_id", user.id)
-          .eq("platform", "linkedin")
-          .in("person_id", personIds),
-        client
-          .from("people")
-          .select("id, first_name, last_name")
-          .eq("user_id", user.id)
-          .in("id", personIds),
+      const [socials, people] = await Promise.all([
+        prisma.peopleSocial.findMany({
+          select: { handle: true, personId: true },
+          where: {
+            personId: { in: personIds },
+            platform: "linkedin",
+            userId: user.id,
+          },
+        }),
+        prisma.people.findMany({
+          select: { firstName: true, id: true, lastName: true },
+          where: { id: { in: personIds }, userId: user.id },
+        }),
       ]);
 
-      const handleMap = new Map(
-        (socialsRes.data || []).map((sm) => [sm.person_id, sm.handle as string]),
-      );
+      const handleMap = new Map(socials.map((row) => [row.personId, row.handle]));
       const nameMap = new Map(
-        (namesRes.data || []).map((p) => [
-          p.id,
-          { firstName: p.first_name ?? null, lastName: p.last_name ?? null },
+        people.map((person) => [
+          person.id,
+          { firstName: person.firstName ?? null, lastName: person.lastName ?? null },
         ]),
       );
 
       return {
-        items: items.map((item) => ({
-          firstName: nameMap.get(item.person_id)?.firstName ?? null,
-          lastName: nameMap.get(item.person_id)?.lastName ?? null,
-          linkedinHandle: handleMap.get(item.person_id) ?? null,
-          personId: item.person_id,
+        items: queueItems.map((item) => ({
+          firstName: nameMap.get(item.personId)?.firstName ?? null,
+          lastName: nameMap.get(item.personId)?.lastName ?? null,
+          linkedinHandle: handleMap.get(item.personId) ?? null,
+          personId: item.personId,
           queueItemId: item.id,
         })),
       };
     },
   );
 
-  /**
-   * PATCH /api/contacts/enrich-queue/:id
-   * Update queue item status to completed or failed.
-   */
   fastify.patch(
     "/enrich-queue/:id",
     {
@@ -208,11 +160,6 @@ export function registerEnrichQueueRoutes(fastify: AppFastifyInstance): void {
     ),
   );
 
-  /**
-   * DELETE /api/contacts/enrich-queue
-   * Delete remaining pending queue items (cancel path).
-   * Completed/failed rows are preserved and cleaned up by the next init call.
-   */
   fastify.delete(
     "/enrich-queue",
     {

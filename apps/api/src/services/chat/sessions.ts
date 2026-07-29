@@ -1,48 +1,70 @@
-import type { Json } from "@bondery/schemas/supabase.types";
+import type { Prisma } from "@bondery/db";
+import type { ChatMessage, ChatSession } from "@bondery/schemas";
 import type { UIMessage } from "ai";
 import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 
-const CHAT_SESSION_SELECT = "id, userId:user_id, title, createdAt:created_at, updatedAt:updated_at";
+function toChatSessionDto(row: {
+  id: string;
+  userId: string;
+  title: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}): ChatSession {
+  return {
+    createdAt: row.createdAt.toISOString(),
+    id: row.id,
+    title: row.title,
+    updatedAt: row.updatedAt.toISOString(),
+    userId: row.userId,
+  };
+}
 
 export async function createChatSession(ctx: DomainContext) {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data, error } = await client
-    .from("chat_sessions")
-    .insert({ user_id: user.id })
-    .select(CHAT_SESSION_SELECT)
-    .single();
-
-  if (error || !data) {
-    throw internal("chat_session_failed_to_create_session");
+  try {
+    const row = await db.chatSession.create({
+      data: { userId: user.id },
+    });
+    return toChatSessionDto(row);
+  } catch (error) {
+    throw internal(
+      "chat_session_failed_to_create_session",
+      error instanceof Error ? error.message : undefined,
+    );
   }
-
-  return data;
 }
 
 export async function updateChatSessionTitle(ctx: DomainContext, sessionId: string, title: string) {
-  const { client } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data, error } = await client
-    .from("chat_sessions")
-    .update({ title })
-    .eq("id", sessionId)
-    .select(CHAT_SESSION_SELECT)
-    .single();
-
-  if (error || !data) {
-    throw internal("chat_session_failed_to_update_session");
+  try {
+    const row = await db.chatSession.update({
+      data: { title },
+      where: { id: sessionId, userId: user.id },
+    });
+    return toChatSessionDto(row);
+  } catch (error) {
+    throw internal(
+      "chat_session_failed_to_update_session",
+      error instanceof Error ? error.message : undefined,
+    );
   }
-
-  return data;
 }
 
 export async function deleteChatSession(ctx: DomainContext, sessionId: string): Promise<void> {
-  const { client } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { error } = await client.from("chat_sessions").delete().eq("id", sessionId);
-  if (error) {
+  const result = await db.chatSession.deleteMany({
+    where: { id: sessionId, userId: user.id },
+  });
+
+  if (result.count === 0) {
     throw internal("chat_session_failed_to_delete_session");
   }
 }
@@ -53,7 +75,8 @@ export async function persistChatMessages(
   userMessage: UIMessage,
   assistantText: string,
 ): Promise<void> {
-  const { client } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
   const userText =
     userMessage.parts
@@ -61,28 +84,37 @@ export async function persistChatMessages(
       .map((p) => p.text)
       .join(" ") ?? "";
 
-  const { error: userErr } = await client.from("chat_messages").insert({
-    content: { text: userText } as unknown as Json,
-    role: "user" as const,
-    session_id: sessionId,
+  const userContent = { text: userText } satisfies Prisma.InputJsonValue;
+  const assistantContent = { text: assistantText } satisfies Prisma.InputJsonValue;
+
+  const { count } = await db.chatSession.updateMany({
+    data: { updatedAt: new Date() },
+    where: { id: sessionId, userId: user.id },
   });
-  if (userErr) {
-    ctx.log?.error({ err: userErr }, "Failed to save user message");
+
+  if (count === 0) {
+    ctx.log?.error({ sessionId }, "Failed to update chat session timestamp — session not found");
+    return;
   }
 
-  const { error: assistantErr } = await client.from("chat_messages").insert({
-    content: { text: assistantText } as unknown as Json,
-    role: "assistant" as const,
-    session_id: sessionId,
-  });
-  if (assistantErr) {
-    ctx.log?.error({ err: assistantErr }, "Failed to save assistant message");
+  try {
+    await db.chatMessage.createMany({
+      data: [
+        {
+          content: userContent,
+          role: "user",
+          sessionId,
+        },
+        {
+          content: assistantContent,
+          role: "assistant",
+          sessionId,
+        },
+      ],
+    });
+  } catch (error) {
+    ctx.log?.error({ err: error }, "Failed to save chat messages");
   }
-
-  await client
-    .from("chat_sessions")
-    .update({ updated_at: new Date().toISOString() })
-    .eq("id", sessionId);
 }
 
 export async function setChatSessionTitleIfEmpty(
@@ -90,20 +122,44 @@ export async function setChatSessionTitleIfEmpty(
   sessionId: string,
   title: string,
 ): Promise<void> {
-  const { client } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: session } = await client
-    .from("chat_sessions")
-    .select("title")
-    .eq("id", sessionId)
-    .single();
-
-  if (session?.title || !title) {
+  if (!title) {
     return;
   }
 
-  const { error } = await client.from("chat_sessions").update({ title }).eq("id", sessionId);
-  if (error) {
+  const session = await db.chatSession.findFirst({
+    select: { title: true },
+    where: { id: sessionId, userId: user.id },
+  });
+
+  if (session?.title) {
+    return;
+  }
+
+  try {
+    await db.chatSession.updateMany({
+      data: { title },
+      where: { id: sessionId, title: null, userId: user.id },
+    });
+  } catch (error) {
     ctx.log?.error({ err: error }, "Failed to set chat session title");
   }
+}
+
+export function toChatMessageDto(row: {
+  id: string;
+  sessionId: string;
+  role: string;
+  content: unknown;
+  createdAt: Date;
+}): ChatMessage {
+  return {
+    content: row.content,
+    createdAt: row.createdAt.toISOString(),
+    id: row.id,
+    role: row.role,
+    sessionId: row.sessionId,
+  };
 }

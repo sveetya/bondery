@@ -1,13 +1,6 @@
-/**
- * Mapy.com API helpers for geocoding and timezone lookup.
- *
- * Used to enrich LinkedIn-scraped location strings (e.g. "Prague, Czechia")
- * with coordinates, structured address fields, and IANA timezone identifiers.
- */
-
+import { prisma } from "@bondery/db";
 import { formatPlaceLabel } from "@bondery/helpers/address";
 import logger from "../platform/logger.js";
-import { createAdminClient } from "../storage/supabase-client.js";
 
 const MAPS_BASE_URL = "https://api.mapy.com";
 
@@ -44,18 +37,6 @@ export interface GeocodeResult {
 /**
  * Parses a LinkedIn location string into a query and optional locality (country)
  * for the mapy.com geocode API.
- *
- * LinkedIn places can be:
- *   - "Prague, Czechia"                → query = "Prague",  locality = "Czechia"
- *   - "Brno, South Moravia, Czechia"   → query = "Brno",    locality = "Czechia"
- *   - "Czechia"                        → query = "Czechia",  locality = undefined
- *   - "San Francisco Bay Area"         → query = "San Francisco Bay Area", locality = undefined
- *
- * For 3-part strings the middle segment (region) is intentionally dropped from the
- * query so the API resolves the *city*, not the region.
- *
- * @param location - Raw location string from LinkedIn.
- * @returns An object with `query` and optional `locality`.
  */
 function parseLinkedInLocation(location: string): { query: string; locality?: string } {
   const trimmed = location.trim();
@@ -69,29 +50,14 @@ function parseLinkedInLocation(location: string): { query: string; locality?: st
   }
 
   if (parts.length === 1) {
-    // No comma — could be just a country name or a single city
     return { query: parts[0] };
   }
 
-  // 2-part ("City, Country") or 3+-part ("City, Region, Country"):
-  // Always use the first segment as query and the last as locality.
   return { locality: parts[parts.length - 1], query: parts[0] };
 }
 
 /**
  * Geocodes a LinkedIn-scraped location string using the Mapy.com /v1/geocode API.
- *
- * Splits the location into city + country, sends a regional geocode request with
- * limit=1, and parses the first result's position and regional structure into
- * a structured GeocodeResult.
- *
- * Returns null when:
- *  - `location` is empty
- *  - `BONDERY_PRIVATE_MAPS_KEY` is not configured
- *  - the API returns no results or an error
- *
- * @param location - Raw location string from LinkedIn (e.g. "Brno, Czechia" or "Czechia").
- * @returns Structured geocode result, or null on failure.
  */
 export async function geocodeLinkedInLocation(location: string): Promise<GeocodeResult | null> {
   const trimmed = location.trim();
@@ -143,7 +109,6 @@ export async function geocodeLinkedInLocation(location: string): Promise<Geocode
       return null;
     }
 
-    // Extract structured address from regionalStructure
     const regional: Array<{ name: string; type: string; isoCode?: string }> = Array.isArray(
       item.regionalStructure,
     )
@@ -162,8 +127,6 @@ export async function geocodeLinkedInLocation(location: string): Promise<Geocode
           city = entry.name;
         }
       } else if (entry.type === "regional.region") {
-        // The API may return multiple regions (e.g. "Brno-City District" then
-        // "South Moravian Region"). Always keep the last (broadest) one.
         state = entry.name;
       } else if (entry.type === "regional.country") {
         country = entry.name;
@@ -190,14 +153,6 @@ export async function geocodeLinkedInLocation(location: string): Promise<Geocode
   }
 }
 
-/**
- * Fetches the IANA timezone identifier for a given coordinate pair from the
- * Mapy.com /v1/timezone/coordinate API.
- *
- * @param lat - Latitude (-90 to 90).
- * @param lon - Longitude (-180 to 180).
- * @returns IANA timezone name (e.g. "Europe/Prague"), or null on failure.
- */
 export async function getTimezoneForCoordinates(lat: number, lon: number): Promise<string | null> {
   const mapsKey = getMapsKey();
   const mapsUrl = getMapsUrl();
@@ -233,19 +188,6 @@ export async function getTimezoneForCoordinates(lat: number, lon: number): Promi
   }
 }
 
-/**
- * Validates a street-level address by geocoding without the `type: "regional"` filter.
- *
- * Unlike `geocodeLinkedInPlace` (which only matches cities/regions), this function
- * searches across all result types (streets, addresses, POIs, regions). If the API
- * returns only a regional/city-level match for a query that includes a street name,
- * the street is considered non-existent.
- *
- * @param query - Full address string (e.g. "Panská 11, Mostkovice, Czechia").
- * @param expectedCity - The city to validate the result against (case-insensitive).
- * @returns The geocode result if the address is valid at street level, or `null` if
- *          the street/address was not found.
- */
 export async function validateStreetAddress(
   query: string,
   expectedCity: string,
@@ -263,7 +205,6 @@ export async function validateStreetAddress(
   upstream.searchParams.set("query", trimmed);
   upstream.searchParams.set("lang", "en");
   upstream.searchParams.set("limit", "1");
-  // No type filter — search all result types (address, street, regional, etc.)
 
   try {
     const response = await fetch(upstream.toString(), {
@@ -293,10 +234,6 @@ export async function validateStreetAddress(
       return null;
     }
 
-    // Check result type: if only an administrative region level, the street wasn't found.
-    // Mapy.com result types: "regional.municipality", "regional.region",
-    // "regional.country", "regional.address", "street", "address", "poi", etc.
-    // Note: "regional.address" IS a valid street-level result — only reject pure admin types.
     const resultType: string = item.type ?? "";
     const ADMIN_REGION_TYPES = new Set([
       "regional.municipality",
@@ -306,12 +243,9 @@ export async function validateStreetAddress(
       "regional.country",
     ]);
     if (ADMIN_REGION_TYPES.has(resultType)) {
-      // The API only found a city/region, not a specific address → not a street result
       return null;
     }
 
-    // Verify the result is in the expected city (prevent matching a same-name
-    // street in a different city).
     const regional: Array<{ name: string; type: string; isoCode?: string }> = Array.isArray(
       item.regionalStructure,
     )
@@ -337,7 +271,6 @@ export async function validateStreetAddress(
       }
     }
 
-    // If we have an expected city and it doesn't match, result is for a different city
     if (expectedCity && city) {
       const normalizedExpected = expectedCity.trim().toLowerCase();
       const normalizedCity = city.trim().toLowerCase();
@@ -374,24 +307,6 @@ export interface CachedGeocodeResult {
   timezone: string | null;
 }
 
-/**
- * Geocodes a LinkedIn location string with a shared database cache.
- *
- * Lookup flow:
- *  1. Normalise `location` → `location_key` (lowercased, trimmed).
- *  2. Check `geocode_cache` for a non-stale row (updated within the last
- *     {@link GEOCODE_CACHE_TTL_DAYS} days).
- *  3. On cache **hit** with `geocode_found = true` → return cached geo + timezone.
- *  4. On cache **hit** with `geocode_found = false` → return `null` (negative cache).
- *  5. On cache **miss** or stale → call `geocodeLinkedInLocation()` + optionally
- *     `getTimezoneForCoordinates()`, upsert the result, and return it.
- *
- * Uses an admin Supabase client internally so the public `geocode_cache` table
- * (service-role only RLS) is accessible regardless of the calling user's session.
- *
- * @param location - Raw location string from LinkedIn (e.g. "Brno, Czechia").
- * @returns Combined geocode result with timezone, or `null` when geocoding yields no result.
- */
 export async function cachedGeocodeLinkedInLocation(
   location: string,
 ): Promise<CachedGeocodeResult | null> {
@@ -400,27 +315,23 @@ export async function cachedGeocodeLinkedInLocation(
     return null;
   }
 
-  const admin = createAdminClient();
+  const staleThreshold = new Date();
+  staleThreshold.setDate(staleThreshold.getDate() - GEOCODE_CACHE_TTL_DAYS);
 
-  // ── 1. Cache lookup ────────────────────────────────────────────────────
   try {
-    const staleThreshold = new Date();
-    staleThreshold.setDate(staleThreshold.getDate() - GEOCODE_CACHE_TTL_DAYS);
-
-    const { data: cached } = await admin
-      .from("geocode_cache")
-      .select("*")
-      .eq("place_key", placeKey)
-      .gte("updated_at", staleThreshold.toISOString())
-      .maybeSingle();
+    const cached = await prisma.geocodeCache.findFirst({
+      where: {
+        placeKey,
+        updatedAt: { gte: staleThreshold },
+      },
+    });
 
     if (cached) {
-      if (!cached.geocode_found) {
-        // Negative cache — the location was previously looked up with no result
+      if (!cached.geocodeFound) {
         return null;
       }
 
-      if (cached.lat == null || cached.lon == null || cached.location_ewkt == null) {
+      if (cached.lat == null || cached.lon == null || cached.locationEwkt == null) {
         return null;
       }
 
@@ -428,32 +339,28 @@ export async function cachedGeocodeLinkedInLocation(
         geo: {
           city: cached.city ?? null,
           country: cached.country ?? null,
-          countryCode: cached.country_code ?? null,
+          countryCode: cached.countryCode ?? null,
           formattedLabel:
             formatPlaceLabel({
               city: cached.city,
-              countryCode: cached.country_code,
+              countryCode: cached.countryCode,
               state: cached.state,
             }) || null,
           lat: cached.lat,
-          locationEwkt: cached.location_ewkt,
+          locationEwkt: cached.locationEwkt,
           lon: cached.lon,
           name: cached.name ?? placeKey,
           postalCode: null,
           state: cached.state ?? null,
-          stateCode: cached.state_code ?? null,
+          stateCode: cached.stateCode ?? null,
         },
         timezone: cached.timezone ?? null,
       };
     }
   } catch (err) {
-    // Cache read failed — fall through to live geocode
     logger.error({ err }, "[mapy] Cache read failed, falling through to live geocode");
   }
 
-  // ── 2. Live geocode + timezone ─────────────────────────────────────────
-  // Capture whether the API key exists BEFORE calling so we can decide
-  // whether a null result should be written to the negative cache.
   const mapsKeyConfigured = !!getMapsKey();
   const geo = await geocodeLinkedInLocation(location);
   let timezone: string | null = null;
@@ -462,45 +369,57 @@ export async function cachedGeocodeLinkedInLocation(
     timezone = await getTimezoneForCoordinates(geo.lat, geo.lon);
   }
 
-  // ── 3. Upsert into cache ──────────────────────────────────────────────
   try {
     if (geo) {
-      await admin.from("geocode_cache").upsert(
-        {
+      await prisma.geocodeCache.upsert({
+        create: {
           city: geo.city,
           country: geo.country,
-          country_code: geo.countryCode,
-          formatted_label: geo.formattedLabel,
-          geocode_found: true,
+          countryCode: geo.countryCode,
+          formattedLabel: geo.formattedLabel,
+          geocodeFound: true,
           lat: geo.lat,
-          location_ewkt: geo.locationEwkt,
+          locationEwkt: geo.locationEwkt,
           lon: geo.lon,
           name: geo.name,
-          place_key: placeKey,
-          place_original: location.trim(),
+          placeKey,
+          placeOriginal: location.trim(),
           state: geo.state,
-          state_code: geo.stateCode,
+          stateCode: geo.stateCode,
           timezone,
-          updated_at: new Date().toISOString(),
         },
-        { onConflict: "place_key" },
-      );
+        update: {
+          city: geo.city,
+          country: geo.country,
+          countryCode: geo.countryCode,
+          formattedLabel: geo.formattedLabel,
+          geocodeFound: true,
+          lat: geo.lat,
+          locationEwkt: geo.locationEwkt,
+          lon: geo.lon,
+          name: geo.name,
+          placeOriginal: location.trim(),
+          state: geo.state,
+          stateCode: geo.stateCode,
+          timezone,
+        },
+        where: { placeKey },
+      });
     } else if (mapsKeyConfigured) {
-      // Negative cache — the API was called and returned no result.
-      // Skipped when BONDERY_PRIVATE_MAPS_KEY is not configured so that transient
-      // misconfigurations don't poison the cache for 180 days.
-      await admin.from("geocode_cache").upsert(
-        {
-          geocode_found: false,
-          place_key: placeKey,
-          place_original: location.trim(),
-          updated_at: new Date().toISOString(),
+      await prisma.geocodeCache.upsert({
+        create: {
+          geocodeFound: false,
+          placeKey,
+          placeOriginal: location.trim(),
         },
-        { onConflict: "place_key" },
-      );
+        update: {
+          geocodeFound: false,
+          placeOriginal: location.trim(),
+        },
+        where: { placeKey },
+      });
     }
   } catch (err) {
-    // Cache write failure is non-fatal — log and return the live result
     logger.error({ err }, "[mapy] Cache upsert failed");
   }
 

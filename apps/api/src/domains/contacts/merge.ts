@@ -1,8 +1,8 @@
+import type { Prisma } from "@bondery/db";
 import type {
   MergeConflictChoice,
   MergeConflictField,
   MergeContactsResponse,
-  TablesUpdate,
 } from "@bondery/schemas";
 import { loadEnrichedContact } from "../../lib/contacts/enrichment.js";
 import {
@@ -19,6 +19,8 @@ import {
 } from "../../lib/sync/build-changes.js";
 import { persistSyncChanges } from "../../lib/sync/persist-changes.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
+import { toSyncRow } from "../_shared/prisma-helpers.js";
 import { captureCurrentSyncTxid } from "../_shared/with-txid.js";
 import { mergeContactEmails, mergeContactPhones } from "./merge-channels.js";
 import { scheduleMergeRecommendationsRefresh } from "./merge-recommendations.js";
@@ -41,7 +43,8 @@ export async function mergeContacts(
   ctx: DomainContext,
   input: MergeContactsInput,
 ): Promise<{ data: MergeContactsResponse; txid: string; serverSequence: number }> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
   const leftPersonId = input.leftPersonId.trim();
   const rightPersonId = input.rightPersonId.trim();
   const conflictResolutions = input.conflictResolutions ?? {};
@@ -63,17 +66,11 @@ export async function mergeContacts(
     }
   }
 
-  const { data: peopleRows, error: peopleError } = await client
-    .from("people")
-    .select("*")
-    .eq("user_id", user.id)
-    .in("id", [leftPersonId, rightPersonId]);
+  const peopleRows = await db.people.findMany({
+    where: { id: { in: [leftPersonId, rightPersonId] }, userId: user.id },
+  });
 
-  if (peopleError) {
-    throw internal("contact_merge_failed", peopleError.message);
-  }
-
-  if (peopleRows?.length !== 2) {
+  if (peopleRows.length !== 2) {
     throw new DomainError("One or both contacts were not found", 404, "contact_not_found");
   }
 
@@ -84,19 +81,27 @@ export async function mergeContacts(
     throw new DomainError("One or both contacts were not found", 404, "contact_not_found");
   }
 
-  const scalarUpdates: TablesUpdate<"people"> = {};
+  const leftPersonSync = toSyncRow(leftPerson as unknown as Record<string, unknown>);
+  const rightPersonSync = toSyncRow(rightPerson as unknown as Record<string, unknown>);
+
+  const scalarUpdates: Prisma.PeopleUpdateManyMutationInput = {};
+  let gisPointEwkt: string | null | undefined;
 
   for (const [field, dbColumn] of Object.entries(MERGEABLE_SCALAR_FIELDS)) {
     const mergeField = field as MergeConflictField;
-    const leftValue = (leftPerson as Record<string, unknown>)[dbColumn];
-    const rightValue = (rightPerson as Record<string, unknown>)[dbColumn];
+    const leftValue = leftPersonSync[dbColumn];
+    const rightValue = rightPersonSync[dbColumn];
 
     if (!hasMeaningfulValue(rightValue)) {
       continue;
     }
 
     if (!hasMeaningfulValue(leftValue)) {
-      (scalarUpdates as Record<string, unknown>)[dbColumn] = rightValue;
+      if (mergeField === "gisPoint") {
+        gisPointEwkt = rightValue as string;
+      } else {
+        (scalarUpdates as Record<string, unknown>)[field] = rightValue;
+      }
       continue;
     }
 
@@ -105,57 +110,77 @@ export async function mergeContacts(
     }
 
     if (resolveConflictChoice(conflictResolutions, mergeField) === "right") {
-      (scalarUpdates as Record<string, unknown>)[dbColumn] = rightValue;
+      if (mergeField === "gisPoint") {
+        gisPointEwkt = rightValue as string;
+      } else {
+        (scalarUpdates as Record<string, unknown>)[field] = rightValue;
+      }
     }
   }
 
-  scalarUpdates.updated_at = new Date().toISOString();
+  scalarUpdates.updatedAt = new Date();
 
-  const { error: updateLeftPersonError } = await client
-    .from("people")
-    .update(scalarUpdates)
-    .eq("id", leftPersonId)
-    .eq("user_id", user.id);
+  try {
+    const updated = await db.people.updateMany({
+      data: scalarUpdates,
+      where: { id: leftPersonId, userId: user.id },
+    });
 
-  if (updateLeftPersonError) {
-    throw internal("contact_merge_failed", updateLeftPersonError.message);
+    if (updated.count === 0) {
+      throw internal("contact_merge_failed", "Failed to update merged contact");
+    }
+
+    if (gisPointEwkt !== undefined) {
+      if (gisPointEwkt) {
+        await db.$executeRaw`
+          UPDATE people
+          SET gis_point = ST_GeogFromText(${gisPointEwkt}),
+              updated_at = NOW()
+          WHERE id = ${leftPersonId}::uuid AND user_id = ${user.id}::uuid
+        `;
+      } else {
+        await db.$executeRaw`
+          UPDATE people
+          SET gis_point = NULL,
+              updated_at = NOW()
+          WHERE id = ${leftPersonId}::uuid AND user_id = ${user.id}::uuid
+        `;
+      }
+    }
+  } catch (error) {
+    throw internal(
+      "contact_merge_failed",
+      error instanceof Error ? error.message : "contact_merge_failed",
+    );
   }
 
-  await mergeContactPhones(client, user.id, leftPersonId, rightPersonId, conflictResolutions);
-  await mergeContactEmails(client, user.id, leftPersonId, rightPersonId, conflictResolutions);
-  await mergeContactSocials(client, user.id, leftPersonId, rightPersonId, conflictResolutions);
-  await mergeContactGroupMemberships(client, user.id, leftPersonId, rightPersonId);
-  await mergeContactInteractionParticipants(client, leftPersonId, rightPersonId);
-  await mergeContactImportantDates(
-    client,
-    user.id,
-    leftPersonId,
-    rightPersonId,
-    conflictResolutions,
-  );
-  await mergeContactRelationships(client, user.id, leftPersonId, rightPersonId);
+  await mergeContactPhones(db, user.id, leftPersonId, rightPersonId, conflictResolutions);
+  await mergeContactEmails(db, user.id, leftPersonId, rightPersonId, conflictResolutions);
+  await mergeContactSocials(db, user.id, leftPersonId, rightPersonId, conflictResolutions);
+  await mergeContactGroupMemberships(db, user.id, leftPersonId, rightPersonId);
+  await mergeContactInteractionParticipants(db, leftPersonId, rightPersonId);
+  await mergeContactImportantDates(db, user.id, leftPersonId, rightPersonId, conflictResolutions);
+  await mergeContactRelationships(db, user.id, leftPersonId, rightPersonId);
 
-  const { error: deleteMergedPersonError } = await client
-    .from("people")
-    .delete()
-    .eq("id", rightPersonId)
-    .eq("user_id", user.id);
+  const deleted = await db.people.deleteMany({
+    where: { id: rightPersonId, userId: user.id },
+  });
 
-  if (deleteMergedPersonError) {
-    throw internal("contact_merge_failed", deleteMergedPersonError.message);
+  if (deleted.count === 0) {
+    throw internal("contact_merge_failed", "Failed to delete merged contact");
   }
 
   await mergeContactAvatar(
-    client,
+    db,
     user.id,
     leftPersonId,
     rightPersonId,
-    leftPerson.has_avatar,
-    rightPerson.has_avatar,
+    leftPerson.hasAvatar,
+    rightPerson.hasAvatar,
     conflictResolutions,
   );
 
-  const contact = await loadEnrichedContact(client, user.id, leftPersonId, undefined, log);
+  const contact = await loadEnrichedContact(db, user.id, leftPersonId, undefined, log);
 
   const response: MergeContactsResponse = {
     contact,
@@ -165,9 +190,9 @@ export async function mergeContacts(
     userId: user.id,
   };
 
-  const snapshotChanges = await buildContactSnapshotChanges(client, user.id, leftPersonId);
+  const snapshotChanges = await buildContactSnapshotChanges(user.id, leftPersonId, db);
   const changes = [...snapshotChanges, buildPeopleDeleteChange(rightPersonId)];
-  const txid = await captureCurrentSyncTxid(client);
+  const txid = await captureCurrentSyncTxid();
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 

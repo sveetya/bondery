@@ -18,30 +18,19 @@ import {
 } from "@bondery/schemas/http";
 import { conflictResponse } from "@bondery/schemas/http/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import {
   createRelationship,
   deleteRelationship,
   updateRelationship,
 } from "../../../domains/contacts/relationships.js";
 import { extractAvatarOptions } from "../../../lib/data/select-fragments.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal, notFound } from "../../../lib/platform/errors/http-errors.js";
+import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
+import { notFound } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
 import { resolveContactAvatarUrl } from "../../../lib/storage/avatar-urls.js";
-
-// ── Constants ────────────────────────────────────────────────────
-
-const RELATIONSHIP_SELECT = `
-  id,
-  user_id,
-  source_person_id,
-  target_person_id,
-  relationship_type,
-  created_at,
-  updated_at
-`;
 
 const RELATIONSHIP_TYPES: RelationshipType[] = [
   "parent",
@@ -57,8 +46,6 @@ const RELATIONSHIP_TYPES: RelationshipType[] = [
   "other",
 ] satisfies RelationshipType[];
 
-// ── Helpers ──────────────────────────────────────────────────────
-
 function _isRelationshipType(value: string): value is RelationshipType {
   return RELATIONSHIP_TYPES.includes(value as RelationshipType);
 }
@@ -66,25 +53,20 @@ function _isRelationshipType(value: string): value is RelationshipType {
 function toContactPreview(
   person: {
     id: string;
-    first_name: string;
-    last_name: string | null;
+    firstName: string;
+    lastName: string | null;
   },
   avatarUrl: string | null,
 ) {
   return {
     avatar: avatarUrl,
-    firstName: person.first_name,
+    firstName: person.firstName,
     id: person.id,
-    lastName: person.last_name,
+    lastName: person.lastName,
   };
 }
 
-// ── Route Registration ───────────────────────────────────────────
-
 export function registerRelationshipRoutes(fastify: AppFastifyInstance): void {
-  /**
-   * GET /api/contacts/:id/relationships - Get all relationships for a person
-   */
   fastify.get(
     "/:id/relationships",
     {
@@ -96,100 +78,96 @@ export function registerRelationshipRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
+      const { user } = ctx;
       const avatarOpts = extractAvatarOptions(request.query);
       const { id: personId } = request.params;
 
-      const { data: person, error: personError } = await client
-        .from("people")
-        .select("id")
-        .eq("id", personId)
-        .eq("user_id", user.id)
-        .single();
+      const person = await db.people.findFirst({
+        select: { id: true },
+        where: { id: personId, userId: user.id },
+      });
 
-      if (personError || !person) {
+      if (!person) {
         throw notFound("Contact not found", "not_found");
       }
 
-      const { data: rows, error: rowsError } = await client
-        .from("people_relationships")
-        .select(RELATIONSHIP_SELECT)
-        .or(`source_person_id.eq.${personId},target_person_id.eq.${personId}`)
-        .order("created_at", { ascending: true });
+      const rows = await db.peopleRelationship.findMany({
+        orderBy: { createdAt: "asc" },
+        where: {
+          OR: [{ sourcePersonId: personId }, { targetPersonId: personId }],
+          userId: user.id,
+        },
+      });
 
-      if (rowsError) {
-        throw internal("internal_server_error", rowsError.message);
-      }
-
-      const relationships = rows || [];
-      if (relationships.length === 0) {
+      if (rows.length === 0) {
         return { relationships: [] };
       }
 
       const personIds = Array.from(
         new Set(
-          relationships.flatMap((relationship) => [
-            relationship.source_person_id,
-            relationship.target_person_id,
+          rows.flatMap((relationship) => [
+            relationship.sourcePersonId,
+            relationship.targetPersonId,
           ]),
         ),
       );
 
-      const { data: peopleRows, error: peopleError } = await client
-        .from("people")
-        .select("id, first_name, last_name, updated_at, has_avatar")
-        .in("id", personIds)
-        .eq("user_id", user.id);
+      const peopleRows = await db.people.findMany({
+        select: {
+          firstName: true,
+          hasAvatar: true,
+          id: true,
+          lastName: true,
+          updatedAt: true,
+        },
+        where: { id: { in: personIds }, userId: user.id },
+      });
 
-      if (peopleError) {
-        throw internal("internal_server_error", peopleError.message);
-      }
+      const peopleById = new Map(peopleRows.map((personRow) => [personRow.id, personRow]));
 
-      const peopleById = new Map((peopleRows || []).map((personRow) => [personRow.id, personRow]));
-
-      const formattedRelationships = relationships
+      const formattedRelationships = rows
         .map((relationship) => {
-          const sourcePerson = peopleById.get(relationship.source_person_id);
-          const targetPerson = peopleById.get(relationship.target_person_id);
+          const sourcePerson = peopleById.get(relationship.sourcePersonId);
+          const targetPerson = peopleById.get(relationship.targetPersonId);
 
           if (!sourcePerson || !targetPerson) {
             return null;
           }
 
           return {
-            createdAt: relationship.created_at,
+            createdAt: relationship.createdAt.toISOString(),
             id: relationship.id,
-            relationshipType: relationship.relationship_type as RelationshipType,
+            relationshipType: relationship.relationshipType as RelationshipType,
             sourcePerson: toContactPreview(
               sourcePerson,
               resolveContactAvatarUrl(
-                client,
                 user.id,
                 {
-                  hasAvatar: sourcePerson.has_avatar,
+                  hasAvatar: sourcePerson.hasAvatar,
                   id: sourcePerson.id,
-                  updatedAt: sourcePerson.updated_at,
+                  updatedAt: sourcePerson.updatedAt.toISOString(),
                 },
                 avatarOpts,
               ),
             ),
-            sourcePersonId: relationship.source_person_id,
+            sourcePersonId: relationship.sourcePersonId,
             targetPerson: toContactPreview(
               targetPerson,
               resolveContactAvatarUrl(
-                client,
                 user.id,
                 {
-                  hasAvatar: targetPerson.has_avatar,
+                  hasAvatar: targetPerson.hasAvatar,
                   id: targetPerson.id,
-                  updatedAt: targetPerson.updated_at,
+                  updatedAt: targetPerson.updatedAt.toISOString(),
                 },
                 avatarOpts,
               ),
             ),
-            targetPersonId: relationship.target_person_id,
-            updatedAt: relationship.updated_at,
-            userId: relationship.user_id,
+            targetPersonId: relationship.targetPersonId,
+            updatedAt: relationship.updatedAt.toISOString(),
+            userId: relationship.userId,
           };
         })
         .filter(
@@ -200,9 +178,6 @@ export function registerRelationshipRoutes(fastify: AppFastifyInstance): void {
     },
   );
 
-  /**
-   * POST /api/contacts/:id/relationships - Create a relationship for a person
-   */
   fastify.post(
     "/:id/relationships",
     {
@@ -230,9 +205,6 @@ export function registerRelationshipRoutes(fastify: AppFastifyInstance): void {
     ),
   );
 
-  /**
-   * PATCH /api/contacts/:id/relationships/:relationshipId - Update a relationship for a person
-   */
   fastify.patch(
     "/:id/relationships/:relationshipId",
     {
@@ -261,9 +233,6 @@ export function registerRelationshipRoutes(fastify: AppFastifyInstance): void {
     ),
   );
 
-  /**
-   * DELETE /api/contacts/:id/relationships/:relationshipId - Delete a relationship for a person
-   */
   fastify.delete(
     "/:id/relationships/:relationshipId",
     {

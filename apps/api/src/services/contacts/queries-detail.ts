@@ -4,16 +4,14 @@ import type {
   GroupWithCount,
   ImportantDateType,
 } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
+import { toGroupDto } from "../../domains/_shared/prisma-helpers.js";
 import { attachContactExtras, loadEnrichedContact } from "../../lib/contacts/enrichment.js";
 import { findPersonIdBySocial } from "../../lib/contacts/socials.js";
 import { generateVCard } from "../../lib/contacts/vcard.js";
-import {
-  CONTACT_SELECT,
-  extractAvatarOptions,
-  GROUP_SELECT,
-} from "../../lib/data/select-fragments.js";
+import { contactDetailSelect, mapContactDetailRecord } from "../../lib/data/prisma-mappers.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { badRequest, internal, notFound } from "../../lib/platform/errors/http-errors.js";
 import { withEmptyChannels, withEmptySocials } from "./helpers.js";
 import {
@@ -24,19 +22,21 @@ import {
   toContactPreview,
 } from "./queries-shared.js";
 
+type ContactDetailContext = Pick<DomainContext, "db" | "user"> & { log?: ServiceLog };
+
 export async function getContact(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: ContactDetailContext,
   contactId: string,
   avatarOptions?: AvatarTransformOptions,
-  log?: ServiceLog,
 ) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const enrichedContact = await loadEnrichedContact(
-    client,
-    userId,
+    db,
+    user.id,
     contactId,
     { avatarOptions },
-    log,
+    ctx.log,
   );
 
   if (!enrichedContact) {
@@ -46,11 +46,9 @@ export async function getContact(
   return { contact: enrichedContact };
 }
 
-export async function findContactBySocial(
-  client: SupabaseClient<Database>,
-  userId: string,
-  query: BySocialQuery,
-) {
+export async function findContactBySocial(ctx: ContactDetailContext, query: BySocialQuery) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const platform = query.platform?.trim() ?? "";
   const handle = query.handle?.trim() ?? "";
   const avatarOpts = extractAvatarOptions(query);
@@ -59,106 +57,126 @@ export async function findContactBySocial(
     throw badRequest("Invalid platform or handle", "bad_request");
   }
 
-  const personId = await findPersonIdBySocial(client, userId, platform, handle);
+  const personId = await findPersonIdBySocial(db, user.id, platform, handle);
 
   if (!personId) {
     return { exists: false as const };
   }
 
-  const { data: person, error } = await client
-    .from("people")
-    .select("id, first_name, last_name, updated_at, has_avatar")
-    .eq("user_id", userId)
-    .eq("id", personId)
-    .single();
+  const person = await db.people.findFirst({
+    select: {
+      firstName: true,
+      hasAvatar: true,
+      id: true,
+      lastName: true,
+      updatedAt: true,
+    },
+    where: { id: personId, userId: user.id },
+  });
 
-  if (error || !person) {
-    throw internal("internal_server_error", error?.message ?? "Failed to find contact");
+  if (!person) {
+    throw internal("internal_server_error", "Failed to find contact");
   }
 
   return {
-    contact: toContactPreview(client, userId, person, avatarOpts),
+    contact: toContactPreview(
+      user.id,
+      {
+        firstName: person.firstName,
+        hasAvatar: person.hasAvatar,
+        id: person.id,
+        lastName: person.lastName,
+        updatedAt: person.updatedAt.toISOString(),
+      },
+      avatarOpts,
+    ),
     exists: true as const,
   };
 }
 
-export async function getContactGroups(client: SupabaseClient<Database>, personId: string) {
-  const { data: memberships, error: membershipsError } = await client
-    .from("people_groups")
-    .select("group_id")
-    .eq("person_id", personId);
+export async function getContactGroups(
+  db: ReturnType<typeof domainDb>,
+  userId: string,
+  personId: string,
+) {
+  const contact = await db.people.findFirst({
+    select: { id: true },
+    where: { id: personId, userId },
+  });
 
-  if (membershipsError) {
-    throw internal("internal_server_error", membershipsError.message);
+  if (!contact) {
+    throw notFound("Contact not found", "not_found");
   }
 
-  const groupIds = (memberships || []).map((m) => m.group_id);
+  const memberships = await db.peopleGroup.findMany({
+    select: { groupId: true },
+    where: { personId, userId },
+  });
+
+  const groupIds = memberships.map((membership) => membership.groupId);
 
   if (groupIds.length === 0) {
     return { groups: [] as GroupWithCount[] };
   }
 
-  const { data: groups, error: groupsError } = await client
-    .from("groups")
-    .select(GROUP_SELECT)
-    .in("id", groupIds)
-    .order("label", { ascending: true });
-
-  if (groupsError) {
-    throw internal("internal_server_error", groupsError.message);
-  }
-
-  const { data: groupMemberships, error: countsError } = await client
-    .from("people_groups")
-    .select("group_id")
-    .in("group_id", groupIds);
-
-  if (countsError) {
-    throw internal("internal_server_error", countsError.message);
-  }
+  const [groups, groupMemberships] = await Promise.all([
+    db.group.findMany({
+      orderBy: { label: "asc" },
+      where: { id: { in: groupIds }, userId },
+    }),
+    db.peopleGroup.findMany({
+      select: { groupId: true },
+      where: { groupId: { in: groupIds }, userId },
+    }),
+  ]);
 
   const countMap = new Map<string, number>();
-  groupMemberships?.forEach((item) => {
-    const current = countMap.get(item.group_id) || 0;
-    countMap.set(item.group_id, current + 1);
-  });
+  for (const item of groupMemberships) {
+    const current = countMap.get(item.groupId) ?? 0;
+    countMap.set(item.groupId, current + 1);
+  }
 
-  const groupsWithCounts = (groups || []).map((group) => ({
-    ...group,
-    contactCount: countMap.get(group.id) || 0,
+  const groupsWithCounts: GroupWithCount[] = groups.map((group) => ({
+    ...toGroupDto(group),
+    contactCount: countMap.get(group.id) ?? 0,
   }));
 
   return { groups: groupsWithCounts };
 }
 
 export async function getContactVCardExport(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: ContactDetailContext,
   contactId: string,
   avatarOptions?: AvatarTransformOptions,
-  log?: ServiceLog,
 ) {
-  const { data: contact, error } = await client
-    .from("people")
-    .select(CONTACT_SELECT)
-    .eq("id", contactId)
-    .eq("user_id", userId)
-    .single();
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
+  const contact = await db.people.findFirst({
+    select: contactDetailSelect,
+    where: { id: contactId, userId: user.id },
+  });
 
-  if (error || !contact) {
+  if (!contact) {
     throw notFound("Contact not found", "not_found");
   }
 
+  const mappedContact = mapContactDetailRecord(contact);
+
   let contactWithChannels: Contact;
   try {
-    const [enrichedContact] = await attachContactExtras(client, userId, [contact], {
+    const [enrichedContact] = await attachContactExtras(db, user.id, [mappedContact], {
       addresses: true,
       avatarOptions,
     });
     contactWithChannels = enrichedContact as Contact;
   } catch (channelError) {
-    log?.error({ channelError }, "Failed to attach contact channels/social media for vCard export");
-    contactWithChannels = withEmptySocials(withEmptyChannels([contact]))[0] as unknown as Contact;
+    ctx.log?.error(
+      { channelError },
+      "Failed to attach contact channels/social media for vCard export",
+    );
+    contactWithChannels = withEmptySocials(
+      withEmptyChannels([mappedContact]),
+    )[0] as unknown as Contact;
   }
 
   let exportImportantDates: Array<{
@@ -168,18 +186,20 @@ export async function getContactVCardExport(
   let exportCategories: string[] = [];
 
   try {
-    const [{ data: importantDates }, { data: peopleTags }] = await Promise.all([
-      client
-        .from("people_important_dates")
-        .select("type, date")
-        .eq("person_id", contactId)
-        .eq("user_id", userId),
-      client.from("people_tags").select("tag_id").eq("person_id", contactId).eq("user_id", userId),
+    const [importantDates, peopleTags] = await Promise.all([
+      db.peopleImportantDate.findMany({
+        select: { date: true, type: true },
+        where: { personId: contactId, userId: user.id },
+      }),
+      db.peopleTag.findMany({
+        select: { tagId: true },
+        where: { personId: contactId, userId: user.id },
+      }),
     ]);
 
-    exportImportantDates = (importantDates ?? [])
+    exportImportantDates = importantDates
       .map((entry) => ({
-        date: entry.date,
+        date: entry.date.toISOString().slice(0, 10),
         type: entry.type,
       }))
       .filter(
@@ -194,25 +214,20 @@ export async function getContactVCardExport(
           entry.date.trim().length > 0,
       );
 
-    const tagIds = Array.from(
-      new Set((peopleTags ?? []).map((entry) => entry.tag_id).filter(Boolean)),
-    );
+    const tagIds = Array.from(new Set(peopleTags.map((entry) => entry.tagId).filter(Boolean)));
 
     if (tagIds.length > 0) {
-      const { data: tags } = await client
-        .from("tags")
-        .select("label")
-        .eq("user_id", userId)
-        .in("id", tagIds);
+      const tags = await db.tag.findMany({
+        select: { label: true },
+        where: { id: { in: tagIds }, userId: user.id },
+      });
 
       exportCategories = Array.from(
-        new Set(
-          (tags ?? []).map((entry) => entry.label).filter((label): label is string => !!label),
-        ),
+        new Set(tags.map((entry) => entry.label).filter((label): label is string => !!label)),
       );
     }
   } catch (extrasError) {
-    log?.warn?.({ extrasError }, "Failed to fetch important dates/tags for vCard export");
+    ctx.log?.warn?.({ extrasError }, "Failed to fetch important dates/tags for vCard export");
   }
 
   let vcard: string;
@@ -222,12 +237,12 @@ export async function getContactVCardExport(
       importantDates: exportImportantDates,
     });
   } catch (vcardError) {
-    log?.error({ vcardError }, "Failed to generate vCard");
+    ctx.log?.error({ vcardError }, "Failed to generate vCard");
     throw internal("failed_to_generate_vcard");
   }
 
-  const firstName = contact.firstName || "contact";
-  const lastName = contact.lastName || "";
+  const firstName = mappedContact.firstName || "contact";
+  const lastName = mappedContact.lastName || "";
   const filename = lastName ? `${firstName}_${lastName}.vcf` : `${firstName}.vcf`;
 
   return { filename, vcard };

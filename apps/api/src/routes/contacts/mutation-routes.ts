@@ -5,9 +5,10 @@ import {
   deleteContactsResponseSchema,
 } from "@bondery/schemas";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { createContact, deleteContacts } from "../../domains/contacts/index.js";
 import { resolveContactPersonIds } from "../../lib/contacts/resolve-person-ids.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import { badRequest } from "../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../lib/platform/openapi/responses.js";
@@ -24,19 +25,16 @@ export function registerContactMutationRoutes(fastify: AppFastifyInstance): void
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request, reply) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const body = request.body;
 
-      const { data, txid } = await createContact(
-        { client, log: request.log, user },
-        {
-          firstName: body.firstName,
-          id: body.id,
-          lastName: body.lastName,
-          linkedin: body.linkedin,
-          middleName: body.middleName,
-        },
-      );
+      const { data, txid } = await createContact(ctx, {
+        firstName: body.firstName,
+        id: body.id,
+        lastName: body.lastName,
+        linkedin: body.linkedin,
+        middleName: body.middleName,
+      });
 
       return reply.status(201).send({ contact: data.contact, txid });
     },
@@ -52,13 +50,14 @@ export function registerContactMutationRoutes(fastify: AppFastifyInstance): void
       } satisfies FastifyZodOpenApiSchema,
     },
     withDomainRoute({ body: deleteContactsRequestSchema }, async (ctx, { body }) => {
-      const { client, user } = ctx;
+      const { user } = ctx;
+      const db = domainDb(ctx);
 
       let uniqueIds: string[];
 
       if ("ids" in body && Array.isArray(body.ids)) {
         uniqueIds = await resolveContactPersonIds(
-          client,
+          db,
           user.id,
           { personIds: body.ids },
           {
@@ -69,7 +68,7 @@ export function registerContactMutationRoutes(fastify: AppFastifyInstance): void
           },
         );
       } else if ("filter" in body && body.filter) {
-        uniqueIds = await resolveContactPersonIds(client, user.id, {
+        uniqueIds = await resolveContactPersonIds(db, user.id, {
           contactFilter: body.filter,
           excludePersonIds: body.excludeIds,
         });

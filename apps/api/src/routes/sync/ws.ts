@@ -1,8 +1,8 @@
+import { prisma } from "@bondery/db";
 import { parseSyncWsClientMessage } from "@bondery/schemas/sync";
 import websocket from "@fastify/websocket";
 import type { WebSocket } from "ws";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getLastServerSequence } from "../../lib/sync/idempotency.js";
 import {
   getSyncWakeRuntime,
@@ -74,8 +74,7 @@ export const syncWsRoutes: AppRoutePlugin = async (fastify): Promise<void> => {
       runtime.hub.register(userId, wakeSocket);
 
       try {
-        const admin = createAdminClient();
-        const serverSequence = await getLastServerSequence(admin, userId);
+        const serverSequence = await getLastServerSequence(prisma, userId);
         runtime.hub.sendHello(userId, serverSequence);
       } catch (error) {
         request.log.error({ err: error, userId }, "sync wake hello failed");

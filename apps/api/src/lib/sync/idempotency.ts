@@ -1,34 +1,7 @@
 import { createHash } from "node:crypto";
+import type { Prisma, PrismaClient } from "@bondery/db";
 import type { SyncMutation } from "@bondery/schemas/sync";
-import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
-
-type UntypedAdminClient = {
-  from(table: string): {
-    select(columns: string): {
-      eq(
-        column: string,
-        value: string,
-      ): {
-        eq(
-          column: string,
-          value: string,
-        ): {
-          maybeSingle(): Promise<{ data: unknown; error: { message: string } | null }>;
-        };
-        maybeSingle(): Promise<{ data: unknown; error: { message: string } | null }>;
-      };
-    };
-    insert(row: Record<string, unknown>): Promise<{ error: { message: string } | null }>;
-  };
-  rpc(
-    fn: string,
-    args?: Record<string, unknown>,
-  ): Promise<{ data: unknown; error: { message: string } | null }>;
-};
-
-function admin(client: DomainSupabaseClient): UntypedAdminClient {
-  return client as unknown as UntypedAdminClient;
-}
+import { allocateSyncServerSequence } from "../data/sync-txid.js";
 
 export function hashSyncMutationPayload(mutation: SyncMutation): string {
   return createHash("sha256")
@@ -50,26 +23,39 @@ export interface StoredSyncReceipt {
 }
 
 export async function findSyncReceipt(
-  client: DomainSupabaseClient,
+  db: PrismaClient,
   userId: string,
   mutationId: string,
 ): Promise<StoredSyncReceipt | null> {
-  const { data, error } = await admin(client)
-    .from("sync_mutation_receipts")
-    .select("server_sequence, mutation_type, payload_hash, result")
-    .eq("user_id", userId)
-    .eq("client_mutation_id", mutationId)
-    .maybeSingle();
+  const receipt = await db.syncMutationReceipt.findUnique({
+    select: {
+      mutationType: true,
+      payloadHash: true,
+      result: true,
+      serverSequence: true,
+    },
+    where: {
+      userId_clientMutationId: {
+        clientMutationId: mutationId,
+        userId,
+      },
+    },
+  });
 
-  if (error) {
-    throw new Error(error.message);
+  if (!receipt) {
+    return null;
   }
 
-  return (data as StoredSyncReceipt | null) ?? null;
+  return {
+    mutation_type: receipt.mutationType,
+    payload_hash: receipt.payloadHash,
+    result: receipt.result,
+    server_sequence: Number(receipt.serverSequence),
+  };
 }
 
 export async function storeSyncReceipt(
-  client: DomainSupabaseClient,
+  db: PrismaClient,
   input: {
     userId: string;
     mutationId: string;
@@ -79,50 +65,31 @@ export async function storeSyncReceipt(
     result: unknown;
   },
 ): Promise<void> {
-  const { error } = await admin(client).from("sync_mutation_receipts").insert({
-    client_mutation_id: input.mutationId,
-    mutation_type: input.mutationType,
-    payload_hash: input.payloadHash,
-    result: input.result,
-    server_sequence: input.serverSequence,
-    user_id: input.userId,
+  await db.syncMutationReceipt.create({
+    data: {
+      clientMutationId: input.mutationId,
+      mutationType: input.mutationType,
+      payloadHash: input.payloadHash,
+      result: input.result as Prisma.InputJsonValue,
+      serverSequence: BigInt(input.serverSequence),
+      userId: input.userId,
+    },
   });
-
-  if (error) {
-    throw new Error(error.message);
-  }
 }
 
 export async function allocateServerSequences(
-  client: DomainSupabaseClient,
+  db: PrismaClient,
   userId: string,
   count: number,
 ): Promise<number> {
-  const { data, error } = await admin(client).rpc("allocate_sync_server_sequence", {
-    p_count: count,
-    p_user_id: userId,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data as number;
+  return allocateSyncServerSequence(userId, count, db);
 }
 
-export async function getLastServerSequence(
-  client: DomainSupabaseClient,
-  userId: string,
-): Promise<number> {
-  const { data, error } = await admin(client)
-    .from("sync_user_sequence")
-    .select("last_sequence")
-    .eq("user_id", userId)
-    .maybeSingle();
+export async function getLastServerSequence(db: PrismaClient, userId: string): Promise<number> {
+  const row = await db.syncUserSequence.findUnique({
+    select: { lastSequence: true },
+    where: { userId },
+  });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return (data as { last_sequence: number } | null)?.last_sequence ?? 0;
+  return row ? Number(row.lastSequence) : 0;
 }

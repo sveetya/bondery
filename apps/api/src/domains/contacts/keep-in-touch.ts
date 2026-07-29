@@ -1,19 +1,21 @@
 import type { KeepInTouchCountResponse } from "@bondery/schemas";
+import { getKeepInTouchOverdueCount as queryKeepInTouchOverdueCount } from "../../lib/data/keep-in-touch.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import type { DomainContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
 
 export async function getKeepInTouchOverdueCount(
   ctx: DomainContext,
 ): Promise<KeepInTouchCountResponse> {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data, error } = await client.rpc("get_keep_in_touch_overdue_count", {
-    p_user_id: user.id,
-  });
-
-  if (error) {
-    throw internal("internal_server_error", error.message);
+  try {
+    const overdueCount = await queryKeepInTouchOverdueCount(db, ctx.user.id);
+    return { overdueCount };
+  } catch (error) {
+    throw internal(
+      "internal_server_error",
+      error instanceof Error ? error.message : "Failed to count overdue contacts",
+    );
   }
-
-  return { overdueCount: typeof data === "number" ? data : 0 };
 }

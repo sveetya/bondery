@@ -1,11 +1,10 @@
+import type { PrismaClient } from "@bondery/db";
 import type {
   EmailEntry,
   MergeConflictChoice,
   MergeConflictField,
   PhoneEntry,
 } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { replaceContactEmails, replaceContactPhones } from "../../lib/contacts/channels.js";
 import {
   normalizeEmailSet,
@@ -72,36 +71,27 @@ function resolveMergedCollection<T>(
 }
 
 export async function mergeContactPhones(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
   conflictResolutions: ConflictResolutions,
 ): Promise<void> {
-  const [
-    { data: leftPhones, error: leftPhonesError },
-    { data: rightPhones, error: rightPhonesError },
-  ] = await Promise.all([
-    client
-      .from("people_phones")
-      .select("prefix, value, type, preferred")
-      .eq("user_id", userId)
-      .eq("person_id", leftPersonId)
-      .order("sort_order", { ascending: true }),
-    client
-      .from("people_phones")
-      .select("prefix, value, type, preferred")
-      .eq("user_id", userId)
-      .eq("person_id", rightPersonId)
-      .order("sort_order", { ascending: true }),
+  const [leftPhones, rightPhones] = await Promise.all([
+    db.peoplePhone.findMany({
+      orderBy: { sortOrder: "asc" },
+      select: { preferred: true, prefix: true, type: true, value: true },
+      where: { personId: leftPersonId, userId },
+    }),
+    db.peoplePhone.findMany({
+      orderBy: { sortOrder: "asc" },
+      select: { preferred: true, prefix: true, type: true, value: true },
+      where: { personId: rightPersonId, userId },
+    }),
   ]);
 
-  if (leftPhonesError || rightPhonesError) {
-    throw internal("contact_merge_phones_load_failed", leftPhonesError ?? rightPhonesError);
-  }
-
-  const normalizedLeftPhones = normalizePhones(leftPhones || []);
-  const normalizedRightPhones = normalizePhones(rightPhones || []);
+  const normalizedLeftPhones = normalizePhones(leftPhones);
+  const normalizedRightPhones = normalizePhones(rightPhones);
   const mergedPhones = resolveMergedCollection(
     normalizedLeftPhones,
     normalizedRightPhones,
@@ -111,7 +101,7 @@ export async function mergeContactPhones(
   );
 
   try {
-    await replaceContactPhones(client, userId, leftPersonId, mergedPhones as PhoneEntry[]);
+    await replaceContactPhones(db, userId, leftPersonId, mergedPhones as PhoneEntry[]);
   } catch (phoneError) {
     const message = phoneError instanceof Error ? phoneError.message : "Failed to merge phones";
     throw internal("contact_merge_failed", message);
@@ -119,36 +109,27 @@ export async function mergeContactPhones(
 }
 
 export async function mergeContactEmails(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
   conflictResolutions: ConflictResolutions,
 ): Promise<void> {
-  const [
-    { data: leftEmails, error: leftEmailsError },
-    { data: rightEmails, error: rightEmailsError },
-  ] = await Promise.all([
-    client
-      .from("people_emails")
-      .select("value, type, preferred")
-      .eq("user_id", userId)
-      .eq("person_id", leftPersonId)
-      .order("sort_order", { ascending: true }),
-    client
-      .from("people_emails")
-      .select("value, type, preferred")
-      .eq("user_id", userId)
-      .eq("person_id", rightPersonId)
-      .order("sort_order", { ascending: true }),
+  const [leftEmails, rightEmails] = await Promise.all([
+    db.peopleEmail.findMany({
+      orderBy: { sortOrder: "asc" },
+      select: { preferred: true, type: true, value: true },
+      where: { personId: leftPersonId, userId },
+    }),
+    db.peopleEmail.findMany({
+      orderBy: { sortOrder: "asc" },
+      select: { preferred: true, type: true, value: true },
+      where: { personId: rightPersonId, userId },
+    }),
   ]);
 
-  if (leftEmailsError || rightEmailsError) {
-    throw internal("contact_merge_emails_load_failed", leftEmailsError ?? rightEmailsError);
-  }
-
-  const normalizedLeftEmails = normalizeEmails(leftEmails || []);
-  const normalizedRightEmails = normalizeEmails(rightEmails || []);
+  const normalizedLeftEmails = normalizeEmails(leftEmails);
+  const normalizedRightEmails = normalizeEmails(rightEmails);
   const mergedEmails = resolveMergedCollection(
     normalizedLeftEmails,
     normalizedRightEmails,
@@ -158,7 +139,7 @@ export async function mergeContactEmails(
   );
 
   try {
-    await replaceContactEmails(client, userId, leftPersonId, mergedEmails as EmailEntry[]);
+    await replaceContactEmails(db, userId, leftPersonId, mergedEmails as EmailEntry[]);
   } catch (emailError) {
     const message = emailError instanceof Error ? emailError.message : "Failed to merge emails";
     throw internal("contact_merge_failed", message);

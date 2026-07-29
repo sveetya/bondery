@@ -13,9 +13,10 @@ import { avatarTransformQuerySchema } from "@bondery/schemas/http";
 import { EXAMPLE_PROFILE_PHOTO_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras } from "../../lib/contacts/enrichment.js";
-import { CONTACT_SELECT, extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { contactListSelect, mapContactListRecord } from "../../lib/data/prisma-mappers.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { badRequest, internal, notFound } from "../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
@@ -84,32 +85,33 @@ export const meRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(contactResponseSchema, "Myself contact"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    async (request) => {
-      const { client, user } = getAuth(request);
-      const avatarOpts = extractAvatarOptions(request.query);
+    withDomainRoute({ query: avatarTransformQuerySchema }, async (ctx, { query }) => {
+      const { user } = ctx;
+      const avatarOpts = extractAvatarOptions(query);
+      const db = domainDb(ctx);
 
-      const { data: contact, error } = await client
-        .from("people")
-        .select(CONTACT_SELECT)
-        .eq("user_id", user.id)
-        .eq("myself", true)
-        .single();
+      const contactRow = await db.people.findFirst({
+        select: contactListSelect,
+        where: { myself: true, userId: user.id },
+      });
 
-      if (error || !contact) {
+      if (!contactRow) {
         throw notFound("Myself contact not found", "not_found");
       }
 
+      const contact = mapContactListRecord(contactRow);
+
       try {
-        const [enrichedContact] = await attachContactExtras(client, user.id, [contact], {
+        const [enrichedContact] = await attachContactExtras(db, user.id, [contact], {
           addresses: true,
           avatarOptions: avatarOpts,
         });
         return { contact: enrichedContact };
       } catch (error) {
-        request.log.error({ err: error }, "Failed to enrich myself contact");
+        ctx.log?.error({ err: error }, "Failed to enrich myself contact");
         throw internal("failed_to_load_profile_contact");
       }
-    },
+    }),
   );
 
   /**

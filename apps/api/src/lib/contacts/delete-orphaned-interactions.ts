@@ -1,16 +1,6 @@
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PrismaClient } from "@bondery/db";
 
-/** Keeps PostgREST `.in()` filters within URL-size limits. */
 const IN_FILTER_CHUNK_SIZE = 500;
-
-/** PostgREST returns at most 1000 rows per request unless paginated. */
-const SELECT_PAGE_SIZE = 1000;
-
-type ParticipantMembership = {
-  interaction_id: string;
-  person_id: string;
-};
 
 function chunkArray<T>(items: T[], chunkSize: number): T[][] {
   const chunks: T[][] = [];
@@ -18,151 +8,6 @@ function chunkArray<T>(items: T[], chunkSize: number): T[][] {
     chunks.push(items.slice(index, index + chunkSize));
   }
   return chunks;
-}
-
-async function fetchAllRows<T>(
-  fetchPage: (
-    offset: number,
-    pageSize: number,
-  ) => Promise<{ data: T[] | null; error: { message: string } | null }>,
-): Promise<T[]> {
-  const rows: T[] = [];
-  let offset = 0;
-
-  while (true) {
-    const { data, error } = await fetchPage(offset, SELECT_PAGE_SIZE);
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data?.length) {
-      break;
-    }
-
-    rows.push(...data);
-    if (data.length < SELECT_PAGE_SIZE) {
-      break;
-    }
-
-    offset += SELECT_PAGE_SIZE;
-  }
-
-  return rows;
-}
-
-async function fetchParticipantMembershipsByPersonIds(
-  client: SupabaseClient<Database>,
-  personIds: string[],
-): Promise<ParticipantMembership[]> {
-  const rows: ParticipantMembership[] = [];
-
-  for (const chunk of chunkArray(personIds, IN_FILTER_CHUNK_SIZE)) {
-    const chunkRows = await fetchAllRows<ParticipantMembership>(async (offset, pageSize) =>
-      client
-        .from("interaction_participants")
-        .select("interaction_id, person_id")
-        .in("person_id", chunk)
-        .range(offset, offset + pageSize - 1),
-    );
-    rows.push(...chunkRows);
-  }
-
-  return rows;
-}
-
-async function fetchParticipantMembershipsByInteractionIds(
-  client: SupabaseClient<Database>,
-  interactionIds: string[],
-): Promise<ParticipantMembership[]> {
-  const rows: ParticipantMembership[] = [];
-
-  for (const chunk of chunkArray(interactionIds, IN_FILTER_CHUNK_SIZE)) {
-    const chunkRows = await fetchAllRows<ParticipantMembership>(async (offset, pageSize) =>
-      client
-        .from("interaction_participants")
-        .select("interaction_id, person_id")
-        .in("interaction_id", chunk)
-        .range(offset, offset + pageSize - 1),
-    );
-    rows.push(...chunkRows);
-  }
-
-  return rows;
-}
-
-async function fetchOwnedInteractionIds(
-  client: SupabaseClient<Database>,
-  userId: string,
-  interactionIds: string[],
-): Promise<string[]> {
-  const ownedIds: string[] = [];
-
-  for (const chunk of chunkArray(interactionIds, IN_FILTER_CHUNK_SIZE)) {
-    const chunkRows = await fetchAllRows<{ id: string }>(async (offset, pageSize) =>
-      client
-        .from("interactions")
-        .select("id")
-        .eq("user_id", userId)
-        .in("id", chunk)
-        .range(offset, offset + pageSize - 1),
-    );
-    ownedIds.push(...chunkRows.map((row) => row.id));
-  }
-
-  return ownedIds;
-}
-
-async function fetchParticipantlessInteractionIds(
-  client: SupabaseClient<Database>,
-  userId: string,
-): Promise<string[]> {
-  const interactionIds = (
-    await fetchAllRows<{ id: string }>(async (offset, pageSize) =>
-      client
-        .from("interactions")
-        .select("id")
-        .eq("user_id", userId)
-        .range(offset, offset + pageSize - 1),
-    )
-  ).map((row) => row.id);
-
-  if (interactionIds.length === 0) {
-    return [];
-  }
-
-  const memberships = await fetchParticipantMembershipsByInteractionIds(client, interactionIds);
-  const interactionIdsWithParticipants = new Set(
-    memberships.map((membership) => membership.interaction_id),
-  );
-
-  return interactionIds.filter((id) => !interactionIdsWithParticipants.has(id));
-}
-
-async function deleteInteractionsByIds(
-  client: SupabaseClient<Database>,
-  interactionIds: string[],
-): Promise<void> {
-  for (const chunk of chunkArray(interactionIds, IN_FILTER_CHUNK_SIZE)) {
-    const { error } = await client.from("interactions").delete().in("id", chunk);
-    if (error) {
-      throw new Error(error.message);
-    }
-  }
-}
-
-function buildParticipantsByInteractionId(
-  memberships: ParticipantMembership[],
-): Map<string, Set<string>> {
-  const participantsByInteractionId = new Map<string, Set<string>>();
-
-  for (const membership of memberships) {
-    const participants =
-      participantsByInteractionId.get(membership.interaction_id) ?? new Set<string>();
-    participants.add(membership.person_id);
-    participantsByInteractionId.set(membership.interaction_id, participants);
-  }
-
-  return participantsByInteractionId;
 }
 
 export type DeleteOrphanedInteractionsOptions = {
@@ -179,7 +24,7 @@ export type DeleteOrphanedInteractionsOptions = {
  * are kept because that contact is never included in `contactIds`.
  */
 export async function deleteOrphanedInteractionsForDeletedContacts(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contactIds: string[],
   options?: DeleteOrphanedInteractionsOptions,
@@ -193,19 +38,25 @@ export async function deleteOrphanedInteractionsForDeletedContacts(
     return;
   }
 
-  const impactedMemberships = await fetchParticipantMembershipsByPersonIds(
-    client,
-    Array.from(deletedContactIds),
-  );
+  const impactedMemberships = await db.interactionParticipant.findMany({
+    select: { interactionId: true, personId: true },
+    where: { personId: { in: Array.from(deletedContactIds) } },
+  });
 
   const candidateInteractionIds = new Set(
-    impactedMemberships.map((membership) => membership.interaction_id),
+    impactedMemberships.map((membership) => membership.interactionId),
   );
 
   if (options?.includeParticipantlessInteractions) {
-    const participantlessInteractionIds = await fetchParticipantlessInteractionIds(client, userId);
-    for (const interactionId of participantlessInteractionIds) {
-      candidateInteractionIds.add(interactionId);
+    const interactions = await db.interaction.findMany({
+      select: { id: true, participants: { select: { personId: true } } },
+      where: { userId },
+    });
+
+    for (const interaction of interactions) {
+      if (interaction.participants.length === 0) {
+        candidateInteractionIds.add(interaction.id);
+      }
     }
   }
 
@@ -213,21 +64,35 @@ export async function deleteOrphanedInteractionsForDeletedContacts(
     return;
   }
 
-  const ownedInteractionIds = await fetchOwnedInteractionIds(
-    client,
-    userId,
-    Array.from(candidateInteractionIds),
-  );
+  const ownedInteractionIds: string[] = [];
+  for (const chunk of chunkArray(Array.from(candidateInteractionIds), IN_FILTER_CHUNK_SIZE)) {
+    const rows = await db.interaction.findMany({
+      select: { id: true },
+      where: { id: { in: chunk }, userId },
+    });
+    ownedInteractionIds.push(...rows.map((row) => row.id));
+  }
 
   if (ownedInteractionIds.length === 0) {
     return;
   }
 
-  const allMemberships = await fetchParticipantMembershipsByInteractionIds(
-    client,
-    ownedInteractionIds,
-  );
-  const participantsByInteractionId = buildParticipantsByInteractionId(allMemberships);
+  const allMemberships: Array<{ interactionId: string; personId: string }> = [];
+  for (const chunk of chunkArray(ownedInteractionIds, IN_FILTER_CHUNK_SIZE)) {
+    const rows = await db.interactionParticipant.findMany({
+      select: { interactionId: true, personId: true },
+      where: { interactionId: { in: chunk } },
+    });
+    allMemberships.push(...rows);
+  }
+
+  const participantsByInteractionId = new Map<string, Set<string>>();
+  for (const membership of allMemberships) {
+    const participants =
+      participantsByInteractionId.get(membership.interactionId) ?? new Set<string>();
+    participants.add(membership.personId);
+    participantsByInteractionId.set(membership.interactionId, participants);
+  }
 
   const interactionIdsToDelete: string[] = [];
 
@@ -252,5 +117,9 @@ export async function deleteOrphanedInteractionsForDeletedContacts(
     return;
   }
 
-  await deleteInteractionsByIds(client, interactionIdsToDelete);
+  for (const chunk of chunkArray(interactionIdsToDelete, IN_FILTER_CHUNK_SIZE)) {
+    await db.interaction.deleteMany({
+      where: { id: { in: chunk }, userId },
+    });
+  }
 }

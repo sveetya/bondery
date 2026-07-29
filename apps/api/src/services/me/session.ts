@@ -1,6 +1,7 @@
 import type { ColorSchemePreference, UserSessionData } from "@bondery/schemas";
 import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { isPlatformAdmin } from "../../lib/auth/is-platform-admin.js";
 import { getMyselfProfile } from "../../lib/contacts/myself.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
@@ -18,28 +19,34 @@ function parseColorScheme(value: string | null | undefined): ColorSchemePreferen
 }
 
 export async function getUserSession(ctx: DomainContext): Promise<UserSessionData> {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
-  const { data: settings, error } = await client
-    .from("user_settings")
-    .select("color_scheme, language, timezone, time_format, onboarding_completed_at")
-    .eq("user_id", user.id)
-    .single();
+  const settings = await db.userSettings.findUnique({
+    select: {
+      colorScheme: true,
+      language: true,
+      onboardingCompletedAt: true,
+      timeFormat: true,
+      timezone: true,
+    },
+    where: { userId: user.id },
+  });
 
-  if (error || !settings) {
+  if (!settings) {
     throw internal("session_settings_missing");
   }
 
-  const { firstName, avatarUrl } = await getMyselfProfile(client, user.id, SHELL_AVATAR_OPTIONS);
+  const { firstName, avatarUrl } = await getMyselfProfile(db, user.id, SHELL_AVATAR_OPTIONS);
 
   return {
     avatarUrl,
-    colorScheme: parseColorScheme(settings.color_scheme),
+    colorScheme: parseColorScheme(settings.colorScheme),
     displayName: firstName?.trim() || user.email || "User",
     isPlatformAdmin: await isPlatformAdmin(user.id),
     language: settings.language ?? DEFAULT_LOCALE,
-    onboardingCompletedAt: settings.onboarding_completed_at ?? null,
-    timeFormat: settings.time_format === "12h" ? "12h" : DEFAULT_TIME_FORMAT,
+    onboardingCompletedAt: settings.onboardingCompletedAt?.toISOString() ?? null,
+    timeFormat: settings.timeFormat === "12h" ? "12h" : DEFAULT_TIME_FORMAT,
     timezone: settings.timezone || "UTC",
   };
 }
@@ -47,5 +54,5 @@ export async function getUserSession(ctx: DomainContext): Promise<UserSessionDat
 /** Idempotent signup setup: default settings row + optional provider avatar import. */
 export async function initializeUserDefaults(ctx: DomainContext): Promise<void> {
   await ensureDefaultSettings(ctx);
-  await syncProviderAvatarIfNeeded(ctx.client, ctx.user.id);
+  await syncProviderAvatarIfNeeded(ctx.user.id);
 }

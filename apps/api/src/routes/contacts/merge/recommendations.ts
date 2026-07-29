@@ -15,6 +15,7 @@ import {
 } from "@bondery/schemas";
 import { avatarTransformQuerySchema, uuidParamSchema } from "@bondery/schemas/http";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import {
   declineMergeRecommendation,
   getMergeRecommendationsCount,
@@ -28,8 +29,7 @@ import {
   parsePagination,
 } from "../../../lib/data/pagination.js";
 import { extractAvatarOptions } from "../../../lib/data/select-fragments.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { domainContextFromClient } from "../../../lib/platform/domain-context.js";
+import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
 import { internal } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
@@ -49,8 +49,8 @@ export function registerRecommendationRoutes(fastify: AppFastifyInstance): void 
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return getMergeRecommendationsCount(domainContextFromClient(client, user, request.log));
+      const ctx = domainContextFromRequest(request);
+      return getMergeRecommendationsCount(ctx);
     },
   );
 
@@ -64,7 +64,8 @@ export function registerRecommendationRoutes(fastify: AppFastifyInstance): void 
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
       const avatarOptions = extractAvatarOptions(request.query);
       const { limit, offset } = parsePagination(request.query);
       const declinedQuery = request.query?.declined;
@@ -75,26 +76,26 @@ export function registerRecommendationRoutes(fastify: AppFastifyInstance): void 
             ? declinedQuery.toLowerCase() === "true"
             : false;
 
-      const {
-        data: recommendationRows,
-        error: recommendationsError,
-        count,
-      } = await client
-        .from("people_merge_recommendations")
-        .select("id, left_person_id, right_person_id, score, reasons", { count: "exact" })
-        .eq("user_id", user.id)
-        .eq("is_declined", showDeclined)
-        .order("score", { ascending: false })
-        .order("created_at", { ascending: false })
-        .range(offset, offset + limit - 1);
+      const where = { isDeclined: showDeclined, userId: ctx.user.id };
 
-      if (recommendationsError) {
-        throw internal("internal_server_error", recommendationsError.message);
-      }
+      const [recommendationRows, totalCount] = await Promise.all([
+        db.peopleMergeRecommendation.findMany({
+          orderBy: [{ score: "desc" }, { createdAt: "desc" }],
+          select: {
+            id: true,
+            leftPersonId: true,
+            reasons: true,
+            rightPersonId: true,
+            score: true,
+          },
+          skip: offset,
+          take: limit,
+          where,
+        }),
+        db.peopleMergeRecommendation.count({ where }),
+      ]);
 
-      const totalCount = typeof count === "number" ? count : (recommendationRows || []).length;
-
-      if (!recommendationRows || recommendationRows.length === 0) {
+      if (recommendationRows.length === 0) {
         const pagination = buildPaginationMeta({
           itemCount: 0,
           limit,
@@ -109,11 +110,15 @@ export function registerRecommendationRoutes(fastify: AppFastifyInstance): void 
       let recommendations: MergeRecommendationsResponse["recommendations"];
       try {
         recommendations = await hydrateMergeRecommendations(
-          client,
-          user.id,
-          recommendationRows || [],
+          ctx,
+          recommendationRows.map((row) => ({
+            id: row.id,
+            left_person_id: row.leftPersonId,
+            reasons: row.reasons,
+            right_person_id: row.rightPersonId,
+            score: row.score,
+          })),
           avatarOptions,
-          fastify.log,
         );
       } catch (hydrateError) {
         const message =
@@ -149,14 +154,14 @@ export function registerRecommendationRoutes(fastify: AppFastifyInstance): void 
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const avatarOptions = extractAvatarOptions(request.query);
 
       try {
-        return (await refreshMergeRecommendations(
-          domainContextFromClient(client, user, request.log),
-          { avatarOptions, hydrate: true },
-        )) as RefreshMergeRecommendationsResponse;
+        return (await refreshMergeRecommendations(ctx, {
+          avatarOptions,
+          hydrate: true,
+        })) as RefreshMergeRecommendationsResponse;
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Failed to refresh merge recommendations";

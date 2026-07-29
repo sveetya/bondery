@@ -1,100 +1,167 @@
+import { prisma } from "@bondery/db";
 import { internal } from "../../lib/platform/errors/http-errors.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
+
+export type SubscriptionMirrorFields = {
+  billingInterval?: string | null;
+  currency?: string | null;
+  paymentFailureCount?: number;
+  priceId?: string | null;
+  productName?: string | null;
+  stripeStatus?: string | null;
+  trialEndsAt?: Date | null;
+  unitAmount?: number | null;
+};
 
 export async function findUserIdByEmail(email: string): Promise<string | null> {
-  const admin = createAdminClient();
-  const { data, error } = await admin.rpc(
-    "get_user_id_by_email" as never,
-    {
-      p_email: email,
-    } as never,
-  );
+  const user = await prisma.user.findFirst({
+    select: { id: true },
+    where: { email },
+  });
 
-  if (error) {
-    throw internal("billing_user_lookup_failed", error);
-  }
-
-  return (data as string | null) ?? null;
+  return user?.id ?? null;
 }
 
 export async function upsertSubscription(
   userId: string,
-  polarCustomerId: string,
-  polarSubscriptionId: string,
+  stripeCustomerId: string,
+  stripeSubscriptionId: string,
   status: string,
   currentPeriodStart: Date | null,
   currentPeriodEnd: Date | null,
   cancelAtPeriodEnd: boolean,
+  mirror: SubscriptionMirrorFields = {},
 ): Promise<void> {
-  const admin = createAdminClient();
+  const data = {
+    billingInterval: mirror.billingInterval ?? null,
+    cancelAtPeriodEnd,
+    currency: mirror.currency ?? null,
+    currentPeriodEnd,
+    currentPeriodStart,
+    paymentFailureCount: mirror.paymentFailureCount ?? 0,
+    priceId: mirror.priceId ?? null,
+    productName: mirror.productName ?? null,
+    status,
+    stripeCustomerId,
+    stripeStatus: mirror.stripeStatus ?? null,
+    stripeSubscriptionId,
+    trialEndsAt: mirror.trialEndsAt ?? null,
+    unitAmount: mirror.unitAmount ?? null,
+    userId,
+  };
 
-  const { error } = await admin.from("subscriptions").upsert(
-    {
-      cancel_at_period_end: cancelAtPeriodEnd,
-      current_period_end: currentPeriodEnd ? currentPeriodEnd.toISOString() : null,
-      current_period_start: currentPeriodStart ? currentPeriodStart.toISOString() : null,
-      polar_customer_id: polarCustomerId,
-      polar_subscription_id: polarSubscriptionId,
-      status,
-      user_id: userId,
-    },
-    { onConflict: "user_id" },
-  );
+  const existing = await prisma.subscription.findFirst({
+    select: { id: true },
+    where: { userId },
+  });
 
-  if (error) {
+  try {
+    if (existing) {
+      await prisma.subscription.update({
+        data,
+        where: { id: existing.id },
+      });
+      return;
+    }
+
+    await prisma.subscription.create({ data });
+  } catch (error) {
     throw internal("billing_subscription_upsert_failed", error);
   }
 }
 
 export async function storePendingSubscription(
   email: string,
-  polarCustomerId: string,
-  polarSubscriptionId: string,
+  stripeCustomerId: string,
+  stripeSubscriptionId: string,
   status: string,
   currentPeriodEnd: Date | null,
   cancelAtPeriodEnd: boolean,
 ): Promise<void> {
-  const admin = createAdminClient();
-
-  const { error } = await admin.from("pending_subscriptions" as never).upsert(
-    {
-      cancel_at_period_end: cancelAtPeriodEnd,
-      current_period_end: currentPeriodEnd ? currentPeriodEnd.toISOString() : null,
-      email,
-      polar_customer_id: polarCustomerId,
-      polar_subscription_id: polarSubscriptionId,
-      status,
-    } as never,
-    { onConflict: "email" },
-  );
-
-  if (error) {
+  try {
+    await prisma.pendingSubscription.upsert({
+      create: {
+        cancelAtPeriodEnd,
+        currentPeriodEnd,
+        email,
+        status,
+        stripeCustomerId,
+        stripeSubscriptionId,
+      },
+      update: {
+        cancelAtPeriodEnd,
+        currentPeriodEnd,
+        status,
+        stripeCustomerId,
+        stripeSubscriptionId,
+      },
+      where: { email },
+    });
+  } catch (error) {
     throw internal("billing_pending_subscription_store_failed", error);
   }
 }
 
 export async function deletePendingSubscription(email: string): Promise<void> {
-  const admin = createAdminClient();
-  await admin
-    .from("pending_subscriptions" as never)
-    .delete()
-    .eq("email", email as never);
+  await prisma.pendingSubscription.deleteMany({ where: { email } });
 }
 
-export function mapStatus(polarStatus: string, cancelAtPeriodEnd: boolean): string {
-  switch (polarStatus) {
-    case "active":
-      return cancelAtPeriodEnd ? "canceling" : "active";
-    case "trialing":
-      return "active";
-    case "canceled":
-    case "incomplete_expired":
-      return "canceled";
-    case "past_due":
-    case "incomplete":
-    case "unpaid":
-      return "past_due";
-    default:
-      return "past_due";
+export async function resetPaymentFailureCount(stripeSubscriptionId: string): Promise<void> {
+  try {
+    await prisma.subscription.update({
+      data: { paymentFailureCount: 0 },
+      where: { stripeSubscriptionId },
+    });
+  } catch (error) {
+    throw internal("billing_subscription_upsert_failed", error);
   }
 }
+
+export async function setPaymentFailureCount(
+  stripeSubscriptionId: string,
+  attemptCount: number,
+): Promise<void> {
+  try {
+    await prisma.subscription.update({
+      data: { paymentFailureCount: attemptCount },
+      where: { stripeSubscriptionId },
+    });
+  } catch (error) {
+    throw internal("billing_subscription_upsert_failed", error);
+  }
+}
+
+export async function markTrialEndingEmailSent(stripeSubscriptionId: string): Promise<void> {
+  try {
+    await prisma.subscription.update({
+      data: { trialEndingEmailSentAt: new Date() },
+      where: { stripeSubscriptionId },
+    });
+  } catch (error) {
+    throw internal("billing_subscription_upsert_failed", error);
+  }
+}
+
+export async function getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<{
+  trialEndingEmailSentAt: string | null;
+  userId: string;
+} | null> {
+  try {
+    const row = await prisma.subscription.findUnique({
+      select: { trialEndingEmailSentAt: true, userId: true },
+      where: { stripeSubscriptionId },
+    });
+
+    if (!row) {
+      return null;
+    }
+
+    return {
+      trialEndingEmailSentAt: row.trialEndingEmailSentAt?.toISOString() ?? null,
+      userId: row.userId,
+    };
+  } catch (error) {
+    throw internal("billing_subscription_upsert_failed", error);
+  }
+}
+
+export { mapStripeStatus } from "./map-status.js";

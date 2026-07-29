@@ -1,4 +1,4 @@
-// Fails when route modules call Supabase write methods directly (migration guard).
+// Fails when route modules call database write methods directly (migration guard).
 //
 // Usage: npx tsx scripts/check-no-route-writes.ts
 
@@ -46,7 +46,7 @@ for (const file of walk(routesRoot)) {
 
 if (violations.length > 0) {
   console.error(
-    "check-no-route-writes: Supabase writes in routes not on allowlist:\n" +
+    "check-no-route-writes: Database writes in routes not on allowlist:\n" +
       violations.map((v) => `  - ${v}`).join("\n"),
   );
   process.exit(1);

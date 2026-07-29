@@ -1,5 +1,5 @@
-import type { Database, SocialPlatform } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PrismaClient } from "@bondery/db";
+import type { SocialPlatform } from "@bondery/schemas";
 import type { ContactWithId } from "../data/select-fragments.js";
 
 const SOCIAL_PLATFORMS: SocialPlatform[] = [
@@ -22,13 +22,6 @@ type SocialsShape = {
   signal: string | null;
 };
 
-type SocialRow = {
-  person_id: string;
-  platform: string;
-  handle: string;
-  connected_at: string | null;
-};
-
 function emptySocialShape(): SocialsShape {
   return {
     facebook: null,
@@ -48,16 +41,9 @@ function asSocialPlatform(value: string): SocialPlatform | null {
   return null;
 }
 
-/**
- * Loads normalized socials rows and merges them into contact-shaped objects.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param contacts Contacts loaded from people table.
- * @returns Contacts with top-level socials fields attached.
- */
+/** Loads normalized socials rows and merges them into contact-shaped objects. */
 export async function attachContactSocials<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contacts: T[],
 ): Promise<Array<T & SocialsShape>> {
@@ -67,28 +53,23 @@ export async function attachContactSocials<T extends ContactWithId>(
 
   const personIds = contacts.map((contact) => contact.id);
 
-  const { data: socialRows, error } = await client
-    .from("people_socials")
-    .select("person_id, platform, handle, connected_at")
-    .eq("user_id", userId)
-    .in("person_id", personIds);
-
-  if (error) {
-    throw new Error(error.message);
-  }
+  const socialRows = await db.peopleSocial.findMany({
+    select: { handle: true, personId: true, platform: true },
+    where: { personId: { in: personIds }, userId },
+  });
 
   const map = new Map<string, SocialsShape>();
   for (const contact of contacts) {
     map.set(contact.id, emptySocialShape());
   }
 
-  for (const row of (socialRows || []) as SocialRow[]) {
+  for (const row of socialRows) {
     const platform = asSocialPlatform(row.platform);
     if (!platform) {
       continue;
     }
 
-    const bucket = map.get(row.person_id);
+    const bucket = map.get(row.personId);
     if (!bucket) {
       continue;
     }
@@ -102,17 +83,9 @@ export async function attachContactSocials<T extends ContactWithId>(
   }));
 }
 
-/**
- * Upserts or deletes a socials handle for a specific person and platform.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param personId Person id.
- * @param platform Social platform.
- * @param handle Handle/URL value. Empty/null removes the row.
- */
+/** Upserts or deletes a socials handle for a specific person and platform. */
 export async function upsertContactSocials(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   personId: string,
   platform: SocialPlatform,
@@ -122,49 +95,42 @@ export async function upsertContactSocials(
   const normalizedHandle = typeof handle === "string" ? handle.trim() : "";
 
   if (normalizedHandle.length === 0) {
-    const { error: deleteError } = await client
-      .from("people_socials")
-      .delete()
-      .eq("user_id", userId)
-      .eq("person_id", personId)
-      .eq("platform", platform);
-
-    if (deleteError) {
-      throw new Error(deleteError.message);
-    }
-
+    await db.peopleSocial.deleteMany({
+      where: { personId, platform, userId },
+    });
     return;
   }
 
-  const { error: upsertError } = await client.from("people_socials").upsert(
-    {
-      connected_at: connectedAt ?? null,
-      handle: normalizedHandle,
-      person_id: personId,
-      platform,
-      user_id: userId,
-    },
-    {
-      onConflict: "user_id,person_id,platform",
-    },
-  );
+  const existing = await db.peopleSocial.findFirst({
+    select: { id: true },
+    where: { personId, platform, userId },
+  });
 
-  if (upsertError) {
-    throw new Error(upsertError.message);
+  if (existing) {
+    await db.peopleSocial.update({
+      data: {
+        connectedAt: connectedAt ? new Date(connectedAt) : null,
+        handle: normalizedHandle,
+      },
+      where: { id: existing.id },
+    });
+    return;
   }
+
+  await db.peopleSocial.create({
+    data: {
+      connectedAt: connectedAt ? new Date(connectedAt) : null,
+      handle: normalizedHandle,
+      personId,
+      platform,
+      userId,
+    },
+  });
 }
 
-/**
- * Finds person id by user and one social platform/handle pair.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param platform Social platform.
- * @param handle Handle/URL to match.
- * @returns Matching person id or null.
- */
+/** Finds person id by user and one social platform/handle pair. */
 export async function findPersonIdBySocial(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   platform: SocialPlatform,
   handle: string,
@@ -174,20 +140,11 @@ export async function findPersonIdBySocial(
     return null;
   }
 
-  const { data, error } = await client
-    .from("people_socials")
-    .select("person_id")
-    .eq("user_id", userId)
-    .eq("platform", platform)
-    .eq("handle", normalizedHandle)
-    .order("updated_at", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const row = await db.peopleSocial.findFirst({
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+    select: { personId: true },
+    where: { handle: normalizedHandle, platform, userId },
+  });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data?.person_id || null;
+  return row?.personId ?? null;
 }

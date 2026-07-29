@@ -1,6 +1,5 @@
-import type { Json } from "@bondery/schemas/supabase.types";
+import { type Prisma, prisma } from "@bondery/db";
 import type { SyncChange, SyncEmitMeta, SyncTableKey, SyncWakeEvent } from "@bondery/schemas/sync";
-import { createAdminClient } from "../storage/supabase-client.js";
 import { allocateServerSequences } from "./idempotency.js";
 import { notifySyncWake } from "./wake/index.js";
 
@@ -27,23 +26,19 @@ export async function emitSyncBatch(
     return null;
   }
 
-  const admin = createAdminClient();
-  const serverSequence = await allocateServerSequences(admin, userId, 1);
+  const serverSequence = await allocateServerSequences(prisma, userId, 1);
 
-  const rows = changes.map((change, changeIndex) => ({
-    change_index: changeIndex,
-    entity_id: change.entityId,
-    operation: change.operation,
-    row_data: change.value as Json | null,
-    server_sequence: serverSequence,
-    table_name: change.table,
-    user_id: userId,
-  }));
-
-  const { error } = await admin.from("sync_change_log").insert(rows);
-  if (error) {
-    throw new Error(error.message);
-  }
+  await prisma.syncChangeLog.createMany({
+    data: changes.map((change, changeIndex) => ({
+      changeIndex,
+      entityId: change.entityId,
+      operation: change.operation,
+      rowData: (change.value ?? null) as Prisma.InputJsonValue,
+      serverSequence: BigInt(serverSequence),
+      tableName: change.table,
+      userId,
+    })),
+  });
 
   void notifySyncWake(userId, syncWakeEventFromChanges(serverSequence, changes, meta));
 

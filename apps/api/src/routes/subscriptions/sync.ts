@@ -8,12 +8,12 @@ import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../lib/platform/with-domain-route.js";
-import { syncSubscriptionFromPolar } from "../../services/billing/sync.js";
+import { syncSubscriptionFromStripe } from "../../services/billing/sync.js";
 
 const subscriptionSyncResponseSchema = z
   .union([
     z.object({
-      source: z.enum(["pending", "polar_api"]),
+      source: z.enum(["pending", "stripe_api"]),
       synced: z.literal(true),
     }),
     z.object({
@@ -34,10 +34,10 @@ export async function subscriptionSyncRoutes(fastify: FastifyInstance): Promise<
     "/",
     {
       schema: {
-        description: "Sync subscription state from Polar for the authenticated user.",
+        description: "Sync subscription state from Stripe for the authenticated user.",
         response: withOkResponse(subscriptionSyncResponseSchema, "Subscription sync result"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    withDomainRoute(async (ctx) => syncSubscriptionFromPolar(ctx)),
+    withDomainRoute(async (ctx) => syncSubscriptionFromStripe(ctx)),
   );
 }

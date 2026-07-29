@@ -1,69 +1,45 @@
 import type { Tag } from "@bondery/schemas";
-import { TAG_SELECT } from "../../lib/data/select-fragments.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import {
-  buildPeopleTagChange,
   buildPeopleTagChangeFromRow,
-  findPeopleTagId,
+  buildPeopleTagChangeWithDb,
+  findPeopleTagIdWithDb,
 } from "../../lib/sync/build-changes.js";
 import { persistSyncChanges } from "../../lib/sync/persist-changes.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "./context.js";
+import { domainDb } from "./domain-db.js";
+import { toPeopleTagSyncRow, toTagDto } from "./prisma-helpers.js";
 import { captureCurrentSyncTxid, withPersonTxid } from "./with-txid.js";
-
-const PEOPLE_TAG_WITH_TAG_SELECT = `
-  id,
-  person_id,
-  tag_id,
-  user_id,
-  created_at,
-  tags!inner(${TAG_SELECT})
-`;
-
-type PeopleTagMembershipRow = {
-  id: string;
-  person_id: string;
-  tag_id: string;
-  user_id: string;
-  created_at: string;
-  tags: Tag;
-};
-
-function toPeopleTagSyncRow(membership: PeopleTagMembershipRow) {
-  const { tags: _tags, ...peopleTagRow } = membership;
-  return peopleTagRow;
-}
 
 export async function upsertPeopleTagMembership(
   ctx: DomainContext,
   personId: string,
   tagId: string,
 ): Promise<{ tag: Tag; personId: string; txid: string; serverSequence: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: membership, error } = await client
-    .from("people_tags")
-    .upsert(
-      { person_id: personId, tag_id: tagId, user_id: user.id },
-      { onConflict: "person_id,tag_id" },
-    )
-    .select(PEOPLE_TAG_WITH_TAG_SELECT)
-    .single();
-
-  if (error || !membership) {
-    if (error) {
-      throw internal("tag_upsert_failed", error);
-    }
+  const tagRow = await db.tag.findFirst({ where: { id: tagId, userId: user.id } });
+  if (!tagRow) {
     throw new DomainError("Tag not found", 404, "tag_not_found");
   }
 
-  const typedMembership = membership as PeopleTagMembershipRow;
-  const tag = typedMembership.tags;
-  if (!tag) {
-    throw new DomainError("Tag not found", 404, "tag_not_found");
+  await db.peopleTag.upsert({
+    create: { personId, tagId, userId: user.id },
+    update: {},
+    where: { personId_tagId: { personId, tagId } },
+  });
+
+  const membership = await db.peopleTag.findFirst({
+    where: { personId, tagId, userId: user.id },
+  });
+  if (!membership) {
+    throw internal("internal_server_error", "people_tag membership missing after upsert");
   }
 
-  const { txid } = await withPersonTxid(client, user.id, async () => ({ personId }));
-  const changes = [buildPeopleTagChangeFromRow(toPeopleTagSyncRow(typedMembership))];
+  const tag = toTagDto(tagRow);
+  const { txid } = await withPersonTxid(user.id, async () => ({ personId }));
+  const changes = [buildPeopleTagChangeFromRow(toPeopleTagSyncRow(membership))];
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 
@@ -75,24 +51,23 @@ export async function removePeopleTagMembership(
   personId: string,
   tagId: string,
 ): Promise<{ personId: string; tagId: string; txid: string; serverSequence: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: deletedMembership, error } = await client
-    .from("people_tags")
-    .delete()
-    .eq("person_id", personId)
-    .eq("tag_id", tagId)
-    .eq("user_id", user.id)
-    .select("id")
-    .maybeSingle();
+  const membership = await db.peopleTag.findFirst({
+    select: { id: true },
+    where: { personId, tagId, userId: user.id },
+  });
 
-  if (error) {
-    throw internal("tag_failed", error.message);
+  if (membership) {
+    await db.peopleTag.deleteMany({
+      where: { personId, tagId, userId: user.id },
+    });
   }
 
-  const peopleTagId = deletedMembership?.id ?? null;
+  const peopleTagId = membership?.id ?? null;
 
-  const { txid } = await withPersonTxid(client, user.id, async () => ({ personId }));
+  const { txid } = await withPersonTxid(user.id, async () => ({ personId }));
   const changes = peopleTagId
     ? [
         {
@@ -114,18 +89,10 @@ export async function upsertPeopleTagMemberships(
   tagId: string,
   personIds: string[],
 ): Promise<{ addedCount: number; txid: string; serverSequence: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: tag, error: tagError } = await client
-    .from("tags")
-    .select("id")
-    .eq("id", tagId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (tagError) {
-    throw internal("tag_failed", tagError.message);
-  }
+  const tag = await db.tag.findFirst({ where: { id: tagId, userId: user.id } });
   if (!tag) {
     throw new DomainError("Tag not found", 404, "tag_not_found");
   }
@@ -134,28 +101,22 @@ export async function upsertPeopleTagMemberships(
     return { addedCount: 0, serverSequence: 0, txid: "" };
   }
 
-  const memberships = personIds.map((personId) => ({
-    person_id: personId,
-    tag_id: tagId,
-    user_id: user.id,
-  }));
-
-  const { error } = await client.from("people_tags").upsert(memberships, {
-    ignoreDuplicates: true,
-    onConflict: "person_id,tag_id",
+  await db.peopleTag.createMany({
+    data: personIds.map((personId) => ({
+      personId,
+      tagId,
+      userId: user.id,
+    })),
+    skipDuplicates: true,
   });
-
-  if (error) {
-    throw internal("tag_failed", error.message);
-  }
 
   const changes = (
     await Promise.all(
-      personIds.map((personId) => buildPeopleTagChange(client, user.id, personId, tagId)),
+      personIds.map((personId) => buildPeopleTagChangeWithDb(db, user.id, personId, tagId)),
     )
   ).filter((change): change is NonNullable<typeof change> => change !== null);
 
-  const txid = await captureCurrentSyncTxid(client);
+  const txid = await captureCurrentSyncTxid();
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 
@@ -167,22 +128,20 @@ export async function removePeopleTagMemberships(
   tagId: string,
   personIds: string[],
 ): Promise<{ removedCount: number; txid: string; serverSequence: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
   const peopleTagIds = await Promise.all(
-    personIds.map((personId) => findPeopleTagId(client, user.id, personId, tagId)),
+    personIds.map((personId) => findPeopleTagIdWithDb(db, user.id, personId, tagId)),
   );
 
-  const { error } = await client
-    .from("people_tags")
-    .delete()
-    .eq("tag_id", tagId)
-    .eq("user_id", user.id)
-    .in("person_id", personIds);
-
-  if (error) {
-    throw internal("tag_failed", error.message);
-  }
+  await db.peopleTag.deleteMany({
+    where: {
+      personId: { in: personIds },
+      tagId,
+      userId: user.id,
+    },
+  });
 
   const changes = peopleTagIds
     .filter((id): id is string => id !== null)
@@ -193,7 +152,7 @@ export async function removePeopleTagMemberships(
       value: null,
     }));
 
-  const txid = await captureCurrentSyncTxid(client);
+  const txid = await captureCurrentSyncTxid();
   const serverSequence =
     (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
 

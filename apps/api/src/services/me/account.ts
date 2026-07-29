@@ -2,6 +2,7 @@ import { prisma } from "@bondery/db";
 import type { FastifyRequest } from "fastify";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { DomainError } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { auth } from "../../lib/auth/index.js";
 import { toFetchHeaders } from "../../lib/auth/request-headers.js";
 import {
@@ -11,13 +12,13 @@ import {
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 
 export async function updateAccountMetadata(
   ctx: DomainContext,
   input: { name?: string; middlename?: string; surname?: string },
 ) {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
   if (input.name !== undefined) {
     await prisma.user.update({
@@ -26,43 +27,50 @@ export async function updateAccountMetadata(
     });
   }
 
-  const myselfUpdates: Record<string, string> = {};
+  const myselfUpdates: {
+    firstName?: string;
+    lastName?: string;
+    middleName?: string;
+  } = {};
   if (input.name !== undefined) {
-    myselfUpdates.first_name = input.name;
+    myselfUpdates.firstName = input.name;
   }
   if (input.surname !== undefined) {
-    myselfUpdates.last_name = input.surname;
+    myselfUpdates.lastName = input.surname;
   }
   if (input.middlename !== undefined) {
-    myselfUpdates.middlename = input.middlename;
+    myselfUpdates.middleName = input.middlename;
   }
 
   if (Object.keys(myselfUpdates).length > 0) {
-    const { error } = await client
-      .from("people")
-      .update(myselfUpdates)
-      .eq("user_id", user.id)
-      .eq("myself", true);
-
-    if (error) {
+    try {
+      await db.people.updateMany({
+        data: myselfUpdates,
+        where: { myself: true, userId: user.id },
+      });
+    } catch (error) {
       throw internal("account_failed_to_update_account", error);
     }
   }
 
-  const profile = await prisma.user.findUnique({
-    select: { email: true, id: true, name: true },
-    where: { id: user.id },
-  });
+  const [profile, myself] = await Promise.all([
+    prisma.user.findUnique({
+      select: { email: true, id: true, name: true },
+      where: { id: user.id },
+    }),
+    db.people.findFirst({
+      select: {
+        firstName: true,
+        hasAvatar: true,
+        lastName: true,
+        middleName: true,
+      },
+      where: { myself: true, userId: user.id },
+    }),
+  ]);
 
-  const { data: myself } = await client
-    .from("people")
-    .select("first_name, last_name, middlename, has_avatar")
-    .eq("user_id", user.id)
-    .eq("myself", true)
-    .maybeSingle();
-
-  const avatarUrl = myself?.has_avatar
-    ? resolveContactAvatarUrl(client, user.id, {
+  const avatarUrl = myself?.hasAvatar
+    ? resolveContactAvatarUrl(user.id, {
         hasAvatar: true,
         id: user.id,
       })
@@ -74,9 +82,9 @@ export async function updateAccountMetadata(
       id: user.id,
       user_metadata: {
         avatar_url: avatarUrl,
-        middlename: myself?.middlename ?? undefined,
-        name: myself?.first_name ?? profile?.name ?? undefined,
-        surname: myself?.last_name ?? undefined,
+        middlename: myself?.middleName ?? undefined,
+        name: myself?.firstName ?? profile?.name ?? undefined,
+        surname: myself?.lastName ?? undefined,
       },
     },
     success: true as const,
@@ -109,8 +117,8 @@ export async function uploadProfilePhoto(
   buffer: Buffer,
   mimeType: string,
 ): Promise<{ success: true; data: { avatarUrl: string } }> {
-  const { client, user } = ctx;
-  const adminClient = createAdminClient();
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
   const validation = validateImageUpload({ size: buffer.length, type: mimeType });
   if (!validation.isValid) {
@@ -126,12 +134,12 @@ export async function uploadProfilePhoto(
   }
 
   try {
-    await uploadContactAvatarAndSetFlag(client, adminClient, user.id, user.id, buffer, mimeType);
+    await uploadContactAvatarAndSetFlag(db, user.id, user.id, buffer, mimeType);
   } catch {
     throw internal("account_failed_to_upload_profile_photo");
   }
 
-  const avatarUrl = resolveContactAvatarUrl(client, user.id, {
+  const avatarUrl = resolveContactAvatarUrl(user.id, {
     hasAvatar: true,
     id: user.id,
     updatedAt: new Date().toISOString(),
@@ -145,8 +153,8 @@ export async function uploadProfilePhoto(
 }
 
 export async function deleteProfilePhoto(ctx: DomainContext): Promise<{ success: true }> {
-  const { client, user } = ctx;
-  const adminClient = createAdminClient();
-  await deleteContactAvatarAndClearFlag(client, adminClient, user.id, user.id);
+  const { user } = ctx;
+  const db = domainDb(ctx);
+  await deleteContactAvatarAndClearFlag(db, user.id, user.id);
   return { success: true };
 }

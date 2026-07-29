@@ -1,17 +1,15 @@
+import type { Prisma } from "@bondery/db";
 import type { PeopleListQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import {
   buildPaginationMeta,
   normalizeSearch,
   parsePagination,
   resolveSort,
 } from "../../lib/data/pagination.js";
-import {
-  countSearchPeopleIds,
-  restoreRankedOrder,
-  searchPeopleIds,
-} from "../../lib/data/search.js";
+import { restoreRankedOrder } from "../../lib/data/search.js";
+import { countSearchPeopleIdsWithDb, searchPeopleIdsWithDb } from "../../lib/data/search-prisma.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import type { ServiceLog } from "./queries-shared.js";
 
@@ -27,25 +25,54 @@ export type QueryPeoplePageResult = {
   count: number | null;
 };
 
-export async function queryPeoplePage(
-  client: SupabaseClient<Database>,
-  userId: string,
+type ContactListContext = Pick<DomainContext, "db" | "user"> & { log?: ServiceLog };
+
+function peopleListOrderBy(sort: PeopleListQuery["sort"]): Prisma.PeopleOrderByWithRelationInput {
+  switch (sort) {
+    case "nameDesc":
+      return { firstName: "desc" };
+    case "surnameAsc":
+      return { lastName: { nulls: "first", sort: "asc" } };
+    case "surnameDesc":
+      return { lastName: { nulls: "last", sort: "desc" } };
+    case "interactionAsc":
+      return { lastInteraction: { nulls: "first", sort: "asc" } };
+    case "interactionDesc":
+      return { lastInteraction: { nulls: "last", sort: "desc" } };
+    case "createdAtAsc":
+      return { createdAt: "asc" };
+    case "createdAtDesc":
+      return { createdAt: "desc" };
+    default:
+      return { firstName: "asc" };
+  }
+}
+
+export async function queryPeoplePage<S extends Prisma.PeopleSelect>(
+  ctx: ContactListContext,
   query: PeopleListQuery,
-  select: string,
+  config: {
+    select: S;
+    map: (row: Prisma.PeopleGetPayload<{ select: S }>) => PeoplePageRow;
+  },
   log?: ServiceLog,
 ): Promise<QueryPeoplePageResult> {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const { limit, offset } = parsePagination(query);
   const search = normalizeSearch(query.search);
+  const keepInTouch = Boolean(query.keepInTouch);
 
-  let rows: PeoplePageRow[] = [];
-  let count: number | null = null;
-  let error: PostgrestError | null = null;
+  const baseWhere: Prisma.PeopleWhereInput = {
+    myself: false,
+    userId: user.id,
+    ...(keepInTouch ? { keepFrequencyDays: { not: null } } : {}),
+  };
 
   if (search) {
-    const keepInTouch = Boolean(query.keepInTouch);
     const [searchResult, countResult] = await Promise.all([
-      searchPeopleIds(client, userId, search, limit, offset, { keepInTouch }),
-      countSearchPeopleIds(client, userId, search, { keepInTouch }),
+      searchPeopleIdsWithDb(db, user.id, search, limit, offset, { keepInTouch }),
+      countSearchPeopleIdsWithDb(db, user.id, search, { keepInTouch }),
     ]);
 
     if (searchResult.error) {
@@ -58,98 +85,40 @@ export async function queryPeoplePage(
       throw internal("internal_server_error", countResult.error);
     }
 
-    count = countResult.count ?? 0;
+    const count = countResult.count ?? 0;
 
     if (!searchResult.ranked || searchResult.ranked.length === 0) {
-      rows = [];
-    } else {
-      const rankedIds = searchResult.ranked.map((r) => r.id);
-
-      const { data: fetchedContacts, error: fetchError } = await client
-        .from("people")
-        .select(select)
-        .in("id", rankedIds);
-
-      if (fetchError) {
-        log?.error({ err: fetchError }, "Error fetching fuzzy search results");
-        throw internal("internal_server_error", fetchError.message);
-      }
-
-      rows = restoreRankedOrder((fetchedContacts || []) as unknown as PeoplePageRow[], rankedIds);
-    }
-  } else {
-    let peopleQuery = client
-      .from("people")
-      .select(select, { count: "exact" })
-      .eq("user_id", userId)
-      .eq("myself", false);
-
-    if (query.keepInTouch) {
-      peopleQuery = peopleQuery.not("keep_frequency_days", "is", null);
+      return { count, rows: [] };
     }
 
-    switch (query.sort) {
-      case "nameAsc":
-        peopleQuery = peopleQuery.order("first_name", { ascending: true });
-        break;
-      case "nameDesc":
-        peopleQuery = peopleQuery.order("first_name", { ascending: false });
-        break;
-      case "surnameAsc":
-        peopleQuery = peopleQuery.order("last_name", {
-          ascending: true,
-          nullsFirst: true,
-        });
-        break;
-      case "surnameDesc":
-        peopleQuery = peopleQuery.order("last_name", {
-          ascending: false,
-          nullsFirst: false,
-        });
-        break;
-      case "interactionAsc":
-        peopleQuery = peopleQuery.order("last_interaction", {
-          ascending: true,
-          nullsFirst: true,
-        });
-        break;
-      case "interactionDesc":
-        peopleQuery = peopleQuery.order("last_interaction", {
-          ascending: false,
-          nullsFirst: false,
-        });
-        break;
-      case "createdAtAsc":
-        peopleQuery = peopleQuery.order("created_at", {
-          ascending: true,
-          nullsFirst: true,
-        });
-        break;
-      case "createdAtDesc":
-        peopleQuery = peopleQuery.order("created_at", {
-          ascending: false,
-          nullsFirst: false,
-        });
-        break;
-      default:
-        peopleQuery = peopleQuery.order("first_name", { ascending: true });
-        break;
-    }
+    const rankedIds = searchResult.ranked.map((r) => r.id);
+    const fetchedContacts = await db.people.findMany({
+      select: config.select,
+      where: {
+        id: { in: rankedIds },
+        myself: false,
+        userId: user.id,
+      },
+    });
 
-    peopleQuery = peopleQuery.range(offset, offset + limit - 1);
-
-    const result = await peopleQuery;
-    rows = (result.data || []) as unknown as PeoplePageRow[];
-    count = result.count;
-    error = result.error;
+    const normalized = fetchedContacts.map(config.map);
+    const rows = restoreRankedOrder(normalized, rankedIds);
+    return { count, rows };
   }
 
-  if (error) {
-    log?.error({ err: error }, "Error fetching contacts");
-    throw internal("internal_server_error", error.message);
-  }
+  const contactRows = await db.people.findMany({
+    orderBy: peopleListOrderBy(query.sort),
+    select: config.select,
+    skip: offset,
+    take: limit,
+    where: baseWhere,
+  });
+  const count = await db.people.count({ where: baseWhere });
 
-  return { count, rows };
+  return {
+    count,
+    rows: contactRows.map(config.map),
+  };
 }
 
 export function buildPeopleListPagination(

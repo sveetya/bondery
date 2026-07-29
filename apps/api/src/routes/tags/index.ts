@@ -29,7 +29,7 @@ import {
   removeTagMembers,
   updateTag,
 } from "../../domains/tags/index.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../lib/platform/with-domain-route.js";
@@ -52,8 +52,8 @@ export const tagRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return listTags(client, user.id, request.query);
+      const ctx = domainContextFromRequest(request);
+      return listTags(ctx, request.query);
     },
   );
 
@@ -99,9 +99,9 @@ export const tagRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id } = request.params;
-      return getTag(client, user.id, id);
+      return getTag(ctx, id);
     },
   );
 
@@ -153,9 +153,9 @@ export const tagRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id: tagId } = request.params;
-      return listTagMembers(client, user.id, tagId, request.query);
+      return listTagMembers(ctx, tagId, request.query);
     },
   );
 

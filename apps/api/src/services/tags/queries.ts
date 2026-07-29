@@ -1,7 +1,9 @@
+import type { Prisma } from "@bondery/db";
 import type { ContactPreview, Tag, TagWithCount } from "@bondery/schemas";
 import type { AvatarTransformQuery, PeopleListQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
+import { toTagDto } from "../../domains/_shared/prisma-helpers.js";
 import {
   buildPaginatedResponse,
   buildPaginationMeta,
@@ -9,12 +11,9 @@ import {
   parsePagination,
   resolveSort,
 } from "../../lib/data/pagination.js";
-import {
-  countSearchPeopleIds,
-  restoreRankedOrder,
-  searchPeopleIds,
-} from "../../lib/data/search.js";
-import { extractAvatarOptions, TAG_SELECT } from "../../lib/data/select-fragments.js";
+import { restoreRankedOrder } from "../../lib/data/search.js";
+import { countSearchPeopleIdsWithDb, searchPeopleIdsWithDb } from "../../lib/data/search-prisma.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
@@ -22,100 +21,115 @@ export type PreviewListQuery = AvatarTransformQuery & {
   previewLimit?: number | string;
 };
 
-export async function listTags(
-  client: SupabaseClient<Database>,
-  userId: string,
-  query?: PreviewListQuery,
-) {
+type TagListContext = Pick<DomainContext, "db" | "user">;
+
+function peopleListOrderBy(sort: PeopleListQuery["sort"]): Prisma.PeopleOrderByWithRelationInput {
+  switch (sort) {
+    case "nameDesc":
+      return { firstName: "desc" };
+    case "surnameAsc":
+      return { lastName: { nulls: "first", sort: "asc" } };
+    case "surnameDesc":
+      return { lastName: { nulls: "last", sort: "desc" } };
+    case "interactionAsc":
+      return { lastInteraction: { nulls: "first", sort: "asc" } };
+    case "interactionDesc":
+      return { lastInteraction: { nulls: "last", sort: "desc" } };
+    default:
+      return { firstName: "asc" };
+  }
+}
+
+export async function listTags(ctx: TagListContext, query?: PreviewListQuery) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const previewLimitRaw = query?.previewLimit;
   const previewLimit = previewLimitRaw ? Number(previewLimitRaw) : 3;
   const includePreview = previewLimit > 0;
   const avatarOptions = extractAvatarOptions(query ?? {});
 
-  const { data: tags, error: tagsError } = await client
-    .from("tags")
-    .select(TAG_SELECT)
-    .order("label", { ascending: true });
+  const tagRows = await db.tag.findMany({
+    orderBy: { label: "asc" },
+    where: { userId: user.id },
+  });
 
-  if (tagsError) {
-    throw internal("internal_server_error", tagsError.message);
-  }
-
-  const { data: memberships, error: countsError } = await client
-    .from("people_tags")
-    .select("tag_id, person_id");
-
-  if (countsError) {
-    throw internal("internal_server_error", countsError.message);
-  }
+  const memberships = await db.peopleTag.findMany({
+    select: { personId: true, tagId: true },
+    where: { userId: user.id },
+  });
 
   const countMap = new Map<string, number>();
   const previewMap = new Map<string, string[]>();
 
-  memberships?.forEach((item: { tag_id: string; person_id: string }) => {
-    const current = countMap.get(item.tag_id) || 0;
-    countMap.set(item.tag_id, current + 1);
+  for (const item of memberships) {
+    const current = countMap.get(item.tagId) ?? 0;
+    countMap.set(item.tagId, current + 1);
 
     if (!includePreview) {
-      return;
+      continue;
     }
 
-    const existing = previewMap.get(item.tag_id) || [];
+    const existing = previewMap.get(item.tagId) ?? [];
     if (existing.length < previewLimit) {
-      existing.push(item.person_id);
-      previewMap.set(item.tag_id, existing);
+      existing.push(item.personId);
+      previewMap.set(item.tagId, existing);
     }
-  });
+  }
 
   let previewContactsById = new Map<string, ContactPreview>();
 
   if (includePreview) {
-    const previewIds = Array.from(new Set(Array.from(previewMap.values()).flat()));
+    const previewIds = [...new Set(Array.from(previewMap.values()).flat())];
 
     if (previewIds.length > 0) {
-      const { data: previewContacts, error: previewError } = await client
-        .from("people")
-        .select(
-          `id, firstName:first_name, lastName:last_name, updatedAt:updated_at, hasAvatar:has_avatar`,
-        )
-        .in("id", previewIds)
-        .eq("myself", false);
-
-      if (previewError) {
-        throw internal("internal_server_error", previewError.message);
-      }
+      const previewContacts = await db.people.findMany({
+        select: {
+          firstName: true,
+          hasAvatar: true,
+          id: true,
+          lastName: true,
+          updatedAt: true,
+        },
+        where: {
+          id: { in: previewIds },
+          myself: false,
+          userId: user.id,
+        },
+      });
 
       previewContactsById = new Map(
-        (previewContacts || []).map((contact) => [
+        previewContacts.map((contact) => [
           contact.id,
           {
-            ...contact,
-            avatar: resolveContactAvatarUrl(
-              client,
-              userId,
+            avatar: resolveContactAvatarUrl(user.id,
               {
                 hasAvatar: contact.hasAvatar,
                 id: contact.id,
-                updatedAt: contact.updatedAt,
+                updatedAt: contact.updatedAt.toISOString(),
               },
               avatarOptions,
             ),
+            firstName: contact.firstName,
+            hasAvatar: contact.hasAvatar,
+            id: contact.id,
+            lastName: contact.lastName,
+            updatedAt: contact.updatedAt.toISOString(),
           } as ContactPreview,
         ]),
       );
     }
   }
 
-  const tagsWithCounts: TagWithCount[] = (tags || []).map((tag) => {
-    const baseTag = tag as unknown as Tag;
-    const pIds = includePreview ? previewMap.get(tag.id) || [] : [];
+  const tagsWithCounts: TagWithCount[] = tagRows.map((row) => {
+    const baseTag = toTagDto(row);
+    const pIds = includePreview ? (previewMap.get(row.id) ?? []) : [];
     const previewContacts = includePreview
-      ? (pIds.map((id: string) => previewContactsById.get(id)).filter(Boolean) as ContactPreview[])
+      ? (pIds.map((id) => previewContactsById.get(id)).filter(Boolean) as ContactPreview[])
       : undefined;
 
     return {
       ...baseTag,
-      contactCount: countMap.get(tag.id) || 0,
+      contactCount: countMap.get(row.id) ?? 0,
       previewContacts,
     };
   });
@@ -126,42 +140,42 @@ export async function listTags(
   };
 }
 
-export async function getTag(client: SupabaseClient<Database>, userId: string, tagId: string) {
-  const { data: tag, error } = await client
-    .from("tags")
-    .select(TAG_SELECT)
-    .eq("id", tagId)
-    .eq("user_id", userId)
-    .single();
+export async function getTag(ctx: TagListContext, tagId: string) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
+  const row = await db.tag.findFirst({
+    where: { id: tagId, userId: user.id },
+  });
 
-  if (error) {
+  if (!row) {
     throw notFound("Tag not found", "not_found");
   }
 
-  return { tag };
+  return { tag: toTagDto(row) as Tag };
 }
 
-export async function listTagMembers(
-  client: SupabaseClient<Database>,
-  userId: string,
-  tagId: string,
-  query: PeopleListQuery,
-) {
+export async function listTagMembers(ctx: TagListContext, tagId: string, query: PeopleListQuery) {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const { limit, offset } = parsePagination(query);
   const search = normalizeSearch(query.search);
   const effectiveSort = resolveSort(query.sort, "nameAsc");
   const avatarOptions = extractAvatarOptions(query);
 
-  const { data: tag, error: tagError } = await client
-    .from("tags")
-    .select("id")
-    .eq("id", tagId)
-    .eq("user_id", userId)
-    .single();
+  const tag = await db.tag.findFirst({
+    select: { id: true },
+    where: { id: tagId, userId: user.id },
+  });
 
-  if (tagError || !tag) {
+  if (!tag) {
     throw notFound("Tag not found", "not_found");
   }
+
+  const memberWhere: Prisma.PeopleWhereInput = {
+    myself: false,
+    tags: { some: { tagId } },
+    userId: user.id,
+  };
 
   let contacts: Array<{
     id: string;
@@ -174,8 +188,8 @@ export async function listTagMembers(
 
   if (search) {
     const [searchResult, countResult] = await Promise.all([
-      searchPeopleIds(client, userId, search, limit, offset, { tagId }),
-      countSearchPeopleIds(client, userId, search, { tagId }),
+      searchPeopleIdsWithDb(db, user.id, search, limit, offset, { tagId }),
+      countSearchPeopleIdsWithDb(db, user.id, search, { tagId }),
     ]);
 
     if (searchResult.error) {
@@ -189,81 +203,62 @@ export async function listTagMembers(
 
     if (searchResult.ranked && searchResult.ranked.length > 0) {
       const rankedIds = searchResult.ranked.map((r) => r.id);
-      const { data: fetchedContacts, error: fetchError } = await client
-        .from("people")
-        .select(
-          "id, firstName:first_name, lastName:last_name, updatedAt:updated_at, hasAvatar:has_avatar",
-        )
-        .in("id", rankedIds)
-        .eq("myself", false);
+      const fetchedContacts = await db.people.findMany({
+        select: {
+          firstName: true,
+          hasAvatar: true,
+          id: true,
+          lastName: true,
+          updatedAt: true,
+        },
+        where: {
+          id: { in: rankedIds },
+          myself: false,
+          userId: user.id,
+        },
+      });
 
-      if (fetchError) {
-        throw internal("internal_server_error", fetchError.message);
-      }
+      const normalized = fetchedContacts.map((row) => ({
+        firstName: row.firstName,
+        hasAvatar: row.hasAvatar,
+        id: row.id,
+        lastName: row.lastName,
+        updatedAt: row.updatedAt.toISOString(),
+      }));
 
-      contacts = restoreRankedOrder(fetchedContacts || [], rankedIds);
+      contacts = restoreRankedOrder(normalized, rankedIds);
     }
   } else {
-    let contactsQuery = client
-      .from("people")
-      .select(
-        "id, firstName:first_name, lastName:last_name, updatedAt:updated_at, hasAvatar:has_avatar, people_tags!inner(tag_id)",
-        {
-          count: "exact",
+    const [contactRows, count] = await Promise.all([
+      db.people.findMany({
+        orderBy: peopleListOrderBy(query.sort),
+        select: {
+          firstName: true,
+          hasAvatar: true,
+          id: true,
+          lastName: true,
+          updatedAt: true,
         },
-      )
-      .eq("myself", false)
-      .eq("people_tags.tag_id", tagId);
+        skip: offset,
+        take: limit,
+        where: memberWhere,
+      }),
+      db.people.count({ where: memberWhere }),
+    ]);
 
-    switch (query.sort) {
-      case "nameDesc":
-        contactsQuery = contactsQuery.order("first_name", { ascending: false });
-        break;
-      case "surnameAsc":
-        contactsQuery = contactsQuery.order("last_name", { ascending: true, nullsFirst: true });
-        break;
-      case "surnameDesc":
-        contactsQuery = contactsQuery.order("last_name", { ascending: false, nullsFirst: false });
-        break;
-      case "interactionAsc":
-        contactsQuery = contactsQuery.order("last_interaction", {
-          ascending: true,
-          nullsFirst: true,
-        });
-        break;
-      case "interactionDesc":
-        contactsQuery = contactsQuery.order("last_interaction", {
-          ascending: false,
-          nullsFirst: false,
-        });
-        break;
-      default:
-        contactsQuery = contactsQuery.order("first_name", { ascending: true });
-        break;
-    }
-
-    const {
-      data: contactRows,
-      error: contactsError,
-      count,
-    } = await contactsQuery.range(offset, offset + limit - 1);
-
-    if (contactsError) {
-      throw internal("internal_server_error", contactsError.message);
-    }
-
-    contacts = (contactRows || []).map((row) => {
-      const { people_tags: _pt, ...contact } = row;
-      return contact;
-    });
-    totalCount = typeof count === "number" ? count : contacts.length;
+    contacts = contactRows.map((row) => ({
+      firstName: row.firstName,
+      hasAvatar: row.hasAvatar,
+      id: row.id,
+      lastName: row.lastName,
+      updatedAt: row.updatedAt.toISOString(),
+    }));
+    totalCount = count;
   }
 
   const enrichedContacts = contacts.map((c) => ({
     ...c,
-    avatar: resolveContactAvatarUrl(
-      client,
-      userId,
+    avatar: resolveContactAvatarUrl(user.id,
       {
         hasAvatar: c.hasAvatar,
         id: c.id,

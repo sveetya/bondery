@@ -5,8 +5,6 @@ import type {
   SocialPlatform,
 } from "@bondery/schemas";
 import type { AvatarTransformQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
 export const LOOKUP_SOCIAL_PLATFORMS: SocialPlatform[] = ["instagram", "linkedin", "facebook"];
@@ -42,36 +40,33 @@ export function isLookupPlatform(value: string): value is (typeof LOOKUP_SOCIAL_
 }
 
 export function toContactPreview(
-  client: SupabaseClient<Database>,
   userId: string,
   person: {
     id: string;
-    first_name: string;
-    last_name: string | null;
-    has_avatar: boolean;
-    updated_at?: string | null;
+    firstName: string;
+    lastName: string | null;
+    hasAvatar: boolean;
+    updatedAt?: string | null;
   },
-  avatarOptions?: Parameters<typeof resolveContactAvatarUrl>[3],
+  avatarOptions?: Parameters<typeof resolveContactAvatarUrl>[2],
 ): ContactPreview {
   return {
     avatar: resolveContactAvatarUrl(
-      client,
       userId,
       {
-        hasAvatar: person.has_avatar,
+        hasAvatar: person.hasAvatar,
         id: person.id,
-        updatedAt: person.updated_at,
+        updatedAt: person.updatedAt,
       },
       avatarOptions,
     ),
-    firstName: person.first_name,
+    firstName: person.firstName,
     id: person.id,
-    lastName: person.last_name,
+    lastName: person.lastName,
   };
 }
 
 export function toContactSelectable(
-  client: SupabaseClient<Database>,
   userId: string,
   person: {
     id: string;
@@ -84,11 +79,10 @@ export function toContactSelectable(
     hasAvatar: boolean;
     updatedAt?: string | null;
   },
-  avatarOptions?: Parameters<typeof resolveContactAvatarUrl>[3],
+  avatarOptions?: Parameters<typeof resolveContactAvatarUrl>[2],
 ): ContactSelectable {
   return {
     avatar: resolveContactAvatarUrl(
-      client,
       userId,
       {
         hasAvatar: person.hasAvatar,

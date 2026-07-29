@@ -1,5 +1,6 @@
-import type { ContactAddressEntry, Database, EmailEntry, PhoneEntry } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PrismaClient } from "@bondery/db";
+import type { ContactAddressEntry, EmailEntry, PhoneEntry } from "@bondery/schemas";
+import { getContactExtrasWithDb } from "../data/contact-rpc.js";
 
 export type ContactExtrasPayload = {
   phones: PhoneEntry[];
@@ -177,7 +178,7 @@ export function getEmptyContactExtras(): ContactExtrasPayload {
  * Loads phones, emails, addresses, and socials for many contacts in one RPC call.
  */
 export async function fetchContactExtras(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   personIds: string[],
 ): Promise<Map<string, ContactExtrasPayload>> {
@@ -185,14 +186,6 @@ export async function fetchContactExtras(
     return new Map();
   }
 
-  const { data, error } = await client.rpc("get_contact_extras", {
-    p_person_ids: personIds,
-    p_user_id: userId,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
+  const data = await getContactExtrasWithDb(db, userId, personIds);
   return parseContactExtrasRpcResult(data);
 }

@@ -1,6 +1,7 @@
+import type { PrismaClient } from "@bondery/db";
+import { Prisma } from "@bondery/db";
 import type { MergeConflictChoice, MergeConflictField } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { setContactHasAvatar } from "../../lib/contacts/avatar-storage.js";
 import {
   areValuesEquivalent,
   hasMeaningfulValue,
@@ -9,14 +10,20 @@ import {
   resolveConflictChoice,
 } from "../../lib/contacts/merge-helpers.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import {
+  AVATARS_BUCKET,
+  copyStorageObject,
+  deleteStorageObjects,
+} from "../../lib/storage/get-storage.js";
+import { isUniqueViolation } from "../_shared/prisma-helpers.js";
 
 type ConflictResolutions = Partial<Record<MergeConflictField, MergeConflictChoice>>;
 
 type ImportantDateRow = {
   type: string;
-  date: string;
+  date: Date;
   note: string | null;
-  notify_days_before: number | null;
+  notifyDaysBefore: number | null;
 };
 
 function resolveMergedImportantDates(
@@ -24,9 +31,18 @@ function resolveMergedImportantDates(
   rightDates: ImportantDateRow[],
   conflictResolutions: ConflictResolutions,
 ) {
+  const toComparable = (dates: ImportantDateRow[]) =>
+    normalizeImportantDateSet(
+      dates.map((event) => ({
+        date: event.date.toISOString().slice(0, 10),
+        note: event.note,
+        notify_days_before: event.notifyDaysBefore,
+        type: event.type,
+      })),
+    );
+
   const importantDatesEqual =
-    JSON.stringify(normalizeImportantDateSet(leftDates)) ===
-    JSON.stringify(normalizeImportantDateSet(rightDates));
+    JSON.stringify(toComparable(leftDates)) === JSON.stringify(toComparable(rightDates));
 
   if (!leftDates.length && rightDates.length) {
     return rightDates;
@@ -41,42 +57,39 @@ function resolveMergedImportantDates(
 }
 
 export async function mergeContactSocials(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
   conflictResolutions: ConflictResolutions,
 ): Promise<void> {
-  const { data: socialRows, error: socialRowsError } = await client
-    .from("people_socials")
-    .select("id, person_id, platform, handle, connected_at")
-    .eq("user_id", userId)
-    .in("person_id", [leftPersonId, rightPersonId]);
-
-  if (socialRowsError) {
-    throw internal("contact_merge_failed", socialRowsError.message);
-  }
+  const socialRows = await db.peopleSocial.findMany({
+    select: {
+      connectedAt: true,
+      handle: true,
+      id: true,
+      personId: true,
+      platform: true,
+    },
+    where: { personId: { in: [leftPersonId, rightPersonId] }, userId },
+  });
 
   const leftSocialByPlatform = new Map(
-    (socialRows || [])
-      .filter((row) => row.person_id === leftPersonId)
-      .map((row) => [row.platform, row]),
+    socialRows.filter((row) => row.personId === leftPersonId).map((row) => [row.platform, row]),
   );
 
   const rightSocialByPlatform = new Map(
-    (socialRows || [])
-      .filter((row) => row.person_id === rightPersonId)
-      .map((row) => [row.platform, row]),
+    socialRows.filter((row) => row.personId === rightPersonId).map((row) => [row.platform, row]),
   );
 
   const socialInserts: Array<{
-    user_id: string;
-    person_id: string;
+    userId: string;
+    personId: string;
     platform: string;
     handle: string;
-    connected_at: string | null;
+    connectedAt: Date | null;
   }> = [];
-  const socialUpdatePromises: Array<PromiseLike<unknown>> = [];
+  const socialUpdatePromises: Array<Promise<unknown>> = [];
 
   for (const [field, platform] of Object.entries(MERGEABLE_SOCIAL_FIELDS)) {
     const leftSocial = leftSocialByPlatform.get(platform);
@@ -88,11 +101,11 @@ export async function mergeContactSocials(
 
     if (!leftSocial) {
       socialInserts.push({
-        connected_at: rightSocial.connected_at,
+        connectedAt: rightSocial.connectedAt,
         handle: rightSocial.handle,
-        person_id: leftPersonId,
+        personId: leftPersonId,
         platform,
-        user_id: userId,
+        userId,
       });
       continue;
     }
@@ -107,230 +120,184 @@ export async function mergeContactSocials(
     }
 
     socialUpdatePromises.push(
-      client
-        .from("people_socials")
-        .update({
-          connected_at: rightSocial.connected_at,
+      db.peopleSocial.update({
+        data: {
+          connectedAt: rightSocial.connectedAt,
           handle: rightSocial.handle,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", leftSocial.id)
-        .eq("user_id", userId),
+          updatedAt: new Date(),
+        },
+        where: { id: leftSocial.id, userId },
+      }),
     );
   }
 
   const socialWriteResults = await Promise.allSettled([
-    ...(socialInserts.length > 0 ? [client.from("people_socials").insert(socialInserts)] : []),
+    ...(socialInserts.length > 0
+      ? [
+          db.peopleSocial.createMany({
+            data: socialInserts,
+            skipDuplicates: true,
+          }),
+        ]
+      : []),
     ...socialUpdatePromises,
   ]);
 
   for (const result of socialWriteResults) {
     if (result.status === "rejected") {
-      throw internal("contact_merge_socials_failed", result.reason);
-    }
-    if (
-      result.status === "fulfilled" &&
-      result.value &&
-      typeof result.value === "object" &&
-      "error" in result.value
-    ) {
-      const err = (result.value as { error: { code?: string; message: string } | null }).error;
-      if (err && err.code !== "23505") {
-        throw internal("contact_merge_failed", err.message);
+      if (isUniqueViolation(result.reason)) {
+        continue;
       }
+      throw internal("contact_merge_socials_failed", String(result.reason));
     }
   }
 }
 
 export async function mergeContactGroupMemberships(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
 ): Promise<void> {
-  const { data: rightGroupMemberships, error: rightGroupMembershipsError } = await client
-    .from("people_groups")
-    .select("group_id")
-    .eq("user_id", userId)
-    .eq("person_id", rightPersonId);
+  const rightGroupMemberships = await db.peopleGroup.findMany({
+    select: { groupId: true },
+    where: { personId: rightPersonId, userId },
+  });
 
-  if (rightGroupMembershipsError) {
-    throw internal("contact_merge_failed", rightGroupMembershipsError.message);
-  }
-
-  if ((rightGroupMemberships || []).length === 0) {
+  if (rightGroupMemberships.length === 0) {
     return;
   }
 
-  const { error: groupMergeError } = await client.from("people_groups").upsert(
-    (rightGroupMemberships || []).map((membership) => ({
-      group_id: membership.group_id,
-      person_id: leftPersonId,
-      user_id: userId,
-    })),
-    {
-      ignoreDuplicates: true,
-      onConflict: "person_id,group_id",
-    },
-  );
-
-  if (groupMergeError) {
-    throw internal("contact_merge_failed", groupMergeError.message);
+  try {
+    await db.peopleGroup.createMany({
+      data: rightGroupMemberships.map((membership) => ({
+        groupId: membership.groupId,
+        personId: leftPersonId,
+        userId,
+      })),
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    throw internal(
+      "contact_merge_failed",
+      error instanceof Error ? error.message : "contact_merge_failed",
+    );
   }
 }
 
 export async function mergeContactInteractionParticipants(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   leftPersonId: string,
   rightPersonId: string,
 ): Promise<void> {
-  const { data: rightParticipants, error: rightParticipantsError } = await client
-    .from("interaction_participants")
-    .select("interaction_id")
-    .eq("person_id", rightPersonId);
+  const rightParticipants = await db.interactionParticipant.findMany({
+    select: { interactionId: true },
+    where: { personId: rightPersonId },
+  });
 
-  if (rightParticipantsError) {
-    throw internal("contact_merge_failed", rightParticipantsError.message);
-  }
-
-  if ((rightParticipants || []).length === 0) {
+  if (rightParticipants.length === 0) {
     return;
   }
 
-  const { error: participantsMergeError } = await client.from("interaction_participants").upsert(
-    (rightParticipants || []).map((participant) => ({
-      interaction_id: participant.interaction_id,
-      person_id: leftPersonId,
-    })),
-    {
-      ignoreDuplicates: true,
-      onConflict: "interaction_id,person_id",
-    },
-  );
-
-  if (participantsMergeError) {
-    throw internal("contact_merge_failed", participantsMergeError.message);
+  try {
+    await db.interactionParticipant.createMany({
+      data: rightParticipants.map((participant) => ({
+        interactionId: participant.interactionId,
+        personId: leftPersonId,
+      })),
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    throw internal(
+      "contact_merge_failed",
+      error instanceof Error ? error.message : "contact_merge_failed",
+    );
   }
 }
 
 export async function mergeContactImportantDates(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
   conflictResolutions: ConflictResolutions,
 ): Promise<void> {
-  const [
-    { data: leftImportantDates, error: leftImportantDatesError },
-    { data: rightImportantDates, error: rightImportantDatesError },
-  ] = await Promise.all([
-    client
-      .from("people_important_dates")
-      .select("type, date, note, notify_days_before")
-      .eq("user_id", userId)
-      .eq("person_id", leftPersonId)
-      .order("created_at", { ascending: true }),
-    client
-      .from("people_important_dates")
-      .select("type, date, note, notify_days_before")
-      .eq("user_id", userId)
-      .eq("person_id", rightPersonId)
-      .order("created_at", { ascending: true }),
+  const [leftImportantDates, rightImportantDates] = await Promise.all([
+    db.peopleImportantDate.findMany({
+      orderBy: { createdAt: "asc" },
+      select: { date: true, note: true, notifyDaysBefore: true, type: true },
+      where: { personId: leftPersonId, userId },
+    }),
+    db.peopleImportantDate.findMany({
+      orderBy: { createdAt: "asc" },
+      select: { date: true, note: true, notifyDaysBefore: true, type: true },
+      where: { personId: rightPersonId, userId },
+    }),
   ]);
 
-  if (leftImportantDatesError || rightImportantDatesError) {
-    throw internal(
-      "contact_merge_important_dates_load_failed",
-      leftImportantDatesError ?? rightImportantDatesError,
-    );
-  }
-
-  const normalizedLeftImportantDates = (leftImportantDates || []).map((event) => ({
-    date: event.date,
-    note: event.note,
-    notify_days_before: event.notify_days_before,
-    type: event.type,
-  }));
-
-  const normalizedRightImportantDates = (rightImportantDates || []).map((event) => ({
-    date: event.date,
-    note: event.note,
-    notify_days_before: event.notify_days_before,
-    type: event.type,
-  }));
-
   const mergedImportantDates = resolveMergedImportantDates(
-    normalizedLeftImportantDates,
-    normalizedRightImportantDates,
+    leftImportantDates,
+    rightImportantDates,
     conflictResolutions,
   );
 
-  const { error: deleteLeftImportantDatesError } = await client
-    .from("people_important_dates")
-    .delete()
-    .eq("user_id", userId)
-    .eq("person_id", leftPersonId);
-
-  if (deleteLeftImportantDatesError) {
-    throw internal("contact_merge_failed", deleteLeftImportantDatesError.message);
-  }
+  await db.peopleImportantDate.deleteMany({
+    where: { personId: leftPersonId, userId },
+  });
 
   if (mergedImportantDates.length === 0) {
     return;
   }
 
-  const { error: insertImportantDatesError } = await client.from("people_important_dates").insert(
-    mergedImportantDates.map((event) => ({
-      date: event.date,
-      note: event.note,
-      notify_days_before: event.notify_days_before,
-      person_id: leftPersonId,
-      type: event.type,
-      user_id: userId,
-    })),
-  );
-
-  if (insertImportantDatesError) {
-    throw internal("contact_merge_failed", insertImportantDatesError.message);
+  try {
+    await db.peopleImportantDate.createMany({
+      data: mergedImportantDates.map((event) => ({
+        date: event.date,
+        note: event.note,
+        notifyDaysBefore: event.notifyDaysBefore,
+        personId: leftPersonId,
+        type: event.type,
+        userId,
+      })),
+    });
+  } catch (error) {
+    throw internal(
+      "contact_merge_failed",
+      error instanceof Error ? error.message : "contact_merge_failed",
+    );
   }
 }
 
 export async function mergeContactRelationships(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
 ): Promise<void> {
-  const { data: relationshipsToTransfer, error: relationshipsToTransferError } = await client
-    .from("people_relationships")
-    .select("relationship_type, source_person_id, target_person_id")
-    .eq("user_id", userId)
-    .or(`source_person_id.eq.${rightPersonId},target_person_id.eq.${rightPersonId}`);
+  const relationshipsToTransfer = await db.peopleRelationship.findMany({
+    select: { relationshipType: true, sourcePersonId: true, targetPersonId: true },
+    where: {
+      OR: [{ sourcePersonId: rightPersonId }, { targetPersonId: rightPersonId }],
+      userId,
+    },
+  });
 
-  if (relationshipsToTransferError) {
-    throw internal("contact_merge_failed", relationshipsToTransferError.message);
-  }
-
-  const relationshipRows = (relationshipsToTransfer || [])
+  const relationshipRows = relationshipsToTransfer
     .map((relationship) => {
       const nextSourcePersonId =
-        relationship.source_person_id === rightPersonId
-          ? leftPersonId
-          : relationship.source_person_id;
+        relationship.sourcePersonId === rightPersonId ? leftPersonId : relationship.sourcePersonId;
       const nextTargetPersonId =
-        relationship.target_person_id === rightPersonId
-          ? leftPersonId
-          : relationship.target_person_id;
+        relationship.targetPersonId === rightPersonId ? leftPersonId : relationship.targetPersonId;
 
       if (nextSourcePersonId === nextTargetPersonId) {
         return null;
       }
 
       return {
-        relationship_type: relationship.relationship_type,
-        source_person_id: nextSourcePersonId,
-        target_person_id: nextTargetPersonId,
-        user_id: userId,
+        relationshipType: relationship.relationshipType,
+        sourcePersonId: nextSourcePersonId,
+        targetPersonId: nextTargetPersonId,
+        userId,
       };
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
@@ -340,21 +307,33 @@ export async function mergeContactRelationships(
   }
 
   const results = await Promise.allSettled(
-    relationshipRows.map((row) => client.from("people_relationships").insert(row)),
+    relationshipRows.map((row) =>
+      db.peopleRelationship.create({
+        data: row,
+      }),
+    ),
   );
 
   for (const result of results) {
-    if (result.status === "fulfilled" && result.value.error) {
-      const err = result.value.error;
-      if (err.code !== "23505" && err.code !== "23514") {
-        throw internal("contact_merge_failed", err.message);
+    if (result.status === "rejected") {
+      const error = result.reason;
+      if (
+        isUniqueViolation(error) ||
+        (error instanceof Prisma.PrismaClientKnownRequestError &&
+          (error.code === "P2004" || error.message.includes("23514")))
+      ) {
+        continue;
       }
+      throw internal(
+        "contact_merge_failed",
+        error instanceof Error ? error.message : "contact_merge_failed",
+      );
     }
   }
 }
 
 export async function mergeContactAvatar(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   leftPersonId: string,
   rightPersonId: string,
@@ -366,17 +345,13 @@ export async function mergeContactAvatar(
   const leftAvatarPath = `${userId}/${leftPersonId}.jpg`;
 
   if (resolveConflictChoice(conflictResolutions, "avatar") === "right") {
-    await client.storage.from("avatars").copy(rightAvatarPath, leftAvatarPath);
+    await copyStorageObject(AVATARS_BUCKET, rightAvatarPath, leftAvatarPath, "image/jpeg");
   }
 
-  await client.storage.from("avatars").remove([rightAvatarPath]);
+  await deleteStorageObjects(AVATARS_BUCKET, [rightAvatarPath]);
 
   const avatarChoice = resolveConflictChoice(conflictResolutions, "avatar");
   const survivorHasAvatar = avatarChoice === "right" ? rightHasAvatar : leftHasAvatar;
 
-  await client
-    .from("people")
-    .update({ has_avatar: survivorHasAvatar })
-    .eq("id", leftPersonId)
-    .eq("user_id", userId);
+  await setContactHasAvatar(db, userId, leftPersonId, survivorHasAvatar);
 }

@@ -1,9 +1,11 @@
-import type { Tables, TablesUpdate, UpdateSettingsBody } from "@bondery/schemas";
+import type { ColorScheme, SupportedLocale } from "@bondery/db";
+import type { UpdateSettingsBody } from "@bondery/schemas";
 import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 
-export type UserSettingsLanguage = NonNullable<TablesUpdate<"user_settings">["language"]>;
+export type UserSettingsLanguage = SupportedLocale;
 
 const DEFAULT_REMINDER_SEND_HOUR = "08:00:00";
 const NEW_SIGNUP_WINDOW_MS = 30_000;
@@ -18,96 +20,100 @@ function normalizeReminderSendHour(value: string): string {
 
 export function formatSettingsPatchData(result: {
   timezone?: string | null;
-  reminder_send_hour?: string | null;
-  time_format?: string | null;
+  reminderSendHour?: string | null;
+  timeFormat?: string | null;
   language?: UserSettingsLanguage | null;
-  color_scheme?: string | null;
-  left_swipe_action?: string | null;
-  right_swipe_action?: string | null;
-  group_sort_order?: string | null;
-  tag_sort_order?: string | null;
+  colorScheme?: ColorScheme | null;
+  leftSwipeAction?: string | null;
+  rightSwipeAction?: string | null;
+  groupSortOrder?: string | null;
+  tagSortOrder?: string | null;
 }) {
   return {
-    colorScheme: result.color_scheme,
-    groupSortOrder: result.group_sort_order,
+    colorScheme: result.colorScheme,
+    groupSortOrder: result.groupSortOrder,
     language: result.language,
-    leftSwipeAction: result.left_swipe_action,
-    reminderSendHour: result.reminder_send_hour,
-    rightSwipeAction: result.right_swipe_action,
-    tagSortOrder: result.tag_sort_order,
-    timeFormat: result.time_format,
+    leftSwipeAction: result.leftSwipeAction,
+    reminderSendHour: result.reminderSendHour,
+    rightSwipeAction: result.rightSwipeAction,
+    tagSortOrder: result.tagSortOrder,
+    timeFormat: result.timeFormat,
     timezone: result.timezone,
   };
 }
 
 export async function ensureDefaultSettings(ctx: DomainContext) {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
-  const { data: settings, error } = await client
-    .from("user_settings")
-    .select("*")
-    .eq("user_id", user.id)
-    .single();
-
-  if (error && error.code !== "PGRST116") {
-    throw internal("settings_failed_to_fetch_settings");
-  }
+  const settings = await db.userSettings.findUnique({
+    where: { userId: user.id },
+  });
 
   if (settings) {
     return settings;
   }
 
-  const { data: newSettings, error: insertError } = await client
-    .from("user_settings")
-    .insert({
-      color_scheme: "auto",
-      language: DEFAULT_LOCALE as UserSettingsLanguage,
-      next_reminder_at_utc: new Date().toISOString(),
-      reminder_send_hour: DEFAULT_REMINDER_SEND_HOUR,
-      time_format: "24h",
-      timezone: "UTC",
-      user_id: user.id,
-    })
-    .select()
-    .single();
-
-  if (insertError) {
+  try {
+    return await db.userSettings.create({
+      data: {
+        aiMessagesMonthResetAt: new Date(),
+        colorScheme: "auto",
+        language: DEFAULT_LOCALE as SupportedLocale,
+        nextReminderAtUtc: new Date(),
+        reminderSendHour: DEFAULT_REMINDER_SEND_HOUR,
+        timeFormat: "24h",
+        timezone: "UTC",
+        userId: user.id,
+      },
+    });
+  } catch {
     throw internal("settings_failed_to_create_default_settings");
   }
-
-  return newSettings;
 }
 
 export async function updateUserSettings(ctx: DomainContext, input: UpdateSettingsBody) {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
-  const updatePayload: TablesUpdate<"user_settings"> = {};
+  const updatePayload: {
+    timezone?: string;
+    reminderSendHour?: string;
+    language?: UserSettingsLanguage;
+    colorScheme?: ColorScheme;
+    timeFormat?: string;
+    leftSwipeAction?: string;
+    rightSwipeAction?: string;
+    groupSortOrder?: string;
+    tagSortOrder?: string;
+  } = {};
+
   if (input.timezone !== undefined) {
     updatePayload.timezone = input.timezone;
   }
   if (input.reminderSendHour !== undefined) {
-    updatePayload.reminder_send_hour = normalizeReminderSendHour(input.reminderSendHour);
+    updatePayload.reminderSendHour = normalizeReminderSendHour(input.reminderSendHour);
   }
   if (input.language !== undefined) {
     updatePayload.language = input.language as UserSettingsLanguage;
   }
   if (input.colorScheme !== undefined) {
-    updatePayload.color_scheme = input.colorScheme as TablesUpdate<"user_settings">["color_scheme"];
+    updatePayload.colorScheme = input.colorScheme as ColorScheme;
   }
   if (input.timeFormat !== undefined) {
-    updatePayload.time_format = input.timeFormat;
+    updatePayload.timeFormat = input.timeFormat;
   }
   if (input.leftSwipeAction !== undefined) {
-    updatePayload.left_swipe_action = input.leftSwipeAction;
+    updatePayload.leftSwipeAction = input.leftSwipeAction;
   }
   if (input.rightSwipeAction !== undefined) {
-    updatePayload.right_swipe_action = input.rightSwipeAction;
+    updatePayload.rightSwipeAction = input.rightSwipeAction;
   }
   if (input.groupSortOrder !== undefined) {
-    updatePayload.group_sort_order = input.groupSortOrder;
+    updatePayload.groupSortOrder = input.groupSortOrder;
   }
   if (input.tagSortOrder !== undefined) {
-    updatePayload.tag_sort_order = input.tagSortOrder;
+    updatePayload.tagSortOrder = input.tagSortOrder;
   }
 
   if (Object.keys(updatePayload).length === 0) {
@@ -115,15 +121,21 @@ export async function updateUserSettings(ctx: DomainContext, input: UpdateSettin
   }
 
   if (input.onlyIfNewSignup) {
-    const { data: signupSettings } = await client
-      .from("user_settings")
-      .select("created_at, timezone, reminder_send_hour, time_format, language, color_scheme")
-      .eq("user_id", user.id)
-      .single();
+    const signupSettings = await db.userSettings.findUnique({
+      select: {
+        colorScheme: true,
+        createdAt: true,
+        language: true,
+        reminderSendHour: true,
+        timeFormat: true,
+        timezone: true,
+      },
+      where: { userId: user.id },
+    });
 
     const isNewSignup =
-      signupSettings?.created_at &&
-      Date.now() - new Date(signupSettings.created_at).getTime() < NEW_SIGNUP_WINDOW_MS;
+      signupSettings?.createdAt &&
+      Date.now() - signupSettings.createdAt.getTime() < NEW_SIGNUP_WINDOW_MS;
 
     if (!isNewSignup) {
       return {
@@ -134,41 +146,24 @@ export async function updateUserSettings(ctx: DomainContext, input: UpdateSettin
     }
   }
 
-  const { data: existingSettings } = await client
-    .from("user_settings")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
+  const existingSettings = await db.userSettings.findUnique({
+    select: { id: true },
+    where: { userId: user.id },
+  });
 
-  let result: Tables<"user_settings">;
-  if (existingSettings) {
-    const { data, error } = await client
-      .from("user_settings")
-      .update(updatePayload)
-      .eq("user_id", user.id)
-      .select()
-      .single();
-
-    if (error) {
-      throw internal("settings_failed_to_update_settings");
-    }
-    result = data;
-  } else {
-    const { data, error } = await client
-      .from("user_settings")
-      .insert({
-        user_id: user.id,
-        ...updatePayload,
-        next_reminder_at_utc: new Date().toISOString(),
+  const result = existingSettings
+    ? await db.userSettings.update({
+        data: updatePayload,
+        where: { userId: user.id },
       })
-      .select()
-      .single();
-
-    if (error) {
-      throw internal("settings_failed_to_create_settings");
-    }
-    result = data;
-  }
+    : await db.userSettings.create({
+        data: {
+          aiMessagesMonthResetAt: new Date(),
+          nextReminderAtUtc: new Date(),
+          userId: user.id,
+          ...updatePayload,
+        },
+      });
 
   return {
     data: formatSettingsPatchData(result),

@@ -1,66 +1,139 @@
-import type { AvatarTransformOptions } from "@bondery/schemas";
-import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
-import { INTERACTION_SELECT } from "../../lib/data/select-fragments.js";
+import type { AvatarTransformOptions, InteractionType } from "@bondery/schemas";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
+const interactionPersonSelect = {
+  firstName: true,
+  hasAvatar: true,
+  id: true,
+  lastName: true,
+  updatedAt: true,
+} as const;
+
+type InteractionPersonRow = {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  hasAvatar: boolean;
+  updatedAt: Date;
+};
+
 export function mapInteractionParticipant(
-  client: DomainSupabaseClient,
   userId: string,
-  person: {
-    id: string;
-    first_name: string;
-    last_name: string | null;
-    has_avatar: boolean;
-    updated_at: string;
-  },
+  person: InteractionPersonRow,
   avatarOptions?: AvatarTransformOptions,
 ) {
   return {
     avatar: resolveContactAvatarUrl(
-      client,
       userId,
       {
-        hasAvatar: person.has_avatar,
+        hasAvatar: person.hasAvatar,
         id: person.id,
-        updatedAt: person.updated_at,
+        updatedAt: person.updatedAt.toISOString(),
       },
       avatarOptions,
     ),
-    firstName: person.first_name,
+    firstName: person.firstName,
     id: person.id,
-    lastName: person.last_name,
-    updatedAt: person.updated_at,
+    lastName: person.lastName,
+    updatedAt: person.updatedAt.toISOString(),
   };
 }
 
-export async function loadFormattedInteraction(
-  client: DomainSupabaseClient,
+function formatInteractionRow(
   userId: string,
+  interaction: {
+    id: string;
+    userId: string;
+    type: string;
+    title: string | null;
+    description: string | null;
+    date: Date;
+    createdAt: Date;
+    updatedAt: Date;
+    participants: Array<{ person: InteractionPersonRow }>;
+  },
+  avatarOptions?: AvatarTransformOptions,
+  options?: { includeUserId?: boolean },
+) {
+  const formatted = {
+    createdAt: interaction.createdAt.toISOString(),
+    date: interaction.date.toISOString(),
+    description: interaction.description,
+    id: interaction.id,
+    participants: interaction.participants.map((participant) =>
+      mapInteractionParticipant(userId, participant.person, avatarOptions),
+    ),
+    title: interaction.title,
+    type: interaction.type as InteractionType,
+    updatedAt: interaction.updatedAt.toISOString(),
+  };
+
+  if (options?.includeUserId) {
+    return { ...formatted, userId: interaction.userId };
+  }
+
+  return formatted;
+}
+
+export async function loadFormattedInteraction(
+  ctx: Pick<DomainContext, "db" | "user">,
   interactionId: string,
   avatarOptions?: AvatarTransformOptions,
 ) {
-  const { data: interaction, error } = await client
-    .from("interactions")
-    .select(INTERACTION_SELECT)
-    .eq("id", interactionId)
-    .eq("user_id", userId)
-    .single();
+  const db = domainDb(ctx as DomainContext);
+  const { user } = ctx;
 
-  if (error || !interaction) {
+  const interaction = await db.interaction.findFirst({
+    include: {
+      participants: {
+        include: {
+          person: { select: interactionPersonSelect },
+        },
+      },
+    },
+    where: { id: interactionId, userId: user.id },
+  });
+
+  if (!interaction) {
     return null;
   }
 
-  return {
-    createdAt: interaction.created_at,
-    date: interaction.date,
-    description: interaction.description,
-    id: interaction.id,
-    participants: interaction.participants.map(
-      (participant: { person: Parameters<typeof mapInteractionParticipant>[2] }) =>
-        mapInteractionParticipant(client, userId, participant.person, avatarOptions),
-    ),
-    title: interaction.title,
-    type: interaction.type,
-    updatedAt: interaction.updated_at,
-  };
+  return formatInteractionRow(user.id, interaction, avatarOptions);
+}
+
+export async function loadFormattedInteractions(
+  ctx: Pick<DomainContext, "db" | "user">,
+  interactionIds: string[],
+  avatarOptions?: AvatarTransformOptions,
+) {
+  if (interactionIds.length === 0) {
+    return [];
+  }
+
+  const db = domainDb(ctx as DomainContext);
+  const { user } = ctx;
+
+  const interactions = await db.interaction.findMany({
+    include: {
+      participants: {
+        include: {
+          person: { select: interactionPersonSelect },
+        },
+      },
+    },
+    where: { id: { in: interactionIds }, userId: user.id },
+  });
+
+  const byId = new Map(
+    interactions.map((interaction) => [
+      interaction.id,
+      formatInteractionRow(user.id, interaction, avatarOptions, { includeUserId: true }),
+    ]),
+  );
+
+  return interactionIds
+    .map((id) => byId.get(id))
+    .filter((interaction): interaction is NonNullable<typeof interaction> => interaction != null);
 }

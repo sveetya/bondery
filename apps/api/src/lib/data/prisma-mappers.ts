@@ -10,6 +10,7 @@ export const contactListSelect = {
   language: true,
   lastInteraction: true,
   lastInteractionActivityId: true,
+  lastName: true,
   latitude: true,
   location: true,
   longitude: true,
@@ -20,7 +21,6 @@ export const contactListSelect = {
   timezone: true,
   updatedAt: true,
   userId: true,
-  lastName: true,
 } satisfies Prisma.PeopleSelect;
 
 export type ContactListRecord = Prisma.PeopleGetPayload<{ select: typeof contactListSelect }>;
@@ -37,6 +37,7 @@ export function mapContactListRecord(contact: ContactListRecord) {
     language: contact.language,
     lastInteraction: contact.lastInteraction?.toISOString() ?? null,
     lastInteractionActivityId: contact.lastInteractionActivityId,
+    lastName: contact.lastName,
     latitude: contact.latitude,
     location: contact.location,
     longitude: contact.longitude,
@@ -47,7 +48,65 @@ export function mapContactListRecord(contact: ContactListRecord) {
     timezone: contact.timezone,
     updatedAt: contact.updatedAt.toISOString(),
     userId: contact.userId,
+  };
+}
+
+export const contactDetailSelect = {
+  createdAt: true,
+  firstName: true,
+  hasAvatar: true,
+  headline: true,
+  id: true,
+  keepFrequencyDays: true,
+  language: true,
+  lastInteraction: true,
+  lastInteractionActivityId: true,
+  lastName: true,
+  latitude: true,
+  location: true,
+  longitude: true,
+  middleName: true,
+  myself: true,
+  notes: true,
+  notesUpdatedAt: true,
+  timezone: true,
+  updatedAt: true,
+  userId: true,
+} satisfies Prisma.PeopleSelect;
+
+export type ContactDetailRecord = Prisma.PeopleGetPayload<{ select: typeof contactDetailSelect }>;
+
+export function mapContactDetailRecord(contact: ContactDetailRecord) {
+  return mapContactListRecord(contact as ContactListRecord);
+}
+
+export const selectableContactSelect = {
+  firstName: true,
+  hasAvatar: true,
+  headline: true,
+  id: true,
+  lastName: true,
+  location: true,
+  middleName: true,
+  myself: true,
+  updatedAt: true,
+} satisfies Prisma.PeopleSelect;
+
+export type SelectableContactRecord = Prisma.PeopleGetPayload<{
+  select: typeof selectableContactSelect;
+}>;
+
+export function mapSelectableContactRecord(contact: SelectableContactRecord) {
+  return {
+    firstName: contact.firstName,
+    hasAvatar: contact.hasAvatar,
+    headline: contact.headline,
+    id: contact.id,
     lastName: contact.lastName,
+    location: contact.location,
+    middleName: contact.middleName,
+    myself: contact.myself,
+    updatedAt: contact.updatedAt.toISOString(),
   };
 }
 

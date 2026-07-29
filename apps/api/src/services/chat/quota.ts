@@ -8,8 +8,11 @@
  * the TOCTOU race that would exist if check and increment were separate calls.
  */
 
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { prisma } from "@bondery/db";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
+import { rpcCheckAndIncrementAiMessages } from "../../lib/data/rpc.js";
+import { hasPremiumAccess } from "../billing/entitlements.js";
 
 /** Number of free AI messages available to unsubscribed users (lifetime). */
 export const FREE_MESSAGE_LIMIT = 5;
@@ -26,6 +29,30 @@ export interface QuotaCheckResult {
   resetAt: string | null;
 }
 
+async function resolvePremiumAccess(
+  db: ReturnType<typeof domainDb>,
+  userId: string,
+  isPremiumOverride?: boolean,
+): Promise<boolean> {
+  if (isPremiumOverride !== undefined) {
+    return isPremiumOverride;
+  }
+
+  const subscription = await db.subscription.findFirst({
+    select: { paymentFailureCount: true, status: true },
+    where: { userId },
+  });
+
+  return hasPremiumAccess(
+    subscription
+      ? {
+          paymentFailureCount: subscription.paymentFailureCount ?? 0,
+          status: subscription.status,
+        }
+      : null,
+  );
+}
+
 /**
  * Atomically checks quota and increments the message counter.
  *
@@ -36,55 +63,22 @@ export interface QuotaCheckResult {
  * IMPORTANT: Because this increments unconditionally, the caller MUST check
  * `result.allowed` and abort streaming if false. The increment is not rolled
  * back — over-limit attempts are counted but blocked.
- *
- * @param client RLS-scoped Supabase client for the current user
- * @param userId The authenticated user's ID
  */
-export async function checkAndIncrementQuota(
-  client: SupabaseClient<Database>,
-  userId: string,
-): Promise<QuotaCheckResult> {
-  // Resolve subscription status first — one lightweight SELECT on an indexed column.
-  const { data: subscription } = await client
-    .from("subscriptions")
-    .select("status")
-    .eq("user_id", userId)
-    .single();
+export async function checkAndIncrementQuota(ctx: DomainContext): Promise<QuotaCheckResult> {
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
-  const isPremium = subscription?.status === "active" || subscription?.status === "canceling";
-
+  const isPremium = await resolvePremiumAccess(db, user.id);
   const limit = isPremium ? PREMIUM_MESSAGE_LIMIT : FREE_MESSAGE_LIMIT;
 
-  const { data, error } = await client.rpc(
-    "check_and_increment_ai_messages" as never,
-    {
-      p_is_premium: isPremium,
-      p_limit: limit,
-      p_user_id: userId,
-    } as never,
-  );
-
-  if (error) {
-    throw new Error(`check_and_increment_ai_messages RPC failed: ${error.message}`);
-  }
-
-  // RPC returns a single-row result set
-  const row = Array.isArray(data)
-    ? (
-        data as Array<{
-          allowed: boolean;
-          messages_used: number;
-          reset_at: string | null;
-        }>
-      )[0]
-    : null;
+  const row = await rpcCheckAndIncrementAiMessages(db, user.id, limit, isPremium);
 
   return {
-    allowed: row?.allowed ?? false,
+    allowed: row.allowed,
     limit,
-    messagesUsed: row?.messages_used ?? limit,
+    messagesUsed: row.messagesUsed,
     plan: isPremium ? "premium" : "free",
-    resetAt: row?.reset_at ?? null,
+    resetAt: row.resetAt ?? null,
   };
 }
 
@@ -92,41 +86,36 @@ export async function checkAndIncrementQuota(
  * Read-only quota check — does NOT increment. Used by GET /api/subscriptions
  * to report current usage to the frontend without consuming a message.
  *
- * @param client RLS-scoped Supabase client for the current user
+ * @param _client Unused legacy parameter — kept for route signature compatibility.
  * @param userId The authenticated user's ID
  */
 export async function checkChatQuota(
-  client: SupabaseClient<Database>,
   userId: string,
+  isPremiumOverride?: boolean,
 ): Promise<QuotaCheckResult> {
-  const { data: subscription } = await client
-    .from("subscriptions")
-    .select("status")
-    .eq("user_id", userId)
-    .single();
-
-  const isPremium = subscription?.status === "active" || subscription?.status === "canceling";
+  const db = prisma;
+  const isPremium = await resolvePremiumAccess(db, userId, isPremiumOverride);
 
   if (isPremium) {
-    const { data: settings } = await client
-      .from("user_settings")
-      .select("ai_messages_this_month, ai_messages_month_reset_at")
-      .eq("user_id", userId)
-      .single();
+    const settings = await db.userSettings.findUnique({
+      select: {
+        aiMessagesMonthResetAt: true,
+        aiMessagesThisMonth: true,
+      },
+      where: { userId },
+    });
 
-    const rawUsed = settings?.ai_messages_this_month ?? 0;
-    const rawResetAt = settings?.ai_messages_month_reset_at ?? null;
+    const rawUsed = settings?.aiMessagesThisMonth ?? 0;
+    const rawResetAt = settings?.aiMessagesMonthResetAt ?? null;
 
-    // Lazily treat as 0 if the period has elapsed (RPC will reset on next send).
     const periodExpired =
-      rawResetAt != null && Date.now() > new Date(rawResetAt).getTime() + 30 * 24 * 60 * 60 * 1000;
+      rawResetAt != null && Date.now() > rawResetAt.getTime() + 30 * 24 * 60 * 60 * 1000;
 
     const messagesUsed = periodExpired ? 0 : rawUsed;
-    // Return period END (start + 30 days) so the UI shows when usage resets.
     const resetAt =
       periodExpired || !rawResetAt
         ? null
-        : new Date(new Date(rawResetAt).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
+        : new Date(rawResetAt.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
     return {
       allowed: messagesUsed < PREMIUM_MESSAGE_LIMIT,
@@ -137,13 +126,12 @@ export async function checkChatQuota(
     };
   }
 
-  const { data: settings } = await client
-    .from("user_settings")
-    .select("ai_messages_used")
-    .eq("user_id", userId)
-    .single();
+  const settings = await db.userSettings.findUnique({
+    select: { aiMessagesUsed: true },
+    where: { userId },
+  });
 
-  const messagesUsed = settings?.ai_messages_used ?? 0;
+  const messagesUsed = settings?.aiMessagesUsed ?? 0;
 
   return {
     allowed: messagesUsed < FREE_MESSAGE_LIMIT,

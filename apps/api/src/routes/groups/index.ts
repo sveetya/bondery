@@ -16,7 +16,7 @@ import {
   uuidParamSchema,
 } from "@bondery/schemas/http";
 import { createGroup, deleteGroup, updateGroup } from "../../domains/groups/index.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import type { AppRoutePlugin, FastifyZodOpenApiSchema } from "../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../lib/platform/with-domain-route.js";
@@ -40,8 +40,8 @@ export const groupRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
-      return listGroups(client, user.id, request.query);
+      const ctx = domainContextFromRequest(request);
+      return listGroups(ctx, request.query);
     },
   );
 
@@ -91,9 +91,9 @@ export const groupRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id } = request.params;
-      return getGroup(client, user.id, id);
+      return getGroup(ctx, id);
     },
   );
 

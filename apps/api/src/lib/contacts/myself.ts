@@ -1,5 +1,5 @@
-import type { AvatarTransformOptions, Database } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PrismaClient } from "@bondery/db";
+import type { AvatarTransformOptions } from "@bondery/schemas";
 import { resolveContactAvatarUrl } from "../storage/avatar-urls.js";
 
 export type MyselfProfile = {
@@ -12,30 +12,27 @@ export type MyselfProfile = {
  * the "myself" contact record.
  */
 export async function getMyselfProfile(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   avatarOptions?: AvatarTransformOptions,
 ): Promise<MyselfProfile> {
-  const { data: myself } = await client
-    .from("people")
-    .select("first_name, updated_at, has_avatar")
-    .eq("user_id", userId)
-    .eq("myself", true)
-    .single();
+  const myself = await db.people.findFirst({
+    select: { firstName: true, hasAvatar: true, updatedAt: true },
+    where: { myself: true, userId },
+  });
 
   const avatarUrl = resolveContactAvatarUrl(
-    client,
     userId,
     {
-      hasAvatar: myself?.has_avatar ?? false,
+      hasAvatar: myself?.hasAvatar ?? false,
       id: userId,
-      updatedAt: myself?.updated_at,
+      updatedAt: myself?.updatedAt?.toISOString(),
     },
     avatarOptions,
   );
 
   return {
     avatarUrl,
-    firstName: myself?.first_name ?? null,
+    firstName: myself?.firstName ?? null,
   };
 }

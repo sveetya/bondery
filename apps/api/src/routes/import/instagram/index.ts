@@ -6,8 +6,9 @@ import {
 } from "@bondery/schemas";
 import { IMPORT_HANDLE_LOOKUP_CHUNK_SIZE } from "@bondery/schemas/constants";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import { commitInstagramImport } from "../../../domains/import/instagram.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
 import { badRequest } from "../../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
@@ -48,7 +49,8 @@ export const instagramImportRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
 
       try {
         const files: Array<{ fileName: string; content: Buffer }> = [];
@@ -96,18 +98,16 @@ export const instagramImportRoutes: AppRoutePlugin = async (fastify) => {
               index + IMPORT_HANDLE_LOOKUP_CHUNK_SIZE,
             );
 
-            const { data: existingRows, error: existingError } = await client
-              .from("people_socials")
-              .select("handle")
-              .eq("user_id", user.id)
-              .eq("platform", "instagram")
-              .in("handle", handleChunk);
+            const existingRows = await db.peopleSocial.findMany({
+              select: { handle: true },
+              where: {
+                handle: { in: handleChunk },
+                platform: "instagram",
+                userId: ctx.user.id,
+              },
+            });
 
-            if (existingError) {
-              throw new Error(existingError.message);
-            }
-
-            for (const row of existingRows || []) {
+            for (const row of existingRows) {
               if (typeof row.handle !== "string") {
                 continue;
               }

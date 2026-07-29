@@ -1,9 +1,9 @@
+import type { Prisma } from "@bondery/db";
 import type {
   Contact,
   ContactAddressEntry,
   EmailEntry,
   PhoneEntry,
-  TablesUpdate,
   UpdateContactInput,
 } from "@bondery/schemas";
 import type { SyncChange } from "@bondery/schemas/sync";
@@ -16,6 +16,7 @@ import {
 } from "../../lib/contacts/channels.js";
 import { loadEnrichedContact } from "../../lib/contacts/enrichment.js";
 import { upsertContactSocials } from "../../lib/contacts/socials.js";
+import { setPersonLocationWithDb } from "../../lib/data/contact-rpc.js";
 import { cachedGeocodeLinkedInLocation } from "../../lib/integrations/mapy.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import {
@@ -26,6 +27,8 @@ import {
 import { checkContactUpdateConflict } from "../../lib/sync/conflict.js";
 import { emitSyncBatch } from "../../lib/sync/emit-change.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
+import { toSyncRow } from "../_shared/prisma-helpers.js";
 import { withPersonTxid } from "../_shared/with-txid.js";
 import {
   patchAffectsMergeRecommendations,
@@ -42,27 +45,29 @@ export async function updateContact(
   ctx: DomainContext,
   input: UpdateContactDomainInput,
 ): Promise<{ data: { contact: Contact; personId: string }; txid: string; serverSequence: number }> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
   const { personId, patch: body, baseUpdatedAt } = input;
 
   if (baseUpdatedAt) {
-    await checkContactUpdateConflict(client, user.id, personId, baseUpdatedAt);
+    await checkContactUpdateConflict(db, user.id, personId, baseUpdatedAt);
   }
 
   let priorPhoneIds: string[] | null = null;
   let priorEmailIds: string[] | null = null;
   let priorAddressIds: string[] | null = null;
 
-  const updates: TablesUpdate<"people"> = {};
+  const updates: Prisma.PeopleUncheckedUpdateManyInput = {};
+  let gisPointEwkt: string | null | undefined;
 
   if (body.firstName !== undefined) {
-    updates.first_name = body.firstName;
+    updates.firstName = body.firstName;
   }
   if (body.middleName !== undefined) {
-    updates.middle_name = body.middleName;
+    updates.middleName = body.middleName;
   }
   if (body.lastName !== undefined) {
-    updates.last_name = body.lastName;
+    updates.lastName = body.lastName;
   }
   if (body.headline !== undefined) {
     updates.headline = body.headline;
@@ -80,7 +85,7 @@ export async function updateContact(
     updates.timezone = body.timezone;
   }
   if (body.gisPoint !== undefined) {
-    updates.gis_point = body.gisPoint;
+    gisPointEwkt = typeof body.gisPoint === "string" ? body.gisPoint : null;
   }
 
   const clientProvidesCoords =
@@ -109,11 +114,11 @@ export async function updateContact(
   }
 
   if (body.lastInteraction !== undefined) {
-    updates.last_interaction = body.lastInteraction;
-    updates.last_interaction_activity_id = null;
+    updates.lastInteraction = body.lastInteraction ? new Date(body.lastInteraction) : null;
+    updates.lastInteractionActivityId = null;
   }
   if (body.keepFrequencyDays !== undefined) {
-    updates.keep_frequency_days = body.keepFrequencyDays;
+    updates.keepFrequencyDays = body.keepFrequencyDays;
   }
 
   const hasLatitudeField = Object.hasOwn(body, "latitude");
@@ -145,7 +150,7 @@ export async function updateContact(
 
   let nextPhones: PhoneEntry[] | undefined;
   if (body.phones !== undefined) {
-    priorPhoneIds = await listContactChildIds(client, user.id, personId, "people_phones");
+    priorPhoneIds = await listContactChildIds(user.id, personId, "people_phones", db);
     try {
       nextPhones = parsePhoneEntries(body.phones);
     } catch (parseError) {
@@ -156,7 +161,7 @@ export async function updateContact(
 
   let nextEmails: EmailEntry[] | undefined;
   if (body.emails !== undefined) {
-    priorEmailIds = await listContactChildIds(client, user.id, personId, "people_emails");
+    priorEmailIds = await listContactChildIds(user.id, personId, "people_emails", db);
     try {
       nextEmails = parseEmailEntries(body.emails);
     } catch (parseError) {
@@ -167,7 +172,7 @@ export async function updateContact(
 
   let nextAddresses: ContactAddressEntry[] | undefined;
   if (body.addresses !== undefined) {
-    priorAddressIds = await listContactChildIds(client, user.id, personId, "people_addresses");
+    priorAddressIds = await listContactChildIds(user.id, personId, "people_addresses", db);
     try {
       nextAddresses = parseAddressEntries(body.addresses);
     } catch (parseError) {
@@ -201,64 +206,83 @@ export async function updateContact(
     socialsUpdates.push({ handle: body.signal, platform: "signal" });
   }
 
-  updates.updated_at = new Date().toISOString();
+  updates.updatedAt = new Date();
 
-  const { data: updatedContact, error } = await client
-    .from("people")
-    .update(updates)
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .select("id, myself")
-    .single();
+  const updated = await db.people.updateMany({
+    data: updates,
+    where: { id: personId, userId: user.id },
+  });
 
-  if (error) {
-    throw internal("contact_failed", error.message);
+  if (updated.count === 0) {
+    throw new DomainError("Contact not found", 404, "contact_not_found");
   }
+
+  const updatedContact = await db.people.findFirst({
+    select: { id: true, myself: true },
+    where: { id: personId, userId: user.id },
+  });
 
   if (!updatedContact) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
   try {
-    if (hasLatitudeField || hasLongitudeField) {
-      const { error: locationError } = await client.rpc("set_person_location", {
-        p_latitude: (nextLatitude ?? null) as number,
-        p_longitude: (nextLongitude ?? null) as number,
-        p_person_id: personId,
-        p_user_id: user.id,
-      });
-
-      if (locationError) {
-        throw internal("contact_failed", locationError.message);
+    if (gisPointEwkt !== undefined) {
+      if (gisPointEwkt) {
+        await db.$executeRaw`
+          UPDATE people
+          SET gis_point = ST_GeogFromText(${gisPointEwkt}),
+              updated_at = NOW()
+          WHERE id = ${personId}::uuid AND user_id = ${user.id}::uuid
+        `;
+      } else {
+        await db.$executeRaw`
+          UPDATE people
+          SET gis_point = NULL,
+              updated_at = NOW()
+          WHERE id = ${personId}::uuid AND user_id = ${user.id}::uuid
+        `;
       }
+    }
+
+    if (hasLatitudeField || hasLongitudeField) {
+      await setPersonLocationWithDb(
+        db,
+        user.id,
+        personId,
+        nextLatitude ?? null,
+        nextLongitude ?? null,
+      );
     } else if (geocodedLocation) {
-      const { error: geoRpcError } = await client.rpc("set_person_location", {
-        p_latitude: geocodedLocation.lat as number,
-        p_longitude: geocodedLocation.lon as number,
-        p_person_id: personId,
-        p_user_id: user.id,
-      });
-      if (geoRpcError) {
-        log?.warn({ err: geoRpcError }, "[updateContact] Failed to set geocoded coordinates");
+      try {
+        await setPersonLocationWithDb(
+          db,
+          user.id,
+          personId,
+          geocodedLocation.lat,
+          geocodedLocation.lon,
+        );
+      } catch (geoError) {
+        log?.warn({ err: geoError }, "[updateContact] Failed to set geocoded coordinates");
       }
     }
 
     const parallelOps: Promise<void>[] = [];
 
     if (nextPhones !== undefined) {
-      parallelOps.push(replaceContactPhones(client, user.id, personId, nextPhones));
+      parallelOps.push(replaceContactPhones(db, user.id, personId, nextPhones));
     }
     if (nextEmails !== undefined) {
-      parallelOps.push(replaceContactEmails(client, user.id, personId, nextEmails));
+      parallelOps.push(replaceContactEmails(db, user.id, personId, nextEmails));
     }
     if (nextAddresses !== undefined) {
-      parallelOps.push(replaceContactAddresses(client, user.id, personId, nextAddresses));
+      parallelOps.push(replaceContactAddresses(db, user.id, personId, nextAddresses));
     }
     if (socialsUpdates.length > 0) {
       parallelOps.push(
         Promise.all(
           socialsUpdates.map((entry) =>
-            upsertContactSocials(client, user.id, personId, entry.platform, entry.handle),
+            upsertContactSocials(db, user.id, personId, entry.platform, entry.handle),
           ),
         ).then(() => undefined),
       );
@@ -272,16 +296,16 @@ export async function updateContact(
     throw internal("contact_failed", message);
   }
 
-  const enrichedContact = await loadEnrichedContact(client, user.id, personId, undefined, log);
+  const enrichedContact = await loadEnrichedContact(db, user.id, personId, undefined, log);
 
   if (!enrichedContact) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
-  const { txid } = await withPersonTxid(client, user.id, async () => ({ personId }));
+  const { txid } = await withPersonTxid(user.id, async () => ({ personId }));
 
   const changes: SyncChange[] = [];
-  const peopleChange = await buildPeopleRowChange(client, user.id, personId);
+  const peopleChange = await buildPeopleRowChange(user.id, personId, db);
   if (peopleChange) {
     changes.push(peopleChange);
   }
@@ -289,11 +313,11 @@ export async function updateContact(
   if (priorPhoneIds) {
     changes.push(
       ...(await buildChildTableReplaceChanges(
-        client,
         user.id,
         personId,
         "people_phones",
         priorPhoneIds,
+        db,
       )),
     );
   }
@@ -301,11 +325,11 @@ export async function updateContact(
   if (priorEmailIds) {
     changes.push(
       ...(await buildChildTableReplaceChanges(
-        client,
         user.id,
         personId,
         "people_emails",
         priorEmailIds,
+        db,
       )),
     );
   }
@@ -313,32 +337,26 @@ export async function updateContact(
   if (priorAddressIds) {
     changes.push(
       ...(await buildChildTableReplaceChanges(
-        client,
         user.id,
         personId,
         "people_addresses",
         priorAddressIds,
+        db,
       )),
     );
   }
 
   if (socialsUpdates.length > 0) {
-    const { data: socialRows, error: socialError } = await client
-      .from("people_socials")
-      .select("*")
-      .eq("user_id", user.id)
-      .eq("person_id", personId);
+    const socialRows = await db.peopleSocial.findMany({
+      where: { personId, userId: user.id },
+    });
 
-    if (socialError) {
-      throw internal("contact_failed", socialError.message);
-    }
-
-    for (const row of socialRows ?? []) {
+    for (const row of socialRows) {
       changes.push({
-        entityId: String(row.id),
+        entityId: row.id,
         operation: "update",
         table: "people_socials",
-        value: row as Record<string, unknown>,
+        value: toSyncRow(row as unknown as Record<string, unknown>),
       });
     }
   }

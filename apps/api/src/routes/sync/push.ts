@@ -1,10 +1,10 @@
+import { prisma } from "@bondery/db";
 import type { SyncPushResult } from "@bondery/schemas/sync";
 import { syncPushRequestSchema, syncPushResponseSchema } from "@bondery/schemas/sync";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { applySyncMutation } from "../../lib/sync/apply-mutation.js";
 import {
   findSyncReceipt,
@@ -36,10 +36,9 @@ export const syncPushRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
       }
 
       const { mutations, deviceId } = request.body;
-      const { client, user } = getAuth(request);
-      const admin = createAdminClient();
+      const { user } = getAuth(request);
       const ctx = {
-        client,
+        db: prisma,
         log: request.log,
         user,
         wakeMeta: { sourceDeviceId: deviceId },
@@ -51,7 +50,7 @@ export const syncPushRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
 
       for (const mutation of sortedMutations) {
         const payloadHash = hashSyncMutationPayload(mutation);
-        const existing = await findSyncReceipt(admin, user.id, mutation.id);
+        const existing = await findSyncReceipt(prisma, user.id, mutation.id);
 
         if (existing) {
           if (existing.payload_hash !== payloadHash) {
@@ -76,7 +75,7 @@ export const syncPushRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
         const { result } = await applySyncMutation(ctx, mutation);
 
         if (result.status === "applied") {
-          await storeSyncReceipt(admin, {
+          await storeSyncReceipt(prisma, {
             mutationId: mutation.id,
             mutationType: mutation.type,
             payloadHash,
@@ -89,7 +88,7 @@ export const syncPushRoutes: AppRoutePlugin = async (fastify): Promise<void> => 
         results.push(result);
       }
 
-      const nextServerSequence = await getLastServerSequence(admin, user.id);
+      const nextServerSequence = await getLastServerSequence(prisma, user.id);
 
       return {
         nextServerSequence,

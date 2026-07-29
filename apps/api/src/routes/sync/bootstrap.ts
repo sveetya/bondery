@@ -1,10 +1,11 @@
+import { prisma } from "@bondery/db";
 import type { SyncBootstrapResponse } from "@bondery/schemas/sync";
 import { syncBootstrapResponseSchema } from "@bondery/schemas/sync";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { fetchSyncTableRows } from "../../lib/data/prisma-sync.js";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getLastServerSequence } from "../../lib/sync/idempotency.js";
 import { logSyncBootstrap } from "../../lib/sync/metrics.js";
 import { validateSyncProtocolHeaders } from "../../lib/sync/protocol.js";
@@ -33,7 +34,6 @@ export const syncBootstrapRoutes: AppRoutePlugin = async (fastify): Promise<void
 
       const started = Date.now();
       const { user } = getAuth(request);
-      const admin = createAdminClient();
 
       const tables = Object.fromEntries(
         SYNC_TABLE_KEYS.map((table) => [table, [] as Record<string, unknown>[]]),
@@ -42,19 +42,13 @@ export const syncBootstrapRoutes: AppRoutePlugin = async (fastify): Promise<void
 
       await Promise.all(
         SYNC_TABLE_KEYS.map(async (table) => {
-          const { data, error } = await admin.from(table).select("*").eq("user_id", user.id);
-
-          if (error) {
-            throw new Error(error.message);
-          }
-
-          const rows = (data ?? []) as Record<string, unknown>[];
+          const rows = await fetchSyncTableRows(prisma, user.id, table);
           tables[table] = rows;
           rowCount += rows.length;
         }),
       );
 
-      const nextServerSequence = await getLastServerSequence(admin, user.id);
+      const nextServerSequence = await getLastServerSequence(prisma, user.id);
       const durationMs = Date.now() - started;
       logSyncBootstrap(request.log, { durationMs, nextServerSequence, rowCount, userId: user.id });
 

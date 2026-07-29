@@ -1,11 +1,12 @@
+import type { Prisma } from "@bondery/db";
 import type {
   AvatarTransformOptions,
   CreateInteractionInput,
   InteractionType,
-  TablesUpdate,
   UpdateInteractionInput,
 } from "@bondery/schemas";
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { loadFormattedInteraction } from "./format.js";
 
@@ -15,55 +16,81 @@ export type FormattedInteraction = NonNullable<
 
 export { loadFormattedInteraction, mapInteractionParticipant } from "./format.js";
 
+async function updateParticipantLastInteraction(
+  db: ReturnType<typeof domainDb>,
+  participantIds: string[],
+  interactionId: string,
+  interactionDate: string,
+) {
+  if (participantIds.length === 0) {
+    return;
+  }
+
+  await db.people.updateMany({
+    data: {
+      lastInteraction: new Date(interactionDate),
+      lastInteractionActivityId: interactionId,
+    },
+    where: { id: { in: participantIds } },
+  });
+}
+
+async function syncLastInteractionForExistingParticipants(
+  db: ReturnType<typeof domainDb>,
+  interactionId: string,
+  interactionDate: string,
+) {
+  const participants = await db.interactionParticipant.findMany({
+    select: { personId: true },
+    where: { interactionId },
+  });
+
+  if (participants.length === 0) {
+    return;
+  }
+
+  await db.people.updateMany({
+    data: {
+      lastInteraction: new Date(interactionDate),
+      lastInteractionActivityId: interactionId,
+    },
+    where: {
+      id: { in: participants.map((participant) => participant.personId) },
+      lastInteractionActivityId: interactionId,
+    },
+  });
+}
+
 export async function createInteraction(
   ctx: DomainContext,
   input: CreateInteractionInput,
 ): Promise<FormattedInteraction> {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
+  const { user } = ctx;
 
-  const { data: interaction, error: interactionError } = await client
-    .from("interactions")
-    .insert({
-      date: input.date,
+  const interaction = await db.interaction.create({
+    data: {
+      date: new Date(input.date),
       description: input.description || null,
       title: input.title || null,
       type: input.type,
-      user_id: user.id,
-    })
-    .select("id")
-    .single();
-
-  if (interactionError || !interaction) {
-    throw internal(
-      "interaction_failed",
-      interactionError?.message ?? "Failed to create interaction",
-    );
-  }
+      userId: user.id,
+    },
+    select: { id: true },
+  });
 
   if (input.participantIds && input.participantIds.length > 0) {
-    const participantsData = input.participantIds.map((personId) => ({
-      interaction_id: interaction.id,
-      person_id: personId,
-    }));
+    await db.interactionParticipant.createMany({
+      data: input.participantIds.map((personId) => ({
+        interactionId: interaction.id,
+        personId,
+      })),
+    });
 
-    const { error: participantsError } = await client
-      .from("interaction_participants")
-      .insert(participantsData);
-
-    if (participantsError) {
-      throw internal("interaction_participants_failed", participantsError.message);
-    }
-
-    await client
-      .from("people")
-      .update({
-        last_interaction: input.date,
-        last_interaction_activity_id: interaction.id,
-      })
-      .in("id", input.participantIds);
+    await updateParticipantLastInteraction(db, input.participantIds, interaction.id, input.date);
   }
 
-  const formatted = await loadFormattedInteraction(client, user.id, interaction.id);
+  const formatted = await loadFormattedInteraction(ctx, interaction.id);
   if (!formatted) {
     throw internal("interaction_interaction_was_created_but_could_not_be");
   }
@@ -77,9 +104,9 @@ export async function updateInteraction(
   input: UpdateInteractionInput,
   avatarOptions?: AvatarTransformOptions,
 ): Promise<FormattedInteraction> {
-  const { client, user } = ctx;
+  const db = domainDb(ctx);
 
-  const updates: TablesUpdate<"interactions"> = {};
+  const updates: Prisma.InteractionUpdateInput = {};
   if (input.title !== undefined) {
     updates.title = input.title;
   }
@@ -90,74 +117,38 @@ export async function updateInteraction(
     updates.type = input.type;
   }
   if (input.date !== undefined) {
-    updates.date = input.date;
+    updates.date = new Date(input.date);
   }
 
   if (Object.keys(updates).length > 0) {
-    const { error } = await client.from("interactions").update(updates).eq("id", interactionId);
-    if (error) {
-      throw internal("interaction_failed", error.message);
-    }
+    await db.interaction.update({
+      data: updates,
+      where: { id: interactionId },
+    });
   }
 
   if (input.participantIds) {
-    const { error: deleteParticipantsError } = await client
-      .from("interaction_participants")
-      .delete()
-      .eq("interaction_id", interactionId);
-
-    if (deleteParticipantsError) {
-      throw internal("interaction_failed", deleteParticipantsError.message);
-    }
+    await db.interactionParticipant.deleteMany({
+      where: { interactionId },
+    });
 
     if (input.participantIds.length > 0) {
-      const participantsData = input.participantIds.map((personId) => ({
-        interaction_id: interactionId,
-        person_id: personId,
-      }));
-
-      const { error: insertParticipantsError } = await client
-        .from("interaction_participants")
-        .insert(participantsData);
-
-      if (insertParticipantsError) {
-        throw internal("interaction_failed", insertParticipantsError.message);
-      }
+      await db.interactionParticipant.createMany({
+        data: input.participantIds.map((personId) => ({
+          interactionId,
+          personId,
+        })),
+      });
 
       if (input.date) {
-        await client
-          .from("people")
-          .update({
-            last_interaction: input.date,
-            last_interaction_activity_id: interactionId,
-          })
-          .in("id", input.participantIds);
+        await updateParticipantLastInteraction(db, input.participantIds, interactionId, input.date);
       }
     }
   } else if (input.date !== undefined) {
-    const { data: participants } = await client
-      .from("interaction_participants")
-      .select("person_id")
-      .eq("interaction_id", interactionId);
-
-    if (participants && participants.length > 0 && input.date !== undefined) {
-      const interactionDate = input.date;
-      await Promise.all(
-        participants.map((p) =>
-          client
-            .from("people")
-            .update({
-              last_interaction: interactionDate,
-              last_interaction_activity_id: interactionId,
-            })
-            .eq("id", p.person_id)
-            .eq("last_interaction_activity_id", interactionId),
-        ),
-      );
-    }
+    await syncLastInteractionForExistingParticipants(db, interactionId, input.date);
   }
 
-  const formatted = await loadFormattedInteraction(client, user.id, interactionId, avatarOptions);
+  const formatted = await loadFormattedInteraction(ctx, interactionId, avatarOptions);
   if (!formatted) {
     throw new DomainError("Interaction not found", 404, "interaction_not_found");
   }
@@ -166,14 +157,15 @@ export async function updateInteraction(
 }
 
 export async function deleteInteraction(ctx: DomainContext, interactionId: string) {
-  const { client } = ctx;
+  const db = domainDb(ctx);
 
-  await client.from("interaction_participants").delete().eq("interaction_id", interactionId);
+  await db.interactionParticipant.deleteMany({
+    where: { interactionId },
+  });
 
-  const { error } = await client.from("interactions").delete().eq("id", interactionId);
-  if (error) {
-    throw internal("interaction_failed", error.message);
-  }
+  await db.interaction.delete({
+    where: { id: interactionId },
+  });
 }
 
 export async function logInteraction(
@@ -186,7 +178,7 @@ export async function logInteraction(
     participantIds: string[];
   },
 ) {
-  const { client } = ctx;
+  const db = domainDb(ctx);
 
   const interaction = await createInteraction(ctx, {
     date: input.date,
@@ -196,13 +188,13 @@ export async function logInteraction(
     type: input.type,
   });
 
-  const { data: participants } = await client
-    .from("people")
-    .select("first_name, last_name")
-    .in("id", input.participantIds);
+  const participants = await db.people.findMany({
+    select: { firstName: true, lastName: true },
+    where: { id: { in: input.participantIds } },
+  });
 
   const names =
-    participants?.map((p) => [p.first_name, p.last_name].filter(Boolean).join(" ")).join(", ") ??
+    participants.map((p) => [p.firstName, p.lastName].filter(Boolean).join(" ")).join(", ") ||
     "unknown";
 
   return {
@@ -219,24 +211,23 @@ export async function addParticipantsToInteraction(
   interactionId: string,
   participantIds: string[],
 ) {
-  const { client } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: interaction, error: interactionError } = await client
-    .from("interactions")
-    .select("id, date, title, type")
-    .eq("id", interactionId)
-    .single();
+  const interaction = await db.interaction.findFirst({
+    select: { date: true, id: true, title: true, type: true },
+    where: { id: interactionId },
+  });
 
-  if (interactionError || !interaction) {
+  if (!interaction) {
     throw new DomainError("Interaction not found", 404, "interaction_not_found");
   }
 
-  const { data: existing } = await client
-    .from("interaction_participants")
-    .select("person_id")
-    .eq("interaction_id", interactionId);
+  const existing = await db.interactionParticipant.findMany({
+    select: { personId: true },
+    where: { interactionId },
+  });
 
-  const existingIds = new Set(existing?.map((p) => p.person_id) ?? []);
+  const existingIds = new Set(existing.map((p) => p.personId));
   const newIds = participantIds.filter((id) => !existingIds.has(id));
 
   if (newIds.length === 0) {
@@ -245,36 +236,22 @@ export async function addParticipantsToInteraction(
     };
   }
 
-  const { error: insertError } = await client.from("interaction_participants").insert(
-    newIds.map((personId) => ({
-      interaction_id: interactionId,
-      person_id: personId,
+  await db.interactionParticipant.createMany({
+    data: newIds.map((personId) => ({
+      interactionId,
+      personId,
     })),
-  );
+  });
 
-  if (insertError) {
-    throw internal("interaction_failed_to_add_participants_inserterror_m");
-  }
+  await updateParticipantLastInteraction(db, newIds, interactionId, interaction.date.toISOString());
 
-  await Promise.all(
-    newIds.map((personId) =>
-      client
-        .from("people")
-        .update({
-          last_interaction: interaction.date,
-          last_interaction_activity_id: interactionId,
-        })
-        .eq("id", personId),
-    ),
-  );
-
-  const { data: participants } = await client
-    .from("people")
-    .select("first_name, last_name")
-    .in("id", newIds);
+  const participants = await db.people.findMany({
+    select: { firstName: true, lastName: true },
+    where: { id: { in: newIds } },
+  });
 
   const names =
-    participants?.map((p) => [p.first_name, p.last_name].filter(Boolean).join(" ")).join(", ") ??
+    participants.map((p) => [p.firstName, p.lastName].filter(Boolean).join(" ")).join(", ") ||
     "unknown";
 
   return {
@@ -289,36 +266,31 @@ export async function removeParticipantsFromInteraction(
   interactionId: string,
   participantIds: string[],
 ) {
-  const { client } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: interaction, error: interactionError } = await client
-    .from("interactions")
-    .select("id, title, type")
-    .eq("id", interactionId)
-    .single();
+  const interaction = await db.interaction.findFirst({
+    select: { id: true, title: true, type: true },
+    where: { id: interactionId },
+  });
 
-  if (interactionError || !interaction) {
+  if (!interaction) {
     throw new DomainError("Interaction not found", 404, "interaction_not_found");
   }
 
-  const { error: deleteError } = await client
-    .from("interaction_participants")
-    .delete()
-    .eq("interaction_id", interactionId)
-    .in("person_id", participantIds);
+  await db.interactionParticipant.deleteMany({
+    where: {
+      interactionId,
+      personId: { in: participantIds },
+    },
+  });
 
-  if (deleteError) {
-    throw internal("interaction_failed_to_remove_participants_deleteerro");
-  }
-
-  const { data: people } = await client
-    .from("people")
-    .select("first_name, last_name")
-    .in("id", participantIds);
+  const people = await db.people.findMany({
+    select: { firstName: true, lastName: true },
+    where: { id: { in: participantIds } },
+  });
 
   const names =
-    people?.map((p) => [p.first_name, p.last_name].filter(Boolean).join(" ")).join(", ") ??
-    "unknown";
+    people.map((p) => [p.firstName, p.lastName].filter(Boolean).join(" ")).join(", ") || "unknown";
 
   return {
     interactionId,
@@ -337,7 +309,7 @@ export async function updateInteractionDetails(
     description?: string;
   },
 ) {
-  const updates: TablesUpdate<"interactions"> = {};
+  const updates: Prisma.InteractionUpdateInput = {};
   if (input.title !== undefined) {
     updates.title = input.title;
   }
@@ -345,7 +317,7 @@ export async function updateInteractionDetails(
     updates.type = input.type;
   }
   if (input.date !== undefined) {
-    updates.date = input.date;
+    updates.date = new Date(input.date);
   }
   if (input.description !== undefined) {
     updates.description = input.description;
@@ -355,70 +327,60 @@ export async function updateInteractionDetails(
     throw new DomainError("No fields to update were provided.", 400, "interaction_no_fields");
   }
 
-  const { client } = ctx;
-  const { data: interaction, error } = await client
-    .from("interactions")
-    .update(updates)
-    .eq("id", interactionId)
-    .select("id, title, type, date, description")
-    .single();
+  const db = domainDb(ctx);
 
-  if (error || !interaction) {
-    if (error) {
-      throw internal("interaction_update_failed", error);
+  try {
+    const interaction = await db.interaction.update({
+      data: updates,
+      select: {
+        date: true,
+        description: true,
+        id: true,
+        title: true,
+        type: true,
+      },
+      where: { id: interactionId },
+    });
+
+    if (input.date !== undefined) {
+      await syncLastInteractionForExistingParticipants(db, interactionId, input.date);
     }
-    throw new DomainError("Interaction not found", 404, "interaction_not_found");
-  }
 
-  if (input.date !== undefined) {
-    const { data: participants } = await client
-      .from("interaction_participants")
-      .select("person_id")
-      .eq("interaction_id", interactionId);
-
-    if (participants && participants.length > 0 && input.date !== undefined) {
-      const interactionDate = input.date;
-      await Promise.all(
-        participants.map((p) =>
-          client
-            .from("people")
-            .update({
-              last_interaction: interactionDate,
-              last_interaction_activity_id: interactionId,
-            })
-            .eq("id", p.person_id)
-            .eq("last_interaction_activity_id", interactionId),
-        ),
-      );
+    return {
+      date: interaction.date.toISOString(),
+      description: interaction.description,
+      id: interaction.id,
+      message: "Updated interaction successfully.",
+      title: interaction.title,
+      type: interaction.type,
+    };
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2025"
+    ) {
+      throw new DomainError("Interaction not found", 404, "interaction_not_found");
     }
+    throw internal("interaction_update_failed", error);
   }
-
-  return {
-    date: interaction.date,
-    description: interaction.description,
-    id: interaction.id,
-    message: "Updated interaction successfully.",
-    title: interaction.title,
-    type: interaction.type,
-  };
 }
 
 export async function deleteInteractionWithSummary(ctx: DomainContext, interactionId: string) {
-  const { client } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: interaction, error: fetchError } = await client
-    .from("interactions")
-    .select("id, title, type, date")
-    .eq("id", interactionId)
-    .single();
+  const interaction = await db.interaction.findFirst({
+    select: { date: true, id: true, title: true, type: true },
+    where: { id: interactionId },
+  });
 
-  if (fetchError || !interaction) {
+  if (!interaction) {
     throw new DomainError("Interaction not found", 404, "interaction_not_found");
   }
 
   await deleteInteraction(ctx, interactionId);
 
   return {
-    message: `Deleted ${interaction.type} interaction "${interaction.title ?? "(untitled)"}" from ${interaction.date}.`,
+    message: `Deleted ${interaction.type} interaction "${interaction.title ?? "(untitled)"}" from ${interaction.date.toISOString()}.`,
   };
 }

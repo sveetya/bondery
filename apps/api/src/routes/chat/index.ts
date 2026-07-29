@@ -10,7 +10,6 @@ import { convertToModelMessages } from "ai";
 import type { FastifyRequest } from "fastify";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
 import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import { badRequest, forbidden } from "../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
@@ -56,17 +55,14 @@ export const chatRoutes: AppRoutePlugin = async (fastify) => {
       }>,
       reply,
     ) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { messages, sessionId } = request.body;
 
       if (!sessionId) {
         throw badRequest("sessionId is required", "bad_request");
       }
 
-      // Atomically check quota and increment the counter in one DB round-trip.
-      // If not allowed, abort immediately — the increment is counted but the
-      // user's message is not streamed or persisted.
-      const quota = await checkAndIncrementQuota(client, user.id);
+      const quota = await checkAndIncrementQuota(ctx);
       if (!quota.allowed) {
         throw forbidden("Chat quota exceeded", "chat_quota_exceeded", {
           limit: quota.limit,
@@ -77,7 +73,7 @@ export const chatRoutes: AppRoutePlugin = async (fastify) => {
       }
 
       const modelMessages = await convertToModelMessages(messages);
-      const result = runChatAgent(modelMessages, client, user.id, user.email);
+      const result = runChatAgent(modelMessages, ctx);
 
       reply.hijack();
       reply.raw.setHeader("Content-Type", "text/event-stream");
@@ -87,12 +83,10 @@ export const chatRoutes: AppRoutePlugin = async (fastify) => {
 
       result.pipeUIMessageStreamToResponse(reply.raw);
 
-      // Persist messages after streaming completes (fire-and-forget)
       const lastUserMessage = messages[messages.length - 1];
 
       Promise.resolve(result.text)
         .then(async (fullText) => {
-          const ctx = domainContextFromRequest(request);
           await persistChatMessages(ctx, sessionId, lastUserMessage, fullText);
           const userText =
             lastUserMessage.parts

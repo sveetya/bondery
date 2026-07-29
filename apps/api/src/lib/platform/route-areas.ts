@@ -67,7 +67,7 @@ export function integrationRoutes(plugin: AppRoutePlugin): AppRoutePlugin {
   };
 }
 
-/** Session routes: Supabase session only (no API keys). */
+/** Session routes: OAuth session only (no API keys). */
 export function sessionRoutes(plugin: AppRoutePlugin): AppRoutePlugin {
   return async (fastify) => {
     fastify.addHook("onRoute", stampOpenApiArea("session"));

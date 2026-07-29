@@ -3,16 +3,17 @@
  *
  * GET /api/subscriptions/portal
  *
- * Creates a short-lived Polar customer portal session and redirects the user.
+ * Creates a short-lived Stripe billing portal session and redirects the user.
  */
 
+import { prisma } from "@bondery/db";
 import { WEBAPP_ROUTES } from "@bondery/helpers";
 import { standardErrorResponses } from "@bondery/schemas/http/responses";
-import type { Polar } from "@polar-sh/sdk";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import type Stripe from "stripe";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
-import { getPolarClient } from "../../services/billing/polar.js";
+import { getStripeClient } from "../../services/billing/stripe.js";
 
 export async function subscriptionPortalRoutes(fastify: FastifyInstance): Promise<void> {
   fastify.addHook("onRoute", (routeOptions) => {
@@ -21,71 +22,52 @@ export async function subscriptionPortalRoutes(fastify: FastifyInstance): Promis
     }
   });
 
-  /**
-   * GET / — Redirect to the Polar customer portal for billing management.
-   */
   fastify.get(
     "/",
     {
       schema: {
-        description: "Redirect to the Polar customer portal for billing management.",
+        description: "Redirect to the Stripe customer portal for billing management.",
         response: {
           302: {
-            description: "Redirect to Polar customer portal",
+            description: "Redirect to Stripe customer portal",
           },
           ...standardErrorResponses,
         },
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
       const settingsUrl = `${fastify.config.BONDERY_PUBLIC_WEBAPP_URL}${WEBAPP_ROUTES.SETTINGS}`;
 
-      let polar: Polar;
+      let stripe: Stripe;
       try {
-        polar = getPolarClient();
+        stripe = getStripeClient();
       } catch {
-        request.log.warn({ userId: user.id }, "subscription-portal: Polar not configured");
+        request.log.warn({ userId: user.id }, "subscription-portal: Stripe not configured");
+        return reply.redirect(settingsUrl);
+      }
+
+      const subscription = await prisma.subscription.findFirst({
+        select: { stripeCustomerId: true },
+        where: { userId: user.id },
+      });
+
+      if (!subscription?.stripeCustomerId) {
         return reply.redirect(settingsUrl);
       }
 
       try {
-        const session = await polar.customerSessions.create({
-          externalCustomerId: user.id,
-          returnUrl: settingsUrl,
+        const session = await stripe.billingPortal.sessions.create({
+          customer: subscription.stripeCustomerId,
+          return_url: settingsUrl,
         });
-        if (session.customerPortalUrl) {
-          return reply.redirect(session.customerPortalUrl);
-        }
-      } catch (err) {
-        request.log.warn(
-          { err, userId: user.id },
-          "subscription-portal: externalCustomerId lookup failed, trying polar_customer_id",
-        );
-      }
-
-      const { data: subscription } = await client
-        .from("subscriptions")
-        .select("polar_customer_id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!subscription?.polar_customer_id) {
-        return reply.redirect(settingsUrl);
-      }
-
-      try {
-        const session = await polar.customerSessions.create({
-          customerId: subscription.polar_customer_id,
-          returnUrl: settingsUrl,
-        });
-        if (session.customerPortalUrl) {
-          return reply.redirect(session.customerPortalUrl);
+        if (session.url) {
+          return reply.redirect(session.url);
         }
       } catch (err) {
         request.log.error(
           { err, userId: user.id },
-          "subscription-portal: failed to create customer session",
+          "subscription-portal: failed to create billing portal session",
         );
       }
 

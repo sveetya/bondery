@@ -1,6 +1,5 @@
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { searchPeopleIds } from "../data/search.js";
+import type { PrismaClient } from "@bondery/db";
+import { searchPeopleIdsWithDb } from "../data/search-prisma.js";
 import { badRequest, internal } from "../platform/errors/http-errors.js";
 
 export type ResolveGroupMemberPersonIdsExplicitBody = {
@@ -21,7 +20,7 @@ export type ResolveGroupMemberPersonIdsBody =
  * Filter scope is limited to existing members of the target group.
  */
 export async function resolveGroupMemberPersonIds(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   groupId: string,
   body: ResolveGroupMemberPersonIdsBody,
@@ -53,9 +52,14 @@ export async function resolveGroupMemberPersonIds(
       typeof body.memberFilter.search === "string" ? body.memberFilter.search.trim() : "";
 
     if (search) {
-      const { ranked, error: rpcError } = await searchPeopleIds(client, userId, search, 10000, 0, {
-        groupId,
-      });
+      const { ranked, error: rpcError } = await searchPeopleIdsWithDb(
+        db,
+        userId,
+        search,
+        10000,
+        0,
+        { groupId },
+      );
 
       if (rpcError) {
         throw internal("group_member_ids_search_failed", rpcError);
@@ -65,20 +69,17 @@ export async function resolveGroupMemberPersonIds(
       return (ranked || []).map((row) => row.id).filter((id) => !excludeSet.has(id));
     }
 
-    const { data: rows, error: filterError } = await client
-      .from("people")
-      .select("id, people_groups!inner(group_id)")
-      .eq("myself", false)
-      .eq("people_groups.group_id", groupId);
-
-    if (filterError) {
-      throw internal("group_member_ids_filter_failed", filterError);
-    }
+    const rows = await db.people.findMany({
+      select: { id: true },
+      where: {
+        groups: { some: { groupId } },
+        myself: false,
+        userId,
+      },
+    });
 
     const excludeSet = new Set(body.excludePersonIds ?? []);
-    return (rows || [])
-      .map((row: { id: string }) => row.id)
-      .filter((id: string) => !excludeSet.has(id));
+    return rows.map((row) => row.id).filter((id) => !excludeSet.has(id));
   }
 
   throw badRequest(

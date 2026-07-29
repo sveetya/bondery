@@ -1,6 +1,5 @@
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { searchPeopleIds } from "../data/search.js";
+import type { PrismaClient } from "@bondery/db";
+import { countSearchPeopleIdsWithDb, searchPeopleIdsWithDb } from "../data/search-prisma.js";
 import { badRequest, internal } from "../platform/errors/http-errors.js";
 
 export type ResolveContactPersonIdsExplicitBody = {
@@ -21,11 +20,10 @@ export type ResolveContactPersonIdsBody =
  * Filter scope matches DELETE /api/contacts (all non-myself contacts, optional fuzzy search).
  */
 export async function resolveContactPersonIds(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   body: ResolveContactPersonIdsBody,
   options?: {
-    /** When true, reject explicit lists that are empty or contain only myself. */
     rejectEmptyExplicit?: boolean;
     emptyExplicitError?: string;
     onlyMyselfError?: string;
@@ -46,13 +44,11 @@ export async function resolveContactPersonIds(
       return [];
     }
 
-    const { data: myselfRows } = await client
-      .from("people")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("myself", true)
-      .in("id", uniqueIds);
-    const myselfIds = new Set((myselfRows ?? []).map((row: { id: string }) => row.id));
+    const myselfRows = await db.people.findMany({
+      select: { id: true },
+      where: { id: { in: uniqueIds }, myself: true, userId },
+    });
+    const myselfIds = new Set(myselfRows.map((row) => row.id));
     uniqueIds = uniqueIds.filter((id) => !myselfIds.has(id));
 
     if (uniqueIds.length === 0 && options?.rejectEmptyExplicit) {
@@ -70,7 +66,7 @@ export async function resolveContactPersonIds(
       typeof body.contactFilter.search === "string" ? body.contactFilter.search.trim() : "";
 
     if (search) {
-      const { ranked, error: rpcError } = await searchPeopleIds(client, userId, search, 10000);
+      const { ranked, error: rpcError } = await searchPeopleIdsWithDb(db, userId, search, 10000, 0);
 
       if (rpcError) {
         throw internal("contact_ids_search_failed", rpcError);
@@ -80,20 +76,13 @@ export async function resolveContactPersonIds(
       return (ranked || []).map((row) => row.id).filter((id) => !excludeSet.has(id));
     }
 
-    const { data: rows, error: filterError } = await client
-      .from("people")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("myself", false);
-
-    if (filterError) {
-      throw internal("contact_ids_filter_failed", filterError);
-    }
+    const rows = await db.people.findMany({
+      select: { id: true },
+      where: { myself: false, userId },
+    });
 
     const excludeSet = new Set(body.excludePersonIds ?? []);
-    return (rows || [])
-      .map((row: { id: string }) => row.id)
-      .filter((id: string) => !excludeSet.has(id));
+    return rows.map((row) => row.id).filter((id) => !excludeSet.has(id));
   }
 
   throw badRequest(

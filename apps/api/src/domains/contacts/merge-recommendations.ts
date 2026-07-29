@@ -14,9 +14,9 @@ import {
   toFullNameKey,
 } from "../../lib/contacts/merge-helpers.js";
 import type { extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { internal } from "../../lib/platform/errors/http-errors.js";
 import { hydrateMergeRecommendations } from "../../services/contacts/merge-recommendations.js";
 import { type DomainContext, DomainError } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
 
 export { patchAffectsMergeRecommendations } from "@bondery/helpers/contact";
 
@@ -28,19 +28,14 @@ export interface RefreshMergeRecommendationsOptions {
 export async function getMergeRecommendationsCount(
   ctx: DomainContext,
 ): Promise<MergeRecommendationsCountResponse> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { count, error } = await client
-    .from("people_merge_recommendations")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", user.id)
-    .eq("is_declined", false);
+  const activeCount = await db.peopleMergeRecommendation.count({
+    where: { isDeclined: false, userId: user.id },
+  });
 
-  if (error) {
-    throw internal("internal_server_error", error.message);
-  }
-
-  return { activeCount: count ?? 0 };
+  return { activeCount };
 }
 
 export async function refreshMergeRecommendations(
@@ -54,25 +49,31 @@ export async function refreshMergeRecommendations(
     return { recommendationsCount: activeCount, success: true };
   }
 
-  const { client, user, log } = ctx;
-  const { data: recommendationRows, error: recommendationsError } = await client
-    .from("people_merge_recommendations")
-    .select("id, left_person_id, right_person_id, score, reasons")
-    .eq("user_id", user.id)
-    .eq("is_declined", false)
-    .order("score", { ascending: false })
-    .order("created_at", { ascending: false });
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  if (recommendationsError) {
-    throw internal("internal_server_error", recommendationsError.message);
-  }
+  const recommendationRows = await db.peopleMergeRecommendation.findMany({
+    orderBy: [{ score: "desc" }, { createdAt: "desc" }],
+    select: {
+      id: true,
+      leftPersonId: true,
+      reasons: true,
+      rightPersonId: true,
+      score: true,
+    },
+    where: { isDeclined: false, userId: user.id },
+  });
 
   const recommendations = await hydrateMergeRecommendations(
-    client,
-    user.id,
-    recommendationRows || [],
+    ctx,
+    recommendationRows.map((row) => ({
+      id: row.id,
+      left_person_id: row.leftPersonId,
+      reasons: row.reasons,
+      right_person_id: row.rightPersonId,
+      score: row.score,
+    })),
     options.avatarOptions ?? {},
-    log,
   );
 
   return {
@@ -98,22 +99,15 @@ export async function declineMergeRecommendation(
     throw new DomainError("Recommendation id is required", 400, "merge_recommendation_id_required");
   }
 
-  const { client, user } = ctx;
-  const { data, error } = await client
-    .from("people_merge_recommendations")
-    .update({
-      is_declined: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select("id")
-    .maybeSingle();
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  if (error) {
-    throw internal("contact_merge_failed", error.message);
-  }
-  if (!data) {
+  const updated = await db.peopleMergeRecommendation.updateMany({
+    data: { isDeclined: true, updatedAt: new Date() },
+    where: { id, userId: user.id },
+  });
+
+  if (updated.count === 0) {
     throw new DomainError("Recommendation not found", 404, "merge_recommendation_not_found");
   }
 
@@ -129,22 +123,15 @@ export async function restoreMergeRecommendation(
     throw new DomainError("Recommendation id is required", 400, "merge_recommendation_id_required");
   }
 
-  const { client, user } = ctx;
-  const { data, error } = await client
-    .from("people_merge_recommendations")
-    .update({
-      is_declined: false,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .select("id")
-    .maybeSingle();
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  if (error) {
-    throw internal("contact_merge_failed", error.message);
-  }
-  if (!data) {
+  const updated = await db.peopleMergeRecommendation.updateMany({
+    data: { isDeclined: false, updatedAt: new Date() },
+    where: { id, userId: user.id },
+  });
+
+  if (updated.count === 0) {
     throw new DomainError("Recommendation not found", 404, "merge_recommendation_not_found");
   }
 
@@ -152,106 +139,102 @@ export async function restoreMergeRecommendation(
 }
 
 export async function recomputeMergeRecommendations(ctx: DomainContext): Promise<number> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
   const userId = user.id;
 
-  const [
-    { data: peopleRows, error: peopleError },
-    { data: emailRows, error: emailError },
-    { data: phoneRows, error: phoneError },
-    { data: socialRows, error: socialError },
-    { data: existingRows, error: existingError },
-  ] = await Promise.all([
-    client.from("people").select("id, first_name, last_name").eq("user_id", userId),
-    client.from("people_emails").select("person_id, value").eq("user_id", userId),
-    client.from("people_phones").select("person_id, prefix, value").eq("user_id", userId),
-    client
-      .from("people_socials")
-      .select("person_id, platform, handle")
-      .eq("user_id", userId)
-      .in("platform", ["linkedin", "facebook"]),
-    client
-      .from("people_merge_recommendations")
-      .select("id, left_person_id, right_person_id, is_declined")
-      .eq("user_id", userId),
+  const [peopleRows, emailRows, phoneRows, socialRows, existingRows] = await Promise.all([
+    db.people.findMany({
+      select: { firstName: true, id: true, lastName: true },
+      where: { userId },
+    }),
+    db.peopleEmail.findMany({
+      select: { personId: true, value: true },
+      where: { userId },
+    }),
+    db.peoplePhone.findMany({
+      select: { personId: true, prefix: true, value: true },
+      where: { userId },
+    }),
+    db.peopleSocial.findMany({
+      select: { handle: true, personId: true, platform: true },
+      where: { platform: { in: ["linkedin", "facebook"] }, userId },
+    }),
+    db.peopleMergeRecommendation.findMany({
+      select: { id: true, isDeclined: true, leftPersonId: true, rightPersonId: true },
+      where: { userId },
+    }),
   ]);
 
-  if (peopleError || emailError || phoneError || socialError || existingError) {
-    throw internal(
-      "contact_merge_recommendations_recompute_failed",
-      peopleError ?? emailError ?? phoneError ?? socialError ?? existingError,
-    );
-  }
-
-  const people = peopleRows || [];
+  const people = peopleRows;
   if (people.length < 2) {
-    if ((existingRows || []).length > 0) {
-      const { error: clearError } = await client
-        .from("people_merge_recommendations")
-        .delete()
-        .eq("user_id", userId)
-        .eq("is_declined", false);
-
-      if (clearError) {
-        throw internal("contact_merge_failed", clearError.message);
-      }
+    if (existingRows.length > 0) {
+      await db.peopleMergeRecommendation.deleteMany({
+        where: { isDeclined: false, userId },
+      });
     }
 
     return 0;
   }
 
   const emailsByPerson = new Map<string, Set<string>>();
-  for (const row of emailRows || []) {
+  for (const row of emailRows) {
     const normalized = normalizeEmailValue(row.value || "");
     if (!normalized) {
       continue;
     }
 
-    const bucket = emailsByPerson.get(row.person_id) || new Set<string>();
+    const bucket = emailsByPerson.get(row.personId) || new Set<string>();
     bucket.add(normalized);
-    emailsByPerson.set(row.person_id, bucket);
+    emailsByPerson.set(row.personId, bucket);
   }
 
   const phonesByPerson = new Map<string, Set<string>>();
-  for (const row of phoneRows || []) {
+  for (const row of phoneRows) {
     const normalized = normalizePhoneValue(row.prefix, row.value || "");
     if (!normalized) {
       continue;
     }
 
-    const bucket = phonesByPerson.get(row.person_id) || new Set<string>();
+    const bucket = phonesByPerson.get(row.personId) || new Set<string>();
     bucket.add(normalized);
-    phonesByPerson.set(row.person_id, bucket);
+    phonesByPerson.set(row.personId, bucket);
   }
 
   const socialByPerson = new Map<string, { linkedin: string; facebook: string }>();
-  for (const row of socialRows || []) {
+  for (const row of socialRows) {
     const normalized = normalizeSocialHandle(row.handle || "");
     if (!normalized) {
       continue;
     }
 
-    const existing = socialByPerson.get(row.person_id) || { facebook: "", linkedin: "" };
+    const existing = socialByPerson.get(row.personId) || { facebook: "", linkedin: "" };
     if (row.platform === "linkedin") {
       existing.linkedin = normalized;
     }
     if (row.platform === "facebook") {
       existing.facebook = normalized;
     }
-    socialByPerson.set(row.person_id, existing);
+    socialByPerson.set(row.personId, existing);
   }
 
   const candidates: MergeRecommendationCandidate[] = [];
   for (let leftIndex = 0; leftIndex < people.length; leftIndex += 1) {
     const leftPerson = people[leftIndex];
-    const leftName = toFullNameKey(leftPerson);
+    const leftName = toFullNameKey({
+      first_name: leftPerson.firstName,
+      last_name: leftPerson.lastName,
+    });
     const leftEmails = emailsByPerson.get(leftPerson.id) || new Set<string>();
     const leftPhones = phonesByPerson.get(leftPerson.id) || new Set<string>();
     const leftSocial = socialByPerson.get(leftPerson.id) || { facebook: "", linkedin: "" };
 
     for (let rightIndex = leftIndex + 1; rightIndex < people.length; rightIndex += 1) {
       const rightPerson = people[rightIndex];
-      const rightName = toFullNameKey(rightPerson);
+      const rightName = toFullNameKey({
+        first_name: rightPerson.firstName,
+        last_name: rightPerson.lastName,
+      });
       const rightEmails = emailsByPerson.get(rightPerson.id) || new Set<string>();
       const rightPhones = phonesByPerson.get(rightPerson.id) || new Set<string>();
       const rightSocial = socialByPerson.get(rightPerson.id) || { facebook: "", linkedin: "" };
@@ -308,7 +291,7 @@ export async function recomputeMergeRecommendations(ctx: DomainContext): Promise
   }
 
   const existingByPair = new Map(
-    (existingRows || []).map((row) => [`${row.left_person_id}|${row.right_person_id}`, row]),
+    existingRows.map((row) => [`${row.leftPersonId}|${row.rightPersonId}`, row]),
   );
   const nextPairKeys = new Set(
     candidates.map((candidate) => `${candidate.leftPersonId}|${candidate.rightPersonId}`),
@@ -318,47 +301,46 @@ export async function recomputeMergeRecommendations(ctx: DomainContext): Promise
   ).length;
 
   if (candidates.length > 0) {
-    const rowsToUpsert = candidates.map((candidate) => {
+    for (const candidate of candidates) {
       const key = `${candidate.leftPersonId}|${candidate.rightPersonId}`;
       const existing = existingByPair.get(key);
 
-      return {
-        algorithm_version: MERGE_RECOMMENDATION_ALGORITHM_VERSION,
-        is_declined: existing?.is_declined || false,
-        left_person_id: candidate.leftPersonId,
-        reasons: candidate.reasons,
-        right_person_id: candidate.rightPersonId,
-        score: candidate.score,
-        user_id: userId,
-      };
-    });
+      if (existing) {
+        await db.peopleMergeRecommendation.update({
+          data: {
+            algorithmVersion: MERGE_RECOMMENDATION_ALGORITHM_VERSION,
+            reasons: candidate.reasons,
+            score: candidate.score,
+            updatedAt: new Date(),
+          },
+          where: { id: existing.id },
+        });
+        continue;
+      }
 
-    const { error: upsertError } = await client
-      .from("people_merge_recommendations")
-      .upsert(rowsToUpsert, {
-        onConflict: "user_id,left_person_id,right_person_id",
+      await db.peopleMergeRecommendation.create({
+        data: {
+          algorithmVersion: MERGE_RECOMMENDATION_ALGORITHM_VERSION,
+          isDeclined: false,
+          leftPersonId: candidate.leftPersonId,
+          reasons: candidate.reasons,
+          rightPersonId: candidate.rightPersonId,
+          score: candidate.score,
+          userId,
+        },
       });
-
-    if (upsertError) {
-      throw internal("contact_merge_failed", upsertError.message);
     }
   }
 
-  const staleActiveIds = (existingRows || [])
-    .filter((row) => !row.is_declined)
-    .filter((row) => !nextPairKeys.has(`${row.left_person_id}|${row.right_person_id}`))
+  const staleActiveIds = existingRows
+    .filter((row) => !row.isDeclined)
+    .filter((row) => !nextPairKeys.has(`${row.leftPersonId}|${row.rightPersonId}`))
     .map((row) => row.id);
 
   if (staleActiveIds.length > 0) {
-    const { error: deleteStaleError } = await client
-      .from("people_merge_recommendations")
-      .delete()
-      .eq("user_id", userId)
-      .in("id", staleActiveIds);
-
-    if (deleteStaleError) {
-      throw internal("contact_merge_failed", deleteStaleError.message);
-    }
+    await db.peopleMergeRecommendation.deleteMany({
+      where: { id: { in: staleActiveIds }, userId },
+    });
   }
 
   return newCandidatesCount;

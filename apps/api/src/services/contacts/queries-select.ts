@@ -1,44 +1,33 @@
 import type { ContactSelectable } from "@bondery/schemas";
 import type { PeopleListQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
 import { buildPaginatedResponse } from "../../lib/data/pagination.js";
 import {
-  extractAvatarOptions,
-  SELECTABLE_CONTACT_SELECT,
-} from "../../lib/data/select-fragments.js";
+  mapSelectableContactRecord,
+  selectableContactSelect,
+} from "../../lib/data/prisma-mappers.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { type ServiceLog, toContactSelectable } from "./queries-shared.js";
-import {
-  buildPeopleListPagination,
-  type PeoplePageRow,
-  queryPeoplePage,
-} from "./query-people-page.js";
+import { buildPeopleListPagination, queryPeoplePage } from "./query-people-page.js";
 
-function rowToSelectableInput(row: PeoplePageRow) {
-  return {
-    firstName: String(row.firstName ?? ""),
-    hasAvatar: Boolean(row.hasAvatar),
-    headline: (row.headline as string | null | undefined) ?? null,
-    id: row.id,
-    lastName: (row.lastName as string | null | undefined) ?? null,
-    location: (row.location as string | null | undefined) ?? null,
-    middleName: (row.middleName as string | null | undefined) ?? null,
-    myself: (row.myself as boolean | null | undefined) ?? null,
-    updatedAt: (row.updatedAt as string | null | undefined) ?? null,
-  };
-}
+type ContactListContext = Pick<DomainContext, "db" | "user"> & { log?: ServiceLog };
 
-export async function listSelectableContacts(
-  client: SupabaseClient<Database>,
-  userId: string,
-  query: PeopleListQuery,
-  log?: ServiceLog,
-) {
+export async function listSelectableContacts(ctx: ContactListContext, query: PeopleListQuery) {
+  const { user } = ctx;
   const avatarOptions = extractAvatarOptions(query);
-  const page = await queryPeoplePage(client, userId, query, SELECTABLE_CONTACT_SELECT, log);
+  const page = await queryPeoplePage(
+    ctx,
+    query,
+    { map: mapSelectableContactRecord, select: selectableContactSelect },
+    ctx.log,
+  );
 
   const contacts: ContactSelectable[] = page.rows.map((row) =>
-    toContactSelectable(client, userId, rowToSelectableInput(row), avatarOptions),
+    toContactSelectable(
+      user.id,
+      row as ReturnType<typeof mapSelectableContactRecord>,
+      avatarOptions,
+    ),
   );
 
   const pagination = buildPeopleListPagination(query, contacts.length, page.count);

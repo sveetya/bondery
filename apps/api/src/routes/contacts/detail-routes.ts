@@ -10,9 +10,10 @@ import { syncConflictResponse } from "@bondery/schemas/http/responses";
 import { EXAMPLE_VCARD_EXPORT } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { deleteContact, updateContact } from "../../domains/contacts/index.js";
 import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
+import { domainContextFromRequest } from "../../lib/platform/domain-context.js";
 import type { AppFastifyInstance } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
 import {
@@ -33,10 +34,10 @@ export function registerContactDetailRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id } = request.params;
       const avatarOpts = extractAvatarOptions(request.query);
-      return getContact(client, user.id, id, avatarOpts, request.log);
+      return getContact(ctx, id, avatarOpts);
     },
   );
 
@@ -54,17 +55,14 @@ export function registerContactDetailRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id } = request.params;
       const body = request.body;
 
-      const { data, txid } = await updateContact(
-        { client, log: request.log, user },
-        {
-          patch: body,
-          personId: id,
-        },
-      );
+      const { data, txid } = await updateContact(ctx, {
+        patch: body,
+        personId: id,
+      });
 
       return { contact: data.contact, txid };
     },
@@ -80,10 +78,10 @@ export function registerContactDetailRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id } = request.params;
 
-      await deleteContact({ client, log: request.log, user }, id);
+      await deleteContact(ctx, id);
       return { message: "Contact deleted successfully" };
     },
   );
@@ -98,9 +96,9 @@ export function registerContactDetailRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const { id: personId } = request.params;
-      return getContactGroups(client, personId);
+      return getContactGroups(domainDb(ctx), ctx.user.id, personId);
     },
   );
 
@@ -118,17 +116,11 @@ export function registerContactDetailRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request, reply) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
       const avatarOpts = extractAvatarOptions(request.query);
       const { id } = request.params;
 
-      const { vcard, filename } = await getContactVCardExport(
-        client,
-        user.id,
-        id,
-        avatarOpts,
-        request.log,
-      );
+      const { vcard, filename } = await getContactVCardExport(ctx, id, avatarOpts);
 
       reply.header("Content-Type", "text/vcard; charset=utf-8");
       reply.header("Content-Disposition", `attachment; filename="${filename}"`);

@@ -1,3 +1,4 @@
+import type { PrismaClient } from "@bondery/db";
 import type {
   InstagramImportCommitResponse,
   InstagramImportSource,
@@ -12,13 +13,72 @@ import {
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { markBulkImportCompleted } from "../../services/import/followup.js";
 import type { DomainContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
 import { scheduleMergeRecommendationsRefresh } from "../contacts/merge-recommendations.js";
+
+async function upsertPeopleSocials(
+  db: PrismaClient,
+  userId: string,
+  rows: Array<{
+    personId: string;
+    platform: string;
+    handle: string;
+    connectedAt: Date | null;
+  }>,
+): Promise<void> {
+  if (rows.length === 0) {
+    return;
+  }
+
+  const existing = await db.peopleSocial.findMany({
+    select: { id: true, personId: true, platform: true },
+    where: {
+      OR: rows.map((row) => ({ personId: row.personId, platform: row.platform })),
+      userId,
+    },
+  });
+
+  const existingByKey = new Map(existing.map((row) => [`${row.personId}:${row.platform}`, row.id]));
+
+  const toCreate = rows.filter((row) => !existingByKey.has(`${row.personId}:${row.platform}`));
+  const toUpdate = rows.filter((row) => existingByKey.has(`${row.personId}:${row.platform}`));
+
+  if (toCreate.length > 0) {
+    await db.peopleSocial.createMany({
+      data: toCreate.map((row) => ({
+        connectedAt: row.connectedAt,
+        handle: row.handle,
+        personId: row.personId,
+        platform: row.platform,
+        userId,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  await Promise.all(
+    toUpdate.map((row) =>
+      db.peopleSocial.updateMany({
+        data: {
+          connectedAt: row.connectedAt,
+          handle: row.handle,
+        },
+        where: {
+          personId: row.personId,
+          platform: row.platform,
+          userId,
+        },
+      }),
+    ),
+  );
+}
 
 export async function commitInstagramImport(
   ctx: DomainContext,
   rawImportContacts: InstagramPreparedContact[],
 ): Promise<InstagramImportCommitResponse> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
   const rawContacts = rawImportContacts;
 
   const seenHandles = new Set<string>();
@@ -48,67 +108,59 @@ export async function commitInstagramImport(
     };
   }
 
-  const now = new Date().toISOString();
-  const handles = validContacts.map((c) => c.instagramUsername.trim().toLowerCase());
+  const now = new Date();
+  const handles = validContacts.map((contact) => contact.instagramUsername.trim().toLowerCase());
   const handleToPersonId = new Map<string, string>();
 
-  for (let i = 0; i < handles.length; i += IMPORT_HANDLE_LOOKUP_CHUNK_SIZE) {
-    const chunk = handles.slice(i, i + IMPORT_HANDLE_LOOKUP_CHUNK_SIZE);
+  for (let index = 0; index < handles.length; index += IMPORT_HANDLE_LOOKUP_CHUNK_SIZE) {
+    const chunk = handles.slice(index, index + IMPORT_HANDLE_LOOKUP_CHUNK_SIZE);
 
-    const { data: existingRows, error: lookupError } = await client
-      .from("people_socials")
-      .select("handle, person_id")
-      .eq("user_id", user.id)
-      .eq("platform", "instagram")
-      .in("handle", chunk);
+    const existingRows = await db.peopleSocial.findMany({
+      select: { handle: true, personId: true },
+      where: {
+        handle: { in: chunk },
+        platform: "instagram",
+        userId: user.id,
+      },
+    });
 
-    if (lookupError) {
-      throw internal("import_instagram_failed", lookupError.message);
-    }
-
-    for (const row of existingRows ?? []) {
-      if (row.handle && row.person_id) {
-        handleToPersonId.set(row.handle.trim().toLowerCase(), row.person_id);
+    for (const row of existingRows) {
+      if (row.handle && row.personId) {
+        handleToPersonId.set(row.handle.trim().toLowerCase(), row.personId);
       }
     }
   }
 
   const toInsert = validContacts.filter(
-    (c) => !handleToPersonId.has(c.instagramUsername.trim().toLowerCase()),
+    (contact) => !handleToPersonId.has(contact.instagramUsername.trim().toLowerCase()),
   );
-  const toUpdate = validContacts.filter((c) =>
-    handleToPersonId.has(c.instagramUsername.trim().toLowerCase()),
+  const toUpdate = validContacts.filter((contact) =>
+    handleToPersonId.has(contact.instagramUsername.trim().toLowerCase()),
   );
 
   let importedCount = 0;
   const groupAssignments = new Map<DefaultImportGroupKey, Set<string>>();
 
   if (toInsert.length > 0) {
-    const { data: insertedPeople, error: insertError } = await client
-      .from("people")
-      .insert(
-        toInsert.map((c) => ({
-          first_name: c.firstName,
-          last_interaction: now,
-          last_name: c.lastName,
-          middle_name: c.middleName,
-          myself: false,
-          user_id: user.id,
-        })),
-      )
-      .select("id");
+    const insertedPeople = await db.people.createManyAndReturn({
+      data: toInsert.map((contact) => ({
+        firstName: contact.firstName,
+        lastInteraction: now,
+        lastName: contact.lastName,
+        middleName: contact.middleName,
+        myself: false,
+        userId: user.id,
+      })),
+      select: { id: true },
+    });
 
-    if (insertError || !insertedPeople) {
-      throw internal("import_instagram_failed", insertError?.message ?? "Insert failed");
-    }
-
-    for (let i = 0; i < toInsert.length; i++) {
-      const inserted = insertedPeople[i];
+    for (let index = 0; index < toInsert.length; index++) {
+      const inserted = insertedPeople[index];
       if (inserted) {
-        const handle = toInsert[i].instagramUsername.trim().toLowerCase();
+        const handle = toInsert[index].instagramUsername.trim().toLowerCase();
         handleToPersonId.set(handle, inserted.id);
 
-        const sources = (toInsert[i].sources ?? []) as InstagramImportSource[];
+        const sources = (toInsert[index].sources ?? []) as InstagramImportSource[];
         const groupKeys = toInstagramImportGroupKeys(sources);
         for (const groupKey of groupKeys) {
           const members = groupAssignments.get(groupKey) ?? new Set<string>();
@@ -125,60 +177,51 @@ export async function commitInstagramImport(
 
   if (toUpdate.length > 0) {
     const updateResults = await Promise.all(
-      toUpdate.flatMap((c) => {
-        const personId = handleToPersonId.get(c.instagramUsername.trim().toLowerCase());
+      toUpdate.flatMap((contact) => {
+        const personId = handleToPersonId.get(contact.instagramUsername.trim().toLowerCase());
         if (!personId) {
           return [];
         }
 
         return [
-          client
-            .from("people")
-            .update({
-              first_name: c.firstName,
-              last_name: c.lastName,
-              middle_name: c.middleName,
-            })
-            .eq("user_id", user.id)
-            .eq("id", personId),
+          db.people.updateMany({
+            data: {
+              firstName: contact.firstName,
+              lastName: contact.lastName,
+              middleName: contact.middleName,
+            },
+            where: { id: personId, userId: user.id },
+          }),
         ];
       }),
     );
 
-    updatedCount = updateResults.filter((r) => !r.error).length;
+    updatedCount = updateResults.filter((result) => result.count > 0).length;
   }
 
   const socialRows = validContacts
-    .map((c) => {
-      const handle = c.instagramUsername.trim().toLowerCase();
+    .map((contact) => {
+      const handle = contact.instagramUsername.trim().toLowerCase();
       const personId = handleToPersonId.get(handle);
       if (!personId) {
         return null;
       }
+
       return {
-        connected_at: c.connectedAt ?? null,
+        connectedAt: contact.connectedAt ? new Date(contact.connectedAt) : null,
         handle,
-        person_id: personId,
-        platform: "instagram" as const,
-        user_id: user.id,
+        personId,
+        platform: "instagram",
       };
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
-  if (socialRows.length > 0) {
-    const { error: socialUpsertError } = await client
-      .from("people_socials")
-      .upsert(socialRows, { onConflict: "user_id,person_id,platform" });
-
-    if (socialUpsertError) {
-      throw internal("import_instagram_failed", socialUpsertError.message);
-    }
-  }
+  await upsertPeopleSocials(db, user.id, socialRows);
 
   try {
     await Promise.all(
       Array.from(groupAssignments.entries()).map(([groupKey, personIds]) =>
-        assignContactsToDefaultImportGroup(client, user.id, groupKey, Array.from(personIds)),
+        assignContactsToDefaultImportGroup(ctx, groupKey, Array.from(personIds)),
       ),
     );
   } catch (groupError) {

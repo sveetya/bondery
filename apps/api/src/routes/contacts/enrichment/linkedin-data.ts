@@ -2,6 +2,7 @@
  * Contacts — LinkedIn Data Routes
  */
 
+import { prisma } from "@bondery/db";
 import { linkedinCompanyUrl } from "@bondery/helpers";
 import {
   linkedInDataRequestSchema,
@@ -12,11 +13,11 @@ import { uuidParamSchema } from "@bondery/schemas/http";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { upsertLinkedInWorkHistory } from "../../../domains/contacts/enrichment/linkedin-data.js";
 import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal } from "../../../lib/platform/errors/http-errors.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { ENRICH_TIER } from "../../../lib/platform/rate-limit.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
+import { buildLinkedinLogoUrl } from "../../../lib/storage/avatar-urls.js";
 
 export function registerLinkedInDataRoutes(fastify: AppFastifyInstance): void {
   fastify.post(
@@ -47,103 +48,86 @@ export function registerLinkedInDataRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
       const { id: personId } = request.params;
 
-      const { data: linkedinRow } = await client
-        .from("people_linkedin")
-        .select("id, bio, updated_at")
-        .eq("person_id", personId)
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const linkedinRow = await prisma.peopleLinkedin.findFirst({
+        select: { bio: true, id: true, updatedAt: true },
+        where: { personId, userId: user.id },
+      });
 
       if (!linkedinRow) {
         return { education: [], linkedinBio: null, syncedAt: null, workHistory: [] };
       }
 
-      const [workHistoryResult, educationResult] = await Promise.all([
-        client
-          .from("people_work_history")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("people_linkedin_id", linkedinRow.id)
-          .order("start_date", { ascending: false }),
-        client
-          .from("people_education_history")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("people_linkedin_id", linkedinRow.id)
-          .order("start_date", { ascending: false }),
+      const [workHistory, education] = await Promise.all([
+        prisma.peopleWorkHistory.findMany({
+          orderBy: { startDate: "desc" },
+          where: { peopleLinkedinId: linkedinRow.id, userId: user.id },
+        }),
+        prisma.peopleEducationHistory.findMany({
+          orderBy: { startDate: "desc" },
+          where: { peopleLinkedinId: linkedinRow.id, userId: user.id },
+        }),
       ]);
 
-      const sortByActiveFirst = <T extends { end_date: string | null; start_date: string | null }>(
+      const sortByActiveFirst = <T extends { endDate: Date | null; startDate: Date | null }>(
         rows: T[],
       ): T[] =>
         rows.sort((a, b) => {
-          const aActive = a.end_date === null;
-          const bActive = b.end_date === null;
+          const aActive = a.endDate === null;
+          const bActive = b.endDate === null;
           if (aActive !== bActive) {
             return aActive ? -1 : 1;
           }
-          if (!a.start_date && !b.start_date) {
+          if (!a.startDate && !b.startDate) {
             return 0;
           }
-          if (!a.start_date) {
+          if (!a.startDate) {
             return 1;
           }
-          if (!b.start_date) {
+          if (!b.startDate) {
             return -1;
           }
-          return a.start_date > b.start_date ? -1 : 1;
+          return a.startDate > b.startDate ? -1 : 1;
         });
 
-      if (workHistoryResult.error) {
-        throw internal("internal_server_error", workHistoryResult.error.message);
-      }
-      if (educationResult.error) {
-        throw internal("internal_server_error", educationResult.error.message);
-      }
-
       return {
-        education: sortByActiveFirst(educationResult.data || []).map((row) => ({
-          createdAt: row.created_at,
+        education: sortByActiveFirst(education).map((row) => ({
+          createdAt: row.createdAt.toISOString(),
           degree: row.degree,
           description: row.description,
-          endDate: row.end_date,
+          endDate: row.endDate?.toISOString().slice(0, 10) ?? null,
           id: row.id,
-          peopleLinkedinId: row.people_linkedin_id,
-          schoolLinkedinUrl: linkedinCompanyUrl(row.school_linkedin_id),
-          schoolLogoUrl: row.school_linkedin_id
-            ? client.storage
-                .from("linkedin_logos")
-                .getPublicUrl(`${user.id}/${row.school_linkedin_id}.jpg`).data.publicUrl
+          peopleLinkedinId: row.peopleLinkedinId,
+          schoolLinkedinUrl: linkedinCompanyUrl(row.schoolLinkedinId),
+          schoolLogoUrl: row.schoolLinkedinId
+            ? buildLinkedinLogoUrl(user.id, row.schoolLinkedinId)
             : null,
-          schoolName: row.school_name,
-          startDate: row.start_date,
-          updatedAt: row.updated_at,
-          userId: row.user_id,
+          schoolName: row.schoolName,
+          startDate: row.startDate?.toISOString().slice(0, 10) ?? null,
+          updatedAt: row.updatedAt.toISOString(),
+          userId: row.userId,
         })),
         linkedinBio: linkedinRow.bio ?? null,
-        syncedAt: linkedinRow.updated_at ?? null,
-        workHistory: sortByActiveFirst(workHistoryResult.data || []).map((row) => ({
-          companyLinkedinUrl: linkedinCompanyUrl(row.company_linkedin_id),
-          companyLogoUrl: row.company_linkedin_id
-            ? client.storage
-                .from("linkedin_logos")
-                .getPublicUrl(`${user.id}/${row.company_linkedin_id}.jpg`).data.publicUrl
+        syncedAt: linkedinRow.updatedAt.toISOString(),
+        workHistory: sortByActiveFirst(workHistory).map((row) => ({
+          companyLinkedinUrl: linkedinCompanyUrl(row.companyLinkedinId),
+          companyLogoUrl: row.companyLinkedinId
+            ? buildLinkedinLogoUrl(user.id, row.companyLinkedinId)
             : null,
-          companyName: row.company_name,
-          createdAt: row.created_at,
+          companyName: row.companyName,
+          createdAt: row.createdAt.toISOString(),
           description: row.description,
-          employmentType: row.employment_type,
-          endDate: row.end_date,
+          employmentType: row.employmentType,
+          endDate: row.endDate?.toISOString().slice(0, 10) ?? null,
           id: row.id,
           location: row.location,
-          peopleLinkedinId: row.people_linkedin_id,
-          startDate: row.start_date,
+          peopleLinkedinId: row.peopleLinkedinId,
+          startDate: row.startDate?.toISOString().slice(0, 10) ?? null,
           title: row.title,
-          updatedAt: row.updated_at,
-          userId: row.user_id,
+          updatedAt: row.updatedAt.toISOString(),
+          userId: row.userId,
         })),
       };
     },

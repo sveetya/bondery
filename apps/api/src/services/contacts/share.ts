@@ -1,11 +1,11 @@
 import { ShareContactEmail } from "@bondery/emails";
 import type { ShareableField } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
 import { render } from "@react-email/render";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras, type FullContactExtras } from "../../lib/contacts/enrichment.js";
-import { CONTACT_SELECT } from "../../lib/data/select-fragments.js";
+import { contactDetailSelect, mapContactDetailRecord } from "../../lib/data/prisma-mappers.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
@@ -22,7 +22,9 @@ export type ContactSharingPreview = {
   availableFields: { field: ShareableField; preview: string }[];
 };
 
-/** Combined type of a contact row (from CONTACT_SELECT) plus enrichment extras. */
+type ShareContext = Pick<DomainContext, "db" | "user">;
+
+/** Combined type of a contact row plus enrichment extras. */
 type EnrichedContact = FullContactExtras & {
   firstName?: string | null;
   lastName?: string | null;
@@ -116,22 +118,24 @@ function buildFieldPreview(
  * Used by the AI tool to show the user what data can be included before sharing.
  */
 export async function getContactSharingPreview(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: ShareContext,
   personId: string,
 ): Promise<ContactSharingPreview> {
-  const { data: contactRow, error: contactError } = await client
-    .from("people")
-    .select(CONTACT_SELECT)
-    .eq("id", personId)
-    .eq("user_id", userId)
-    .single();
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
 
-  if (contactError || !contactRow) {
+  const contactRow = await db.people.findFirst({
+    select: contactDetailSelect,
+    where: { id: personId, userId: user.id },
+  });
+
+  if (!contactRow) {
     throw notFound("Contact not found", "contact_not_found");
   }
 
-  const enriched = await attachContactExtras(client, userId, [contactRow], {
+  const mappedContact = mapContactDetailRecord(contactRow);
+
+  const enriched = await attachContactExtras(db, user.id, [mappedContact], {
     addresses: true,
   })
     .then(([result]) => result)
@@ -141,13 +145,15 @@ export async function getContactSharingPreview(
     throw internal("contact_share_failed");
   }
 
-  const { data: importantDatesRaw } = await client
-    .from("people_important_dates")
-    .select("type, date")
-    .eq("person_id", personId)
-    .eq("user_id", userId);
+  const importantDatesRaw = await db.peopleImportantDate.findMany({
+    select: { date: true, type: true },
+    where: { personId, userId: user.id },
+  });
 
-  const importantDates = importantDatesRaw ?? [];
+  const importantDates = importantDatesRaw.map((entry) => ({
+    date: entry.date.toISOString().slice(0, 10),
+    type: entry.type,
+  }));
 
   const contactName =
     [enriched.firstName, enriched.lastName].filter(Boolean).join(" ") || "Unnamed contact";
@@ -165,35 +171,40 @@ export async function getContactSharingPreview(
  * Reads SMTP configuration from environment variables.
  */
 export async function shareContact(
-  client: SupabaseClient<Database>,
-  user: { id: string; email: string },
+  ctx: ShareContext,
   input: ShareContactInput,
 ): Promise<{ success: true }> {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const { personId, recipientEmails, message, selectedFields } = input;
 
-  const { data: myselfContact } = await client
-    .from("people")
-    .select("first_name, middle_name, last_name, has_avatar, updated_at")
-    .eq("user_id", user.id)
-    .eq("myself", true)
-    .single();
+  const myselfContact = await db.people.findFirst({
+    select: {
+      firstName: true,
+      hasAvatar: true,
+      lastName: true,
+      middleName: true,
+      updatedAt: true,
+    },
+    where: { myself: true, userId: user.id },
+  });
   const senderName =
-    [myselfContact?.first_name, myselfContact?.middle_name, myselfContact?.last_name]
+    [myselfContact?.firstName, myselfContact?.middleName, myselfContact?.lastName]
       .filter(Boolean)
       .join(" ") || user.email;
 
-  const { data: contactRow, error: contactError } = await client
-    .from("people")
-    .select(CONTACT_SELECT)
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .single();
+  const contactRow = await db.people.findFirst({
+    select: contactDetailSelect,
+    where: { id: personId, userId: user.id },
+  });
 
-  if (contactError || !contactRow) {
+  if (!contactRow) {
     throw notFound("Contact not found", "contact_not_found");
   }
 
-  const enriched = await attachContactExtras(client, user.id, [contactRow], {
+  const mappedContact = mapContactDetailRecord(contactRow);
+
+  const enriched = await attachContactExtras(db, user.id, [mappedContact], {
     addresses: true,
   })
     .then(([result]) => result)
@@ -203,16 +214,15 @@ export async function shareContact(
     throw internal("contact_share_failed");
   }
 
-  const { data: importantDatesRaw } = await client
-    .from("people_important_dates")
-    .select("type, date")
-    .eq("person_id", personId)
-    .eq("user_id", user.id);
+  const importantDatesRaw = await db.peopleImportantDate.findMany({
+    select: { date: true, type: true },
+    where: { personId, userId: user.id },
+  });
 
-  const importantDates = (importantDatesRaw ?? []).map((d) => ({
-    date: d.date,
-    label: d.type,
-    type: d.type,
+  const importantDates = importantDatesRaw.map((entry) => ({
+    date: entry.date.toISOString().slice(0, 10),
+    label: entry.type,
+    type: entry.type,
   }));
 
   const contactName =
@@ -250,10 +260,10 @@ export async function shareContact(
     })),
     recipientEmail: recipientEmails[0],
     senderAvatarUrl:
-      resolveContactAvatarUrl(client, user.id, {
-        hasAvatar: myselfContact?.has_avatar ?? false,
+      resolveContactAvatarUrl(user.id, {
+        hasAvatar: myselfContact?.hasAvatar ?? false,
         id: user.id,
-        updatedAt: myselfContact?.updated_at,
+        updatedAt: myselfContact?.updatedAt?.toISOString(),
       }) ?? undefined,
     senderEmail: user.email,
     senderName,

@@ -17,25 +17,22 @@ import {
 } from "@bondery/schemas/http";
 import { noContentResponse, standardErrorResponses } from "@bondery/schemas/http/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import {
   buildPaginatedResponse,
   buildPaginationMeta,
   parsePagination,
 } from "../../lib/data/pagination.js";
-import { getAuth } from "../../lib/platform/auth/strategies.js";
-import { internal } from "../../lib/platform/errors/http-errors.js";
+import { notFound } from "../../lib/platform/errors/http-errors.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withCreatedResponse, withOkResponse } from "../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../lib/platform/with-domain-route.js";
 import {
   createChatSession,
   deleteChatSession,
+  toChatMessageDto,
   updateChatSessionTitle,
 } from "../../services/chat/sessions.js";
-
-const CHAT_SESSION_SELECT = "id, userId:user_id, title, createdAt:created_at, updatedAt:updated_at";
-
-const CHAT_MESSAGE_SELECT = "id, sessionId:session_id, role, content, createdAt:created_at";
 
 export const chatSessionRoutes: AppRoutePlugin = async (fastify) => {
   fastify.addHook("onRoute", (routeOptions) => {
@@ -53,28 +50,28 @@ export const chatSessionRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(chatSessionsListResponseSchema, "Paginated chat sessions"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    async (request, reply) => {
-      const { client, user } = getAuth(request);
-      const { limit, offset } = parsePagination(request.query);
+    withDomainRoute(async (ctx, { request }, reply) => {
+      const { limit, offset } = parsePagination(paginationQuerySchema.parse(request.query));
+      const db = domainDb(ctx);
 
-      const {
-        data: sessions,
-        error,
-        count,
-      } = await client
-        .from("chat_sessions")
-        .select(CHAT_SESSION_SELECT, { count: "exact" })
-        .eq("user_id", user.id)
-        .order("updated_at", { ascending: false })
-        .range(offset, offset + limit - 1);
+      const [sessions, totalCount] = await Promise.all([
+        db.chatSession.findMany({
+          orderBy: { updatedAt: "desc" },
+          skip: offset,
+          take: limit,
+          where: { userId: ctx.user.id },
+        }),
+        db.chatSession.count({ where: { userId: ctx.user.id } }),
+      ]);
 
-      if (error) {
-        request.log.error(error, "Failed to list chat sessions");
-        throw internal("failed_to_list_sessions");
-      }
+      const items = sessions.map((session) => ({
+        createdAt: session.createdAt.toISOString(),
+        id: session.id,
+        title: session.title,
+        updatedAt: session.updatedAt.toISOString(),
+        userId: session.userId,
+      }));
 
-      const items = sessions ?? [];
-      const totalCount = typeof count === "number" ? count : items.length;
       const pagination = buildPaginationMeta({
         itemCount: items.length,
         limit,
@@ -85,7 +82,7 @@ export const chatSessionRoutes: AppRoutePlugin = async (fastify) => {
       });
 
       return reply.send(buildPaginatedResponse("sessions", items, pagination));
-    },
+    }),
   );
 
   fastify.post(
@@ -150,39 +147,44 @@ export const chatSessionRoutes: AppRoutePlugin = async (fastify) => {
         response: withOkResponse(chatMessagesListResponseSchema, "Paginated chat messages"),
       } satisfies FastifyZodOpenApiSchema,
     },
-    async (request, reply) => {
-      const { client } = getAuth(request);
-      const { sessionId } = request.params;
-      const { limit, offset } = parsePagination(request.query);
+    withDomainRoute(
+      { params: chatSessionIdParamSchema, query: chatMessagesQuerySchema },
+      async (ctx, route, reply) => {
+        const { sessionId } = route.params;
+        const { limit, offset } = parsePagination(route.query);
+        const db = domainDb(ctx);
 
-      const {
-        data: messages,
-        error,
-        count,
-      } = await client
-        .from("chat_messages")
-        .select(CHAT_MESSAGE_SELECT, { count: "exact" })
-        .eq("session_id", sessionId)
-        .order("created_at", { ascending: true })
-        .range(offset, offset + limit - 1);
+        const session = await db.chatSession.findFirst({
+          select: { id: true },
+          where: { id: sessionId, userId: ctx.user.id },
+        });
 
-      if (error) {
-        request.log.error(error, "Failed to load chat messages");
-        throw internal("failed_to_load_messages");
-      }
+        if (!session) {
+          throw notFound("Chat session not found", "not_found");
+        }
 
-      const items = messages ?? [];
-      const totalCount = typeof count === "number" ? count : items.length;
-      const pagination = buildPaginationMeta({
-        itemCount: items.length,
-        limit,
-        offset,
-        search: null,
-        sort: "createdAtAsc",
-        totalCount,
-      });
+        const [messages, totalCount] = await Promise.all([
+          db.chatMessage.findMany({
+            orderBy: { createdAt: "asc" },
+            skip: offset,
+            take: limit,
+            where: { sessionId },
+          }),
+          db.chatMessage.count({ where: { sessionId } }),
+        ]);
 
-      return reply.send(buildPaginatedResponse("messages", items, pagination));
-    },
+        const items = messages.map(toChatMessageDto);
+        const pagination = buildPaginationMeta({
+          itemCount: items.length,
+          limit,
+          offset,
+          search: null,
+          sort: "createdAtAsc",
+          totalCount,
+        });
+
+        return reply.send(buildPaginatedResponse("messages", items, pagination));
+      },
+    ),
   );
 };

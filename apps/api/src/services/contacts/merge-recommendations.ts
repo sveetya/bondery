@@ -3,11 +3,11 @@ import type {
   MergeRecommendationReason,
   MergeRecommendationsResponse,
 } from "@bondery/schemas";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras, type FullContactExtras } from "../../lib/contacts/enrichment.js";
-import { CONTACT_SELECT, type extractAvatarOptions } from "../../lib/data/select-fragments.js";
-import { internal } from "../../lib/platform/errors/http-errors.js";
+import { contactDetailSelect, mapContactDetailRecord } from "../../lib/data/prisma-mappers.js";
+import type { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { withEmptyChannels, withEmptySocials } from "./helpers.js";
 
 export type MergeRecommendationRow = {
@@ -18,17 +18,17 @@ export type MergeRecommendationRow = {
   reasons: unknown;
 };
 
-type ServiceLog = {
-  error: (payload: unknown, message: string) => void;
+type MergeRecommendationsContext = Pick<DomainContext, "db" | "user"> & {
+  log?: { error: (payload: unknown, message: string) => void };
 };
 
 export async function hydrateMergeRecommendations(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: MergeRecommendationsContext,
   recommendationRows: MergeRecommendationRow[],
   avatarOptions: ReturnType<typeof extractAvatarOptions>,
-  log?: ServiceLog,
 ): Promise<MergeRecommendationsResponse["recommendations"]> {
+  const { user } = ctx;
+  const db = domainDb(ctx as DomainContext);
   const personIds = Array.from(
     new Set(recommendationRows.flatMap((row) => [row.left_person_id, row.right_person_id])),
   );
@@ -37,25 +37,22 @@ export async function hydrateMergeRecommendations(
     return [];
   }
 
-  const { data: personRows, error: personRowsError } = await client
-    .from("people")
-    .select(CONTACT_SELECT)
-    .eq("user_id", userId)
-    .in("id", personIds);
+  const personRows = await db.people.findMany({
+    select: contactDetailSelect,
+    where: { id: { in: personIds }, userId: user.id },
+  });
 
-  if (personRowsError) {
-    throw internal("internal_server_error", personRowsError.message);
-  }
+  const mappedContacts = personRows.map(mapContactDetailRecord);
 
   let enrichedContacts: Array<{ id: string } & FullContactExtras> = [];
   try {
-    enrichedContacts = await attachContactExtras(client, userId, personRows || [], {
+    enrichedContacts = await attachContactExtras(db, user.id, mappedContacts, {
       addresses: true,
       avatarOptions,
     });
   } catch (error) {
-    log?.error({ err: error }, "Failed to attach contact extras for merge recommendations");
-    enrichedContacts = withEmptySocials(withEmptyChannels(personRows || []));
+    ctx.log?.error({ err: error }, "Failed to attach contact extras for merge recommendations");
+    enrichedContacts = withEmptySocials(withEmptyChannels(mappedContacts));
   }
 
   const contactsById = new Map(enrichedContacts.map((contact) => [contact.id, contact]));

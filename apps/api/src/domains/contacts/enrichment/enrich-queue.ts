@@ -1,83 +1,96 @@
+import {
+  getLinkedinEnrichEligibleCountWithDb,
+  getLinkedinEnrichEligibleWithDb,
+} from "../../../lib/data/contact-rpc.js";
 import { internal } from "../../../lib/platform/errors/http-errors.js";
 import { type DomainContext, DomainError } from "../../_shared/context.js";
+import { domainDb } from "../../_shared/domain-db.js";
 
 export async function getEnrichQueueEligibleCount(
   ctx: DomainContext,
 ): Promise<{ eligibleCount: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { data, error } = await client.rpc("get_linkedin_enrich_eligible_count", {
-    p_user_id: user.id,
-  });
-
-  if (error) {
-    throw internal("contact_enrich_failed", error.message);
+  try {
+    const eligibleCount = await getLinkedinEnrichEligibleCountWithDb(db, user.id);
+    return { eligibleCount };
+  } catch (error) {
+    throw internal(
+      "contact_enrich_failed",
+      error instanceof Error ? error.message : "contact_enrich_failed",
+    );
   }
-
-  return { eligibleCount: typeof data === "number" ? data : 0 };
 }
 
 export async function initEnrichQueue(
   ctx: DomainContext,
   personId?: string,
 ): Promise<{ totalEligible: number }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  await client.from("linkedin_enrich_queue").delete().eq("user_id", user.id);
+  await db.linkedinEnrichQueue.deleteMany({
+    where: { userId: user.id },
+  });
 
   if (personId) {
-    const { data: person, error: personError } = await client
-      .from("people")
-      .select("id")
-      .eq("id", personId)
-      .eq("user_id", user.id)
-      .maybeSingle();
+    const person = await db.people.findFirst({
+      select: { id: true },
+      where: { id: personId, userId: user.id },
+    });
 
-    if (personError) {
-      throw internal("contact_enrich_failed", personError.message);
-    }
     if (!person) {
       throw new DomainError("Contact not found", 404, "contact_not_found");
     }
 
-    const { error: insertError } = await client.from("linkedin_enrich_queue").insert({
-      person_id: personId,
-      status: "pending" as const,
-      user_id: user.id,
-    });
-
-    if (insertError) {
-      throw internal("contact_enrich_failed", insertError.message);
+    try {
+      await db.linkedinEnrichQueue.create({
+        data: {
+          personId,
+          status: "pending",
+          userId: user.id,
+        },
+      });
+    } catch (error) {
+      throw internal(
+        "contact_enrich_failed",
+        error instanceof Error ? error.message : "contact_enrich_failed",
+      );
     }
 
     return { totalEligible: 1 };
   }
 
-  const { data: eligible, error: rpcError } = await client.rpc("get_linkedin_enrich_eligible", {
-    p_user_id: user.id,
-  });
-
-  if (rpcError) {
-    throw internal("contact_enrich_failed", rpcError.message);
+  let eligible: Awaited<ReturnType<typeof getLinkedinEnrichEligibleWithDb>>;
+  try {
+    eligible = await getLinkedinEnrichEligibleWithDb(db, user.id, 25);
+  } catch (error) {
+    throw internal(
+      "contact_enrich_failed",
+      error instanceof Error ? error.message : "contact_enrich_failed",
+    );
   }
 
-  const rows = eligible || [];
-  const totalEligible = rows.length;
+  const totalEligible = eligible.length;
 
   if (totalEligible === 0) {
     return { totalEligible: 0 };
   }
 
-  const queueRows = rows.map((r: { person_id: string }) => ({
-    person_id: r.person_id,
-    status: "pending" as const,
-    user_id: user.id,
-  }));
-
-  const { error: insertError } = await client.from("linkedin_enrich_queue").insert(queueRows);
-
-  if (insertError) {
-    throw internal("contact_enrich_failed", insertError.message);
+  try {
+    await db.linkedinEnrichQueue.createMany({
+      data: eligible.map((row) => ({
+        personId: row.person_id,
+        status: "pending",
+        userId: user.id,
+      })),
+    });
+  } catch (error) {
+    throw internal(
+      "contact_enrich_failed",
+      error instanceof Error ? error.message : "contact_enrich_failed",
+    );
   }
 
   return { totalEligible };
@@ -89,31 +102,37 @@ export async function updateEnrichQueueItem(
   status: "completed" | "failed",
   errorMessage?: string | null,
 ): Promise<{ success: true }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { error } = await client
-    .from("linkedin_enrich_queue")
-    .update({
-      error_message: errorMessage ?? null,
+  const updated = await db.linkedinEnrichQueue.updateMany({
+    data: {
+      errorMessage: errorMessage ?? null,
       status,
-    })
-    .eq("id", queueItemId)
-    .eq("user_id", user.id);
+    },
+    where: { id: queueItemId, userId: user.id },
+  });
 
-  if (error) {
-    throw internal("contact_enrich_failed", error.message);
+  if (updated.count === 0) {
+    throw internal("contact_enrich_failed", "Queue item not found");
   }
 
   return { success: true };
 }
 
 export async function cancelEnrichQueue(ctx: DomainContext): Promise<{ success: true }> {
-  const { client, user } = ctx;
+  const { user } = ctx;
+  const db = domainDb(ctx);
 
-  const { error } = await client.from("linkedin_enrich_queue").delete().eq("user_id", user.id);
-
-  if (error) {
-    throw internal("contact_enrich_failed", error.message);
+  try {
+    await db.linkedinEnrichQueue.deleteMany({
+      where: { userId: user.id },
+    });
+  } catch (error) {
+    throw internal(
+      "contact_enrich_failed",
+      error instanceof Error ? error.message : "contact_enrich_failed",
+    );
   }
 
   return { success: true };

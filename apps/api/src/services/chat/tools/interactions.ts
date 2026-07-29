@@ -1,8 +1,9 @@
+import type { Prisma } from "@bondery/db";
 import { INTERACTION_TYPES } from "@bondery/helpers";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { tool } from "ai";
 import { z } from "zod";
+import type { DomainContext } from "../../../domains/_shared/context.js";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
 import {
   addParticipantsToInteraction,
   deleteInteractionWithSummary,
@@ -10,32 +11,10 @@ import {
   removeParticipantsFromInteraction,
   updateInteractionDetails,
 } from "../../../services/interactions/index.js";
-import { chatDomainContext, formatToolDomainError } from "../domain-context.js";
+import { formatToolDomainError } from "../domain-context.js";
 
-type InteractionParticipantRow = {
-  person_id: string;
-  people: {
-    first_name: string | null;
-    last_name: string | null;
-  } | null;
-};
-
-type InteractionSearchRow = {
-  id: string;
-  title: string | null;
-  type: string;
-  description: string | null;
-  date: string;
-  created_at: string;
-  interaction_participants?: InteractionParticipantRow[] | null;
-};
-
-/**
- * Creates interaction-related tools for the AI chat agent.
- * Mutations go through services/interactions; reads stay on Supabase (RLS).
- */
-export function createInteractionTools(supabase: SupabaseClient<Database>, userId: string) {
-  const ctx = () => chatDomainContext(supabase, userId);
+export function createInteractionTools(ctx: DomainContext) {
+  const db = domainDb(ctx);
 
   return {
     add_participants_to_interaction: tool({
@@ -43,7 +22,7 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
         "Add one or more contacts to an existing interaction. Use this when the user says 'add X to the event/meeting/interaction' or wants to include someone in an already-logged interaction. Do NOT create a new interaction in this case.",
       execute: async ({ interactionId, participantIds }) => {
         try {
-          return await addParticipantsToInteraction(ctx(), interactionId, participantIds);
+          return await addParticipantsToInteraction(ctx, interactionId, participantIds);
         } catch (error) {
           return formatToolDomainError(error, "Failed to add participants");
         }
@@ -62,7 +41,7 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
         "Delete an interaction entirely. Use this when the user wants to remove a logged interaction. This will also remove all participant links. Ask for confirmation before deleting.",
       execute: async ({ interactionId }) => {
         try {
-          return await deleteInteractionWithSummary(ctx(), interactionId);
+          return await deleteInteractionWithSummary(ctx, interactionId);
         } catch (error) {
           return formatToolDomainError(error, "Failed to delete interaction");
         }
@@ -71,12 +50,13 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
         interactionId: z.string().uuid().describe("The UUID of the interaction to delete"),
       }),
     }),
+
     log_interaction: tool({
       description:
         "Log a new interaction with one or more contacts. Automatically updates last_interaction on each participant.",
       execute: async ({ title, type, description, date, participantIds }) => {
         try {
-          return await logInteraction(ctx(), {
+          return await logInteraction(ctx, {
             date,
             description,
             participantIds,
@@ -112,7 +92,7 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
         "Remove one or more contacts from an existing interaction. Use this when the user says 'remove X from the meeting' or wants to exclude someone from an already-logged interaction.",
       execute: async ({ interactionId, participantIds }) => {
         try {
-          return await removeParticipantsFromInteraction(ctx(), interactionId, participantIds);
+          return await removeParticipantsFromInteraction(ctx, interactionId, participantIds);
         } catch (error) {
           return formatToolDomainError(error, "Failed to remove participants");
         }
@@ -133,56 +113,54 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
       description:
         "Search past interactions, optionally filtering by contact, type, or date range.",
       execute: async ({ contactId, type, dateFrom, dateTo, limit }) => {
-        let query = supabase
-          .from("interactions")
-          .select(
-            `
-            id, title, type, description, date, created_at,
-            interaction_participants ( person_id, people ( first_name, last_name ) )
-          `,
-          )
-          .order("date", { ascending: false })
-          .limit(limit);
+        const where: Prisma.InteractionWhereInput = {
+          userId: ctx.user.id,
+        };
 
         if (type) {
-          query = query.eq("type", type);
+          where.type = type;
         }
 
-        if (dateFrom) {
-          query = query.gte("date", dateFrom);
+        if (dateFrom || dateTo) {
+          where.date = {
+            ...(dateFrom ? { gte: new Date(dateFrom) } : {}),
+            ...(dateTo ? { lte: new Date(dateTo) } : {}),
+          };
         }
-
-        if (dateTo) {
-          query = query.lte("date", dateTo);
-        }
-
-        const { data: interactions, error } = await query;
-
-        if (error) {
-          return { error: `Failed to search interactions: ${error.message}` };
-        }
-
-        let results = (interactions ?? []) as InteractionSearchRow[];
 
         if (contactId) {
-          results = results.filter((i) =>
-            i.interaction_participants?.some((p) => p.person_id === contactId),
-          );
+          where.participants = { some: { personId: contactId } };
         }
 
+        const interactions = await db.interaction.findMany({
+          include: {
+            participants: {
+              include: {
+                person: { select: { firstName: true, lastName: true } },
+              },
+            },
+          },
+          orderBy: { date: "desc" },
+          take: limit,
+          where,
+        });
+
         return {
-          interactions: results.map((i) => ({
-            date: i.date,
-            description: i.description,
-            id: i.id,
-            participants:
-              i.interaction_participants
-                ?.map((p) => [p.people?.first_name, p.people?.last_name].filter(Boolean).join(" "))
-                .filter(Boolean) ?? [],
-            title: i.title,
-            type: i.type,
+          interactions: interactions.map((interaction) => ({
+            date: interaction.date.toISOString().slice(0, 10),
+            description: interaction.description,
+            id: interaction.id,
+            participants: interaction.participants
+              .map((participant) =>
+                [participant.person.firstName, participant.person.lastName]
+                  .filter(Boolean)
+                  .join(" "),
+              )
+              .filter(Boolean),
+            title: interaction.title,
+            type: interaction.type,
           })),
-          totalFound: results.length,
+          totalFound: interactions.length,
         };
       },
       inputSchema: z.object({
@@ -203,7 +181,7 @@ export function createInteractionTools(supabase: SupabaseClient<Database>, userI
         "Update an existing interaction's details such as title, type, date, or description. Use this when the user wants to edit or change information about a previously logged interaction.",
       execute: async ({ interactionId, title, type, date, description }) => {
         try {
-          return await updateInteractionDetails(ctx(), interactionId, {
+          return await updateInteractionDetails(ctx, interactionId, {
             date,
             description,
             title,

@@ -1,3 +1,4 @@
+import { deleteContactAvatarFile } from "../../lib/contacts/avatar-storage.js";
 import {
   collectLinkedInLogoIds,
   removeOrphanedLinkedInLogos,
@@ -7,20 +8,20 @@ import { internal } from "../../lib/platform/errors/http-errors.js";
 import { buildPeopleDeleteChange } from "../../lib/sync/build-changes.js";
 import { emitSyncBatch } from "../../lib/sync/emit-change.js";
 import { type DomainContext, DomainError, syncEmitMetaFromContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
 import { captureCurrentSyncTxid } from "../_shared/with-txid.js";
 
 export async function deleteContact(
   ctx: DomainContext,
   personId: string,
 ): Promise<{ data: { deletedId: string }; txid: string; serverSequence: number }> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
 
-  const { data: contactCheck } = await client
-    .from("people")
-    .select("id, myself")
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .single();
+  const contactCheck = await db.people.findFirst({
+    select: { id: true, myself: true },
+    where: { id: personId, userId: user.id },
+  });
 
   if (!contactCheck) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
@@ -35,7 +36,7 @@ export async function deleteContact(
   }
 
   try {
-    await deleteOrphanedInteractionsForDeletedContacts(client, user.id, [personId]);
+    await deleteOrphanedInteractionsForDeletedContacts(db, user.id, [personId]);
   } catch (cleanupError) {
     const message =
       cleanupError instanceof Error
@@ -44,29 +45,25 @@ export async function deleteContact(
     throw internal("contact_failed", message);
   }
 
-  const candidateLogoIds = await collectLinkedInLogoIds(client, user.id, [personId]);
+  const candidateLogoIds = await collectLinkedInLogoIds(db, user.id, [personId]);
 
-  const { data: deletedContact, error } = await client
-    .from("people")
-    .delete()
-    .eq("id", personId)
-    .eq("user_id", user.id)
-    .select("id")
-    .single();
+  const deleted = await db.people.deleteMany({
+    where: { id: personId, userId: user.id },
+  });
 
-  if (error || !deletedContact) {
+  if (deleted.count === 0) {
     throw new DomainError("Contact not found", 404, "contact_not_found");
   }
 
-  await client.storage.from("avatars").remove([`${user.id}/${personId}.jpg`]);
+  await deleteContactAvatarFile(user.id, personId);
 
   try {
-    await removeOrphanedLinkedInLogos(client, user.id, candidateLogoIds);
+    await removeOrphanedLinkedInLogos(db, user.id, candidateLogoIds);
   } catch (logoCleanupError) {
     log?.warn({ logoCleanupError }, "[deleteContact] Failed to clean up orphaned LinkedIn logos");
   }
 
-  const txid = await captureCurrentSyncTxid(client);
+  const txid = await captureCurrentSyncTxid();
   const serverSequence =
     (await emitSyncBatch(
       user.id,

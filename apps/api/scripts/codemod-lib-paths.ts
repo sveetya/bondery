@@ -40,7 +40,7 @@ const REPLACEMENTS: [string, string][] = [
   ["lib/supabase.js", "lib/storage/supabase-client.js"],
   ["lib/posthog.js", "services/admin/posthog.js"],
   ["lib/socials.js", "lib/contacts/socials.js"],
-  ["lib/polar.js", "services/billing/polar.js"],
+  ["lib/stripe.js", "services/billing/stripe.js"],
   ["lib/search.js", "lib/data/search.js"],
   ["lib/logger.js", "lib/platform/logger.js"],
   ["lib/config.js", "lib/platform/config.js"],

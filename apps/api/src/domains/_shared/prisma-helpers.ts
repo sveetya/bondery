@@ -60,7 +60,7 @@ export function toTagDto(row: {
   };
 }
 
-/** Prisma model row → snake_case sync payload (matches prior Supabase `select("*")`). */
+/** Prisma model row → snake_case sync payload. */
 export function toSyncRow(row: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(row)) {
@@ -83,6 +83,22 @@ export function toPeopleTagSyncRow(row: {
     id: row.id,
     person_id: row.personId,
     tag_id: row.tagId,
+    user_id: row.userId,
+  };
+}
+
+export function toPeopleGroupSyncRow(row: {
+  id: string;
+  userId: string;
+  personId: string;
+  groupId: string;
+  createdAt: Date;
+}): Record<string, unknown> {
+  return {
+    created_at: row.createdAt.toISOString(),
+    group_id: row.groupId,
+    id: row.id,
+    person_id: row.personId,
     user_id: row.userId,
   };
 }

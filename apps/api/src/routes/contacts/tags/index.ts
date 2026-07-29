@@ -2,7 +2,6 @@
  * Contact tag management routes
  */
 
-import type { Tag } from "@bondery/schemas";
 import {
   contactTagBodySchema,
   contactTagListResponseSchema,
@@ -12,10 +11,10 @@ import {
 import { uuidParamSchema } from "@bondery/schemas/http";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { z } from "zod";
+import { domainDb } from "../../../domains/_shared/domain-db.js";
+import { toTagDto } from "../../../domains/_shared/prisma-helpers.js";
 import { addContactTag, removeContactTag } from "../../../domains/contacts/tags.js";
-import { TAG_SELECT } from "../../../lib/data/select-fragments.js";
-import { getAuth } from "../../../lib/platform/auth/strategies.js";
-import { internal } from "../../../lib/platform/errors/http-errors.js";
+import { domainContextFromRequest } from "../../../lib/platform/domain-context.js";
 import type { AppFastifyInstance } from "../../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../../lib/platform/openapi/responses.js";
 import { withDomainRoute } from "../../../lib/platform/with-domain-route.js";
@@ -36,23 +35,17 @@ export function registerTagRoutes(fastify: AppFastifyInstance): void {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const ctx = domainContextFromRequest(request);
+      const db = domainDb(ctx);
       const { id: personId } = request.params;
 
-      const { data: memberships, error: membershipsError } = await client
-        .from("people_tags")
-        .select(`tags!inner(${TAG_SELECT})`)
-        .eq("person_id", personId)
-        .eq("user_id", user.id)
-        .order("label", { ascending: true, foreignTable: "tags" });
+      const memberships = await db.peopleTag.findMany({
+        include: { tag: true },
+        orderBy: { tag: { label: "asc" } },
+        where: { personId, userId: ctx.user.id },
+      });
 
-      if (membershipsError) {
-        throw internal("internal_server_error", membershipsError.message);
-      }
-
-      const tags = (memberships ?? [])
-        .map((membership) => (membership as { tags: Tag | null }).tags)
-        .filter((tag): tag is Tag => tag != null);
+      const tags = memberships.map((membership) => toTagDto(membership.tag));
 
       return { tags };
     },

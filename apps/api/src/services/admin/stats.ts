@@ -2,6 +2,7 @@
  * Admin stats service — schemas and data-fetching for the internal dashboard.
  */
 
+import { prisma } from "@bondery/db";
 import { GITHUB_REPO_URL } from "@bondery/helpers/globals/paths";
 import {
   EXAMPLE_ACTIVE_USERS_RESPONSE,
@@ -12,7 +13,6 @@ import {
 } from "@bondery/schemas/openapi/fixtures/responses";
 import { z } from "zod";
 import { internal } from "../../lib/platform/errors/http-errors.js";
-import { createAdminClient } from "../../lib/storage/supabase-client.js";
 import { getActiveUsersTimeline, getNpsResults } from "../../services/admin/posthog.js";
 
 export const activeUsersTimelinePointSchema = z.object({
@@ -76,6 +76,21 @@ export const githubStarsResponseSchema = z
   })
   .meta({ example: EXAMPLE_GITHUB_STARS_RESPONSE });
 
+type FunnelPeriodRow = {
+  period_key: string;
+  period_label: string;
+  signups: bigint | number;
+  contacts: bigint | number;
+  interactions: bigint | number;
+  signups_to_contacts_pct: number;
+  contacts_to_interactions_pct: number;
+};
+
+type TotalUsersGrowthRow = {
+  date: Date;
+  total: bigint | number;
+};
+
 export async function fetchActiveUsersTimeline(
   posthogApiSecret: string,
   posthogProjectId: string,
@@ -86,25 +101,23 @@ export async function fetchActiveUsersTimeline(
 }
 
 export async function fetchFunnelPeriods() {
-  const adminClient = createAdminClient();
+  try {
+    const data = await prisma.$queryRaw<FunnelPeriodRow[]>`SELECT * FROM get_funnel_periods()`;
 
-  const { data, error } = await adminClient.rpc("get_funnel_periods");
+    const periods = data.map((item) => ({
+      contacts: Number(item.contacts) || 0,
+      contactsToInteractionsPct: Number(item.contacts_to_interactions_pct) || 0,
+      interactions: Number(item.interactions) || 0,
+      periodKey: item.period_key,
+      periodLabel: item.period_label,
+      signups: Number(item.signups) || 0,
+      signupsToContactsPct: Number(item.signups_to_contacts_pct) || 0,
+    }));
 
-  if (error) {
+    return { periods };
+  } catch (error) {
     throw internal("failed_to_fetch_funnel_stats", error);
   }
-
-  const periods = (data ?? []).map((item) => ({
-    contacts: Number(item.contacts) || 0,
-    contactsToInteractionsPct: Number(item.contacts_to_interactions_pct) || 0,
-    interactions: Number(item.interactions) || 0,
-    periodKey: item.period_key,
-    periodLabel: item.period_label,
-    signups: Number(item.signups) || 0,
-    signupsToContactsPct: Number(item.signups_to_contacts_pct) || 0,
-  }));
-
-  return { periods };
 }
 
 export async function fetchNpsResults(posthogApiSecret: string, posthogProjectId: string) {
@@ -112,20 +125,20 @@ export async function fetchNpsResults(posthogApiSecret: string, posthogProjectId
 }
 
 export async function fetchTotalUsersGrowth() {
-  const adminClient = createAdminClient();
+  try {
+    const data = await prisma.$queryRaw<
+      TotalUsersGrowthRow[]
+    >`SELECT * FROM get_total_users_growth()`;
 
-  const { data, error } = await adminClient.rpc("get_total_users_growth");
+    const timeline = data.map((item) => ({
+      date: item.date instanceof Date ? item.date.toISOString().slice(0, 10) : String(item.date),
+      total: Number(item.total) || 0,
+    }));
 
-  if (error) {
+    return { timeline };
+  } catch (error) {
     throw internal("failed_to_fetch_total_users_growth", error);
   }
-
-  const timeline = (data ?? []).map((item) => ({
-    date: String(item.date),
-    total: Number(item.total) || 0,
-  }));
-
-  return { timeline };
 }
 
 export async function fetchGithubStars() {

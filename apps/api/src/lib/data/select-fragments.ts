@@ -1,5 +1,5 @@
 /**
- * Supabase select fragments and shared API query helpers (non-validation).
+ * Column select fragments and shared API query helpers (non-validation).
  */
 
 import type { AvatarTransformOptions } from "@bondery/schemas";
@@ -18,7 +18,7 @@ export type UploadFile = {
   content: Buffer;
 };
 
-/** Contact fields selection query for Supabase */
+/** Contact fields for list/detail queries */
 export const CONTACT_SELECT = `
   id,
   userId:user_id,
@@ -56,7 +56,7 @@ export const SELECTABLE_CONTACT_SELECT = `
   hasAvatar:has_avatar
 `;
 
-/** Group fields selection query for Supabase */
+/** Group fields for list/detail queries */
 export const GROUP_SELECT = `
   id,
   userId:user_id,
@@ -67,7 +67,7 @@ export const GROUP_SELECT = `
   updatedAt:updated_at
 `;
 
-/** Tag fields selection query for Supabase */
+/** Tag fields for list/detail queries */
 export const TAG_SELECT = `
   id,
   userId:user_id,
@@ -77,7 +77,7 @@ export const TAG_SELECT = `
   updatedAt:updated_at
 `;
 
-/** Interaction fields selection query for Supabase */
+/** Interaction fields for list/detail queries */
 export const INTERACTION_SELECT = `
   *,
   participants:interaction_participants(

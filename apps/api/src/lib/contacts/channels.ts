@@ -1,5 +1,5 @@
-import type { Database, EmailEntry, PhoneEntry } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PrismaClient } from "@bondery/db";
+import type { EmailEntry, PhoneEntry } from "@bondery/schemas";
 import type { ContactWithId } from "../data/select-fragments.js";
 
 type PersonChannelRows = {
@@ -7,35 +7,12 @@ type PersonChannelRows = {
   emails: EmailEntry[];
 };
 
-type PhoneRow = {
-  person_id: string;
-  prefix: string;
-  value: string;
-  type: string;
-  preferred: boolean;
-};
-
-type EmailRow = {
-  person_id: string;
-  value: string;
-  type: string;
-  preferred: boolean;
-};
-
 function normalizeContactType(value: unknown): "home" | "work" {
   return value === "work" ? "work" : "home";
 }
 
-function toBoolean(value: unknown): boolean {
-  return value === true;
-}
-
 /**
  * Parses and validates contact phone entries from API input payload.
- *
- * @param input Raw `phones` value from an update request body.
- * @returns Normalized phone entries preserving input order.
- * @throws Error when the payload shape is invalid.
  */
 export function parsePhoneEntries(input: unknown): PhoneEntry[] {
   if (!Array.isArray(input)) {
@@ -59,7 +36,7 @@ export function parsePhoneEntries(input: unknown): PhoneEntry[] {
     }
 
     return {
-      preferred: toBoolean((item as Record<string, unknown>).preferred),
+      preferred: (item as Record<string, unknown>).preferred === true,
       prefix: maybePrefix.trim(),
       type: normalizeContactType((item as Record<string, unknown>).type),
       value: maybeValue.trim(),
@@ -69,10 +46,6 @@ export function parsePhoneEntries(input: unknown): PhoneEntry[] {
 
 /**
  * Parses and validates contact email entries from API input payload.
- *
- * @param input Raw `emails` value from an update request body.
- * @returns Normalized email entries preserving input order.
- * @throws Error when the payload shape is invalid.
  */
 export function parseEmailEntries(input: unknown): EmailEntry[] {
   if (!Array.isArray(input)) {
@@ -90,7 +63,7 @@ export function parseEmailEntries(input: unknown): EmailEntry[] {
     }
 
     return {
-      preferred: toBoolean((item as Record<string, unknown>).preferred),
+      preferred: (item as Record<string, unknown>).preferred === true,
       type: normalizeContactType((item as Record<string, unknown>).type),
       value: maybeValue.trim(),
     };
@@ -99,14 +72,9 @@ export function parseEmailEntries(input: unknown): EmailEntry[] {
 
 /**
  * Loads normalized phone and email rows for people and merges them into contact-shaped objects.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param contacts Contacts loaded from `people` table.
- * @returns Contacts with `phones` and `emails` arrays attached.
  */
 export async function attachContactChannels<T extends ContactWithId>(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   contacts: T[],
 ): Promise<Array<T & PersonChannelRows>> {
@@ -116,31 +84,18 @@ export async function attachContactChannels<T extends ContactWithId>(
 
   const personIds = contacts.map((contact) => contact.id);
 
-  const [{ data: phoneRows, error: phoneError }, { data: emailRows, error: emailError }] =
-    await Promise.all([
-      client
-        .from("people_phones")
-        .select("person_id, prefix, value, type, preferred")
-        .eq("user_id", userId)
-        .in("person_id", personIds)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: true }),
-      client
-        .from("people_emails")
-        .select("person_id, value, type, preferred")
-        .eq("user_id", userId)
-        .in("person_id", personIds)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: true }),
-    ]);
-
-  if (phoneError) {
-    throw new Error(phoneError.message);
-  }
-
-  if (emailError) {
-    throw new Error(emailError.message);
-  }
+  const [phoneRows, emailRows] = await Promise.all([
+    db.peoplePhone.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      select: { personId: true, preferred: true, prefix: true, type: true, value: true },
+      where: { personId: { in: personIds }, userId },
+    }),
+    db.peopleEmail.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      select: { personId: true, preferred: true, type: true, value: true },
+      where: { personId: { in: personIds }, userId },
+    }),
+  ]);
 
   const map = new Map<string, PersonChannelRows>();
 
@@ -148,8 +103,8 @@ export async function attachContactChannels<T extends ContactWithId>(
     map.set(contact.id, { emails: [], phones: [] });
   }
 
-  for (const row of (phoneRows || []) as PhoneRow[]) {
-    const bucket = map.get(row.person_id);
+  for (const row of phoneRows) {
+    const bucket = map.get(row.personId);
     if (!bucket) {
       continue;
     }
@@ -161,8 +116,8 @@ export async function attachContactChannels<T extends ContactWithId>(
     });
   }
 
-  for (const row of (emailRows || []) as EmailRow[]) {
-    const bucket = map.get(row.person_id);
+  for (const row of emailRows) {
+    const bucket = map.get(row.personId);
     if (!bucket) {
       continue;
     }
@@ -183,89 +138,57 @@ export async function attachContactChannels<T extends ContactWithId>(
   });
 }
 
-/**
- * Replaces all phone rows for a person with the provided ordered entries.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param personId Person id owning the channel entries.
- * @param phones Ordered phone entries.
- */
+/** Replaces all phone rows for a person with the provided ordered entries. */
 export async function replaceContactPhones(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   personId: string,
   phones: PhoneEntry[],
 ): Promise<void> {
-  const { error: deleteError } = await client
-    .from("people_phones")
-    .delete()
-    .eq("user_id", userId)
-    .eq("person_id", personId);
-
-  if (deleteError) {
-    throw new Error(deleteError.message);
-  }
+  await db.peoplePhone.deleteMany({
+    where: { personId, userId },
+  });
 
   if (phones.length === 0) {
     return;
   }
 
-  const insertRows = phones.map((phone, index) => ({
-    person_id: personId,
-    preferred: phone.preferred,
-    prefix: phone.prefix,
-    sort_order: index,
-    type: phone.type,
-    user_id: userId,
-    value: phone.value,
-  }));
-
-  const { error: insertError } = await client.from("people_phones").insert(insertRows);
-  if (insertError) {
-    throw new Error(insertError.message);
-  }
+  await db.peoplePhone.createMany({
+    data: phones.map((phone, index) => ({
+      personId,
+      preferred: phone.preferred,
+      prefix: phone.prefix,
+      sortOrder: index,
+      type: phone.type,
+      userId,
+      value: phone.value,
+    })),
+  });
 }
 
-/**
- * Replaces all email rows for a person with the provided ordered entries.
- *
- * @param client Authenticated Supabase client.
- * @param userId Authenticated user id.
- * @param personId Person id owning the channel entries.
- * @param emails Ordered email entries.
- */
+/** Replaces all email rows for a person with the provided ordered entries. */
 export async function replaceContactEmails(
-  client: SupabaseClient<Database>,
+  db: PrismaClient,
   userId: string,
   personId: string,
   emails: EmailEntry[],
 ): Promise<void> {
-  const { error: deleteError } = await client
-    .from("people_emails")
-    .delete()
-    .eq("user_id", userId)
-    .eq("person_id", personId);
-
-  if (deleteError) {
-    throw new Error(deleteError.message);
-  }
+  await db.peopleEmail.deleteMany({
+    where: { personId, userId },
+  });
 
   if (emails.length === 0) {
     return;
   }
 
-  const insertRows = emails.map((email, index) => ({
-    person_id: personId,
-    preferred: email.preferred,
-    sort_order: index,
-    type: email.type,
-    user_id: userId,
-    value: email.value,
-  }));
-
-  const { error: insertError } = await client.from("people_emails").insert(insertRows);
-  if (insertError) {
-    throw new Error(insertError.message);
-  }
+  await db.peopleEmail.createMany({
+    data: emails.map((email, index) => ({
+      personId,
+      preferred: email.preferred,
+      sortOrder: index,
+      type: email.type,
+      userId,
+      value: email.value,
+    })),
+  });
 }

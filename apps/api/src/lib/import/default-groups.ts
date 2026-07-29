@@ -1,5 +1,6 @@
-import type { Database, InstagramImportSource } from "@bondery/schemas";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { InstagramImportSource } from "@bondery/schemas";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 
 export type DefaultImportGroupKey =
   | "linkedin_import"
@@ -62,43 +63,32 @@ const DEFAULT_IMPORT_GROUPS: Record<
  * a new one is created with the default emoji and color.
  */
 export async function ensureDefaultImportGroup(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: DomainContext,
   key: DefaultImportGroupKey,
 ): Promise<string> {
+  const { user } = ctx;
+  const db = domainDb(ctx);
   const defaults = DEFAULT_IMPORT_GROUPS[key];
 
-  const { data: existingGroups, error: lookupError } = await client
-    .from("groups")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("label", defaults.label)
-    .order("created_at", { ascending: true })
-    .limit(1);
+  const existing = await db.group.findFirst({
+    orderBy: { createdAt: "asc" },
+    select: { id: true },
+    where: { label: defaults.label, userId: user.id },
+  });
 
-  if (lookupError) {
-    throw new Error(lookupError.message);
-  }
-
-  const existing = existingGroups?.[0];
   if (existing?.id) {
     return existing.id;
   }
 
-  const { data: createdGroup, error: createError } = await client
-    .from("groups")
-    .insert({
+  const createdGroup = await db.group.create({
+    data: {
       color: defaults.color,
       emoji: defaults.emoji,
       label: defaults.label,
-      user_id: userId,
-    })
-    .select("id")
-    .single();
-
-  if (createError || !createdGroup) {
-    throw new Error(createError?.message || "Failed to create default import group");
-  }
+      userId: user.id,
+    },
+    select: { id: true },
+  });
 
   return createdGroup.id;
 }
@@ -109,33 +99,28 @@ export async function ensureDefaultImportGroup(
  * Only unique person ids are inserted and duplicate memberships are ignored.
  */
 export async function assignContactsToDefaultImportGroup(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: DomainContext,
   key: DefaultImportGroupKey,
   personIds: string[],
 ): Promise<void> {
+  const { user } = ctx;
+  const db = domainDb(ctx);
   const uniquePersonIds = Array.from(new Set(personIds.filter(Boolean)));
 
   if (uniquePersonIds.length === 0) {
     return;
   }
 
-  const groupId = await ensureDefaultImportGroup(client, userId, key);
+  const groupId = await ensureDefaultImportGroup(ctx, key);
 
-  const memberships = uniquePersonIds.map((personId) => ({
-    group_id: groupId,
-    person_id: personId,
-    user_id: userId,
-  }));
-
-  const { error } = await client.from("people_groups").upsert(memberships, {
-    ignoreDuplicates: true,
-    onConflict: "person_id,group_id",
+  await db.peopleGroup.createMany({
+    data: uniquePersonIds.map((personId) => ({
+      groupId,
+      personId,
+      userId: user.id,
+    })),
+    skipDuplicates: true,
   });
-
-  if (error) {
-    throw new Error(error.message);
-  }
 }
 
 /**

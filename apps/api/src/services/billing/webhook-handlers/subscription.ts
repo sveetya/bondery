@@ -1,0 +1,130 @@
+import type Stripe from "stripe";
+import type { FastifyBaseLogger } from "fastify";
+import { mapStripeStatus } from "../map-status.js";
+import { getSubscriptionPeriod } from "../stripe-helpers.js";
+import {
+  findUserIdByEmail,
+  storePendingSubscription,
+  upsertSubscription,
+  type SubscriptionMirrorFields,
+} from "../subscription.js";
+
+function customerId(customer: string | Stripe.Customer | Stripe.DeletedCustomer): string {
+  return typeof customer === "string" ? customer : customer.id;
+}
+
+function customerEmail(
+  customer: string | Stripe.Customer | Stripe.DeletedCustomer | null,
+): string | null {
+  if (!customer || typeof customer === "string") {
+    return null;
+  }
+  if ("deleted" in customer && customer.deleted) {
+    return null;
+  }
+  return customer.email ?? null;
+}
+
+export function extractMirrorFromStripeSubscription(
+  subscription: Stripe.Subscription,
+): SubscriptionMirrorFields {
+  const item = subscription.items.data[0];
+  const price = item?.price;
+  const product = price?.product;
+  const productName =
+    typeof product === "object" && product !== null && "name" in product
+      ? (product.name as string | null)
+      : null;
+
+  return {
+    billingInterval: price?.recurring?.interval ?? null,
+    currency: price?.currency ?? null,
+    priceId: price?.id ?? null,
+    productName,
+    stripeStatus: subscription.status,
+    trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+    unitAmount: price?.unit_amount ?? null,
+  };
+}
+
+export async function upsertSubscriptionFromStripe(
+  subscription: Stripe.Subscription,
+  log?: FastifyBaseLogger,
+): Promise<void> {
+  const email =
+    subscription.metadata.email ??
+    customerEmail(
+      typeof subscription.customer === "string"
+        ? null
+        : (subscription.customer as Stripe.Customer),
+    );
+
+  const externalId = subscription.metadata.bondery_user_id;
+  const isValidUuid = externalId != null && /^[0-9a-f-]{36}$/i.test(externalId);
+
+  let userId: string | null = isValidUuid ? externalId : null;
+
+  if (!userId && email) {
+    userId = await findUserIdByEmail(email);
+  }
+
+  const stripeCustomerId = customerId(subscription.customer);
+  const status = mapStripeStatus(subscription.status, subscription.cancel_at_period_end);
+  const { currentPeriodEnd, currentPeriodStart } = getSubscriptionPeriod(subscription);
+  const mirror = extractMirrorFromStripeSubscription(subscription);
+
+  if (!userId) {
+    if (!email) {
+      log?.warn(
+        { stripeSubscriptionId: subscription.id },
+        "stripe-webhook: no user or email — skipping subscription upsert",
+      );
+      return;
+    }
+
+    await storePendingSubscription(
+      email,
+      stripeCustomerId,
+      subscription.id,
+      status,
+      currentPeriodEnd,
+      subscription.cancel_at_period_end,
+    );
+    log?.info(
+      { email, stripeSubscriptionId: subscription.id },
+      "stripe-webhook: stored pending subscription",
+    );
+    return;
+  }
+
+  await upsertSubscription(
+    userId,
+    stripeCustomerId,
+    subscription.id,
+    status,
+    currentPeriodStart,
+    currentPeriodEnd,
+    subscription.cancel_at_period_end,
+    mirror,
+  );
+
+  log?.info({ status, stripeSubscriptionId: subscription.id, userId }, "stripe-webhook: subscription updated");
+}
+
+export async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+  log?: FastifyBaseLogger,
+): Promise<void> {
+  const subscriptionId =
+    typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
+
+  if (!subscriptionId) {
+    log?.info({ sessionId: session.id }, "stripe-webhook: checkout session has no subscription");
+    return;
+  }
+
+  const { getStripeClient } = await import("../stripe.js");
+  const stripe = getStripeClient();
+  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  await upsertSubscriptionFromStripe(subscription, log);
+}

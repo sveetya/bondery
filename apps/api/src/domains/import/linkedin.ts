@@ -1,8 +1,10 @@
+import type { PrismaClient } from "@bondery/db";
 import type { LinkedInImportCommitResponse } from "@bondery/schemas";
 import { assignContactsToDefaultImportGroup } from "../../lib/import/default-groups.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { markBulkImportCompleted } from "../../services/import/followup.js";
 import type { DomainContext } from "../_shared/context.js";
+import { domainDb } from "../_shared/domain-db.js";
 import { scheduleMergeRecommendationsRefresh } from "../contacts/merge-recommendations.js";
 
 function buildImportedTitle(position: string | null, company: string | null): string | null {
@@ -20,6 +22,63 @@ function buildImportedTitle(position: string | null, company: string | null): st
   return null;
 }
 
+async function upsertPeopleSocials(
+  db: PrismaClient,
+  userId: string,
+  rows: Array<{
+    personId: string;
+    platform: string;
+    handle: string;
+    connectedAt: Date | null;
+  }>,
+): Promise<void> {
+  if (rows.length === 0) {
+    return;
+  }
+
+  const existing = await db.peopleSocial.findMany({
+    select: { id: true, personId: true, platform: true },
+    where: {
+      OR: rows.map((row) => ({ personId: row.personId, platform: row.platform })),
+      userId,
+    },
+  });
+
+  const existingByKey = new Map(existing.map((row) => [`${row.personId}:${row.platform}`, row.id]));
+
+  const toCreate = rows.filter((row) => !existingByKey.has(`${row.personId}:${row.platform}`));
+  const toUpdate = rows.filter((row) => existingByKey.has(`${row.personId}:${row.platform}`));
+
+  if (toCreate.length > 0) {
+    await db.peopleSocial.createMany({
+      data: toCreate.map((row) => ({
+        connectedAt: row.connectedAt,
+        handle: row.handle,
+        personId: row.personId,
+        platform: row.platform,
+        userId,
+      })),
+      skipDuplicates: true,
+    });
+  }
+
+  await Promise.all(
+    toUpdate.map((row) =>
+      db.peopleSocial.updateMany({
+        data: {
+          connectedAt: row.connectedAt,
+          handle: row.handle,
+        },
+        where: {
+          personId: row.personId,
+          platform: row.platform,
+          userId,
+        },
+      }),
+    ),
+  );
+}
+
 export async function commitLinkedInImport(
   ctx: DomainContext,
   rawImportContacts: Array<{
@@ -34,10 +93,10 @@ export async function commitLinkedInImport(
     connectedAt?: string | null;
   }>,
 ): Promise<LinkedInImportCommitResponse> {
-  const { client, user, log } = ctx;
+  const { user, log } = ctx;
+  const db = domainDb(ctx);
   const rawContacts = rawImportContacts;
 
-  // De-duplicate by handle, drop invalid rows up-front.
   const seenHandles = new Set<string>();
   const validContacts = rawContacts.filter((contact) => {
     if (!contact.isValid || !contact.linkedinUsername) {
@@ -61,69 +120,61 @@ export async function commitLinkedInImport(
     } satisfies LinkedInImportCommitResponse;
   }
 
-  const now = new Date().toISOString();
+  const now = new Date();
+  const handles = validContacts.map((contact) => contact.linkedinUsername.trim());
 
-  // ── Step 1: Single query to find all existing person_ids by handle ──────
-  const handles = validContacts.map((c) => c.linkedinUsername.trim());
-
-  const { data: existingSocialRows, error: socialLookupError } = await client
-    .from("people_socials")
-    .select("handle, person_id")
-    .eq("user_id", user.id)
-    .eq("platform", "linkedin")
-    .in("handle", handles);
-
-  if (socialLookupError) {
-    throw internal("import_linkedin_failed", socialLookupError.message);
-  }
+  const existingSocialRows = await db.peopleSocial.findMany({
+    select: { handle: true, personId: true },
+    where: {
+      handle: { in: handles },
+      platform: "linkedin",
+      userId: user.id,
+    },
+  });
 
   const handleToPersonId = new Map<string, string>();
-  for (const row of existingSocialRows ?? []) {
-    if (row.handle && row.person_id) {
-      // Decode percent-encoded handles (e.g. from old imports) so they
-      // match the decoded form produced by the current parser.
-      let decodedHandle: string;
-      try {
-        decodedHandle = decodeURIComponent(row.handle.trim());
-      } catch {
-        decodedHandle = row.handle.trim();
-      }
-      handleToPersonId.set(decodedHandle, row.person_id);
+  for (const row of existingSocialRows) {
+    if (!row.handle || !row.personId) {
+      continue;
     }
+
+    let decodedHandle: string;
+    try {
+      decodedHandle = decodeURIComponent(row.handle.trim());
+    } catch {
+      decodedHandle = row.handle.trim();
+    }
+    handleToPersonId.set(decodedHandle, row.personId);
   }
 
-  const toInsert = validContacts.filter((c) => !handleToPersonId.has(c.linkedinUsername.trim()));
-  const toUpdate = validContacts.filter((c) => handleToPersonId.has(c.linkedinUsername.trim()));
+  const toInsert = validContacts.filter(
+    (contact) => !handleToPersonId.has(contact.linkedinUsername.trim()),
+  );
+  const toUpdate = validContacts.filter((contact) =>
+    handleToPersonId.has(contact.linkedinUsername.trim()),
+  );
 
-  // ── Step 2a: Bulk insert new people ──────────────────────────────────────
   let importedCount = 0;
   let importedPersonIds: string[] = [];
 
   if (toInsert.length > 0) {
-    const { data: insertedPeople, error: insertError } = await client
-      .from("people")
-      .insert(
-        toInsert.map((c) => ({
-          first_name: c.firstName,
-          headline: buildImportedTitle(c.position ?? null, c.company ?? null),
-          last_interaction: now,
-          last_name: c.lastName,
-          middle_name: c.middleName,
-          myself: false,
-          user_id: user.id,
-        })),
-      )
-      .select("id, first_name, last_name");
+    const insertedPeople = await db.people.createManyAndReturn({
+      data: toInsert.map((contact) => ({
+        firstName: contact.firstName,
+        headline: buildImportedTitle(contact.position ?? null, contact.company ?? null),
+        lastInteraction: now,
+        lastName: contact.lastName,
+        middleName: contact.middleName,
+        myself: false,
+        userId: user.id,
+      })),
+      select: { id: true },
+    });
 
-    if (insertError || !insertedPeople) {
-      throw internal("import_linkedin_failed", insertError?.message ?? "Insert failed");
-    }
-
-    // Map back: inserted rows come back in the same order as the input array.
-    for (let i = 0; i < toInsert.length; i++) {
-      const inserted = insertedPeople[i];
+    for (let index = 0; index < toInsert.length; index++) {
+      const inserted = insertedPeople[index];
       if (inserted) {
-        handleToPersonId.set(toInsert[i].linkedinUsername.trim(), inserted.id);
+        handleToPersonId.set(toInsert[index].linkedinUsername.trim(), inserted.id);
       }
     }
 
@@ -131,118 +182,103 @@ export async function commitLinkedInImport(
     importedPersonIds = insertedPeople.map((person) => person.id);
   }
 
-  // ── Step 2b: Bulk update existing people ─────────────────────────────────
-  // Supabase doesn't support bulk UPDATE with different values per row,
-  // so we run individual updates concurrently (Promise.all) instead of sequentially.
   let updatedCount = 0;
 
   if (toUpdate.length > 0) {
     const updateResults = await Promise.all(
-      toUpdate.flatMap((c) => {
-        const personId = handleToPersonId.get(c.linkedinUsername.trim());
+      toUpdate.flatMap((contact) => {
+        const personId = handleToPersonId.get(contact.linkedinUsername.trim());
         if (!personId) {
           return [];
         }
 
         return [
-          client
-            .from("people")
-            .update({
-              first_name: c.firstName,
-              headline: buildImportedTitle(c.position ?? null, c.company ?? null),
-              last_name: c.lastName,
-              middle_name: c.middleName,
-            })
-            .eq("user_id", user.id)
-            .eq("id", personId),
+          db.people.updateMany({
+            data: {
+              firstName: contact.firstName,
+              headline: buildImportedTitle(contact.position ?? null, contact.company ?? null),
+              lastName: contact.lastName,
+              middleName: contact.middleName,
+            },
+            where: { id: personId, userId: user.id },
+          }),
         ];
       }),
     );
 
-    updatedCount = updateResults.filter((r) => !r.error).length;
+    updatedCount = updateResults.filter((result) => result.count > 0).length;
   }
 
-  // ── Step 3: Bulk upsert social media rows ─────────────────────────────────
   const socialRows = validContacts
-    .map((c) => {
-      const personId = handleToPersonId.get(c.linkedinUsername.trim());
+    .map((contact) => {
+      const personId = handleToPersonId.get(contact.linkedinUsername.trim());
       if (!personId) {
         return null;
       }
+
       return {
-        connected_at: c.connectedAt ?? null,
-        handle: c.linkedinUsername.trim(),
-        person_id: personId,
-        platform: "linkedin" as const,
-        user_id: user.id,
+        connectedAt: contact.connectedAt ? new Date(contact.connectedAt) : null,
+        handle: contact.linkedinUsername.trim(),
+        personId,
+        platform: "linkedin",
       };
     })
     .filter((row): row is NonNullable<typeof row> => row !== null);
 
-  if (socialRows.length > 0) {
-    const { error: socialUpsertError } = await client
-      .from("people_socials")
-      .upsert(socialRows, { onConflict: "user_id,person_id,platform" });
+  await upsertPeopleSocials(db, user.id, socialRows);
 
-    if (socialUpsertError) {
-      throw internal("import_linkedin_failed", socialUpsertError.message);
-    }
-  }
-
-  // ── Step 4: Bulk insert emails (only validContacts that have one) ─────────────
-  const validContactsWithEmail = validContacts.filter((c) => c.email);
+  const validContactsWithEmail = validContacts.filter((contact) => contact.email);
 
   if (validContactsWithEmail.length > 0) {
     const personIds = validContactsWithEmail
-      .map((c) => handleToPersonId.get(c.linkedinUsername.trim()))
-      .filter((id): id is string => !!id);
+      .map((contact) => handleToPersonId.get(contact.linkedinUsername.trim()))
+      .filter((id): id is string => Boolean(id));
 
-    // Fetch all existing emails for affected people in one query.
-    const { data: existingEmails } = await client
-      .from("people_emails")
-      .select("person_id, value")
-      .eq("user_id", user.id)
-      .in("person_id", personIds);
+    const existingEmails = await db.peopleEmail.findMany({
+      select: { personId: true, value: true },
+      where: { personId: { in: personIds }, userId: user.id },
+    });
 
     const existingEmailsByPerson = new Map<string, string[]>();
-    for (const row of existingEmails ?? []) {
-      if (!row.person_id) {
-        continue;
-      }
-      const list = existingEmailsByPerson.get(row.person_id) ?? [];
+    for (const row of existingEmails) {
+      const list = existingEmailsByPerson.get(row.personId) ?? [];
       list.push(row.value.trim().toLowerCase());
-      existingEmailsByPerson.set(row.person_id, list);
+      existingEmailsByPerson.set(row.personId, list);
     }
 
     const emailRowsToInsert = validContactsWithEmail
-      .map((c) => {
-        const personId = handleToPersonId.get(c.linkedinUsername.trim());
-        if (!personId || !c.email) {
+      .map((contact) => {
+        const personId = handleToPersonId.get(contact.linkedinUsername.trim());
+        if (!personId || !contact.email) {
           return null;
         }
+
         const existing = existingEmailsByPerson.get(personId) ?? [];
-        if (existing.includes(c.email.trim().toLowerCase())) {
+        if (existing.includes(contact.email.trim().toLowerCase())) {
           return null;
         }
+
         return {
-          person_id: personId,
+          personId,
           preferred: existing.length === 0,
-          sort_order: existing.length,
-          type: "work" as const,
-          user_id: user.id,
-          value: c.email,
+          sortOrder: existing.length,
+          type: "work",
+          userId: user.id,
+          value: contact.email,
         };
       })
       .filter((row): row is NonNullable<typeof row> => row !== null);
 
     if (emailRowsToInsert.length > 0) {
-      // Ignore conflicts — duplicate emails are silently skipped.
-      await client.from("people_emails").insert(emailRowsToInsert);
+      await db.peopleEmail.createMany({
+        data: emailRowsToInsert,
+        skipDuplicates: true,
+      });
     }
   }
 
   try {
-    await assignContactsToDefaultImportGroup(client, user.id, "linkedin_import", importedPersonIds);
+    await assignContactsToDefaultImportGroup(ctx, "linkedin_import", importedPersonIds);
   } catch (groupError) {
     const message =
       groupError instanceof Error ? groupError.message : "Failed to assign imported contacts";
@@ -258,11 +294,9 @@ export async function commitLinkedInImport(
     scheduleMergeRecommendationsRefresh(ctx);
   }
 
-  const response: LinkedInImportCommitResponse = {
+  return {
     importedCount,
     skippedCount,
     updatedCount,
   };
-
-  return response;
 }

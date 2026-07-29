@@ -1,19 +1,15 @@
-import type { InteractionType } from "@bondery/schemas";
+import type { Prisma } from "@bondery/db";
 import type { AvatarTransformQuery } from "@bondery/schemas/http";
-import type { Database } from "@bondery/schemas/supabase.types";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { DomainContext } from "../../domains/_shared/context.js";
+import { domainDb } from "../../domains/_shared/domain-db.js";
 import {
   buildPaginatedResponse,
   buildPaginationMeta,
   parsePagination,
 } from "../../lib/data/pagination.js";
-import {
-  extractAvatarOptions,
-  INTERACTION_SELECT,
-  INTERACTION_SELECT_BY_CONTACT,
-} from "../../lib/data/select-fragments.js";
+import { extractAvatarOptions } from "../../lib/data/select-fragments.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
-import { mapInteractionParticipant } from "./format.js";
+import { loadFormattedInteractions } from "./format.js";
 
 export type InteractionsListQuery = AvatarTransformQuery & {
   limit?: number | string;
@@ -26,70 +22,63 @@ type ServiceLog = {
 };
 
 export async function listInteractions(
-  client: SupabaseClient<Database>,
-  userId: string,
+  ctx: DomainContext,
   query: InteractionsListQuery,
   log?: ServiceLog,
 ) {
+  const db = domainDb(ctx);
+  const { user } = ctx;
   const { limit, offset } = parsePagination(query);
   const avatarOptions = extractAvatarOptions(query);
   const contactId = query.contactId;
 
   if (contactId) {
-    const { data: person, error: personError } = await client
-      .from("people")
-      .select("id")
-      .eq("id", contactId)
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (personError) {
-      log?.error({ err: personError }, "Error verifying contact for interactions list");
-      throw internal("internal_server_error", personError.message);
-    }
+    const person = await db.people.findFirst({
+      select: { id: true },
+      where: { id: contactId, userId: user.id },
+    });
 
     if (!person) {
       throw notFound("Contact not found", "not_found");
     }
   }
 
-  let interactionsQuery = client
-    .from("interactions")
-    .select(contactId ? INTERACTION_SELECT_BY_CONTACT : INTERACTION_SELECT, { count: "exact" })
-    .order("date", { ascending: false });
+  const where: Prisma.InteractionWhereInput = {
+    userId: user.id,
+    ...(contactId ? { participants: { some: { personId: contactId } } } : {}),
+  };
 
-  if (contactId) {
-    interactionsQuery = interactionsQuery.eq("participants.person_id", contactId);
-  }
+  let interactions: Awaited<ReturnType<typeof loadFormattedInteractions>> = [];
+  let totalCount = 0;
 
-  const {
-    data: interactions,
-    error,
-    count,
-  } = await interactionsQuery.range(offset, offset + limit - 1);
+  try {
+    const [rows, count] = await Promise.all([
+      db.interaction.findMany({
+        orderBy: { date: "desc" },
+        select: { id: true },
+        skip: offset,
+        take: limit,
+        where,
+      }),
+      db.interaction.count({ where }),
+    ]);
 
-  if (error) {
+    totalCount = count;
+    interactions = await loadFormattedInteractions(
+      ctx,
+      rows.map((row) => row.id),
+      avatarOptions,
+    );
+  } catch (error) {
     log?.error({ err: error }, "Error fetching interactions");
-    throw internal("internal_server_error", error.message);
+    throw internal(
+      "internal_server_error",
+      error instanceof Error ? error.message : "Failed to fetch interactions",
+    );
   }
 
-  const formattedInteractions = interactions.map((interaction) => ({
-    createdAt: interaction.created_at,
-    date: interaction.date,
-    description: interaction.description,
-    id: interaction.id,
-    participants: interaction.participants.map((participant) =>
-      mapInteractionParticipant(client, userId, participant.person, avatarOptions),
-    ),
-    title: interaction.title,
-    type: interaction.type as InteractionType,
-    updatedAt: interaction.updated_at,
-    userId: interaction.user_id,
-  }));
-
-  const totalCount = typeof count === "number" ? count : formattedInteractions.length;
   const pagination = buildPaginationMeta({
-    itemCount: formattedInteractions.length,
+    itemCount: interactions.length,
     limit,
     offset,
     search: null,
@@ -97,5 +86,5 @@ export async function listInteractions(
     totalCount,
   });
 
-  return buildPaginatedResponse("interactions", formattedInteractions, pagination);
+  return buildPaginatedResponse("interactions", interactions, pagination);
 }

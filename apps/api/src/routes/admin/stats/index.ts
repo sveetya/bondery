@@ -58,7 +58,7 @@ export const statsRoutes: AppRoutePlugin = async (fastify) => {
     "/funnel",
     {
       schema: {
-        description: "Returns period-based signup → contacts → interactions funnel from Supabase.",
+        description: "Returns period-based signup → contacts → interactions funnel from Postgres.",
         response: withOkResponse(funnelResponseSchema, "Funnel conversion stats"),
       } satisfies FastifyZodOpenApiSchema,
     },

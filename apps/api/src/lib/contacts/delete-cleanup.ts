@@ -1,7 +1,8 @@
-import type { DomainSupabaseClient } from "../../domains/_shared/context.js";
+import type { PrismaClient } from "@bondery/db";
+import { deleteStorageObjects, LINKEDIN_LOGOS_BUCKET } from "../storage/get-storage.js";
 
-export async function collectLinkedInLogoIds(
-  client: DomainSupabaseClient,
+async function linkedinIdsForPeople(
+  db: PrismaClient,
   userId: string,
   personIds: string[],
 ): Promise<string[]> {
@@ -9,37 +10,68 @@ export async function collectLinkedInLogoIds(
     return [];
   }
 
-  const [workResult, eduResult] = await Promise.all([
-    client
-      .from("people_work_history")
-      .select("company_linkedin_id")
-      .eq("user_id", userId)
-      .in("person_id", personIds)
-      .not("company_linkedin_id", "is", null),
-    client
-      .from("people_education_history")
-      .select("school_linkedin_id")
-      .eq("user_id", userId)
-      .in("person_id", personIds)
-      .not("school_linkedin_id", "is", null),
+  const linkedinRows = await db.peopleLinkedin.findMany({
+    select: { id: true },
+    where: { personId: { in: personIds }, userId },
+  });
+  const linkedinIds = linkedinRows.map((row) => row.id);
+
+  if (linkedinIds.length === 0) {
+    return [];
+  }
+
+  return linkedinIds;
+}
+
+export async function collectLinkedInLogoIds(
+  db: PrismaClient,
+  userId: string,
+  personIds: string[],
+): Promise<string[]> {
+  if (personIds.length === 0) {
+    return [];
+  }
+
+  const linkedinIds = await linkedinIdsForPeople(db, userId, personIds);
+  if (linkedinIds.length === 0) {
+    return [];
+  }
+
+  const [workRows, eduRows] = await Promise.all([
+    db.peopleWorkHistory.findMany({
+      select: { companyLinkedinId: true },
+      where: {
+        companyLinkedinId: { not: null },
+        peopleLinkedinId: { in: linkedinIds },
+        userId,
+      },
+    }),
+    db.peopleEducationHistory.findMany({
+      select: { schoolLinkedinId: true },
+      where: {
+        peopleLinkedinId: { in: linkedinIds },
+        schoolLinkedinId: { not: null },
+        userId,
+      },
+    }),
   ]);
 
   const ids = new Set<string>();
-  for (const row of workResult.data ?? []) {
-    if (row.company_linkedin_id) {
-      ids.add(row.company_linkedin_id);
+  for (const row of workRows) {
+    if (row.companyLinkedinId) {
+      ids.add(row.companyLinkedinId);
     }
   }
-  for (const row of eduResult.data ?? []) {
-    if (row.school_linkedin_id) {
-      ids.add(row.school_linkedin_id);
+  for (const row of eduRows) {
+    if (row.schoolLinkedinId) {
+      ids.add(row.schoolLinkedinId);
     }
   }
   return Array.from(ids);
 }
 
 export async function removeOrphanedLinkedInLogos(
-  client: DomainSupabaseClient,
+  db: PrismaClient,
   userId: string,
   candidateIds: string[],
 ): Promise<void> {
@@ -47,28 +79,26 @@ export async function removeOrphanedLinkedInLogos(
     return;
   }
 
-  const [workResult, eduResult] = await Promise.all([
-    client
-      .from("people_work_history")
-      .select("company_linkedin_id")
-      .eq("user_id", userId)
-      .in("company_linkedin_id", candidateIds),
-    client
-      .from("people_education_history")
-      .select("school_linkedin_id")
-      .eq("user_id", userId)
-      .in("school_linkedin_id", candidateIds),
+  const [workRows, eduRows] = await Promise.all([
+    db.peopleWorkHistory.findMany({
+      select: { companyLinkedinId: true },
+      where: { companyLinkedinId: { in: candidateIds }, userId },
+    }),
+    db.peopleEducationHistory.findMany({
+      select: { schoolLinkedinId: true },
+      where: { schoolLinkedinId: { in: candidateIds }, userId },
+    }),
   ]);
 
   const stillReferenced = new Set<string>();
-  for (const row of workResult.data ?? []) {
-    if (row.company_linkedin_id) {
-      stillReferenced.add(row.company_linkedin_id);
+  for (const row of workRows) {
+    if (row.companyLinkedinId) {
+      stillReferenced.add(row.companyLinkedinId);
     }
   }
-  for (const row of eduResult.data ?? []) {
-    if (row.school_linkedin_id) {
-      stillReferenced.add(row.school_linkedin_id);
+  for (const row of eduRows) {
+    if (row.schoolLinkedinId) {
+      stillReferenced.add(row.schoolLinkedinId);
     }
   }
 
@@ -78,5 +108,5 @@ export async function removeOrphanedLinkedInLogos(
   }
 
   const paths = orphaned.map((id) => `${userId}/${id}.jpg`);
-  await client.storage.from("linkedin_logos").remove(paths);
+  await deleteStorageObjects(LINKEDIN_LOGOS_BUCKET, paths);
 }

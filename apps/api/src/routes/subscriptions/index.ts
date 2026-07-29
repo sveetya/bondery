@@ -1,8 +1,12 @@
 /**
  * Subscription Status API Route
  * Returns the authenticated user's subscription status for frontend gating.
+ *
+ * Stripe billing mirror — subscription display fields come from the DB (webhook-maintained).
+ * before large refactors in this folder (`checkout`, `portal`, `sync`, webhooks).
  */
 
+import { prisma } from "@bondery/db";
 import type { SubscriptionStatus } from "@bondery/schemas";
 import { subscriptionStatusSchema } from "@bondery/schemas";
 import { EXAMPLE_SUBSCRIPTION_STATUS_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
@@ -11,7 +15,7 @@ import { z } from "zod";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
-import { getPolarClient } from "../../services/billing/polar.js";
+import { hasPremiumAccess } from "../../services/billing/entitlements.js";
 import {
   checkChatQuota,
   FREE_MESSAGE_LIMIT,
@@ -25,7 +29,7 @@ const subscriptionStatusResponseSchema = z
   })
   .meta({ example: EXAMPLE_SUBSCRIPTION_STATUS_RESPONSE });
 
-const POLAR_STATUSES: SubscriptionStatus["polarStatus"][] = [
+const BILLING_STATUSES: NonNullable<SubscriptionStatus["billingStatus"]>[] = [
   "incomplete",
   "incomplete_expired",
   "trialing",
@@ -35,26 +39,26 @@ const POLAR_STATUSES: SubscriptionStatus["polarStatus"][] = [
   "unpaid",
 ];
 
-const POLAR_INTERVALS: NonNullable<SubscriptionStatus["recurringInterval"]>[] = [
-  "day",
-  "week",
-  "month",
-  "year",
-];
+const BILLING_INTERVALS: NonNullable<SubscriptionStatus["recurringInterval"]>[] = ["month", "year"];
 
-function toPolarStatus(value: string | null | undefined): SubscriptionStatus["polarStatus"] {
-  return value && POLAR_STATUSES.includes(value as SubscriptionStatus["polarStatus"])
-    ? (value as SubscriptionStatus["polarStatus"])
+function toBillingStatus(value: string | null | undefined): SubscriptionStatus["billingStatus"] {
+  return value &&
+    BILLING_STATUSES.includes(value as NonNullable<SubscriptionStatus["billingStatus"]>)
+    ? (value as SubscriptionStatus["billingStatus"])
     : null;
 }
 
-function toPolarInterval(
+function toBillingInterval(
   value: string | null | undefined,
 ): SubscriptionStatus["recurringInterval"] {
   return value &&
-    POLAR_INTERVALS.includes(value as NonNullable<SubscriptionStatus["recurringInterval"]>)
+    BILLING_INTERVALS.includes(value as NonNullable<SubscriptionStatus["recurringInterval"]>)
     ? (value as SubscriptionStatus["recurringInterval"])
     : null;
+}
+
+function isBillingUpgradesEnabled(value: string | undefined): boolean {
+  return value === "true";
 }
 
 export const subscriptionRoutes: AppRoutePlugin = async (fastify) => {
@@ -64,9 +68,6 @@ export const subscriptionRoutes: AppRoutePlugin = async (fastify) => {
     }
   });
 
-  /**
-   * GET /api/subscriptions - Get current user's subscription status
-   */
   fastify.get(
     "/",
     {
@@ -76,65 +77,56 @@ export const subscriptionRoutes: AppRoutePlugin = async (fastify) => {
       } satisfies FastifyZodOpenApiSchema,
     },
     async (request) => {
-      const { client, user } = getAuth(request);
+      const { user } = getAuth(request);
 
-      const quota = await checkChatQuota(client, user.id);
+      const subscription = await prisma.subscription.findFirst({
+        select: {
+          billingInterval: true,
+          cancelAtPeriodEnd: true,
+          currency: true,
+          currentPeriodEnd: true,
+          paymentFailureCount: true,
+          productName: true,
+          status: true,
+          stripeStatus: true,
+          trialEndsAt: true,
+          unitAmount: true,
+        },
+        where: { userId: user.id },
+      });
 
-      // Fetch subscription details for period info
-      const { data: subscription } = await client
-        .from("subscriptions")
-        .select("current_period_end, cancel_at_period_end, polar_subscription_id")
-        .eq("user_id", user.id)
-        .single();
+      const premiumAccess = hasPremiumAccess(
+        subscription
+          ? {
+              paymentFailureCount: subscription.paymentFailureCount ?? 0,
+              status: subscription.status,
+            }
+          : null,
+      );
 
-      let polarStatus: SubscriptionStatus["polarStatus"] = null;
-      let trialEndsAt: string | null = null;
-      let amount: number | null = null;
-      let currency: string | null = null;
-      let productName: string | null = null;
-      let recurringInterval: SubscriptionStatus["recurringInterval"] = null;
-      let currentPeriodEnd = subscription?.current_period_end ?? null;
+      const quota = await checkChatQuota(user.id, premiumAccess);
 
-      if (subscription?.polar_subscription_id) {
-        try {
-          const polar = getPolarClient();
-          const polarSubscription = await polar.subscriptions.get({
-            id: subscription.polar_subscription_id,
-          });
-
-          polarStatus = toPolarStatus(polarSubscription.status);
-          trialEndsAt = polarSubscription.trialEnd
-            ? polarSubscription.trialEnd.toISOString()
-            : null;
-          amount = polarSubscription.amount ?? null;
-          currency = polarSubscription.currency ?? null;
-          productName = polarSubscription.product?.name ?? null;
-          recurringInterval = toPolarInterval(polarSubscription.recurringInterval);
-          currentPeriodEnd = polarSubscription.currentPeriodEnd
-            ? polarSubscription.currentPeriodEnd.toISOString()
-            : currentPeriodEnd;
-        } catch (err) {
-          request.log.warn(
-            { err, userId: user.id },
-            "subscriptions: failed to load Polar subscription details",
-          );
-        }
-      }
+      const paymentBlocked =
+        subscription?.status === "past_due" && (subscription.paymentFailureCount ?? 0) >= 3;
 
       const status: SubscriptionStatus = {
         aiMessageLimit: quota.plan === "premium" ? PREMIUM_MESSAGE_LIMIT : FREE_MESSAGE_LIMIT,
         aiMessagesUsed: quota.messagesUsed,
         aiMonthlyResetAt: quota.resetAt,
-        amount,
-        cancelAtPeriodEnd: subscription?.cancel_at_period_end ?? false,
+        amount: subscription?.unitAmount ?? null,
+        billingStatus: toBillingStatus(subscription?.stripeStatus),
+        cancelAtPeriodEnd: subscription?.cancelAtPeriodEnd ?? false,
         canUseChat: quota.allowed,
-        currency,
-        currentPeriodEnd,
+        currency: subscription?.currency ?? null,
+        currentPeriodEnd: subscription?.currentPeriodEnd?.toISOString() ?? null,
+        paymentBlocked,
         plan: quota.plan,
-        polarStatus,
-        productName,
-        recurringInterval,
-        trialEndsAt,
+        productName: subscription?.productName ?? null,
+        recurringInterval: toBillingInterval(subscription?.billingInterval),
+        trialEndsAt: subscription?.trialEndsAt?.toISOString() ?? null,
+        upgradesEnabled: isBillingUpgradesEnabled(
+          fastify.config.BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED,
+        ),
       };
 
       return { data: status, success: true };
