@@ -350,7 +350,7 @@ enabled = false
 [auth.third_party.aws_cognito]
 enabled = false
 # user_pool_id = "my-user-pool-id"
-# user_pool_region = "us-east-1"
+# user_pool_region = "eu-central-1"
 
 # Use Clerk as a third-party provider alongside Supabase Auth.
 [auth.third_party.clerk]
@@ -393,7 +393,7 @@ backend = "postgres"
 orioledb_version = ""
 # Configures S3 bucket URL, eg. <bucket_name>.s3-<region>.amazonaws.com
 s3_host = "env(S3_HOST)"
-# Configures S3 bucket region, eg. us-east-1
+# Configures S3 bucket region, eg. eu-central-1
 s3_region = "env(S3_REGION)"
 # Configures AWS_ACCESS_KEY_ID for S3 bucket
 s3_access_key = "env(S3_ACCESS_KEY)"

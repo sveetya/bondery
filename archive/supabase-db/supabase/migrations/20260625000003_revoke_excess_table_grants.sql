@@ -49,7 +49,7 @@ FROM authenticated;
 
 -- ── authenticated — subscriptions: keep SELECT, revoke write ops ─────────────
 -- Reads are needed for /api/subscriptions status check (authenticated client).
--- All writes go through adminClient (Polar webhook, sync route).
+-- All writes go through adminClient (Stripe webhook, sync route).
 
 REVOKE INSERT, UPDATE, DELETE ON public.subscriptions FROM authenticated;
 

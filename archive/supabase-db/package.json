@@ -1,7 +1,12 @@
 {
-  "description": "Supabase database setup, migrations, and edge functions",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.1097.0",
+    "@supabase/supabase-js": "^2.111.0"
+  },
+  "description": "Archived Supabase CLI project, migrations, and one-off migration scripts (reference only).",
   "devDependencies": {
-    "supabase": "^2.109.1"
+    "supabase": "^2.109.1",
+    "tsx": "^4.23.0"
   },
   "name": "supabase-db",
   "private": true,
@@ -10,6 +15,8 @@
     "gen-types": "npx supabase gen types typescript --local > ../../packages/schemas/src/supabase.types.ts",
     "get:service-key": "npx tsx scripts/seed-vault-service-key.ts",
     "link": "npx supabase link",
+    "migrate-auth-from-supabase": "tsx scripts/migrate-auth-from-supabase.ts",
+    "migrate-storage-from-supabase": "tsx --env-file=.env.local scripts/migrate-storage-from-supabase.ts",
     "migration:new": "npx supabase migration new",
     "pull": "npx supabase db pull",
     "push": "npx supabase db push",
