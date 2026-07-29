@@ -37,12 +37,12 @@ function main() {
     log.info(".env.local already present");
   }
 
-  log.step(2, 2, "Pull (if Supabase up) → sync → check");
+  log.step(2, 2, "Sync app env files → check");
   run("node --import tsx scripts/env.ts");
 
   log.success("Dev env ready");
-  log.info("Next: cd apps/supabase-db && npm run dev  (if not already)");
-  log.info("Then: npm run env && npm run dev");
+  log.info("Next: npm run start:postgres && npm run start:seaweedfs && npm run bootstrap:seaweedfs");
+  log.info("Then: npm run db:migrate:deploy -w @bondery/db && npm run env && npm run dev");
 }
 
 main();

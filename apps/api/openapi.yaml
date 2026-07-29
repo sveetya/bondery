@@ -10,11 +10,11 @@ info:
     ## Authentication
 
 
-    Most endpoints require authentication via a Supabase session cookie or a Bearer token (session JWT or long-lived API
+    Most endpoints require authentication via a Better Auth session cookie or a Bearer token (session JWT or long-lived API
     key).
 
 
-    **Session auth:** Sign in via the webapp; the browser sends session cookies or a Supabase access token.
+    **Session auth:** Sign in via the webapp or mobile app; send session cookies or an OAuth access token.
 
 
     **API keys:** Create keys in Settings → API keys. Send `Authorization: Bearer bondery_key_…` on allowed integration
@@ -39,7 +39,7 @@ components:
       type: http
     bearerAuth:
       bearerFormat: JWT
-      description: "Supabase session access token from the webapp or mobile app. Send as `Authorization: Bearer <access_token>`."
+      description: "Better Auth session access token from the webapp or mobile app. Send as `Authorization: Bearer <access_token>`."
       scheme: bearer
       type: http
   schemas:
@@ -790,8 +790,8 @@ paths:
       description: "Readiness probe. Checks configured dependencies and returns per-service status. Results are cached in
         memory for one minute. Rate limited to one request per minute per client. Returns HTTP 503 when critical
         dependencies are unavailable (`status: unhealthy`). Returns HTTP 200 when all critical dependencies are healthy
-        (`status: ok` or `status: degraded`). Supabase database (PostgREST) via `GET /rest-admin/v1/ready`; Supabase
-        storage via `GET /storage/v1/health`."
+        (`status: ok` or `status: degraded`). Postgres via Prisma `SELECT 1`; object storage via `GET
+        /storage/v1/health` on the storage gateway."
       responses:
         "200":
           description: Readiness report when dependencies are healthy or degraded
@@ -807,11 +807,14 @@ paths:
                   mapy:
                     configured: true
                     ok: true
-                  polar:
+                  stripe:
                     configured: true
                     ok: true
                   posthog:
                     configured: true
+                    ok: true
+                  postgres:
+                    latencyMs: 18
                     ok: true
                   redis:
                     latencyMs: 2
@@ -819,13 +822,9 @@ paths:
                   smtp:
                     configured: true
                     ok: true
-                  supabase:
-                    database:
-                      latencyMs: 18
-                      ok: true
-                    storage:
-                      latencyMs: 15
-                      ok: true
+                  storage:
+                    latencyMs: 15
+                    ok: true
                 status: ok
                 timestamp: 2026-01-15T12:00:00.000Z
               schema:
@@ -867,7 +866,7 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      polar:
+                      stripe:
                         type: object
                         properties:
                           configured:
@@ -882,6 +881,20 @@ paths:
                           - ok
                         additionalProperties: false
                       posthog:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
+                        required:
+                          - ok
+                        additionalProperties: false
+                      postgres:
                         type: object
                         properties:
                           configured:
@@ -923,49 +936,29 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      supabase:
+                      storage:
                         type: object
                         properties:
-                          database:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
-                          storage:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
                         required:
-                          - database
-                          - storage
+                          - ok
                         additionalProperties: false
                     required:
                       - anthropic
                       - mapy
-                      - polar
+                      - stripe
                       - posthog
+                      - postgres
                       - redis
                       - smtp
-                      - supabase
+                      - storage
                     additionalProperties: false
                   status:
                     type: string
@@ -993,11 +986,14 @@ paths:
                     mapy:
                       configured: true
                       ok: true
-                    polar:
+                    stripe:
                       configured: true
                       ok: true
                     posthog:
                       configured: true
+                      ok: true
+                    postgres:
+                      latencyMs: 18
                       ok: true
                     redis:
                       latencyMs: 2
@@ -1005,13 +1001,9 @@ paths:
                     smtp:
                       configured: true
                       ok: true
-                    supabase:
-                      database:
-                        latencyMs: 18
-                        ok: true
-                      storage:
-                        latencyMs: 15
-                        ok: true
+                    storage:
+                      latencyMs: 15
+                      ok: true
                   status: ok
                   timestamp: 2026-01-15T12:00:00.000Z
         "400":
@@ -1108,25 +1100,24 @@ paths:
                   mapy:
                     configured: true
                     ok: true
-                  polar:
+                  stripe:
                     configured: true
                     ok: true
                   posthog:
                     configured: true
                     ok: true
+                  postgres:
+                    error: Connection refused
+                    ok: false
                   redis:
                     latencyMs: 2
                     ok: true
                   smtp:
                     configured: true
                     ok: true
-                  supabase:
-                    database:
-                      error: Connection refused
-                      ok: false
-                    storage:
-                      error: Connection refused
-                      ok: false
+                  storage:
+                    error: Connection refused
+                    ok: false
                 status: unhealthy
                 timestamp: 2026-01-15T12:00:00.000Z
               schema:
@@ -1168,7 +1159,7 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      polar:
+                      stripe:
                         type: object
                         properties:
                           configured:
@@ -1183,6 +1174,20 @@ paths:
                           - ok
                         additionalProperties: false
                       posthog:
+                        type: object
+                        properties:
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
+                        required:
+                          - ok
+                        additionalProperties: false
+                      postgres:
                         type: object
                         properties:
                           configured:
@@ -1224,49 +1229,29 @@ paths:
                         required:
                           - ok
                         additionalProperties: false
-                      supabase:
+                      storage:
                         type: object
                         properties:
-                          database:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
-                          storage:
-                            type: object
-                            properties:
-                              configured:
-                                type: boolean
-                              error:
-                                type: string
-                              latencyMs:
-                                type: number
-                              ok:
-                                type: boolean
-                            required:
-                              - ok
-                            additionalProperties: false
+                          configured:
+                            type: boolean
+                          error:
+                            type: string
+                          latencyMs:
+                            type: number
+                          ok:
+                            type: boolean
                         required:
-                          - database
-                          - storage
+                          - ok
                         additionalProperties: false
                     required:
                       - anthropic
                       - mapy
-                      - polar
+                      - stripe
                       - posthog
+                      - postgres
                       - redis
                       - smtp
-                      - supabase
+                      - storage
                     additionalProperties: false
                   status:
                     type: string
@@ -1294,11 +1279,14 @@ paths:
                     mapy:
                       configured: true
                       ok: true
-                    polar:
+                    stripe:
                       configured: true
                       ok: true
                     posthog:
                       configured: true
+                      ok: true
+                    postgres:
+                      latencyMs: 18
                       ok: true
                     redis:
                       latencyMs: 2
@@ -1306,13 +1294,9 @@ paths:
                     smtp:
                       configured: true
                       ok: true
-                    supabase:
-                      database:
-                        latencyMs: 18
-                        ok: true
-                      storage:
-                        latencyMs: 15
-                        ok: true
+                    storage:
+                      latencyMs: 15
+                      ok: true
                   status: ok
                   timestamp: 2026-01-15T12:00:00.000Z
   /status:
@@ -1320,7 +1304,7 @@ paths:
       tags:
         - Health
       description: Liveness probe. Returns 200 when the API process is running. Does not check external dependencies. Use `GET
-        /health` for a readiness probe that checks Supabase, Redis, and other configured integrations.
+        /health` for a readiness probe that checks Postgres, storage, Redis, and other configured integrations.
       responses:
         "200":
           description: Liveness status
@@ -18471,7 +18455,7 @@ paths:
                   currency: usd
                   currentPeriodEnd: 2026-01-15T12:00:00.000Z
                   plan: premium
-                  polarStatus: active
+                  billingStatus: active
                   productName: Bondery Premium
                   recurringInterval: month
                   trialEndsAt: null
@@ -18509,7 +18493,7 @@ paths:
                         enum:
                           - free
                           - premium
-                      polarStatus:
+                      billingStatus:
                         nullable: true
                         type: string
                         enum:
@@ -18545,7 +18529,7 @@ paths:
                       - currency
                       - currentPeriodEnd
                       - plan
-                      - polarStatus
+                      - billingStatus
                       - productName
                       - recurringInterval
                       - trialEndsAt
@@ -18567,7 +18551,7 @@ paths:
                     currency: usd
                     currentPeriodEnd: 2026-01-15T12:00:00.000Z
                     plan: premium
-                    polarStatus: active
+                    billingStatus: active
                     productName: Bondery Premium
                     recurringInterval: month
                     trialEndsAt: null
@@ -18669,25 +18653,25 @@ paths:
     post:
       tags:
         - Subscriptions
-      description: Create a Polar checkout session for embedded upgrade.
+      description: Create a Stripe embedded Checkout session for upgrade.
       security: *a2
       responses:
         "200":
-          description: Checkout session URL
+          description: Checkout session client secret
           content:
             application/json:
               example:
-                url: https://checkout.polar.sh/session/example
+                clientSecret: cs_test_example
               schema:
                 type: object
                 properties:
-                  url:
+                  clientSecret:
                     type: string
                 required:
-                  - url
+                  - clientSecret
                 additionalProperties: false
                 example:
-                  url: https://checkout.polar.sh/session/example
+                  clientSecret: cs_test_example
         "400":
           description: Invalid request
           content:
@@ -18798,11 +18782,11 @@ paths:
     get:
       tags:
         - Subscriptions
-      description: Redirect to the Polar customer portal for billing management.
+      description: Redirect to the Stripe customer portal for billing management.
       security: *a2
       responses:
         "302":
-          description: Redirect to Polar customer portal
+          description: Redirect to Stripe customer portal
         "400":
           description: Invalid request
           content:
@@ -18900,7 +18884,7 @@ paths:
     post:
       tags:
         - Subscriptions
-      description: Sync subscription state from Polar for the authenticated user.
+      description: Sync subscription state from Stripe for the authenticated user.
       security: *a2
       responses:
         "200":
@@ -18918,7 +18902,7 @@ paths:
                         type: string
                         enum:
                           - pending
-                          - polar_api
+                          - stripe_api
                       synced:
                         type: boolean
                         enum:
@@ -19188,7 +19172,7 @@ paths:
     get:
       tags:
         - Stats
-      description: Returns period-based signup → contacts → interactions funnel from Supabase.
+      description: Returns period-based signup → contacts → interactions funnel from Postgres.
       security: *a2
       responses:
         "200":
@@ -19729,11 +19713,11 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /webhooks/polar:
+  /webhooks/stripe:
     post:
       tags:
         - Webhooks
-      description: Receive and process a Polar subscription lifecycle webhook event.
+      description: Receive and process a Stripe billing webhook event.
       responses:
         "200":
           description: Webhook acknowledged
@@ -19851,7 +19835,7 @@ servers:
     url: https://api.usebondery.com
 tags:
   - description: Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency
-      checks). `GET /health` probes Supabase, Redis, and integration config; cached for one minute, rate limited to one
+      checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to one
       request per minute per client; returns 503 when critical dependencies are unavailable.
     name: Health
   - description: Contact management operations

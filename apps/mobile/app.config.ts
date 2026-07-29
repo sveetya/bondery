@@ -6,8 +6,7 @@ import type { ConfigContext, ExpoConfig } from "expo/config";
  */
 export default ({ config }: ConfigContext): ExpoConfig => {
   const apiUrl = process.env.BONDERY_PUBLIC_API_URL ?? "";
-  const supabaseUrl = process.env.BONDERY_PUBLIC_SUPABASE_URL ?? "";
-  const supabasePublishableKey = process.env.BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
+  const storageUrl = process.env.BONDERY_PUBLIC_STORAGE_URL ?? "";
   const websiteUrl = process.env.BONDERY_PUBLIC_WEBSITE_URL ?? "https://usebondery.com";
   const syncDebug = process.env.BONDERY_PUBLIC_SYNC_DEBUG ?? "";
 
@@ -32,8 +31,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         projectId: "d07d8729-e178-4d86-ba54-0a6a3be84f85",
       },
       router: {},
-      supabasePublishableKey,
-      supabaseUrl,
+      storageUrl,
       syncDebug,
       websiteUrl,
     },

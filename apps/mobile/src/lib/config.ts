@@ -4,8 +4,7 @@ import { Platform } from "react-native";
 
 type MobileExtra = {
   apiUrl?: string;
-  supabasePublishableKey?: string;
-  supabaseUrl?: string;
+  storageUrl?: string;
   syncDebug?: string;
   websiteUrl?: string;
 };
@@ -38,13 +37,12 @@ function normalizeApiBaseUrl(value: string): string {
 
 const extra = getExtra();
 const rawApiUrl = normalizeMobileUrlForDevice(extra.apiUrl || "");
-const rawSupabaseUrl = normalizeMobileUrlForDevice(extra.supabaseUrl || "");
+const rawStorageUrl = normalizeMobileUrlForDevice(extra.storageUrl || "");
 
 export const API_URL = rawApiUrl ? normalizeApiBaseUrl(rawApiUrl) : "";
-export const SUPABASE_URL = rawSupabaseUrl;
-export const SUPABASE_ANON_KEY = extra.supabasePublishableKey || "";
+export const STORAGE_URL = rawStorageUrl.replace(/\/+$/, "");
 export const WEBSITE_URL = extra.websiteUrl || "https://usebondery.com";
-export const HAS_MOBILE_CONFIG = Boolean(API_URL && SUPABASE_URL && SUPABASE_ANON_KEY);
+export const HAS_MOBILE_CONFIG = Boolean(API_URL && STORAGE_URL);
 export const SYNC_DEBUG = extra.syncDebug === "1" || extra.syncDebug === "true";
 
 /** UI debounce delay constants (milliseconds). Visual/layout tokens: `theme/tokens`. */
@@ -174,9 +172,7 @@ export function assertMobileConfig() {
     throw new Error("Missing BONDERY_PUBLIC_API_URL");
   }
 
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error(
-      "Missing Supabase config. Set BONDERY_PUBLIC_SUPABASE_URL and BONDERY_PUBLIC_SUPABASE_PUBLISHABLE_KEY.",
-    );
+  if (!STORAGE_URL) {
+    throw new Error("Missing BONDERY_PUBLIC_STORAGE_URL");
   }
 }

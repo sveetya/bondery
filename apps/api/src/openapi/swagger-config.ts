@@ -18,7 +18,7 @@ export const swaggerOpenApiConfig = {
       bearerAuth: {
         bearerFormat: "JWT",
         description:
-          "Supabase session access token from the webapp or mobile app. " +
+          "Better Auth session access token (OAuth 2.1) from the webapp or mobile app. " +
           "Send as `Authorization: Bearer <access_token>`.",
         scheme: "bearer",
         type: "http",
@@ -30,10 +30,10 @@ export const swaggerOpenApiConfig = {
     description:
       "REST API for the Bondery application — a contact and relationship management platform.\n\n" +
       "## Authentication\n\n" +
-      "Most endpoints require authentication via a Supabase session cookie or a " +
+      "Most endpoints require authentication via a Better Auth session cookie or a " +
       "Bearer token (session JWT or long-lived API key).\n\n" +
-      "**Session auth:** Sign in via the webapp; the browser sends session cookies " +
-      "or a Supabase access token.\n\n" +
+      "**Session auth:** Sign in via the webapp or mobile app; send the OAuth access " +
+      "token as `Authorization: Bearer …` or rely on the webapp session cookie.\n\n" +
       "**API keys:** Create keys in Settings → API keys. Send " +
       "`Authorization: Bearer bondery_key_…` on allowed integration routes " +
       "(contacts, groups, tags, interactions, imports, share, geocode). " +
@@ -55,7 +55,7 @@ export const swaggerOpenApiConfig = {
   tags: [
     {
       description:
-        "Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency checks). `GET /health` probes Supabase, Redis, and integration config; cached for one minute, rate limited to one request per minute per client; returns 503 when critical dependencies are unavailable.",
+        "Liveness and readiness probes. `GET /status` returns 200 when the process is running (no dependency checks). `GET /health` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to one request per minute per client; returns 503 when critical dependencies are unavailable.",
       name: "Health",
     },
     { description: "Contact management operations", name: "Contacts" },

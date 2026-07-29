@@ -5,10 +5,10 @@ Mobile MVP app for Bondery built with Expo Router and React Native.
 ## Scope (current)
 
 - Authentication
-  - Single login screen with Supabase OAuth (GitHub, LinkedIn OIDC)
+  - Single login screen with Better Auth OAuth (GitHub, LinkedIn OIDC) against the API
   - Session guard uses Expo Router `Stack.Protected` with `(auth)` and `(app)` route groups
-  - Auth state is centralized in `AuthProvider` (single Supabase session read)
-  - OAuth callback route exchanges code for Supabase session
+  - Auth state is centralized in `AuthProvider`
+  - OAuth callback route exchanges code for an API session
 - Contact Book view
   - Search by name/email/phone
   - Sort by name/surname
