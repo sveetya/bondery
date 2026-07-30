@@ -412,7 +412,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     boot: { value: "test-webapp-oauth-client" },
     canonical: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
-    deployExample: { group: "Webapp OAuth", include: true, value: "" },
+    deployExample: { group: "Webapp OAuth", include: true, value: "your-webapp-oauth-client-id" },
     description:
       "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)\nGenerate: openssl rand -hex 16",
     exampleValue: "",
@@ -424,7 +424,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     boot: { value: "test-webapp-oauth-client-secret-32chars-min" },
     canonical: "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
-    deployExample: { group: "Webapp OAuth", include: true, value: "" },
+    deployExample: {
+      group: "Webapp OAuth",
+      include: true,
+      value: "your-super-secret-webapp-oauth-client-secret-min-32-chars",
+    },
     description:
       "Webapp's own OAuth client secret (never exposed to the browser). The API only ever stores/verifies its hash via deployment-time provisioning; it never round-trips the plaintext value.\nGenerate: openssl rand -hex 32",
     exampleValue: "",
