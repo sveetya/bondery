@@ -45,7 +45,7 @@ shared/
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
 
-**Node on runners:** All host jobs use `node-version: latest` (`setup-node@v7`). Production Docker images intentionally pin `node:22-alpine` in Dockerfiles for reproducible releases; release `smoke` jobs validate the container runtime.
+**Node on runners:** Host jobs use `node-version: latest` (`setup-node@v7`). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Production Docker images intentionally pin `node:22-alpine` in Dockerfiles for reproducible releases; release `smoke` jobs validate the container runtime.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 

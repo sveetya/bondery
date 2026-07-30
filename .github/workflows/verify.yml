@@ -57,7 +57,7 @@ jobs:
         run: npm run check-openapi
 
       - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-compose-action@v2
         with:
           version: v2.40.2
 
@@ -101,7 +101,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: filter
         with:
           filters: |

@@ -1,0 +1,36 @@
+{
+  "bypass_actors": [
+    {
+      "actor_id": 1,
+      "actor_type": "OrganizationAdmin",
+      "bypass_mode": "always"
+    }
+  ],
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": ["refs/heads/release"]
+    }
+  },
+  "enforcement": "active",
+  "name": "Protect Release",
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "required_linear_history"
+    },
+    {
+      "parameters": {
+        "update_allows_fetch_and_merge": true
+      },
+      "type": "update"
+    },
+    {
+      "type": "non_fast_forward"
+    }
+  ],
+  "source_type": "Repository",
+  "target": "branch"
+}

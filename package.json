@@ -106,6 +106,8 @@
     "generate-doc-links": "node scripts/generate-doc-links.mjs",
     "generate-env-examples": "node scripts/generate-env-examples.mjs",
     "generate-openapi": "turbo generate-openapi --filter=api",
+    "github:repo-settings": "bash .github/scripts/apply-repo-settings.sh",
+    "github:rulesets": "bash .github/scripts/apply-rulesets.sh",
     "i18n:status": "npm run i18n:status -w @bondery/translations",
     "i18n:types": "npm run i18n:types -w @bondery/translations",
     "lint": "biome check --write .",
