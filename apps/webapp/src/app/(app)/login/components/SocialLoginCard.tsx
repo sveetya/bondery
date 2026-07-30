@@ -63,9 +63,15 @@ export function SocialLoginCard({
             <TypedTrans
               components={{
                 privacyLink: (
-                  <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs" />
+                  <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs">
+                    {null}
+                  </AnchorLink>
                 ),
-                termsLink: <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs" />,
+                termsLink: (
+                  <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs">
+                    {null}
+                  </AnchorLink>
+                ),
               }}
               i18nKey="TermsText"
               t={t}
