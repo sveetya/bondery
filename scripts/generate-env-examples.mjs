@@ -22,6 +22,6 @@ run("node --import tsx scripts/env.ts --write-examples --write-turbo");
 
 if (stage) {
   run(
-    `git add .env.local.example turbo.json packages/db/.env.local.example deploy/bondery/.env.example && find apps -type f \\( -name '.env*.example' -o -name '.env.example' \\) -print0 | xargs -0 git add`,
+    `git add .env.local.example turbo.json packages/db/.env.local.example deploy/bondery/.env.example deploy/ops/.env.example && find apps -type f \\( -name '.env*.example' -o -name '.env.example' \\) -print0 | xargs -0 git add`,
   );
 }

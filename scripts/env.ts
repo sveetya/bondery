@@ -32,6 +32,7 @@ import {
 } from "@bondery/helpers/env";
 import { writeDeployExample } from "./env-deploy-example.js";
 import { formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
+import { writeOpsExample } from "./env-ops-example.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
@@ -160,6 +161,7 @@ function writeExamples(dryRun) {
   log.info(`${dryRun ? "Would write" : "Wrote"} ${rootPath}`);
 
   writeDeployExample(repoRoot, dryRun, packageVersion, log);
+  writeOpsExample(repoRoot, dryRun, log);
 
   for (const target of SYNC_TARGETS) {
     const rows = sortEnvRows(collectTargetVars(target.id, {}, true));
@@ -352,7 +354,7 @@ function checkRoot() {
 
 function assertGeneratedFresh() {
   const diff = execSync(
-    "git diff --name-only -- .env.local.example turbo.json 'apps/**/.env*.example' 'apps/**/.env.example' deploy/bondery/.env.example",
+    "git diff --name-only -- .env.local.example turbo.json 'apps/**/.env*.example' 'apps/**/.env.example' deploy/bondery/.env.example deploy/ops/.env.example",
     { cwd: repoRoot, encoding: "utf-8" },
   ).trim();
 
@@ -364,7 +366,7 @@ function assertGeneratedFresh() {
     process.exit(1);
   }
 
-  log.success("Env examples, deploy example, and turbo.json env sections match the manifest");
+  log.success("Env examples, deploy/ops examples, and turbo.json env sections match the manifest");
 }
 
 function main() {

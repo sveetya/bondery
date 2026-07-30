@@ -56,7 +56,7 @@ npm run dev
 | --- | --- |
 | `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
 | `npm run env` | Sync root `.env.local` → per-app env files → validate |
-| `npm run generate-env-examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, and `turbo.json` from the manifest |
+| `npm run generate-env-examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
 
 Pre-commit (via lint-staged) runs `generate-env-examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
 
@@ -73,7 +73,7 @@ Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,w
 | Root [`.env.local`](../../.env.local) (gitignored) | `apps/*/.env*.local` (generated) |
 | Manifest [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) | Generated `*.example` files (headers say “do not edit”) |
 
-Templates: [`.env.local.example`](../../.env.local.example) (local dev) · [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) (self-host compose).
+Templates: [`.env.local.example`](../../.env.local.example) (local dev) · [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) (self-host compose) · [`deploy/ops/.env.example`](../../deploy/ops/.env.example) (ops marketing stack).
 
 ## Platform adapters (why not `NEXT_PUBLIC_` / `EXPO_PUBLIC_`)
 
@@ -90,4 +90,4 @@ Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example
 
 ## Manifest
 
-[`@bondery/helpers/env`](../../packages/helpers/src/env/manifest.ts) is the single contract: canonical keys, which apps receive them, `requiredIn`, deploy operator examples (`deployExample`), and turbo scopes. Per-app `check-env` scripts read required lists from the manifest (API also cross-checks `required-env.ts`).
+[`@bondery/helpers/env`](../../packages/helpers/src/env/manifest.ts) is the single contract: canonical keys, which apps receive them, `requiredIn`, deploy operator examples (`deployExample` / `opsExample`), and turbo scopes. Per-app `check-env` scripts read required lists from the manifest (API also cross-checks `required-env.ts`).

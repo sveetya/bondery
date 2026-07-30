@@ -31,7 +31,7 @@ There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by 
 
 ```bash
 cd deploy/ops
-cp .env.example .env
+cp .env.example .env   # generated from manifest (opsExample metadata)
 # Set BONDERY_INFRA_WEBAPP_DOMAIN + BONDERY_INFRA_WEBSITE_DOMAIN
 docker compose up -d
 ```

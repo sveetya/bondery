@@ -117,6 +117,17 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
   ],
 };
 
+/** Operator-facing sections in `deploy/ops/.env.example` (order matters). */
+export const OPS_GROUP_ORDER = ["Public hostnames", "Build metadata"] as const;
+
+/** Multi-line comments under ops group headers in `deploy/ops/.env.example`. */
+export const OPS_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
+  "Build metadata": ["Optional build metadata surfaced in the container"],
+  "Public hostnames": [
+    "Public hostnames (no scheme). Compose derives https://… URLs and Traefik Host().",
+  ],
+};
+
 export type DeployExample = {
   /** Include in generated `deploy/bondery/.env.example` */
   include: boolean;
@@ -128,7 +139,10 @@ export type DeployExample = {
   commented?: boolean;
 };
 
-export type ExampleProfile = "development" | "production" | "deploy";
+/** Same shape as `DeployExample` — ops marketing stack (`deploy/ops/.env.example`). */
+export type OpsExample = DeployExample;
+
+export type ExampleProfile = "development" | "production" | "deploy" | "ops";
 
 export type EnvVarDef = {
   canonical: string;
@@ -142,6 +156,8 @@ export type EnvVarDef = {
   targets: EnvTargetWrite[];
   /** Self-host compose operator example (`deploy/bondery/.env.example`) */
   deployExample?: DeployExample;
+  /** Ops marketing Compose operator example (`deploy/ops/.env.example`) */
+  opsExample?: OpsExample;
   /** When false, omit from turbo cache env arrays (rare) */
   turboAffectsCache?: boolean;
 };
@@ -150,6 +166,9 @@ export type EnvVarDef = {
 export function resolveExampleValue(entry: EnvVarDef, profile: ExampleProfile): string {
   if (profile === "deploy") {
     return entry.deployExample?.value ?? entry.exampleValue;
+  }
+  if (profile === "ops") {
+    return entry.opsExample?.value ?? entry.exampleValue;
   }
 
   let value = entry.exampleValue;
@@ -173,6 +192,19 @@ export function sortDeployExampleRows<T extends { group: string; key: string }>(
   return [...rows].sort((a, b) => {
     const rankA = groupRank.get(a.group as (typeof DEPLOY_GROUP_ORDER)[number]) ?? 999;
     const rankB = groupRank.get(b.group as (typeof DEPLOY_GROUP_ORDER)[number]) ?? 999;
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return a.key.localeCompare(b.key);
+  });
+}
+
+/** Sort ops example rows by OPS_GROUP_ORDER then key. */
+export function sortOpsExampleRows<T extends { group: string; key: string }>(rows: T[]): T[] {
+  const groupRank = new Map(OPS_GROUP_ORDER.map((group, index) => [group, index]));
+  return [...rows].sort((a, b) => {
+    const rankA = groupRank.get(a.group as (typeof OPS_GROUP_ORDER)[number]) ?? 999;
+    const rankB = groupRank.get(b.group as (typeof OPS_GROUP_ORDER)[number]) ?? 999;
     if (rankA !== rankB) {
       return rankA - rankB;
     }
@@ -493,6 +525,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     description: "Public webapp hostname for Traefik Host() rules (no scheme).",
     exampleValue: "app.usebondery.com",
     group: "Infra",
+    opsExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "app.usebondery.com",
+    },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -508,6 +545,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       "Public marketing website hostname (no scheme). Compose derives BONDERY_PUBLIC_WEBSITE_URL for api/webapp.",
     exampleValue: "usebondery.com",
     group: "Infra",
+    opsExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "usebondery.com",
+    },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -847,6 +889,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     description: "Git SHA surfaced in webapp runtime config",
     exampleValue: "",
     group: "Infra",
+    opsExample: { group: "Build metadata", include: true, value: "" },
     requiredIn: [],
     secret: false,
     targets: [t("webapp")],
