@@ -102,7 +102,7 @@ When adding a new `*ResponseSchema`:
 
 For inline route-only schemas (e.g. admin stats), attach `.meta({ example })` on the schema in the route file and import the fixture from `@bondery/schemas`.
 
-`npm run test:contracts -w @bondery/schemas` validates every registered example with `schema.parse(example)`. `npm run check-openapi -w apps/api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
+`npm run check-contracts -w @bondery/schemas` validates every registered example with `schema.parse(example)`. `npm run check-openapi-spec -w apps/api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
 
 ## OpenAPI request examples
 
@@ -302,7 +302,7 @@ Workspace packages follow the [Turborepo compiled-package model](https://turbore
 | `npm run check-route-security -w apps/api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
 | `npm run check-openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
 | `npm run check-route-errors -w apps/api` | Bans legacy error patterns; requires `code` on DomainError |
-| `npm run test:contracts -w @bondery/schemas` | Schema boundary assertions + OpenAPI example validation (`check-openapi-examples.ts`) |
+| `npm run check-contracts -w @bondery/schemas` | Schema boundary assertions + OpenAPI example validation (`check-openapi-examples.ts`) |
 
 CI runs all of the above on every pull request.
 

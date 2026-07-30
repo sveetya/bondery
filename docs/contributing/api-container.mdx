@@ -166,4 +166,4 @@ docker build -f apps/api/Dockerfile -t api:local .
 docker run --rm -p 26631:26631 --env-file apps/api/.env.production.local api:local
 ```
 
-Boot validates required env via `assertRequiredEnvAtStartup` (same list as `npm run check-env -w api`) before Fastify listens.
+Boot validates required env via `assertRequiredEnvAtStartup` (same list as `npm run check-env -w apps/api`) before Fastify listens.

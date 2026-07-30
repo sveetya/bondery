@@ -2,7 +2,7 @@
 
 Map changed paths to workspaces, then run the **minimum** command set for that change. Expand to consumer workspaces when shared packages change.
 
-**Workspace flags:** `-w webapp`, `-w api`, `-w apps/api`, and `-w @bondery/db` are all valid; prefer the form used in CI when matching `verify.yml`.
+**Workspace flags:** use `-w apps/api` for the API workspace (not the short `-w api` alias). Other common flags: `-w webapp`, `-w mobile`, `-w @bondery/db`. Match `verify.yml` when in doubt.
 
 ## Fast path (almost always)
 
@@ -25,20 +25,20 @@ npx biome ci .
 | Any TS/JS across monorepo | `npm run check-types` (or scoped `-w` only if change is isolated) |
 | Package import patterns | `npm run check-package-imports` |
 | `packages/helpers/src/env/**`, `.env.example`, turbo env | `npm run env -- --check` |
-| `docs/**` (non-website) | `npm run check-doc-links` |
-| `apps/website/**` MDX/docs | `npm run check-doc-mdx-links` |
-| `apps/api/**` routes/schemas, `packages/schemas/**` | `npm run check-openapi` |
+| `docs/**` (non-website) | `npm run check-docs` |
+| `apps/website/**` MDX/docs | `npm run check-docs` |
+| `apps/api/**` routes/schemas, `packages/schemas/**` | `npm run check-openapi`, `npm run check-contracts` |
 | `packages/translations/**`, locale JSON, UI strings | `npm run check-i18n` |
-| API error catalog/docs | `npm run check-error-docs`, `npm run check-user-facing-errors` |
+| API error catalog/docs | `npm run check-api-errors` |
 | `deploy/bondery/**` | `docker compose -f deploy/bondery/docker-compose.yml config`, `node deploy/bondery/scripts/check-compose.mjs` |
 
 ## `packages/schemas` (`@bondery/schemas`)
 
 | Trigger | Commands |
 |---------|----------|
-| Any change | `npm run test:contracts`, `npm run check-types -w @bondery/schemas` |
+| Any change | `npm run check-contracts`, `npm run check-types -w @bondery/schemas` |
 | Public export surface | `npm run sync-exports` (review diff), `npm run build -w @bondery/schemas` |
-| Consumers | `npm run check-types -w api`, `npm run check-types -w webapp`, `npm run check-types -w mobile` as applicable |
+| Consumers | `npm run check-types -w apps/api`, `npm run check-types -w webapp`, `npm run check-types -w mobile` as applicable |
 
 ## `packages/helpers` (`@bondery/helpers`)
 
@@ -53,7 +53,7 @@ npx biome ci .
 |---------|----------|
 | Prisma schema/migrations | `npm run check-types -w @bondery/db`, `npm run db:generate -w @bondery/db` |
 | Release/CI parity | `npm run release-migrate -w @bondery/db` (requires Postgres — see `ci-parity.md`) |
-| After migration | `npm run test:api -w api`, `npm run test:auth -w api` when API behavior depends on schema |
+| After migration | `npm run test:auth -w apps/api` when auth behavior depends on schema |
 
 ## `packages/translations` (`@bondery/translations`)
 
@@ -66,11 +66,10 @@ npx biome ci .
 
 | Trigger | Commands |
 |---------|----------|
-| Any TS change | `npm run check-types -w api` |
-| Routes/OpenAPI | `npm run check-openapi -w api` or root `npm run check-openapi` |
-| Sync/Redis | `npm run test:sync -w api` |
-| Routes/handlers | `npm run test:api -w api` (Postgres + migrate first) |
-| Auth/OAuth | `npm run test:auth -w api` (Postgres + migrate first) |
+| Any TS change | `npm run check-types -w apps/api` |
+| Routes/OpenAPI | `npm run check-openapi-spec -w apps/api` or root `npm run check-openapi` |
+| Sync/Redis | `npm run test:sync -w apps/api` |
+| Auth/OAuth | `npm run test:auth -w apps/api` (Postgres + migrate first) |
 | Security-sensitive | `bondery-security` verification commands |
 
 Policy scripts run inside `check-types` — see `apps/api/package.json`.
@@ -102,7 +101,7 @@ When `apps/api/src/services/notifications/**` or `apps/api/src/lib/notifications
 | Trigger | Commands |
 |---------|----------|
 | Any change | `npm run check-types -w website` |
-| MDX/docs content | `npm run check-doc-mdx-links -w website` |
+| MDX/docs content | `npm run check-docs` |
 | Release build | `npx turbo build --filter=website^...`, `npm run build -w website` |
 
 ## `apps/mobile` (`mobile`)
@@ -130,7 +129,7 @@ Not in CI today — run locally when mobile changes.
 When `packages/schemas`, `packages/helpers`, or `packages/translations` change, typecheck **downstream** workspaces that import them:
 
 ```bash
-npm run check-types -w api
+npm run check-types -w apps/api
 npm run check-types -w webapp
 npm run check-types -w mobile
 npm run check-types -w chrome-extension

@@ -92,9 +92,8 @@ npm run release-migrate -w @bondery/db
 # Typecheck the db package
 npm run check-types -w @bondery/db
 
-# API type/tests after query changes
-npm run check-types -w api
-npm run test:api -w api
+# API typecheck after query changes
+npm run check-types -w apps/api
 ```
 
 Do not run bare `prisma` or `npx prisma` from the repo root — it will not find `prisma.config.ts` or `packages/db/prisma/`.

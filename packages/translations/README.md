@@ -103,7 +103,7 @@ npm run i18n:types            # regenerate src/generated/i18next-cli/*.d.ts
 npm run check-i18n-structure  # Bondery manifest / Languages exonym / forbidden-pattern rules
 ```
 
-CI runs `npm run check-i18n` (structure, API errors, types, usage, lint). Use `npm run i18n:status` locally only — it runs i18next-cli against the flat mirror and is not authoritative for namespace-scoped hooks.
+CI runs `npm run check-i18n` (structure, types, usage, lint). API error translations are validated by `npm run check-api-errors`. Use `npm run i18n:status` locally only — it runs i18next-cli against the flat mirror and is not authoritative for namespace-scoped hooks.
 
 Suppress intentional literals with `i18next-instrument-ignore` or `i18next-instrument-ignore-next-line` in source.
 

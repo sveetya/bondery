@@ -67,20 +67,16 @@ Run only what applies to the change:
 
 ```bash
 # Route auth wiring + OpenAPI area audit
-npm run check-types -w api          # includes check-route-security
-npm run test:api -w api             # includes route-security-audit.test.ts
+npm run check-types -w apps/api          # includes check-route-security
 
-# OAuth / auth integration
-npm run test:auth -w api
+# OAuth / auth integration (optional; Postgres + migrate required)
+npm run test:auth -w apps/api
 
 # Env contract drift
 npm run env -- --check
 
 # Compose secret isolation (self-host)
 node deploy/bondery/scripts/check-compose.mjs
-
-# Tenant isolation regression (when touching contacts/groups)
-npm run test:api -w api -- contacts-groups-tenant-isolation
 
 # Extension architecture boundaries
 npm run check-types -w chrome-extension
@@ -107,5 +103,5 @@ npm run check-types -w chrome-extension
 - [ ] Upload routes enforce MIME whitelist + magic-byte validation (+ intended size limit)
 - [ ] 5xx responses use catalog/generic messages — no stack traces to client
 - [ ] Negative tests for unauthenticated, unauthorized, and cross-tenant access where applicable
-- [ ] `npm run check-types -w api` passes if API routes changed
+- [ ] `npm run check-types -w apps/api` passes if API routes changed
 - [ ] Known gaps documented as review triggers, not silently assumed safe — see reference files

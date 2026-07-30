@@ -82,7 +82,7 @@ Schemas live in `@bondery/schemas`. Error catalog codes only (snake_case).
 **Rules:**
 - Never return `error.stack` or internal details to clients
 - Use catalog codes via `internal()`, `unauthorized()`, etc. (`http-errors.ts`)
-- CI: `check-route-errors`, `check-no-flat-error-responses`, `check-i18n-api-errors`
+- CI: `check-route-errors`, `check-no-flat-error-responses`, `check-api-errors-translations`
 
 Client display: `bondery-ux` → `references/common/api-errors-display.md`.
 

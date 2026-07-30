@@ -66,3 +66,4 @@ export const API_KEY_PERMISSIONS = ["read", "full"] as const;
 
 export * from "#constants/dev-ports.js";
 export * from "#constants/import.js";
+export * from "#constants/license.js";

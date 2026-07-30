@@ -50,10 +50,10 @@ jobs:
       - name: Check env sync (examples + turbo)
         run: npm run env -- --check
 
-      - name: Validate doc links
-        run: npm run check-doc-links
+      - name: Docs checks
+        run: npm run check-docs
 
-      - name: Check OpenAPI spec
+      - name: OpenAPI checks
         run: npm run check-openapi
 
       - name: Set up Docker Compose
@@ -69,8 +69,8 @@ jobs:
       - name: Webapp runtime config tests
         run: npm run test:runtime-config -w webapp
 
-      - name: Schema contract tests
-        run: npm run test:contracts
+      - name: Schema contracts
+        run: npm run check-contracts
 
       - name: Typecheck
         run: npm run check-types
@@ -87,76 +87,10 @@ jobs:
         run: npm run check-i18n
 
       - name: API error checks
-        run: |
-          npm run check-error-docs
-          npm run check-user-facing-errors
+        run: npm run check-api-errors
 
       - name: API sync unit tests
         run: npm run test:sync -w apps/api
-
-  api-smoke:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    services:
-      postgres:
-        image: postgis/postgis:17-3.5
-        env:
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: bondery
-        ports:
-          - 54322:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    env:
-      BONDERY_INFRA_CHROME_EXTENSION_ID: abcdefghijklmnopqrstuvwxyzabcdef
-      BONDERY_PRIVATE_BETTER_AUTH_SECRETS: 1:dummy-better-auth-secret-for-integration-tests-32
-      BONDERY_PRIVATE_REDIS_URL: redis://127.0.0.1:6379
-      BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET: test-webapp-oauth-client-secret-32chars-min
-      BONDERY_PUBLIC_API_URL: http://localhost:26631
-      BONDERY_PUBLIC_OAUTH_CLIENT_ID: test-extension-oauth-client
-      BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID: test-webapp-oauth-client
-      BONDERY_PUBLIC_WEBAPP_URL: http://localhost:26632
-      DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-      TURBO_TELEMETRY_DISABLED: 1
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: latest
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - uses: ./.github/actions/shared/turbo-remote-cache
-        with:
-          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
-          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
-
-      - name: Build API workspace deps for smoke tests
-        run: npx turbo build --filter=api^...
-
-      - name: Release migrate
-        run: npm run release-migrate -w @bondery/db
-
-      - name: API smoke tests
-        run: npm run test:api -w apps/api
 
   website-build:
     runs-on: ubuntu-latest

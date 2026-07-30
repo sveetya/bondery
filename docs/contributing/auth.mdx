@@ -97,7 +97,7 @@ Use `db:migrate:deploy` to apply existing migrations locally. Reserve `db:migrat
 
 ```bash
 npm run env
-npm run provision-oauth-clients:dev -w api
+npm run provision-oauth-clients:dev -w apps/api
 ```
 
 `provision-oauth-clients` upserts `OauthClient` rows for the webapp and extension, and links them to the API resource. Re-run it whenever you change OAuth client ids, secrets, redirect URIs, or extension ID.
@@ -108,7 +108,7 @@ npm run provision-oauth-clients:dev -w api
 ### Verify
 
 ```bash
-npm run test:auth -w api
+npm run test:auth -w apps/api
 ```
 
 Requires Postgres and Redis running with migrations and provisioning complete. Starts the API in-process and exercises the full authorization-code + PKCE flow, including Postgres fallback when session keys are absent from Redis (`bondery:auth:*`).
@@ -144,7 +144,7 @@ Run migrations from the repo root with the `@bondery/db` workspace script (it lo
 
 ### Redirect URI mismatch (Chrome extension)
 
-Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision-oauth-clients:dev -w api`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
+Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision-oauth-clients:dev -w apps/api`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
 
 ### CORS blocked on `sign-in/social` with `200 (OK)` but no `Access-Control-Allow-Origin`
 

@@ -157,4 +157,4 @@ if (failed) {
   process.exit(1);
 }
 
-console.log("\nBondery i18n rules check passed.");
+console.log("\ncheck-i18n-structure passed.");

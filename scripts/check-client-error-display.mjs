@@ -1,7 +1,7 @@
 /**
  * Ban raw error.message in user-facing notification UI in webapp + mobile.
  *
- * Usage: node scripts/check-user-facing-errors.mjs
+ * Usage: node scripts/check-client-error-display.mjs (npm run check-client-error-display)
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
@@ -64,11 +64,11 @@ for (const root of targets) {
 }
 
 if (violations.length > 0) {
-  console.error("check-user-facing-errors: violations found:\n");
+  console.error("check-client-error-display: violations found:\n");
   for (const violation of violations) {
     console.error(`  - ${violation}`);
   }
   process.exit(1);
 }
 
-console.log("check-user-facing-errors: OK");
+console.log("check-client-error-display: OK");

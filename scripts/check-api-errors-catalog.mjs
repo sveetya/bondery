@@ -1,7 +1,7 @@
 /**
  * Fail CI when any catalog code lacks a docs page on the website.
  *
- * Usage: node scripts/check-error-docs.mjs
+ * Usage: node scripts/check-api-errors-catalog.mjs (npm run check-api-errors-catalog)
  */
 
 import { existsSync } from "node:fs";
@@ -39,11 +39,13 @@ if (!existsSync(join(errorsDocsRoot, "page.tsx"))) {
 }
 
 if (violations.length > 0) {
-  console.error("check-error-docs: violations found:\n");
+  console.error("check-api-errors-catalog: violations found:\n");
   for (const violation of violations) {
     console.error(`  - ${violation}`);
   }
   process.exit(1);
 }
 
-console.log(`check-error-docs: OK (${API_ERROR_CODES.length} codes served by dynamic route)`);
+console.log(
+  `check-api-errors-catalog: OK (${API_ERROR_CODES.length} codes served by dynamic route)`,
+);

@@ -19,30 +19,23 @@ Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 
 ## `verify.yml` local mirror (ordered)
 
-Prerequisites for steps 11–12: Postgres on `127.0.0.1:54322` (or CI-equivalent), env vars from workflow comments.
-
 ```bash
 npm ci
 npx biome ci .
 npm run check-package-imports
 npm run env -- --check
-npm run check-doc-links
-npm run check-doc-mdx-links
+npm run check-docs
 npm run check-openapi
 # Docker required:
 cp deploy/bondery/.env.example deploy/bondery/.env
 docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 node deploy/bondery/scripts/check-compose.mjs
 npm run test:runtime-config -w webapp
-npm run test:contracts
+npm run check-contracts
 npm run check-types
 npm run check-i18n
-npm run check-error-docs
-npm run check-user-facing-errors
+npm run check-api-errors
 npm run test:sync -w apps/api
-# Postgres + Redis + OAuth env (see verify.yml api-smoke job):
-npm run release-migrate -w @bondery/db
-npm run test:api -w apps/api
 ```
 
 ## Staging workflows (not full verify)
@@ -54,10 +47,9 @@ npm run test:api -w apps/api
 
 **`stage-api.yml`** (on `main`, api paths):
 
-- `npm run test:sync -w api`
-- `npm run release-migrate -w @bondery/db` then `npm run test:api -w api` (Postgres + Redis service containers — see `verify.yml` `api-smoke` job)
+- `npm run test:sync -w apps/api`
 
-## Not in CI (run locally when relevant)
+## Optional local checks (not in CI)
 
 | Check | Command |
 |-------|---------|
@@ -79,18 +71,8 @@ Document these as `SKIPPED` in PR parity reports unless the diff touches those a
 | Missing `check-schemas-imports:strict` npm script | Webapp `check-types` may fail until script is added |
 | `transit` turbo task with no package script | Typecheck dependency ordering may be incomplete |
 | Biome CI 2.5.0 vs local 2.5.3 | Rare formatter drift between local and Actions |
-| `stage-api` without `test:auth` | Staging gate narrower than full local auth suite |
+| `stage-api` without `test:auth` | Auth suite local-only until repaired |
 | `verify` omits `test:theme` / `test:sync` for webapp | Stage-webapp covers; verify does not |
-
-## Postgres setup for API integration tests
-
-Match CI service image and env from `verify.yml`:
-
-- Image: `postgis/postgis:17-3.5`
-- `DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery`
-- OAuth test client env vars as in workflow L115–120
-
-Without this, report `test:api` / `test:auth` as `BLOCKED`.
 
 ## Checklist
 

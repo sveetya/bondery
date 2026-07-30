@@ -1,6 +1,6 @@
 // Verifies committed OpenAPI spec is fresh (run generate-openapi first) and meets doc quality rules.
 //
-// Usage: npm run check-openapi -w apps/api
+// Usage: npm run check-openapi-spec -w apps/api
 
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -117,4 +117,4 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log("check-openapi: ok");
+console.log("check-openapi-spec: ok");

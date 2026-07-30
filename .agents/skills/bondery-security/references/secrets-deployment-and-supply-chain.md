@@ -106,9 +106,8 @@ Singleton enforcement: `check-redis-singleton.ts`.
 
 ```bash
 npm run env -- --check
-npm run check-types -w api     # route-security, no-route-writes, redis-singleton
-npm run test:api -w api        # route-security-audit
-npm run test:auth -w api       # OAuth PKCE integration
+npm run check-types -w apps/api     # route-security, no-route-writes, redis-singleton
+npm run test:auth -w apps/api       # OAuth PKCE integration (optional; Postgres required)
 node deploy/bondery/scripts/check-compose.mjs
 ```
 

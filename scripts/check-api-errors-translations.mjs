@@ -1,7 +1,7 @@
 /**
  * Fail CI when catalog codes are missing from common.errors.api in en/cs/de.
  *
- * Usage: node scripts/check-api-error-translations.mjs (npm run check-i18n-api-errors)
+ * Usage: node scripts/check-api-errors-translations.mjs (npm run check-api-errors-translations)
  */
 
 import { readFileSync } from "node:fs";
@@ -28,7 +28,7 @@ for (const locale of locales) {
 }
 
 if (violations.length > 0) {
-  console.error("check-i18n-api-errors: violations found:\n");
+  console.error("check-api-errors-translations: violations found:\n");
   for (const violation of violations) {
     console.error(`  - ${violation}`);
   }
@@ -36,5 +36,5 @@ if (violations.length > 0) {
 }
 
 console.log(
-  `check-i18n-api-errors: OK (${API_ERROR_CODES.length} codes × ${locales.length} locales)`,
+  `check-api-errors-translations: OK (${API_ERROR_CODES.length} codes × ${locales.length} locales)`,
 );

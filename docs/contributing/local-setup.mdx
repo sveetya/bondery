@@ -81,7 +81,7 @@ The API dev server runs migrations on boot. Use these when you author schema cha
 | `npm run db:migrate:dev -w @bondery/db` | Author new migrations interactively (requires shadow DB with PostGIS) |
 | `npm run db:studio -w @bondery/db` | Open Prisma Studio against `DATABASE_URL` |
 | `npm run db:functions -w @bondery/db` | Apply raw SQL functions (included in dev bootstrap) |
-| `npm run provision-oauth-clients:dev -w api` | Upsert first-party OAuth clients (included in dev bootstrap) |
+| `npm run provision-oauth-clients:dev -w apps/api` | Upsert first-party OAuth clients (included in dev bootstrap) |
 
 For a full auth walkthrough, see [Authentication](./auth.mdx).
 
