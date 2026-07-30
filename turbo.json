@@ -87,6 +87,11 @@
     "npm_package_version"
   ],
   "tasks": {
+    "@bondery/db#build": {
+      "dependsOn": ["db:generate", "^build"],
+      "env": ["DATABASE_URL"],
+      "outputs": ["dist/**", ".cache/tsconfig.tsbuildinfo"]
+    },
     "api#build": {
       "dependsOn": ["^build"],
       "env": [
@@ -322,6 +327,12 @@
     "compile": {
       "dependsOn": ["^compile"],
       "outputs": ["dist/**"]
+    },
+    "db:generate": {
+      "cache": true,
+      "env": ["DATABASE_URL"],
+      "inputs": ["prisma/**", "prisma.config.ts"],
+      "outputs": ["src/generated/**"]
     },
     "dev": {
       "cache": false,

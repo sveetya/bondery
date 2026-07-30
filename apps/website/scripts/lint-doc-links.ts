@@ -1,7 +1,13 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import GithubSlugger from "github-slugger";
-import { type FileObject, printErrors, scanURLs, validateFiles } from "next-validate-link";
+import {
+  type FileObject,
+  printErrors,
+  scanURLs,
+  type ValidateResult,
+  validateFiles,
+} from "next-validate-link";
 import { glob } from "tinyglobby";
 
 const DOCS_DIR = join(process.cwd(), "../../docs");
@@ -131,7 +137,7 @@ async function checkLinks() {
     baseDir: DOCS_DIR,
     checkRelativePaths: "exists",
     checkRelativeUrls: true,
-    determinatePathname: (pathname) => {
+    determinatePathname: (pathname: string) => {
       if (pathname.endsWith(".mdx")) {
         return "relative-file-path";
       }
@@ -147,7 +153,10 @@ async function checkLinks() {
 
   printErrors(results, true);
 
-  const errorCount = results.reduce((count, result) => count + result.errors.length, 0);
+  const errorCount = results.reduce(
+    (count: number, result: ValidateResult) => count + result.errors.length,
+    0,
+  );
   if (errorCount === 0) {
     console.log(`Docs MDX links OK: ${files.length} files, ${scanned.urls.size} routes.`);
   }

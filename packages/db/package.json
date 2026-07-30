@@ -52,7 +52,6 @@
     "db:migrate:dev": "dotenv -e .env.local -- prisma migrate dev",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "db:validate": "dotenv -e .env.local -- prisma validate",
-    "postinstall": "prisma generate",
     "release-migrate": "tsx scripts/release-migrate.ts",
     "test": "tsx --test src/**/*.test.ts"
   },

@@ -31,8 +31,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getReadingTime } from "@bondery/helpers";
 import { loadEnvConfig } from "@next/env";
+import { getCategoryConfig } from "@/lib/blog/categories";
 import { allPostMeta } from "../content/blog/metadata";
-import { getCategoryConfig } from "../src/app/blog/_lib/categories";
 import { postDiscordAnnouncement } from "./lib/discord";
 import { postRedditAnnouncement, type RedditConfig } from "./lib/reddit";
 

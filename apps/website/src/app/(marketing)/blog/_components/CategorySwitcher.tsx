@@ -2,8 +2,8 @@
 
 import { Tabs, Tooltip } from "@mantine/core";
 import Link from "next/link";
+import { BLOG_CATEGORIES, CATEGORY_ICONS } from "@/lib/blog/categories";
 import type { PostCategory } from "../_lib";
-import { BLOG_CATEGORIES, CATEGORY_ICONS } from "../_lib";
 
 type CategorySwitcherProps = {
   activeCategory: PostCategory;

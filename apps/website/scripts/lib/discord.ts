@@ -1,5 +1,5 @@
-import { getCategoryConfig } from "@/app/blog/_lib/categories";
 import type { PostMeta } from "@/app/blog/_lib/types";
+import { getCategoryConfig } from "@/lib/blog/categories";
 
 /** Discord embed color — Bondery brand primary (#a34bcb as decimal). */
 const BRAND_COLOR = 0xa34bcb;

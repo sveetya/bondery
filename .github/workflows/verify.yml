@@ -70,9 +70,10 @@ jobs:
         run: npm run check-types
 
       - name: Build API bootstrap CLIs
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: |
-          npm run build -w @bondery/db
-          npm run build -w api
+          npx turbo build --filter=@bondery/db --filter=api
           test -f apps/api/dist/cli/release-migrate.js
           test -f apps/api/dist/cli/ensure-storage-buckets.js
 
@@ -145,6 +146,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Build db package for release-migrate hooks
+        run: npx turbo build --filter=@bondery/db
 
       - name: Release migrate
         run: npm run release-migrate -w @bondery/db

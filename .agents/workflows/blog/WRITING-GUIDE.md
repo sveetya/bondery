@@ -21,7 +21,7 @@ apps/website/content/blog/<category>/<slug>.mdx
 
 - **Slug** = URL-safe filename, lowercase, hyphens only (e.g. `my-new-feature.mdx`)
 - **Category** must match an existing folder: `updates`, `tech`, or `bonds`
-- To add a new category, add an entry to `BLOG_CATEGORY_CONFIGS` in `src/app/blog/_lib/categories.ts` (includes the label, icon, and Discord thread name), then add the slug to the `PostCategory` union in `src/app/blog/_lib/types.ts`
+- To add a new category, add an entry to `BLOG_CATEGORY_CONFIGS` in `src/lib/blog/categories.ts` (includes the label, icon, and Discord thread name), then add the slug to the `PostCategory` union in `src/app/blog/_lib/types.ts`
 
 ## 2. Add the metadata sidecar
 
@@ -35,8 +35,8 @@ This file contains the `postMeta` object as plain TypeScript (no Markdown). Keep
 
 ```ts
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
-import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
-import { techCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { updatesCategoryConfig } from "../../../src/lib/blog/categories";
+import { techCategoryConfig } from "../../../src/lib/blog/categories";
 import { sveetya } from "../../../src/data/team";
 
 export const postMeta: PostMeta = {
@@ -292,8 +292,8 @@ For each new post, create two files.
 
 ```ts
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
-import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
-import { techCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { updatesCategoryConfig } from "../../../src/lib/blog/categories";
+import { techCategoryConfig } from "../../../src/lib/blog/categories";
 import { sveetya } from "../../../src/data/team";
 
 export const postMeta: PostMeta = {

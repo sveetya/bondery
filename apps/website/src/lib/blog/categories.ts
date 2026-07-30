@@ -1,6 +1,6 @@
 import { type Icon, IconCpu, IconHistory, IconTopologyStar } from "@tabler/icons-react";
 
-import type { PostCategory } from "./types";
+import type { PostCategory } from "@/lib/blog/types";
 
 /** Full configuration for a blog category. */
 export type BlogCategoryConfig = {
@@ -23,8 +23,8 @@ export type BlogCategoryConfig = {
 /**
  * Single source of truth for all blog category definitions.
  * When adding a new category:
- *   1. Add it to the PostCategory union in types.ts.
- *   2. Add a BlogCategoryConfig entry here.
+ *   1. Add it to the PostCategory union in src/app/blog/_lib/types.ts.
+ *   2. Add a BlogCategoryConfig entry in src/lib/blog/categories.ts.
  *   3. Create the matching folder under content/blog/<slug>/.
  */
 export const updatesCategoryConfig: BlogCategoryConfig = {
@@ -43,7 +43,7 @@ export const techCategoryConfig: BlogCategoryConfig = {
   emoji: "🔧",
   icon: IconCpu,
   label: "Tech",
-  redditFlairId: "",
+  redditFlairId: "ae9b6d5e-8c29-11f1-88c8-92e274031672",
   slug: "tech",
 };
 
@@ -68,9 +68,19 @@ export function getCategoryConfig(slug: string): BlogCategoryConfig | undefined 
   return BLOG_CATEGORY_CONFIGS.find((c) => c.slug === slug);
 }
 
-// ---------------------------------------------------------------------------
-// Backward-compatible shape — keeps existing callers working without changes.
-// ---------------------------------------------------------------------------
+/** Display title for blog index / category pages (metadata + OG images). */
+export function getBlogCategoryTitle(category: string): string {
+  if (category === "all") {
+    return "Blog";
+  }
+
+  const config = getCategoryConfig(category);
+  if (config) {
+    return `${config.label} Blog`;
+  }
+
+  return `${category.charAt(0).toUpperCase()}${category.slice(1)} Blog`;
+}
 
 /** All categories including the virtual "all" filter. */
 export const BLOG_CATEGORIES: PostCategory[] = ["all", ...BLOG_CATEGORY_CONFIGS.map((c) => c.slug)];

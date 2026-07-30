@@ -1,5 +1,5 @@
-import type { ComponentType } from "react";
-import type { PostMeta } from "@/app/blog/_lib/types";
+import type { MDXContent } from "mdx/types";
+import type { PostMeta } from "@/lib/blog/types";
 
 import GoingSupaless, { postMeta as goingSupaless } from "./tech/going-supaless.mdx";
 import April2026Release, { postMeta as april2026Release } from "./updates/april-2026-release.mdx";
@@ -20,7 +20,7 @@ export const allPosts: PostMeta[] = [
  * Maps "category/slug" to the MDX component.
  * Add a new entry here whenever you add a post to `allPosts`.
  */
-export const postComponents: Record<string, ComponentType> = {
+export const postComponents: Record<string, MDXContent> = {
   [`${goingSupaless.category}/${goingSupaless.slug}`]: GoingSupaless,
   [`${july2026Release.category}/${july2026Release.slug}`]: July2026Release,
   [`${april2026Release.category}/${april2026Release.slug}`]: April2026Release,

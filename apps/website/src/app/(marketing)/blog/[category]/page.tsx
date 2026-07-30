@@ -2,9 +2,10 @@ import { formatMetadataTitle } from "@bondery/helpers";
 import { Container, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BLOG_CATEGORIES, getBlogCategoryTitle } from "@/lib/blog/categories";
 import { BlogCard, CategorySwitcher } from "../_components";
 import type { PostCategory } from "../_lib";
-import { BLOG_CATEGORIES, getBlogCategoryTitle, getPostsByCategory } from "../_lib";
+import { getPostsByCategory } from "../_lib";
 
 type Props = {
   params: Promise<{ category: string }>;

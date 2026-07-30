@@ -1,6 +1,6 @@
 import { AnchorLink } from "@bondery/mantine-next";
 import { Flex, Paper, Text, ThemeIcon, Title } from "@mantine/core";
-import { CATEGORY_ICONS } from "../_lib/categories";
+import { CATEGORY_ICONS } from "@/lib/blog/categories";
 import type { PostMeta } from "../_lib/types";
 
 type BlogCardProps = Pick<PostMeta, "title" | "date" | "description" | "category" | "slug">;

@@ -1,6 +1,6 @@
-import { techCategoryConfig } from "../../../src/app/blog/_lib/categories";
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
 import { sveetya } from "../../../src/data/team";
+import { techCategoryConfig } from "../../../src/lib/blog/categories";
 
 /**
  * Metadata for the "Going Supaless" infrastructure blog post.

@@ -1,6 +1,6 @@
-import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
 import { sveetya } from "../../../src/data/team";
+import { updatesCategoryConfig } from "../../../src/lib/blog/categories";
 
 /**
  * Metadata for the April 2026 (v1.4.0) monthly release blog post.

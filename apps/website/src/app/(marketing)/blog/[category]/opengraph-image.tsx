@@ -1,5 +1,5 @@
 import { OgTitled } from "@bondery/branding/og";
-import { BLOG_CATEGORIES, getBlogCategoryTitle } from "@/app/(marketing)/blog/_lib";
+import { BLOG_CATEGORIES, getBlogCategoryTitle } from "@/lib/blog/categories";
 import { createOgImageResponse, OG_IMAGE_CONTENT_TYPE } from "@/lib/og/imageResponse";
 
 export const contentType = OG_IMAGE_CONTENT_TYPE;

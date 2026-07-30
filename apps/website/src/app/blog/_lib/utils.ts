@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { MDXContent } from "mdx/types";
 import { allPosts, postComponents } from "../../../../content/blog/posts";
 import type { PostCategory, PostMeta } from "./types";
 
@@ -30,6 +30,6 @@ export function getAllSlugs(): { category: string; slug: string }[] {
 }
 
 /** Returns the MDX component for a given post, or undefined if not found. */
-export function getPostComponent(category: string, slug: string): ComponentType | undefined {
+export function getPostComponent(category: string, slug: string): MDXContent | undefined {
   return postComponents[`${category}/${slug}`];
 }
