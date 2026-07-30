@@ -31,7 +31,9 @@ export function ContactPhotoUploadButton({
 
   const handleOpenUploadModal = () => {
     openPhotoUploadModal({
-      uploadFile: (file) => uploadContactPhotoMutation.mutateAsync(file),
+      uploadFile: async (file) => {
+        await uploadContactPhotoMutation.mutateAsync(file);
+      },
       variant: "contact",
     });
   };
