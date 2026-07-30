@@ -33,6 +33,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: "icons.duckduckgo.com",
+        pathname: "/ip3/**",
+        protocol: "https",
+      },
+    ],
+  },
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   // Outbound redirects (status, help, docs, login, auth/callback, oauth/consent, app)
   // live in src/app/**/route.ts so they can import @bondery/helpers.

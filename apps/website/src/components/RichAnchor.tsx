@@ -3,6 +3,7 @@
 import { AnchorLink } from "@bondery/mantine-next";
 import { Anchor, type AnchorProps, VisuallyHidden } from "@mantine/core";
 import { IconExternalLink, IconWorld } from "@tabler/icons-react";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import { getFaviconUrl } from "@/lib/favicon-url";
@@ -31,7 +32,7 @@ function LinkFavicon({ host, src }: { host: string; src: string }) {
   }
 
   return (
-    <img
+    <Image
       alt=""
       aria-hidden
       height={16}
@@ -41,6 +42,7 @@ function LinkFavicon({ host, src }: { host: string; src: string }) {
       }}
       src={src}
       style={{ borderRadius: 2, flexShrink: 0 }}
+      unoptimized
       width={16}
     />
   );
