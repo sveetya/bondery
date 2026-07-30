@@ -30,7 +30,7 @@ async function probeApiServer(): Promise<boolean> {
   const timeout = setTimeout(() => controller.abort(), STATUS_PROBE_TIMEOUT_MS);
 
   try {
-    const response = await fetch(`${API_URL}/status`, {
+    const response = await fetch(`${API_URL}/health/live`, {
       signal: controller.signal,
     });
 

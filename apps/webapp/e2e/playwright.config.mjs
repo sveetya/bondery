@@ -118,7 +118,7 @@ export default defineConfig({
       env: e2ePublicEnv,
       reuseExistingServer,
       timeout: 180_000,
-      url: `${E2E_API_URL}/status`,
+      url: `${E2E_API_URL}/health/live`,
     },
     {
       command: "npm run dev -w webapp",
@@ -126,7 +126,7 @@ export default defineConfig({
       env: e2ePublicEnv,
       reuseExistingServer,
       timeout: 180_000,
-      url: `${E2E_WEBAPP_URL}/api/status`,
+      url: `${E2E_WEBAPP_URL}/api/health/live`,
     },
   ],
   workers: 1,

@@ -13,7 +13,7 @@ npx wxt
 
 Load `dist/chrome-mv3-dev` as unpacked extension in Chrome.
 
-For full setup instructions see [docs/contributing/local-setup.md](../../docs/contributing/local-setup.md).
+For full setup instructions see [docs/contributing/local-setup.mdx](../../docs/contributing/local-setup.mdx).
 
 ## OAuth login error (redirect URI mismatch)
 

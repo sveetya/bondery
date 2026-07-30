@@ -1,6 +1,6 @@
 # Bondery ops stack (marketing website)
 
-**Bondery production only** — not part of the self-host product. Self-hosters use [`deploy/bondery`](../bondery/) (api + webapp + redis + bundled Supabase).
+**Bondery production only** — not part of the self-host product. Self-hosters use [`deploy/bondery`](../bondery/) (api + webapp + redis + Postgres + SeaweedFS).
 
 Docs: [docs/deploy/dokploy.md](../../docs/deploy/dokploy.md)
 
@@ -8,7 +8,7 @@ Docs: [docs/deploy/dokploy.md](../../docs/deploy/dokploy.md)
 
 | Service | Image | Port | Notes |
 |---------|-------|------|--------|
-| `website` | `ghcr.io/usebondery/website:production` | 26630 | Floating CD channel; liveness `/api/live`, readiness `/api/ready` |
+| `website` | `ghcr.io/usebondery/website:production` | 26630 | Floating CD channel; liveness `/health/live`, readiness `/health/ready` |
 
 ## Continuous deploy
 
@@ -39,8 +39,8 @@ Without Traefik (host port):
 ```bash
 cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
-curl -s http://localhost:26630/api/live
-curl -s http://localhost:26630/api/ready
+curl -s http://localhost:26630/health/live
+curl -s http://localhost:26630/health/ready
 ```
 
 Policy lint:
@@ -54,7 +54,7 @@ node deploy/ops/scripts/check-compose.mjs
 1. Wait until `ghcr.io/usebondery/website:production` exists (first successful `deploy-website` run).
 2. **Stop** the old Nixpacks/Railpack website Dokploy app (avoid Traefik `Host()` collision on `usebondery.com`).
 3. Create this Compose app, set `.env` domains, deploy.
-4. Smoke: `/api/live`, `/api/ready`, home page, blog.
+4. Smoke: `/health/live`, `/health/ready`, home page, blog.
 5. Optionally set `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` for automatic redeploys after release pushes.
 
 ## Security

@@ -4,12 +4,12 @@ import { config } from "../../config";
 import { updateActionContextIndicator } from "./badge";
 
 /**
- * Fetches the minimum required extension version from the API /status endpoint
+ * Fetches the minimum required extension version from the API extension manifest
  * and stores whether an update is required in browser.storage.local.
  */
 export async function checkVersionCompatibility(): Promise<void> {
   try {
-    const response = await fetch(`${config.apiUrl}/status`);
+    const response = await fetch(`${config.apiUrl}/extension/manifest`);
     if (!response.ok) {
       return;
     }

@@ -14,7 +14,7 @@ const EXTENSION_UPDATE_ID = "extension-update";
 
 /**
  * Detects the installed Chrome extension version on mount, compares it
- * against the minimum version returned by the API /status endpoint,
+ * against the minimum version returned by the API extension manifest endpoint,
  * and shows a persistent red notification via `statusNotificationsStore`
  * when the extension is outdated.
  *
@@ -33,7 +33,7 @@ export function ExtensionUpdateNotificationManager() {
       }
 
       try {
-        const res = await clientApiFetch("/api/status");
+        const res = await clientApiFetch("/api/extension/manifest");
         if (!res.ok) {
           return;
         }

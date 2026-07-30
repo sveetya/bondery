@@ -30,15 +30,15 @@ Without Traefik (host ports):
 ```bash
 cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
-curl -s http://localhost:26631/status
-curl -s http://localhost:26632/api/live
+curl -s http://localhost:26631/health/live
+curl -s http://localhost:26632/health/live
 ```
 
 ### Services
 
 | Service | Image | Port | Notes |
 |---------|-------|------|--------|
-| `webapp` | `ghcr.io/usebondery/webapp` | 26632 | Liveness `/api/live` |
+| `webapp` | `ghcr.io/usebondery/webapp` | 26632 | Liveness `/health/live` |
 | `api` | `ghcr.io/usebondery/api` | 26631 | Better Auth + Prisma; waits for Redis + Postgres + SeaweedFS |
 | `redis` | `redis:7.4-alpine` | internal | AOF + volume `redis-data` |
 | `db` | `postgis/postgis:17-3.5` | internal | Named volume `postgres-data` |

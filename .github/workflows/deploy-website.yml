@@ -110,12 +110,12 @@ jobs:
           docker compose --env-file .env.smoke pull website
           docker compose --env-file .env.smoke up -d website
 
-      - name: Wait for website /api/live and /api/ready
+      - name: Wait for website /health/live and /health/ready
         working-directory: deploy/ops
         run: |
           for i in $(seq 1 40); do
-            if curl -sf http://127.0.0.1:26630/api/live >/dev/null \
-              && curl -sf http://127.0.0.1:26630/api/ready >/dev/null; then
+            if curl -sf http://127.0.0.1:26630/health/live >/dev/null \
+              && curl -sf http://127.0.0.1:26630/health/ready >/dev/null; then
               echo "website healthy"
               exit 0
             fi

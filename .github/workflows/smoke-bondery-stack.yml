@@ -71,12 +71,12 @@ jobs:
           cp docker-compose.override.yml.example docker-compose.override.yml
           docker compose --env-file .env.smoke up -d redis webapp
 
-      - name: Wait for webapp /api/live and /api/ready
+      - name: Wait for webapp /health/live and /health/ready
         working-directory: deploy/bondery
         run: |
           for i in $(seq 1 30); do
-            if curl -sf http://127.0.0.1:26632/api/live >/dev/null \
-              && curl -sf http://127.0.0.1:26632/api/ready >/dev/null; then
+            if curl -sf http://127.0.0.1:26632/health/live >/dev/null \
+              && curl -sf http://127.0.0.1:26632/health/ready >/dev/null; then
               echo "webapp healthy"
               exit 0
             fi

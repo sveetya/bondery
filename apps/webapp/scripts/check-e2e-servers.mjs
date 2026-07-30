@@ -23,16 +23,16 @@ function formatProbe(label, url, result) {
   return `${label}: ${url} HTTP ${result.status}${result.ok ? " OK" : ""}`;
 }
 
-const [api, webapp] = await Promise.all([
-  probe(`${apiUrl}/status`),
-  probe(`${webappUrl}/api/status`),
+const [api, webappBff] = await Promise.all([
+  probe(`${apiUrl}/health/live`),
+  probe(`${webappUrl}/api/health/live`),
 ]);
 
-if (!api.reachable || !webapp.reachable) {
+if (!api.reachable || !webappBff.reachable) {
   console.error(`
 E2E cannot reach dev servers:
-  ${formatProbe("API", `${apiUrl}/status`, api)}
-  ${formatProbe("Webapp", `${webappUrl}/api/status`, webapp)}
+  ${formatProbe("API", `${apiUrl}/health/live`, api)}
+  ${formatProbe("Webapp BFF", `${webappUrl}/api/health/live`, webappBff)}
 
 Start the full stack (api + webapp):
   npm run dev:webapp-api
@@ -46,15 +46,15 @@ Or omit E2E_REUSE_SERVER=1 to let Playwright start servers.
 if (!api.ok) {
   console.error(`
 API is up but unhealthy:
-  ${formatProbe("API", `${apiUrl}/status`, api)}
+  ${formatProbe("API", `${apiUrl}/health/live`, api)}
 `);
   process.exit(1);
 }
 
-if (!webapp.ok) {
+if (!webappBff.ok) {
   console.error(`
-Webapp is up but /api/status failed (is the API reachable from the webapp BFF?):
-  ${formatProbe("Webapp", `${webappUrl}/api/status`, webapp)}
+Webapp is up but /api/health/live failed (is the API reachable from the webapp BFF?):
+  ${formatProbe("Webapp BFF", `${webappUrl}/api/health/live`, webappBff)}
 `);
   process.exit(1);
 }
