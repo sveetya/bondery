@@ -10,6 +10,7 @@
 // without needing a local .env file. None of these are used during spec generation.
 process.env.BONDERY_PUBLIC_API_URL ??= "http://localhost:26631";
 process.env.BONDERY_PUBLIC_WEBAPP_URL ??= "http://localhost:26632";
+process.env.BONDERY_PUBLIC_WEBSITE_URL ??= "http://localhost:26630";
 process.env.BONDERY_PUBLIC_STORAGE_URL ??= "http://127.0.0.1:8333";
 process.env.BONDERY_PRIVATE_S3_ENDPOINT ??= "http://127.0.0.1:8333";
 process.env.BONDERY_PRIVATE_S3_REGION ??= "eu-central-1";
@@ -24,6 +25,11 @@ process.env.BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET ??= "dummy";
 process.env.BONDERY_PRIVATE_BETTER_AUTH_SECRETS ??=
   "1:dummy-better-auth-secret-for-openapi-generation-32";
 process.env.BONDERY_PRIVATE_REDIS_URL ??= "redis://127.0.0.1:26636";
+process.env.BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID ??= "test-webapp-oauth-client";
+process.env.BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET ??=
+  "test-webapp-oauth-client-secret-32chars-min";
+process.env.BONDERY_PUBLIC_OAUTH_CLIENT_ID ??= "test-extension-oauth-client";
+process.env.BONDERY_INFRA_CHROME_EXTENSION_ID ??= "abcdefghijklmnopqrstuvwxyzabcdef";
 process.env.DATABASE_URL ??= "postgresql://dummy:dummy@127.0.0.1:5432/dummy";
 
 import { writeFileSync } from "node:fs";
