@@ -142,6 +142,14 @@ export type DeployExample = {
 /** Same shape as `DeployExample` — ops marketing stack (`deploy/ops/.env.example`). */
 export type OpsExample = DeployExample;
 
+/** Boot profile for starting a target without a `.env` file (OpenAPI gen, integration tests). */
+export type BootExample = {
+  /** Include in boot env even when not `requiredIn` for the environment (rare) */
+  include?: boolean;
+  /** Override when `exampleValue` is empty or a human placeholder */
+  value?: string;
+};
+
 export type ExampleProfile = "development" | "production" | "deploy" | "ops";
 
 export type EnvVarDef = {
@@ -158,6 +166,8 @@ export type EnvVarDef = {
   deployExample?: DeployExample;
   /** Ops marketing Compose operator example (`deploy/ops/.env.example`) */
   opsExample?: OpsExample;
+  /** Boot without `.env` (OpenAPI generation, API integration tests) */
+  boot?: BootExample;
   /** When false, omit from turbo cache env arrays (rare) */
   turboAffectsCache?: boolean;
 };
@@ -388,6 +398,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api")],
   },
   {
+    boot: { value: "test-extension-oauth-client" },
     canonical: "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
     deployExample: { group: "Chrome extension OAuth", include: true, value: "" },
     description:
@@ -399,6 +410,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api"), t("chrome-extension")],
   },
   {
+    boot: { value: "test-webapp-oauth-client" },
     canonical: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
     deployExample: { group: "Webapp OAuth", include: true, value: "" },
     description:
@@ -410,6 +422,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api"), t("webapp")],
   },
   {
+    boot: { value: "test-webapp-oauth-client-secret-32chars-min" },
     canonical: "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
     deployExample: { group: "Webapp OAuth", include: true, value: "" },
     description:
@@ -601,6 +614,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
 
   // --- API secrets ---
   {
+    boot: { value: "dummy-service-secret-for-boot-env-32chars" },
     canonical: "BONDERY_PRIVATE_SERVICE_SECRET",
     deployExample: {
       group: "Better Auth",

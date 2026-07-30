@@ -1,7 +1,15 @@
+export {
+  applyApiBootEnv,
+  applyTargetBootEnv,
+  getBootEnvVarNames,
+  getBootIncludeExtraVarNames,
+  resolveBootEnvValue,
+} from "#env/apply-boot-env.js";
 export type { EnvCheckConfig } from "#env/check-env.js";
 export { checkEnvVariables, parseEnvFile } from "#env/check-env.js";
 export {
   applyTransform,
+  type BootExample,
   DEPLOY_GROUP_GUIDES,
   DEPLOY_GROUP_ORDER,
   type DeployExample,

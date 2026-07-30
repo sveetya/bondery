@@ -69,7 +69,7 @@
     "check-route-security": "tsx scripts/check-route-security.ts",
     "check-types": "tsx scripts/check-api-schema-patterns.ts && tsx scripts/check-route-security.ts && tsx scripts/check-no-route-writes.ts && tsx scripts/check-redis-singleton.ts && tsx scripts/check-route-errors.ts && tsx scripts/check-no-flat-error-responses.ts && tsx scripts/check-lib-root.ts && tsx scripts/check-lib-imports.ts && node ../../scripts/tsc-native.mjs --noEmit",
     "dev": "npm run check-env && tsx watch --env-file=.env.development.local src/index.ts",
-    "generate-openapi": "tsx scripts/generate-openapi.ts",
+    "generate-openapi": "npm run build -w @bondery/helpers && tsx scripts/generate-openapi.ts",
     "provision-oauth-clients": "tsx scripts/provision-oauth-clients.ts",
     "provision-oauth-clients:dev": "tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts",
     "provision-platform-admins": "tsx scripts/provision-platform-admins.ts",

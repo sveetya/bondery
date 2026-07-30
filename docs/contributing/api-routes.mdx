@@ -145,7 +145,7 @@ The API separates **app assembly** from **runtime boot**:
 | `buildServer()` | [`apps/api/src/build-server.ts`](../../apps/api/src/build-server.ts) | `buildApp()` plus `onReady` (auth JWKS verify, sync wake) and `onClose` shutdown |
 | `registerAllRoutes()` | [`apps/api/src/routes/register-all.ts`](../../apps/api/src/routes/register-all.ts) | Ordered route mount table — add new route modules here |
 
-[`apps/api/scripts/generate-openapi.ts`](../../apps/api/scripts/generate-openapi.ts) imports `build-app.ts` directly so OpenAPI generation never loads `index.ts` side effects (auto-listen). New runtime startup hooks belong in `build-server.ts`, not `build-app.ts`.
+[`apps/api/scripts/generate-openapi.ts`](../../apps/api/scripts/generate-openapi.ts) imports `build-app.ts` directly so OpenAPI generation never loads `index.ts` side effects (auto-listen). New runtime startup hooks belong in `build-server.ts`, not `build-app.ts`. OpenAPI generation and API integration tests call `applyApiBootEnv()` from `@bondery/helpers/env` so no local `.env` is required — values come from the manifest boot profile (`boot.value` when `exampleValue` is empty or a placeholder).
 
 ### Redis
 
