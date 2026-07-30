@@ -5,7 +5,7 @@ GitHub requires workflow files to live directly in `.github/workflows/` (no subf
 ## Logical structure
 
 ```text
-verify.yml                 PR + main checks
+verify.yml                 PR + main checks (incl. path-filtered website-build)
 
 stage/
   api.yml                  -> stage-api.yml       main -> ghcr.io/usebondery/api:beta
@@ -25,6 +25,8 @@ smoke/
 shared/
   prepare-dockerignore/    -> .github/actions/shared/prepare-dockerignore/
   ghcr-login/              -> .github/actions/shared/ghcr-login/
+  turbo-remote-cache/      -> .github/actions/shared/turbo-remote-cache/
+  website-prune-build/     -> .github/actions/shared/website-prune-build/
   docker-build-push.yml    -> shared-docker-build-push.yml
   release-validate.yml     -> shared-release-validate.yml
   container-github-release.yml -> shared-container-github-release.yml
@@ -34,9 +36,9 @@ shared/
 
 | Prefix | Meaning | Trigger |
 |--------|---------|---------|
-| `verify` | Quality gates | PR, push to `main` |
+| `verify` | Quality gates | PR, push to `main` (website prod build path-filtered in `website-build` job) |
 | `stage-*` | Integration/staging images | Push to `main` (path-filtered) |
-| `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered) |
+| `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website is Docker build-push only |
 | `release-*` | Versioned production releases | Git tags `*-X.Y.Z` |
 | `shared-*` | Reusable workflows (not triggered directly) | `workflow_call` only |
 

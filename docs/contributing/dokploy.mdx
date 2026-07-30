@@ -74,7 +74,7 @@ Leave Dokploy **Isolated Deployments** off for the default Bondery app (one stac
 | Image | `ghcr.io/usebondery/website:production` (hardcoded floating channel) |
 | Domain | `BONDERY_INFRA_WEBSITE_DOMAIN` Traefik label → port `26630` |
 
-**CI:** Push to the `release` branch (path-filtered) runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml), which builds/pushes `:production` + `:sha-<short>`. Optional Dokploy redeploy webhook: secret `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`.
+**CI:** Path-filtered PRs and pushes to `main` run `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) (pruned production `next build`). Push to `release` runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) (Docker build-push → smoke → optional Dokploy webhook); image tags `:production` + `:sha-<short>`. Secret `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` for redeploy.
 
 ```bash
 BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com

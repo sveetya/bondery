@@ -27,51 +27,7 @@ permissions:
   packages: write
 
 jobs:
-  gate:
-    runs-on: ubuntu-latest
-    env:
-      TURBO_TELEMETRY_DISABLED: 1
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: latest
-          cache: npm
-
-      - uses: ./.github/actions/shared/turbo-remote-cache
-        with:
-          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
-          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
-
-      - name: Prune monorepo for website
-        run: npx turbo prune website --docker
-
-      - name: Install pruned dependencies
-        run: |
-          cp -r out/full/* out/json/
-          cp -r docs out/json/docs
-          cp -r scripts out/json/scripts
-          mkdir -p out/json/apps/api
-          cp apps/api/openapi.yaml out/json/apps/api/openapi.yaml
-          cd out/json
-          npm ci --ignore-scripts
-
-      - name: Build website
-        working-directory: out/json
-        env:
-          BONDERY_PUBLIC_WEBAPP_URL: https://app.example.com
-          BONDERY_PUBLIC_WEBSITE_URL: https://example.com
-        run: npx turbo build --filter=website
-
-      - name: Website typechecks
-        working-directory: out/json
-        run: npm run check-types -w website
-
   build-push:
-    needs: gate
     uses: ./.github/workflows/shared-docker-build-push.yml
     secrets: inherit
     with:

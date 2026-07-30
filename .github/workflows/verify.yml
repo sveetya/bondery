@@ -155,3 +155,44 @@ jobs:
 
       - name: Auth integration tests
         run: npm run test:auth -w apps/api
+
+  website-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            website:
+              - apps/website/**
+              - apps/api/openapi.yaml
+              - docs/**
+              - packages/**
+              - package.json
+              - package-lock.json
+              - turbo.json
+              - .dockerignore.website
+              - apps/website/Dockerfile
+              - .github/workflows/verify.yml
+              - .github/actions/shared/**
+
+      - uses: actions/setup-node@v7
+        if: steps.filter.outputs.website == 'true'
+        with:
+          node-version: latest
+          cache: npm
+
+      - uses: ./.github/actions/shared/turbo-remote-cache
+        if: steps.filter.outputs.website == 'true'
+        with:
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+
+      - uses: ./.github/actions/shared/website-prune-build
+        if: steps.filter.outputs.website == 'true'
