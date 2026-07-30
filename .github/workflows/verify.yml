@@ -45,8 +45,8 @@ jobs:
       - name: Check package imports
         run: npm run check-package-imports
 
-      - name: Build helpers for env CLI
-        run: npx turbo build --filter=@bondery/helpers
+      - name: Build API workspace deps for contract checks
+        run: npx turbo build --filter=api^...
 
       - name: Check env sync (examples + turbo)
         run: npm run env -- --check
