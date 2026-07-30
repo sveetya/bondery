@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-redis-singleton");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const srcRoot = join(__dirname, "..", "src");
 
@@ -41,12 +45,8 @@ for (const file of walk(srcRoot)) {
   }
 }
 
-if (violations.length > 0) {
-  console.error(
-    "Redis clients must be created in lib/data/redis.ts (health probes may use ephemeral clients):\n" +
-      violations.map((v) => `  - ${v}`).join("\n"),
-  );
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-redis-singleton: ok");
+check.ok();

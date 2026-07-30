@@ -89,8 +89,8 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "check-api-fetch": "tsx scripts/check-api-fetch-patterns.ts",
-    "check-api-fetch:strict": "cross-env CHECK_API_FETCH_STRICT=1 tsx scripts/check-api-fetch-patterns.ts",
+    "check-api-fetch": "tsx scripts/check-api-fetch.ts",
+    "check-api-fetch:strict": "cross-env CHECK_API_FETCH_STRICT=1 tsx scripts/check-api-fetch.ts",
     "check-env": "tsx scripts/check-env.ts",
     "check-modal-patterns": "tsx scripts/check-modal-patterns.ts",
     "check-modal-patterns:strict": "cross-env CHECK_MODAL_PATTERNS_STRICT=1 tsx scripts/check-modal-patterns.ts",

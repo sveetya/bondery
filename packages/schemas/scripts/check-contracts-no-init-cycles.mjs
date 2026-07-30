@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-contracts-no-init-cycles");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(__dirname, "..");
 const srcRoot = join(packageRoot, "src");
@@ -91,28 +95,22 @@ for (const file of collectSourceFiles(srcRoot)) {
   }
 }
 
-if (violations.length > 0) {
-  console.error("Runtime schema modules must not import API-only OpenAPI graphs:\n");
-  for (const { file, forbidden } of violations) {
-    console.error(`  - src/${file}: ${forbidden}`);
-  }
-  process.exit(1);
+for (const { file, forbidden } of violations) {
+  check.add(`src/${file}: ${forbidden}`);
 }
 
 const indexPath = join(srcRoot, "index.ts");
 const indexContent = readFileSync(indexPath, "utf8");
 if (indexContent.includes("#http/index.js")) {
-  console.error(
+  check.add(
     "src/index.ts must not re-export #http/index.js — use @bondery/schemas/http in API routes only.",
   );
-  process.exit(1);
 }
 
 if (indexContent.includes("#geocode/index.js")) {
-  console.error(
+  check.add(
     "src/index.ts must not re-export #geocode/index.js — use @bondery/schemas/geocode to avoid SSR init cycles.",
   );
-  process.exit(1);
 }
 
-console.log("check-no-init-cycles: ok");
+check.ok();

@@ -9,6 +9,10 @@ import { fileURLToPath } from "node:url";
 
 import localeCatalog from "@bondery/schemas/locale/supported-locales.json" with { type: "json" };
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-i18n-usage");
+
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(packageRoot, "../..");
 const localesRoot = path.join(packageRoot, "src/locales");
@@ -46,11 +50,8 @@ function namespaceFromGeneratedHook(hookSuffix) {
   return hookSuffix;
 }
 
-let failed = false;
-
 function fail(message) {
-  console.error(`FAIL: ${message}`);
-  failed = true;
+  check.add(message);
 }
 
 function walk(dir, acc = []) {
@@ -252,13 +253,8 @@ for (const [name] of Object.entries(manifest.namespaces)) {
 
 for (const key of REPRESENTATIVE_KEYS) {
   if (!discovered.has(key)) {
-    console.error(`FAIL: representative key not discovered by hook scanner: ${key}`);
-    failed = true;
+    check.add(`representative key not discovered by hook scanner: ${key}`);
   }
 }
 
-if (failed) {
-  process.exit(1);
-}
-
-console.log(`\ncheck-i18n-usage passed (${discovered.size} keys discovered).`);
+check.ok(`${discovered.size} keys discovered`);

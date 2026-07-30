@@ -6,6 +6,10 @@ import { readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-lib-root");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const libRoot = join(__dirname, "..", "src", "lib");
 
@@ -15,12 +19,10 @@ const rootFiles = readdirSync(libRoot).filter(
   (entry) => entry.endsWith(".ts") && !ALLOWLIST.has(entry),
 );
 
-if (rootFiles.length > 0) {
-  console.error(
-    "check-lib-root: lib/ root must contain only subdirectories — move these files into a subsystem folder:\n" +
-      rootFiles.map((f) => `  - lib/${f}`).join("\n"),
+for (const file of rootFiles) {
+  check.add(
+    `lib/ root must contain only subdirectories — move lib/${file} into a subsystem folder`,
   );
-  process.exit(1);
 }
 
-console.log("check-lib-root: ok");
+check.ok();

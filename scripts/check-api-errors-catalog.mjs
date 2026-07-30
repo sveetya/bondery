@@ -9,6 +9,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { API_ERROR_CODES } from "@bondery/schemas/errors";
 
+import { createCheck } from "./check-report.mjs";
+
+const check = createCheck("check-api-errors-catalog");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, "..");
 const errorsDocsRoot = join(
@@ -24,28 +28,14 @@ const errorsDocsRoot = join(
 );
 const pageTemplate = join(errorsDocsRoot, "[code]", "page.tsx");
 
-const violations = [];
-
 if (!existsSync(pageTemplate)) {
-  violations.push(
+  check.add(
     "Missing dynamic docs page at apps/website/src/app/(chromeless)/docs/api/errors/[code]/page.tsx",
   );
 }
 
 if (!existsSync(join(errorsDocsRoot, "page.tsx"))) {
-  violations.push(
-    "Missing docs index at apps/website/src/app/(chromeless)/docs/api/errors/page.tsx",
-  );
+  check.add("Missing docs index at apps/website/src/app/(chromeless)/docs/api/errors/page.tsx");
 }
 
-if (violations.length > 0) {
-  console.error("check-api-errors-catalog: violations found:\n");
-  for (const violation of violations) {
-    console.error(`  - ${violation}`);
-  }
-  process.exit(1);
-}
-
-console.log(
-  `check-api-errors-catalog: OK (${API_ERROR_CODES.length} codes served by dynamic route)`,
-);
+check.ok(`${API_ERROR_CODES.length} codes served by dynamic route`);

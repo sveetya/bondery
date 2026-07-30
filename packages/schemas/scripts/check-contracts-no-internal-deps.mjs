@@ -5,6 +5,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-contracts-no-internal-deps");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(__dirname, "..");
 const srcRoot = join(packageRoot, "src");
@@ -30,21 +34,11 @@ function collectSourceFiles(dir) {
   return files;
 }
 
-const violations = [];
-
 for (const file of collectSourceFiles(srcRoot)) {
   const content = readFileSync(file, "utf8");
   if (forbiddenPattern.test(content)) {
-    violations.push(relative(packageRoot, file));
+    check.add(relative(packageRoot, file));
   }
 }
 
-if (violations.length > 0) {
-  console.error(
-    "@bondery/schemas must not import other @bondery/* packages:\n" +
-      violations.map((file) => `  - ${file}`).join("\n"),
-  );
-  process.exit(1);
-}
-
-console.log("check-no-internal-deps: ok");
+check.ok();

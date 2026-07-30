@@ -26,7 +26,8 @@ info:
     Endpoints under `/api/me/api-keys`, `/api/sync`, `/api/chat`, `/api/admin`, `/api/subscriptions`, and
     `/api/extension` do not accept API keys.
   license:
-    name: Proprietary
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
   title: Bondery API
   version: 1.0.0
 components:

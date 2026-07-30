@@ -9,7 +9,11 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
 import { loadRouteNonPluginFiles } from "./load-route-non-plugin-files.js";
+
+const check = createCheck("check-route-security");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const routesRoot = join(__dirname, "..", "src", "routes");
@@ -113,9 +117,8 @@ for (const plugin of exportedPlugins) {
   }
 }
 
-if (violations.length > 0) {
-  console.error(`Route security check failed:\n${violations.map((v) => `  - ${v}`).join("\n")}`);
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-route-security: ok");
+check.ok();

@@ -9,11 +9,13 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { API_ERROR_CODES } from "@bondery/schemas/errors";
 
+import { createCheck } from "./check-report.mjs";
+
+const check = createCheck("check-api-errors-translations");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const localesRoot = join(__dirname, "..", "packages", "translations", "src", "locales");
 const locales = ["en", "cs", "de"];
-
-const violations = [];
 
 for (const locale of locales) {
   const common = JSON.parse(readFileSync(join(localesRoot, locale, "common.json"), "utf8"));
@@ -22,19 +24,9 @@ for (const locale of locales) {
   for (const code of API_ERROR_CODES) {
     const value = apiErrors[code];
     if (typeof value !== "string" || value.trim().length === 0) {
-      violations.push(`${locale}: missing common.errors.api.${code}`);
+      check.add(`${locale}: missing common.errors.api.${code}`);
     }
   }
 }
 
-if (violations.length > 0) {
-  console.error("check-api-errors-translations: violations found:\n");
-  for (const violation of violations) {
-    console.error(`  - ${violation}`);
-  }
-  process.exit(1);
-}
-
-console.log(
-  `check-api-errors-translations: OK (${API_ERROR_CODES.length} codes × ${locales.length} locales)`,
-);
+check.ok(`${API_ERROR_CODES.length} codes × ${locales.length} locales`);

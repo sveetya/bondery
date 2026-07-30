@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 
 import localeCatalog from "@bondery/schemas/locale/supported-locales.json" with { type: "json" };
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-i18n-structure");
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const localesRoot = path.join(repoRoot, "packages/translations/src/locales");
 const manifestPath = path.join(repoRoot, "packages/translations/manifest.json");
@@ -15,11 +19,8 @@ const SCAN_ROOTS = [
   path.join(repoRoot, "apps/website/src"),
 ];
 
-let failed = false;
-
 function fail(message) {
-  console.error(`FAIL: ${message}`);
-  failed = true;
+  check.add(message);
 }
 
 function walk(dir, acc = []) {
@@ -153,8 +154,4 @@ for (const root of SCAN_ROOTS) {
   }
 }
 
-if (failed) {
-  process.exit(1);
-}
-
-console.log("\ncheck-i18n-structure passed.");
+check.ok();
