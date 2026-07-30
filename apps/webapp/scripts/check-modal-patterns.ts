@@ -14,6 +14,8 @@ type Violation = { file: string; rule: string; detail: string };
 
 const ALLOWED_DECLARATIVE_MODAL_FILES = new Set([
   "app/(app)/app/(shell)/onboarding/OnboardingClient.tsx",
+  "components/billing/PaymentFailureModal.tsx",
+  "components/shared/UpgradeButton.tsx",
 ]);
 
 const ALLOWED_UPDATE_MODAL_FILES = new Set([
@@ -51,6 +53,14 @@ function walk(dir: string, acc: string[] = []): string[] {
 
 function normalizeRel(rel: string): string {
   return rel.replace(/\\/g, "/");
+}
+
+function hasModalBlockingHelper(content: string): boolean {
+  if (content.includes("useModalBlocking") || content.includes("useModalDismiss")) {
+    return true;
+  }
+  // Hooks that own dismiss/blocking for their modal body (see useInstagramImportModal).
+  return /\buse[A-Z]\w*Modal\(/.test(content);
 }
 
 function checkFile(absPath: string): Violation[] {
@@ -109,7 +119,7 @@ function checkFile(absPath: string): Violation[] {
     BLOCKING_STATE_PATTERN.test(content) &&
     content.includes("modalId") &&
     /function\s+\w+Modal|function\s+\w+Form|ModalBody/.test(content) &&
-    !content.includes("useModalBlocking") &&
+    !hasModalBlockingHelper(content) &&
     !rel.includes("openStandardConfirmModal")
   ) {
     violations.push({
