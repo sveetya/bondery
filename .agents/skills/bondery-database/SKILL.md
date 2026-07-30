@@ -23,7 +23,7 @@ metadata:
 
 Use `supabase-postgres-best-practices` for generic Postgres performance theory. Use `bondery-security` for tenant authorization and the current no-RLS model. Use `bondery-core` for the canonical extension-schema rule.
 
-**Stack:** Bondery runs **Prisma ORM 7** (classic `schema.prisma` + `@prisma/client`), not Prisma Next. Upstream `prisma-next-*` skills are installed for PN-specific work and evaluation — see [references/prisma-skills.md](references/prisma-skills.md). Do not substitute PN CLI commands or `db.orm` APIs for Bondery migrations and queries unless a dedicated PN adoption project is in scope.
+**Stack:** Bondery runs **Prisma ORM 7** (classic multi-file Prisma schema + `@prisma/client`), not Prisma Next. Upstream `prisma-next-*` skills are installed for PN-specific work and evaluation — see [references/prisma-skills.md](references/prisma-skills.md). Do not substitute PN CLI commands or `db.orm` APIs for Bondery migrations and queries unless a dedicated PN adoption project is in scope.
 
 ## Non-negotiables (ranked)
 
@@ -33,7 +33,7 @@ Use `supabase-postgres-best-practices` for generic Postgres performance theory. 
 4. **Use the shared Prisma singleton** — import `prisma` from `@bondery/db`; never instantiate `new PrismaClient()` per request or feature module.
 5. **PostGIS stays behind raw SQL helpers** — Prisma `Unsupported("geography(Point,4326)")` fields are not type-safe Prisma fields.
 6. **Raw SQL is centralized and parameterized** — reusable RPCs belong in `packages/db/prisma/sql/functions.sql`; application calls use tagged `$queryRaw` / `$executeRaw`, never interpolated unsafe SQL.
-7. **Batch writes** — prefer `createMany`, `updateMany`, `deleteMany`, and `skipDuplicates` over per-row database loops.
+7. **Batch writes** — prefer `createMany`, `createManyAndReturn`, `updateMany`, `updateManyAndReturn`, `deleteMany`, and `skipDuplicates` over per-row database loops. Use `*AndReturn` when you need inserted/updated rows back in one round trip.
 8. **Transactions stay short** — never hold a transaction while calling geocoding, email, AI, storage, or another external service.
 9. **Tenant queries remain user-scoped** — this skill owns database mechanics, not authorization. Follow `bondery-security` for `userId` scoping and no-RLS rules.
 
@@ -41,7 +41,9 @@ Use `supabase-postgres-best-practices` for generic Postgres performance theory. 
 
 | Concern | Path |
 |---------|------|
-| Prisma schema | `packages/db/prisma/schema.prisma` |
+| Prisma schema (entry) | `packages/db/prisma/schema.prisma` (generator + datasource) |
+| Prisma models | `packages/db/prisma/models/*.prisma` |
+| Prisma config | `packages/db/prisma.config.ts` (`schema: "prisma"`) |
 | Prisma migrations | `packages/db/prisma/migrations/` |
 | Extensions, indexes, functions | `packages/db/prisma/sql/functions.sql` |
 | Shared Prisma client | `packages/db/src/client.ts` |
@@ -54,11 +56,11 @@ Use `supabase-postgres-best-practices` for generic Postgres performance theory. 
 
 | Task | Read |
 |------|------|
-| Prisma model, relation, type, index | [references/schema-conventions.md](references/schema-conventions.md) |
+| Prisma model, relation, type, index, naming, multi-file layout | [references/schema-conventions.md](references/schema-conventions.md) |
 | New IDs or UUIDv7 rollout | [references/uuidv7-strategy.md](references/uuidv7-strategy.md) |
 | Raw SQL, pg_trgm, PostGIS, functions | [references/raw-sql-and-postgis.md](references/raw-sql-and-postgis.md) |
 | Migration or connection behavior | [references/migrations-and-connections.md](references/migrations-and-connections.md) |
-| Selects, batching, transactions, N+1 | [references/query-patterns.md](references/query-patterns.md) |
+| Selects, `omit`, batching, transactions, N+1 | [references/query-patterns.md](references/query-patterns.md) |
 | Known schema drift and follow-ups | [references/schema-drift-and-gaps.md](references/schema-drift-and-gaps.md) |
 | Prisma Next skills, PN vs classic Prisma, upstream routing | [references/prisma-skills.md](references/prisma-skills.md) |
 | Prisma Next contract / migrations / queries (PN projects only) | `prisma-next-contract`, `prisma-next-migrations`, `prisma-next-queries` — via [references/prisma-skills.md](references/prisma-skills.md) |
@@ -69,9 +71,14 @@ Full index: [references/README.md](references/README.md).
 
 Run only what applies:
 
+Run from the monorepo root with `-w @bondery/db` (Prisma config and schema live in `packages/db/`, not the repo root):
+
 ```bash
 # Regenerate Prisma client
 npm run db:generate -w @bondery/db
+
+# Validate merged multi-file schema
+npm run db:validate -w @bondery/db
 
 # Create and validate a local migration
 npm run db:migrate:dev -w @bondery/db
@@ -82,13 +89,19 @@ npm run db:functions -w @bondery/db
 # Verify release order: migrations → functions → OAuth clients
 npm run release-migrate -w @bondery/db
 
+# Typecheck the db package
+npm run check-types -w @bondery/db
+
 # API type/tests after query changes
 npm run check-types -w api
 npm run test:api -w api
 ```
 
+Do not run bare `prisma` or `npx prisma` from the repo root — it will not find `prisma.config.ts` or `packages/db/prisma/`.
+
 ## Database checklist (before merge)
 
+- [ ] Model added to the correct `prisma/models/*.prisma` file; `prisma.config.ts` still points at `schema: "prisma"`
 - [ ] New entity ID uses UUIDv7; existing v4 IDs are not rewritten
 - [ ] Prisma schema and generated migration agree on types, defaults, relations, and `ON DELETE`
 - [ ] Foreign-key and common `WHERE` / `JOIN` columns have justified indexes

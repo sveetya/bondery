@@ -56,6 +56,14 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Jwks: 'Jwks',
+  Group: 'Group',
+  PeopleGroup: 'PeopleGroup',
+  Interaction: 'Interaction',
+  InteractionParticipant: 'InteractionParticipant',
+  PeopleLinkedin: 'PeopleLinkedin',
+  PeopleWorkHistory: 'PeopleWorkHistory',
+  PeopleEducationHistory: 'PeopleEducationHistory',
+  LinkedinEnrichQueue: 'LinkedinEnrichQueue',
   OauthClient: 'OauthClient',
   OauthResource: 'OauthResource',
   OauthClientResource: 'OauthClientResource',
@@ -63,7 +71,6 @@ export const ModelName = {
   OauthAccessToken: 'OauthAccessToken',
   OauthConsent: 'OauthConsent',
   OauthClientAssertion: 'OauthClientAssertion',
-  UserSettings: 'UserSettings',
   People: 'People',
   PeoplePhone: 'PeoplePhone',
   PeopleEmail: 'PeopleEmail',
@@ -71,17 +78,7 @@ export const ModelName = {
   PeopleAddress: 'PeopleAddress',
   PeopleImportantDate: 'PeopleImportantDate',
   PeopleRelationship: 'PeopleRelationship',
-  Group: 'Group',
-  PeopleGroup: 'PeopleGroup',
-  Tag: 'Tag',
-  PeopleTag: 'PeopleTag',
-  Interaction: 'Interaction',
-  InteractionParticipant: 'InteractionParticipant',
-  PeopleLinkedin: 'PeopleLinkedin',
-  PeopleWorkHistory: 'PeopleWorkHistory',
-  PeopleEducationHistory: 'PeopleEducationHistory',
   PeopleMergeRecommendation: 'PeopleMergeRecommendation',
-  LinkedinEnrichQueue: 'LinkedinEnrichQueue',
   GeocodeCache: 'GeocodeCache',
   Apikey: 'Apikey',
   ChatSession: 'ChatSession',
@@ -92,7 +89,10 @@ export const ModelName = {
   ReminderDispatchLog: 'ReminderDispatchLog',
   SyncChangeLog: 'SyncChangeLog',
   SyncMutationReceipt: 'SyncMutationReceipt',
-  SyncUserSequence: 'SyncUserSequence'
+  SyncUserSequence: 'SyncUserSequence',
+  UserSettings: 'UserSettings',
+  Tag: 'Tag',
+  PeopleTag: 'PeopleTag'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -186,6 +186,114 @@ export const JwksScalarFieldEnum = {
 } as const
 
 export type JwksScalarFieldEnum = (typeof JwksScalarFieldEnum)[keyof typeof JwksScalarFieldEnum]
+
+
+export const GroupScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  color: 'color',
+  emoji: 'emoji',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
+
+
+export const PeopleGroupScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  personId: 'personId',
+  groupId: 'groupId',
+  createdAt: 'createdAt'
+} as const
+
+export type PeopleGroupScalarFieldEnum = (typeof PeopleGroupScalarFieldEnum)[keyof typeof PeopleGroupScalarFieldEnum]
+
+
+export const InteractionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  date: 'date',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InteractionScalarFieldEnum = (typeof InteractionScalarFieldEnum)[keyof typeof InteractionScalarFieldEnum]
+
+
+export const InteractionParticipantScalarFieldEnum = {
+  interactionId: 'interactionId',
+  personId: 'personId',
+  createdAt: 'createdAt'
+} as const
+
+export type InteractionParticipantScalarFieldEnum = (typeof InteractionParticipantScalarFieldEnum)[keyof typeof InteractionParticipantScalarFieldEnum]
+
+
+export const PeopleLinkedinScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  personId: 'personId',
+  bio: 'bio',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PeopleLinkedinScalarFieldEnum = (typeof PeopleLinkedinScalarFieldEnum)[keyof typeof PeopleLinkedinScalarFieldEnum]
+
+
+export const PeopleWorkHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  peopleLinkedinId: 'peopleLinkedinId',
+  companyName: 'companyName',
+  companyLinkedinId: 'companyLinkedinId',
+  title: 'title',
+  employmentType: 'employmentType',
+  location: 'location',
+  description: 'description',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PeopleWorkHistoryScalarFieldEnum = (typeof PeopleWorkHistoryScalarFieldEnum)[keyof typeof PeopleWorkHistoryScalarFieldEnum]
+
+
+export const PeopleEducationHistoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  peopleLinkedinId: 'peopleLinkedinId',
+  schoolName: 'schoolName',
+  schoolLinkedinId: 'schoolLinkedinId',
+  degree: 'degree',
+  description: 'description',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PeopleEducationHistoryScalarFieldEnum = (typeof PeopleEducationHistoryScalarFieldEnum)[keyof typeof PeopleEducationHistoryScalarFieldEnum]
+
+
+export const LinkedinEnrichQueueScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  personId: 'personId',
+  status: 'status',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LinkedinEnrichQueueScalarFieldEnum = (typeof LinkedinEnrichQueueScalarFieldEnum)[keyof typeof LinkedinEnrichQueueScalarFieldEnum]
 
 
 export const OauthClientScalarFieldEnum = {
@@ -329,35 +437,6 @@ export const OauthClientAssertionScalarFieldEnum = {
 export type OauthClientAssertionScalarFieldEnum = (typeof OauthClientAssertionScalarFieldEnum)[keyof typeof OauthClientAssertionScalarFieldEnum]
 
 
-export const UserSettingsScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  language: 'language',
-  timezone: 'timezone',
-  timeFormat: 'timeFormat',
-  colorScheme: 'colorScheme',
-  leftSwipeAction: 'leftSwipeAction',
-  rightSwipeAction: 'rightSwipeAction',
-  groupSortOrder: 'groupSortOrder',
-  tagSortOrder: 'tagSortOrder',
-  reminderSendHour: 'reminderSendHour',
-  nextReminderAtUtc: 'nextReminderAtUtc',
-  onboardingCompletedAt: 'onboardingCompletedAt',
-  welcomeEmailSentAt: 'welcomeEmailSentAt',
-  gettingStartedDismissedAt: 'gettingStartedDismissedAt',
-  importCompletedAt: 'importCompletedAt',
-  importFollowupPlatform: 'importFollowupPlatform',
-  importFollowupStatus: 'importFollowupStatus',
-  aiMessagesUsed: 'aiMessagesUsed',
-  aiMessagesThisMonth: 'aiMessagesThisMonth',
-  aiMessagesMonthResetAt: 'aiMessagesMonthResetAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[keyof typeof UserSettingsScalarFieldEnum]
-
-
 export const PeopleScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -488,124 +567,6 @@ export const PeopleRelationshipScalarFieldEnum = {
 export type PeopleRelationshipScalarFieldEnum = (typeof PeopleRelationshipScalarFieldEnum)[keyof typeof PeopleRelationshipScalarFieldEnum]
 
 
-export const GroupScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  label: 'label',
-  color: 'color',
-  emoji: 'emoji',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
-
-
-export const PeopleGroupScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  personId: 'personId',
-  groupId: 'groupId',
-  createdAt: 'createdAt'
-} as const
-
-export type PeopleGroupScalarFieldEnum = (typeof PeopleGroupScalarFieldEnum)[keyof typeof PeopleGroupScalarFieldEnum]
-
-
-export const TagScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  label: 'label',
-  color: 'color',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
-
-
-export const PeopleTagScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  personId: 'personId',
-  tagId: 'tagId',
-  createdAt: 'createdAt'
-} as const
-
-export type PeopleTagScalarFieldEnum = (typeof PeopleTagScalarFieldEnum)[keyof typeof PeopleTagScalarFieldEnum]
-
-
-export const InteractionScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  type: 'type',
-  title: 'title',
-  description: 'description',
-  date: 'date',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type InteractionScalarFieldEnum = (typeof InteractionScalarFieldEnum)[keyof typeof InteractionScalarFieldEnum]
-
-
-export const InteractionParticipantScalarFieldEnum = {
-  interactionId: 'interactionId',
-  personId: 'personId',
-  createdAt: 'createdAt'
-} as const
-
-export type InteractionParticipantScalarFieldEnum = (typeof InteractionParticipantScalarFieldEnum)[keyof typeof InteractionParticipantScalarFieldEnum]
-
-
-export const PeopleLinkedinScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  personId: 'personId',
-  bio: 'bio',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PeopleLinkedinScalarFieldEnum = (typeof PeopleLinkedinScalarFieldEnum)[keyof typeof PeopleLinkedinScalarFieldEnum]
-
-
-export const PeopleWorkHistoryScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  peopleLinkedinId: 'peopleLinkedinId',
-  companyName: 'companyName',
-  companyLinkedinId: 'companyLinkedinId',
-  title: 'title',
-  employmentType: 'employmentType',
-  location: 'location',
-  description: 'description',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PeopleWorkHistoryScalarFieldEnum = (typeof PeopleWorkHistoryScalarFieldEnum)[keyof typeof PeopleWorkHistoryScalarFieldEnum]
-
-
-export const PeopleEducationHistoryScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  peopleLinkedinId: 'peopleLinkedinId',
-  schoolName: 'schoolName',
-  schoolLinkedinId: 'schoolLinkedinId',
-  degree: 'degree',
-  description: 'description',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PeopleEducationHistoryScalarFieldEnum = (typeof PeopleEducationHistoryScalarFieldEnum)[keyof typeof PeopleEducationHistoryScalarFieldEnum]
-
-
 export const PeopleMergeRecommendationScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -620,19 +581,6 @@ export const PeopleMergeRecommendationScalarFieldEnum = {
 } as const
 
 export type PeopleMergeRecommendationScalarFieldEnum = (typeof PeopleMergeRecommendationScalarFieldEnum)[keyof typeof PeopleMergeRecommendationScalarFieldEnum]
-
-
-export const LinkedinEnrichQueueScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  personId: 'personId',
-  status: 'status',
-  errorMessage: 'errorMessage',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type LinkedinEnrichQueueScalarFieldEnum = (typeof LinkedinEnrichQueueScalarFieldEnum)[keyof typeof LinkedinEnrichQueueScalarFieldEnum]
 
 
 export const GeocodeCacheScalarFieldEnum = {
@@ -800,6 +748,58 @@ export const SyncUserSequenceScalarFieldEnum = {
 } as const
 
 export type SyncUserSequenceScalarFieldEnum = (typeof SyncUserSequenceScalarFieldEnum)[keyof typeof SyncUserSequenceScalarFieldEnum]
+
+
+export const UserSettingsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  language: 'language',
+  timezone: 'timezone',
+  timeFormat: 'timeFormat',
+  colorScheme: 'colorScheme',
+  leftSwipeAction: 'leftSwipeAction',
+  rightSwipeAction: 'rightSwipeAction',
+  groupSortOrder: 'groupSortOrder',
+  tagSortOrder: 'tagSortOrder',
+  reminderSendHour: 'reminderSendHour',
+  nextReminderAtUtc: 'nextReminderAtUtc',
+  onboardingCompletedAt: 'onboardingCompletedAt',
+  welcomeEmailSentAt: 'welcomeEmailSentAt',
+  gettingStartedDismissedAt: 'gettingStartedDismissedAt',
+  importCompletedAt: 'importCompletedAt',
+  importFollowupPlatform: 'importFollowupPlatform',
+  importFollowupStatus: 'importFollowupStatus',
+  aiMessagesUsed: 'aiMessagesUsed',
+  aiMessagesThisMonth: 'aiMessagesThisMonth',
+  aiMessagesMonthResetAt: 'aiMessagesMonthResetAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserSettingsScalarFieldEnum = (typeof UserSettingsScalarFieldEnum)[keyof typeof UserSettingsScalarFieldEnum]
+
+
+export const TagScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  label: 'label',
+  color: 'color',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TagScalarFieldEnum = (typeof TagScalarFieldEnum)[keyof typeof TagScalarFieldEnum]
+
+
+export const PeopleTagScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  personId: 'personId',
+  tagId: 'tagId',
+  createdAt: 'createdAt'
+} as const
+
+export type PeopleTagScalarFieldEnum = (typeof PeopleTagScalarFieldEnum)[keyof typeof PeopleTagScalarFieldEnum]
 
 
 export const SortOrder = {

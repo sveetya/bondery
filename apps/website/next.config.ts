@@ -1,10 +1,8 @@
 import createMDX from "@next/mdx";
+import { createMDX as createFumadocsMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Outbound redirects (status, help, docs, login, auth/callback, oauth/consent, app)
-  // live in src/app/**/route.ts so they can import @bondery/helpers.
-  // Public URLs: server reads BONDERY_PUBLIC_*; client leaves get them as RSC props.
   experimental: {
     optimizePackageImports: [
       "@tabler/icons-react",
@@ -37,10 +35,34 @@ const nextConfig: NextConfig = {
     ];
   },
   pageExtensions: ["ts", "tsx", "md", "mdx"],
+  // Outbound redirects (status, help, docs, login, auth/callback, oauth/consent, app)
+  // live in src/app/**/route.ts so they can import @bondery/helpers.
+  // Public URLs: server reads BONDERY_PUBLIC_*; client leaves get them as RSC props.
+  async redirects() {
+    return [
+      {
+        destination: "/blog/updates",
+        permanent: true,
+        source: "/blog/product",
+      },
+      {
+        destination: "/blog/updates/:slug",
+        permanent: true,
+        source: "/blog/product/:slug",
+      },
+    ];
+  },
+  serverExternalPackages: ["@takumi-rs/core"],
 };
 
-const withMDX = createMDX();
+const withMDX = createMDX({
+  options: {
+    // String plugin names only — Turbopack requires serializable loader options.
+    remarkPlugins: ["remark-gfm"],
+  },
+});
+const withFumadocsMDX = createFumadocsMDX();
 type WithMDXConfig = Parameters<typeof withMDX>[0];
 
 // withMDX resolves NextConfig from root node_modules; cast avoids monorepo type mismatch
-export default withMDX(nextConfig as WithMDXConfig);
+export default withFumadocsMDX(withMDX(nextConfig as WithMDXConfig));

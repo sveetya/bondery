@@ -1,0 +1,64 @@
+model PeopleLinkedin {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @unique @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  bio       String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  workHistory      PeopleWorkHistory[]
+  educationHistory PeopleEducationHistory[]
+
+  @@map("people_linkedin")
+}
+
+model PeopleWorkHistory {
+  id                String          @id @default(uuid()) @db.Uuid
+  userId            String          @map("user_id") @db.Uuid
+  peopleLinkedinId  String          @map("people_linkedin_id") @db.Uuid
+  peopleLinkedin    PeopleLinkedin  @relation(fields: [peopleLinkedinId], references: [id], onDelete: Cascade)
+  companyName       String          @map("company_name")
+  companyLinkedinId String?         @map("company_linkedin_id")
+  title             String?
+  employmentType    String?         @map("employment_type")
+  location          String?
+  description       String?
+  startDate         DateTime?       @map("start_date") @db.Date
+  endDate           DateTime?       @map("end_date") @db.Date
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+
+  @@map("people_work_history")
+}
+
+model PeopleEducationHistory {
+  id               String         @id @default(uuid()) @db.Uuid
+  userId           String         @map("user_id") @db.Uuid
+  peopleLinkedinId String         @map("people_linkedin_id") @db.Uuid
+  peopleLinkedin   PeopleLinkedin @relation(fields: [peopleLinkedinId], references: [id], onDelete: Cascade)
+  schoolName       String         @map("school_name")
+  schoolLinkedinId String?        @map("school_linkedin_id")
+  degree           String?
+  description      String?
+  startDate        DateTime?      @map("start_date") @db.Date
+  endDate          DateTime?      @map("end_date") @db.Date
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+
+  @@map("people_education_history")
+}
+
+model LinkedinEnrichQueue {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  personId     String   @map("person_id") @db.Uuid
+  person       People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  status       String   @default("pending")
+  errorMessage String?  @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("linkedin_enrich_queue")
+}

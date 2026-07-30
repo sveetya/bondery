@@ -1,6 +1,65 @@
 # Schema conventions
 
-Grounded in `packages/db/prisma/schema.prisma` and its generated migrations.
+Grounded in `packages/db/prisma/` and its generated migrations.
+
+## Multi-file layout
+
+Bondery uses Prisma's multi-file schema (GA since v6.7). Prisma merges all `.prisma` files under the configured directory at generate/migrate time — no imports between files.
+
+```
+packages/db/prisma/
+├── schema.prisma          # generator + datasource only
+├── models/
+│   ├── auth.prisma        # Better Auth: User, Session, Account, …
+│   ├── oauth.prisma       # OAuth 2.1 provider tables
+│   ├── settings.prisma    # enums + UserSettings
+│   ├── people.prisma      # People and child tables
+│   ├── groups.prisma
+│   ├── tags.prisma
+│   ├── interactions.prisma
+│   ├── linkedin.prisma
+│   └── platform.prisma    # billing, chat, sync, geocode, …
+└── migrations/
+```
+
+**Configuration:** `packages/db/prisma.config.ts` must set `schema: "prisma"` (the directory), not `schema: "prisma/schema.prisma"`. Pointing at the file silently ignores sibling model files in Prisma 7.
+
+**Rules:**
+
+- Keep `generator` and `datasource` in `schema.prisma` at the directory root
+- Keep `migrations/` at the same level as `schema.prisma`
+- Group models by domain; relations work across files without imports
+- Put new models in the file that matches their domain; add a new file only when a domain is large enough to warrant one
+- After splitting or moving models, run `npm run db:generate -w @bondery/db` and confirm the client includes all models
+
+## Naming conventions
+
+Prisma layer uses idiomatic TypeScript names; Postgres keeps legacy snake_case via mapping.
+
+| Layer | Convention | Example |
+|-------|------------|---------|
+| Model | PascalCase, singular | `People`, `UserSettings` |
+| Field | camelCase | `firstName`, `createdAt` |
+| Relation field | camelCase, descriptive | `lastInteractionActivity` |
+| Enum | PascalCase type; lowercase values | `ColorScheme { light dark auto }` |
+| DB table | snake_case via `@@map` | `@@map("people")` |
+| DB column | snake_case via `@map` | `@map("first_name")` |
+| DB enum | snake_case via `@@map` on enum | `@@map("color_scheme")` |
+
+Example:
+
+```prisma
+model People {
+  firstName String @map("first_name")
+  userId    String @map("user_id") @db.Uuid
+
+  @@map("people")
+}
+```
+
+**Why:** The Prisma schema stays readable in TypeScript; the database keeps column names from the Supabase-era migration so existing rows and raw SQL need no renames.
+
+**Enum vs `String`:** Use a Prisma `enum` for small, stable, app-controlled sets (e.g. `ColorScheme`, `SupportedLocale`). Use `String` for user-generated labels, provider statuses, or values that change often without a migration.
 
 ## Primary keys
 
@@ -79,6 +138,9 @@ Review generated SQL before applying a migration:
 
 ## Schema checklist
 
+- [ ] Model lives in the correct `prisma/models/*.prisma` file
+- [ ] `prisma.config.ts` uses `schema: "prisma"` (directory, not single file)
+- [ ] Naming follows PascalCase models / camelCase fields / `@@map` tables / `@map` columns
 - [ ] Primary-key strategy chosen intentionally (UUIDv7 for new entity IDs)
 - [ ] Relation has explicit, justified `onDelete`
 - [ ] Foreign-key type exactly matches referenced primary key

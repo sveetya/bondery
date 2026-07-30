@@ -11,8 +11,9 @@ type CategorySwitcherProps = {
 
 const CATEGORY_TOOLTIPS: Record<PostCategory, string> = {
   all: "Browse all blog posts",
-  bonds: "Articles about networking and relationships",
-  product: "Usually monthly product updates",
+  bonds: "About networking and relationships",
+  tech: "Technical deep-dives",
+  updates: "Product updates and releases",
 };
 
 export function CategorySwitcher({ activeCategory }: CategorySwitcherProps) {

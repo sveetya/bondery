@@ -1,5 +1,5 @@
 /** Supported blog categories. "all" is a virtual filter showing every post. */
-export type PostCategory = "all" | "product" | "bonds";
+export type PostCategory = "all" | "updates" | "tech" | "bonds";
 
 /** Metadata exported from each blog MDX file via `export const postMeta`. */
 export type PostMeta = {

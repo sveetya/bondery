@@ -729,6 +729,11 @@ export type PeopleOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type PeopleScalarRelationFilter = {
+  is?: Prisma.PeopleWhereInput
+  isNot?: Prisma.PeopleWhereInput
+}
+
 export type PeopleCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -810,11 +815,6 @@ export type PeopleSumOrderByAggregateInput = {
   keepFrequencyDays?: Prisma.SortOrder
 }
 
-export type PeopleScalarRelationFilter = {
-  is?: Prisma.PeopleWhereInput
-  isNot?: Prisma.PeopleWhereInput
-}
-
 export type PeopleCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.PeopleCreateWithoutUserInput, Prisma.PeopleUncheckedCreateWithoutUserInput> | Prisma.PeopleCreateWithoutUserInput[] | Prisma.PeopleUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutUserInput | Prisma.PeopleCreateOrConnectWithoutUserInput[]
@@ -857,112 +857,6 @@ export type PeopleUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.PeopleScalarWhereInput | Prisma.PeopleScalarWhereInput[]
 }
 
-export type NullableFloatFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
-export type PeopleCreateNestedOneWithoutPhonesInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutPhonesInput, Prisma.PeopleUncheckedCreateWithoutPhonesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutPhonesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutPhonesNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutPhonesInput, Prisma.PeopleUncheckedCreateWithoutPhonesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutPhonesInput
-  upsert?: Prisma.PeopleUpsertWithoutPhonesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutPhonesInput, Prisma.PeopleUpdateWithoutPhonesInput>, Prisma.PeopleUncheckedUpdateWithoutPhonesInput>
-}
-
-export type PeopleCreateNestedOneWithoutEmailsInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEmailsInput, Prisma.PeopleUncheckedCreateWithoutEmailsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEmailsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutEmailsNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEmailsInput, Prisma.PeopleUncheckedCreateWithoutEmailsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEmailsInput
-  upsert?: Prisma.PeopleUpsertWithoutEmailsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutEmailsInput, Prisma.PeopleUpdateWithoutEmailsInput>, Prisma.PeopleUncheckedUpdateWithoutEmailsInput>
-}
-
-export type PeopleCreateNestedOneWithoutSocialsInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutSocialsInput, Prisma.PeopleUncheckedCreateWithoutSocialsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutSocialsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutSocialsNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutSocialsInput, Prisma.PeopleUncheckedCreateWithoutSocialsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutSocialsInput
-  upsert?: Prisma.PeopleUpsertWithoutSocialsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutSocialsInput, Prisma.PeopleUpdateWithoutSocialsInput>, Prisma.PeopleUncheckedUpdateWithoutSocialsInput>
-}
-
-export type PeopleCreateNestedOneWithoutAddressesInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutAddressesInput, Prisma.PeopleUncheckedCreateWithoutAddressesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutAddressesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutAddressesNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutAddressesInput, Prisma.PeopleUncheckedCreateWithoutAddressesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutAddressesInput
-  upsert?: Prisma.PeopleUpsertWithoutAddressesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutAddressesInput, Prisma.PeopleUpdateWithoutAddressesInput>, Prisma.PeopleUncheckedUpdateWithoutAddressesInput>
-}
-
-export type PeopleCreateNestedOneWithoutImportantDatesInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutImportantDatesInput, Prisma.PeopleUncheckedCreateWithoutImportantDatesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutImportantDatesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutImportantDatesNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutImportantDatesInput, Prisma.PeopleUncheckedCreateWithoutImportantDatesInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutImportantDatesInput
-  upsert?: Prisma.PeopleUpsertWithoutImportantDatesInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutImportantDatesInput, Prisma.PeopleUpdateWithoutImportantDatesInput>, Prisma.PeopleUncheckedUpdateWithoutImportantDatesInput>
-}
-
-export type PeopleCreateNestedOneWithoutRelationshipsFromInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsFromInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsFromInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsFromInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleCreateNestedOneWithoutRelationshipsToInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsToInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsToInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsToInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutRelationshipsFromNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsFromInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsFromInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsFromInput
-  upsert?: Prisma.PeopleUpsertWithoutRelationshipsFromInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutRelationshipsFromInput, Prisma.PeopleUpdateWithoutRelationshipsFromInput>, Prisma.PeopleUncheckedUpdateWithoutRelationshipsFromInput>
-}
-
-export type PeopleUpdateOneRequiredWithoutRelationshipsToNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsToInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsToInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsToInput
-  upsert?: Prisma.PeopleUpsertWithoutRelationshipsToInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutRelationshipsToInput, Prisma.PeopleUpdateWithoutRelationshipsToInput>, Prisma.PeopleUncheckedUpdateWithoutRelationshipsToInput>
-}
-
 export type PeopleCreateNestedOneWithoutGroupsInput = {
   create?: Prisma.XOR<Prisma.PeopleCreateWithoutGroupsInput, Prisma.PeopleUncheckedCreateWithoutGroupsInput>
   connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutGroupsInput
@@ -975,20 +869,6 @@ export type PeopleUpdateOneRequiredWithoutGroupsNestedInput = {
   upsert?: Prisma.PeopleUpsertWithoutGroupsInput
   connect?: Prisma.PeopleWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutGroupsInput, Prisma.PeopleUpdateWithoutGroupsInput>, Prisma.PeopleUncheckedUpdateWithoutGroupsInput>
-}
-
-export type PeopleCreateNestedOneWithoutTagsInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutTagsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-}
-
-export type PeopleUpdateOneRequiredWithoutTagsNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutTagsInput
-  upsert?: Prisma.PeopleUpsertWithoutTagsInput
-  connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutTagsInput, Prisma.PeopleUpdateWithoutTagsInput>, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
 }
 
 export type PeopleCreateNestedManyWithoutInteractionsLastInput = {
@@ -1099,6 +979,126 @@ export type PeopleUpdateOneRequiredWithoutLinkedinNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutLinkedinInput, Prisma.PeopleUpdateWithoutLinkedinInput>, Prisma.PeopleUncheckedUpdateWithoutLinkedinInput>
 }
 
+export type PeopleCreateNestedOneWithoutEnrichQueueInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEnrichQueueInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutEnrichQueueNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEnrichQueueInput
+  upsert?: Prisma.PeopleUpsertWithoutEnrichQueueInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutEnrichQueueInput, Prisma.PeopleUpdateWithoutEnrichQueueInput>, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
+}
+
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type PeopleCreateNestedOneWithoutPhonesInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutPhonesInput, Prisma.PeopleUncheckedCreateWithoutPhonesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutPhonesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutPhonesNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutPhonesInput, Prisma.PeopleUncheckedCreateWithoutPhonesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutPhonesInput
+  upsert?: Prisma.PeopleUpsertWithoutPhonesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutPhonesInput, Prisma.PeopleUpdateWithoutPhonesInput>, Prisma.PeopleUncheckedUpdateWithoutPhonesInput>
+}
+
+export type PeopleCreateNestedOneWithoutEmailsInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEmailsInput, Prisma.PeopleUncheckedCreateWithoutEmailsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEmailsInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutEmailsNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEmailsInput, Prisma.PeopleUncheckedCreateWithoutEmailsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEmailsInput
+  upsert?: Prisma.PeopleUpsertWithoutEmailsInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutEmailsInput, Prisma.PeopleUpdateWithoutEmailsInput>, Prisma.PeopleUncheckedUpdateWithoutEmailsInput>
+}
+
+export type PeopleCreateNestedOneWithoutSocialsInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutSocialsInput, Prisma.PeopleUncheckedCreateWithoutSocialsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutSocialsInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutSocialsNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutSocialsInput, Prisma.PeopleUncheckedCreateWithoutSocialsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutSocialsInput
+  upsert?: Prisma.PeopleUpsertWithoutSocialsInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutSocialsInput, Prisma.PeopleUpdateWithoutSocialsInput>, Prisma.PeopleUncheckedUpdateWithoutSocialsInput>
+}
+
+export type PeopleCreateNestedOneWithoutAddressesInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutAddressesInput, Prisma.PeopleUncheckedCreateWithoutAddressesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutAddressesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutAddressesNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutAddressesInput, Prisma.PeopleUncheckedCreateWithoutAddressesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutAddressesInput
+  upsert?: Prisma.PeopleUpsertWithoutAddressesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutAddressesInput, Prisma.PeopleUpdateWithoutAddressesInput>, Prisma.PeopleUncheckedUpdateWithoutAddressesInput>
+}
+
+export type PeopleCreateNestedOneWithoutImportantDatesInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutImportantDatesInput, Prisma.PeopleUncheckedCreateWithoutImportantDatesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutImportantDatesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutImportantDatesNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutImportantDatesInput, Prisma.PeopleUncheckedCreateWithoutImportantDatesInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutImportantDatesInput
+  upsert?: Prisma.PeopleUpsertWithoutImportantDatesInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutImportantDatesInput, Prisma.PeopleUpdateWithoutImportantDatesInput>, Prisma.PeopleUncheckedUpdateWithoutImportantDatesInput>
+}
+
+export type PeopleCreateNestedOneWithoutRelationshipsFromInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsFromInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsFromInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsFromInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleCreateNestedOneWithoutRelationshipsToInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsToInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsToInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsToInput
+  connect?: Prisma.PeopleWhereUniqueInput
+}
+
+export type PeopleUpdateOneRequiredWithoutRelationshipsFromNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsFromInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsFromInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsFromInput
+  upsert?: Prisma.PeopleUpsertWithoutRelationshipsFromInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutRelationshipsFromInput, Prisma.PeopleUpdateWithoutRelationshipsFromInput>, Prisma.PeopleUncheckedUpdateWithoutRelationshipsFromInput>
+}
+
+export type PeopleUpdateOneRequiredWithoutRelationshipsToNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutRelationshipsToInput, Prisma.PeopleUncheckedCreateWithoutRelationshipsToInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutRelationshipsToInput
+  upsert?: Prisma.PeopleUpsertWithoutRelationshipsToInput
+  connect?: Prisma.PeopleWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutRelationshipsToInput, Prisma.PeopleUpdateWithoutRelationshipsToInput>, Prisma.PeopleUncheckedUpdateWithoutRelationshipsToInput>
+}
+
 export type PeopleCreateNestedOneWithoutMergeRecommendationsLeftInput = {
   create?: Prisma.XOR<Prisma.PeopleCreateWithoutMergeRecommendationsLeftInput, Prisma.PeopleUncheckedCreateWithoutMergeRecommendationsLeftInput>
   connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutMergeRecommendationsLeftInput
@@ -1127,18 +1127,18 @@ export type PeopleUpdateOneRequiredWithoutMergeRecommendationsRightNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutMergeRecommendationsRightInput, Prisma.PeopleUpdateWithoutMergeRecommendationsRightInput>, Prisma.PeopleUncheckedUpdateWithoutMergeRecommendationsRightInput>
 }
 
-export type PeopleCreateNestedOneWithoutEnrichQueueInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEnrichQueueInput
+export type PeopleCreateNestedOneWithoutTagsInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutTagsInput
   connect?: Prisma.PeopleWhereUniqueInput
 }
 
-export type PeopleUpdateOneRequiredWithoutEnrichQueueNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
-  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutEnrichQueueInput
-  upsert?: Prisma.PeopleUpsertWithoutEnrichQueueInput
+export type PeopleUpdateOneRequiredWithoutTagsNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.PeopleCreateOrConnectWithoutTagsInput
+  upsert?: Prisma.PeopleUpsertWithoutTagsInput
   connect?: Prisma.PeopleWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutEnrichQueueInput, Prisma.PeopleUpdateWithoutEnrichQueueInput>, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleUpdateToOneWithWhereWithoutTagsInput, Prisma.PeopleUpdateWithoutTagsInput>, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
 }
 
 export type PeopleCreateWithoutUserInput = {
@@ -1265,6 +1265,857 @@ export type PeopleScalarWhereInput = {
   lastInteractionActivityId?: Prisma.UuidNullableFilter<"People"> | string | null
   createdAt?: Prisma.DateTimeFilter<"People"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"People"> | Date | string
+}
+
+export type PeopleCreateWithoutGroupsInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleUncheckedCreateWithoutGroupsInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  lastInteractionActivityId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleCreateOrConnectWithoutGroupsInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutGroupsInput, Prisma.PeopleUncheckedCreateWithoutGroupsInput>
+}
+
+export type PeopleUpsertWithoutGroupsInput = {
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutGroupsInput, Prisma.PeopleUncheckedUpdateWithoutGroupsInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutGroupsInput, Prisma.PeopleUncheckedCreateWithoutGroupsInput>
+  where?: Prisma.PeopleWhereInput
+}
+
+export type PeopleUpdateToOneWithWhereWithoutGroupsInput = {
+  where?: Prisma.PeopleWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutGroupsInput, Prisma.PeopleUncheckedUpdateWithoutGroupsInput>
+}
+
+export type PeopleUpdateWithoutGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
+  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
+  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleUncheckedUpdateWithoutGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleCreateWithoutInteractionsLastInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
+}
+
+export type PeopleUncheckedCreateWithoutInteractionsLastInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  lastInteractionActivityId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
+}
+
+export type PeopleCreateOrConnectWithoutInteractionsLastInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionsLastInput, Prisma.PeopleUncheckedCreateWithoutInteractionsLastInput>
+}
+
+export type PeopleCreateWithoutLastInteractionActivityInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleUncheckedCreateWithoutLastInteractionActivityInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleCreateOrConnectWithoutLastInteractionActivityInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedCreateWithoutLastInteractionActivityInput>
+}
+
+export type PeopleCreateManyLastInteractionActivityInputEnvelope = {
+  data: Prisma.PeopleCreateManyLastInteractionActivityInput | Prisma.PeopleCreateManyLastInteractionActivityInput[]
+  skipDuplicates?: boolean
+}
+
+export type PeopleUpsertWithWhereUniqueWithoutInteractionsLastInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionsLastInput, Prisma.PeopleUncheckedUpdateWithoutInteractionsLastInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionsLastInput, Prisma.PeopleUncheckedCreateWithoutInteractionsLastInput>
+}
+
+export type PeopleUpdateWithWhereUniqueWithoutInteractionsLastInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionsLastInput, Prisma.PeopleUncheckedUpdateWithoutInteractionsLastInput>
+}
+
+export type PeopleUpdateManyWithWhereWithoutInteractionsLastInput = {
+  where: Prisma.PeopleScalarWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateManyMutationInput, Prisma.PeopleUncheckedUpdateManyWithoutInteractionsLastInput>
+}
+
+export type PeopleUpsertWithWhereUniqueWithoutLastInteractionActivityInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedUpdateWithoutLastInteractionActivityInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedCreateWithoutLastInteractionActivityInput>
+}
+
+export type PeopleUpdateWithWhereUniqueWithoutLastInteractionActivityInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedUpdateWithoutLastInteractionActivityInput>
+}
+
+export type PeopleUpdateManyWithWhereWithoutLastInteractionActivityInput = {
+  where: Prisma.PeopleScalarWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateManyMutationInput, Prisma.PeopleUncheckedUpdateManyWithoutLastInteractionActivityInput>
+}
+
+export type PeopleCreateWithoutInteractionParticipantInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleUncheckedCreateWithoutInteractionParticipantInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  lastInteractionActivityId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleCreateOrConnectWithoutInteractionParticipantInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedCreateWithoutInteractionParticipantInput>
+}
+
+export type PeopleUpsertWithoutInteractionParticipantInput = {
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedUpdateWithoutInteractionParticipantInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedCreateWithoutInteractionParticipantInput>
+  where?: Prisma.PeopleWhereInput
+}
+
+export type PeopleUpdateToOneWithWhereWithoutInteractionParticipantInput = {
+  where?: Prisma.PeopleWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedUpdateWithoutInteractionParticipantInput>
+}
+
+export type PeopleUpdateWithoutInteractionParticipantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
+  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
+  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleUncheckedUpdateWithoutInteractionParticipantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleCreateWithoutLinkedinInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleUncheckedCreateWithoutLinkedinInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  lastInteractionActivityId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
+  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleCreateOrConnectWithoutLinkedinInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutLinkedinInput, Prisma.PeopleUncheckedCreateWithoutLinkedinInput>
+}
+
+export type PeopleUpsertWithoutLinkedinInput = {
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutLinkedinInput, Prisma.PeopleUncheckedUpdateWithoutLinkedinInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutLinkedinInput, Prisma.PeopleUncheckedCreateWithoutLinkedinInput>
+  where?: Prisma.PeopleWhereInput
+}
+
+export type PeopleUpdateToOneWithWhereWithoutLinkedinInput = {
+  where?: Prisma.PeopleWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutLinkedinInput, Prisma.PeopleUncheckedUpdateWithoutLinkedinInput>
+}
+
+export type PeopleUpdateWithoutLinkedinInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
+  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
+  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleUncheckedUpdateWithoutLinkedinInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
+  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleCreateWithoutEnrichQueueInput = {
+  id?: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutPeopleInput
+  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
+  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleUncheckedCreateWithoutEnrichQueueInput = {
+  id?: string
+  userId: string
+  firstName: string
+  middleName?: string | null
+  lastName?: string | null
+  headline?: string | null
+  notes?: string | null
+  notesUpdatedAt?: Date | string | null
+  myself?: boolean | null
+  hasAvatar?: boolean
+  language?: string | null
+  timezone?: string | null
+  location?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  keepFrequencyDays?: number | null
+  lastInteraction?: Date | string | null
+  lastInteractionActivityId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
+  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
+  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
+  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
+  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
+  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
+}
+
+export type PeopleCreateOrConnectWithoutEnrichQueueInput = {
+  where: Prisma.PeopleWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+}
+
+export type PeopleUpsertWithoutEnrichQueueInput = {
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutEnrichQueueInput, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+  where?: Prisma.PeopleWhereInput
+}
+
+export type PeopleUpdateToOneWithWhereWithoutEnrichQueueInput = {
+  where?: Prisma.PeopleWhereInput
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutEnrichQueueInput, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
+}
+
+export type PeopleUpdateWithoutEnrichQueueInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
+  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
+  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
+  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
+}
+
+export type PeopleUncheckedUpdateWithoutEnrichQueueInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
+  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
+  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
+  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
+  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
+  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
+  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
+  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
+  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
+  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
+  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
+  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
+  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
+  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
 }
 
 export type PeopleCreateWithoutPhonesInput = {
@@ -2415,857 +3266,6 @@ export type PeopleUncheckedUpdateWithoutRelationshipsToInput = {
   interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
 }
 
-export type PeopleCreateWithoutGroupsInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleUncheckedCreateWithoutGroupsInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  lastInteractionActivityId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleCreateOrConnectWithoutGroupsInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutGroupsInput, Prisma.PeopleUncheckedCreateWithoutGroupsInput>
-}
-
-export type PeopleUpsertWithoutGroupsInput = {
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutGroupsInput, Prisma.PeopleUncheckedUpdateWithoutGroupsInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutGroupsInput, Prisma.PeopleUncheckedCreateWithoutGroupsInput>
-  where?: Prisma.PeopleWhereInput
-}
-
-export type PeopleUpdateToOneWithWhereWithoutGroupsInput = {
-  where?: Prisma.PeopleWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutGroupsInput, Prisma.PeopleUncheckedUpdateWithoutGroupsInput>
-}
-
-export type PeopleUpdateWithoutGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
-  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
-  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleUncheckedUpdateWithoutGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleCreateWithoutTagsInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleUncheckedCreateWithoutTagsInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  lastInteractionActivityId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleCreateOrConnectWithoutTagsInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
-}
-
-export type PeopleUpsertWithoutTagsInput = {
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutTagsInput, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
-  where?: Prisma.PeopleWhereInput
-}
-
-export type PeopleUpdateToOneWithWhereWithoutTagsInput = {
-  where?: Prisma.PeopleWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutTagsInput, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
-}
-
-export type PeopleUpdateWithoutTagsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
-  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
-  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleUncheckedUpdateWithoutTagsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleCreateWithoutInteractionsLastInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-}
-
-export type PeopleUncheckedCreateWithoutInteractionsLastInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  lastInteractionActivityId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-}
-
-export type PeopleCreateOrConnectWithoutInteractionsLastInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionsLastInput, Prisma.PeopleUncheckedCreateWithoutInteractionsLastInput>
-}
-
-export type PeopleCreateWithoutLastInteractionActivityInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleUncheckedCreateWithoutLastInteractionActivityInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleCreateOrConnectWithoutLastInteractionActivityInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedCreateWithoutLastInteractionActivityInput>
-}
-
-export type PeopleCreateManyLastInteractionActivityInputEnvelope = {
-  data: Prisma.PeopleCreateManyLastInteractionActivityInput | Prisma.PeopleCreateManyLastInteractionActivityInput[]
-  skipDuplicates?: boolean
-}
-
-export type PeopleUpsertWithWhereUniqueWithoutInteractionsLastInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionsLastInput, Prisma.PeopleUncheckedUpdateWithoutInteractionsLastInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionsLastInput, Prisma.PeopleUncheckedCreateWithoutInteractionsLastInput>
-}
-
-export type PeopleUpdateWithWhereUniqueWithoutInteractionsLastInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionsLastInput, Prisma.PeopleUncheckedUpdateWithoutInteractionsLastInput>
-}
-
-export type PeopleUpdateManyWithWhereWithoutInteractionsLastInput = {
-  where: Prisma.PeopleScalarWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateManyMutationInput, Prisma.PeopleUncheckedUpdateManyWithoutInteractionsLastInput>
-}
-
-export type PeopleUpsertWithWhereUniqueWithoutLastInteractionActivityInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedUpdateWithoutLastInteractionActivityInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedCreateWithoutLastInteractionActivityInput>
-}
-
-export type PeopleUpdateWithWhereUniqueWithoutLastInteractionActivityInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutLastInteractionActivityInput, Prisma.PeopleUncheckedUpdateWithoutLastInteractionActivityInput>
-}
-
-export type PeopleUpdateManyWithWhereWithoutLastInteractionActivityInput = {
-  where: Prisma.PeopleScalarWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateManyMutationInput, Prisma.PeopleUncheckedUpdateManyWithoutLastInteractionActivityInput>
-}
-
-export type PeopleCreateWithoutInteractionParticipantInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleUncheckedCreateWithoutInteractionParticipantInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  lastInteractionActivityId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleCreateOrConnectWithoutInteractionParticipantInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedCreateWithoutInteractionParticipantInput>
-}
-
-export type PeopleUpsertWithoutInteractionParticipantInput = {
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedUpdateWithoutInteractionParticipantInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedCreateWithoutInteractionParticipantInput>
-  where?: Prisma.PeopleWhereInput
-}
-
-export type PeopleUpdateToOneWithWhereWithoutInteractionParticipantInput = {
-  where?: Prisma.PeopleWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutInteractionParticipantInput, Prisma.PeopleUncheckedUpdateWithoutInteractionParticipantInput>
-}
-
-export type PeopleUpdateWithoutInteractionParticipantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
-  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
-  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleUncheckedUpdateWithoutInteractionParticipantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
-  linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleCreateWithoutLinkedinInput = {
-  id?: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPeopleInput
-  lastInteractionActivity?: Prisma.InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput
-  phones?: Prisma.PeoplePhoneCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleUncheckedCreateWithoutLinkedinInput = {
-  id?: string
-  userId: string
-  firstName: string
-  middleName?: string | null
-  lastName?: string | null
-  headline?: string | null
-  notes?: string | null
-  notesUpdatedAt?: Date | string | null
-  myself?: boolean | null
-  hasAvatar?: boolean
-  language?: string | null
-  timezone?: string | null
-  location?: string | null
-  latitude?: number | null
-  longitude?: number | null
-  keepFrequencyDays?: number | null
-  lastInteraction?: Date | string | null
-  lastInteractionActivityId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  phones?: Prisma.PeoplePhoneUncheckedCreateNestedManyWithoutPersonInput
-  emails?: Prisma.PeopleEmailUncheckedCreateNestedManyWithoutPersonInput
-  socials?: Prisma.PeopleSocialUncheckedCreateNestedManyWithoutPersonInput
-  addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
-  groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
-  interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
-}
-
-export type PeopleCreateOrConnectWithoutLinkedinInput = {
-  where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutLinkedinInput, Prisma.PeopleUncheckedCreateWithoutLinkedinInput>
-}
-
-export type PeopleUpsertWithoutLinkedinInput = {
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutLinkedinInput, Prisma.PeopleUncheckedUpdateWithoutLinkedinInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutLinkedinInput, Prisma.PeopleUncheckedCreateWithoutLinkedinInput>
-  where?: Prisma.PeopleWhereInput
-}
-
-export type PeopleUpdateToOneWithWhereWithoutLinkedinInput = {
-  where?: Prisma.PeopleWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutLinkedinInput, Prisma.PeopleUncheckedUpdateWithoutLinkedinInput>
-}
-
-export type PeopleUpdateWithoutLinkedinInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPeopleNestedInput
-  lastInteractionActivity?: Prisma.InteractionUpdateOneWithoutPeopleWithLastInteractionNestedInput
-  phones?: Prisma.PeoplePhoneUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
-export type PeopleUncheckedUpdateWithoutLinkedinInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  headline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  notesUpdatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  myself?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  hasAvatar?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  language?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
-  keepFrequencyDays?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  lastInteraction?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastInteractionActivityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  phones?: Prisma.PeoplePhoneUncheckedUpdateManyWithoutPersonNestedInput
-  emails?: Prisma.PeopleEmailUncheckedUpdateManyWithoutPersonNestedInput
-  socials?: Prisma.PeopleSocialUncheckedUpdateManyWithoutPersonNestedInput
-  addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
-  importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
-  groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
-  interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
-  relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
-  relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
-  mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
-  mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
-  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
-  interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
-}
-
 export type PeopleCreateWithoutMergeRecommendationsLeftInput = {
   id?: string
   firstName: string
@@ -3594,7 +3594,7 @@ export type PeopleUncheckedUpdateWithoutMergeRecommendationsRightInput = {
   interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
 }
 
-export type PeopleCreateWithoutEnrichQueueInput = {
+export type PeopleCreateWithoutTagsInput = {
   id?: string
   firstName: string
   middleName?: string | null
@@ -3621,17 +3621,17 @@ export type PeopleCreateWithoutEnrichQueueInput = {
   addresses?: Prisma.PeopleAddressCreateNestedManyWithoutPersonInput
   importantDates?: Prisma.PeopleImportantDateCreateNestedManyWithoutPersonInput
   groups?: Prisma.PeopleGroupCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagCreateNestedManyWithoutPersonInput
   linkedin?: Prisma.PeopleLinkedinCreateNestedOneWithoutPersonInput
   interactionParticipant?: Prisma.InteractionParticipantCreateNestedManyWithoutPersonInput
   relationshipsFrom?: Prisma.PeopleRelationshipCreateNestedManyWithoutSourcePersonInput
   relationshipsTo?: Prisma.PeopleRelationshipCreateNestedManyWithoutTargetPersonInput
   mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutLeftPersonInput
   mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutPersonInput
   interactionsLast?: Prisma.InteractionCreateNestedManyWithoutPeopleLastActiveInput
 }
 
-export type PeopleUncheckedCreateWithoutEnrichQueueInput = {
+export type PeopleUncheckedCreateWithoutTagsInput = {
   id?: string
   userId: string
   firstName: string
@@ -3658,33 +3658,33 @@ export type PeopleUncheckedCreateWithoutEnrichQueueInput = {
   addresses?: Prisma.PeopleAddressUncheckedCreateNestedManyWithoutPersonInput
   importantDates?: Prisma.PeopleImportantDateUncheckedCreateNestedManyWithoutPersonInput
   groups?: Prisma.PeopleGroupUncheckedCreateNestedManyWithoutPersonInput
-  tags?: Prisma.PeopleTagUncheckedCreateNestedManyWithoutPersonInput
   linkedin?: Prisma.PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput
   interactionParticipant?: Prisma.InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput
   relationshipsFrom?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutSourcePersonInput
   relationshipsTo?: Prisma.PeopleRelationshipUncheckedCreateNestedManyWithoutTargetPersonInput
   mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutLeftPersonInput
   mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutRightPersonInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutPersonInput
   interactionsLast?: Prisma.InteractionUncheckedCreateNestedManyWithoutPeopleLastActiveInput
 }
 
-export type PeopleCreateOrConnectWithoutEnrichQueueInput = {
+export type PeopleCreateOrConnectWithoutTagsInput = {
   where: Prisma.PeopleWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
 }
 
-export type PeopleUpsertWithoutEnrichQueueInput = {
-  update: Prisma.XOR<Prisma.PeopleUpdateWithoutEnrichQueueInput, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
-  create: Prisma.XOR<Prisma.PeopleCreateWithoutEnrichQueueInput, Prisma.PeopleUncheckedCreateWithoutEnrichQueueInput>
+export type PeopleUpsertWithoutTagsInput = {
+  update: Prisma.XOR<Prisma.PeopleUpdateWithoutTagsInput, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
+  create: Prisma.XOR<Prisma.PeopleCreateWithoutTagsInput, Prisma.PeopleUncheckedCreateWithoutTagsInput>
   where?: Prisma.PeopleWhereInput
 }
 
-export type PeopleUpdateToOneWithWhereWithoutEnrichQueueInput = {
+export type PeopleUpdateToOneWithWhereWithoutTagsInput = {
   where?: Prisma.PeopleWhereInput
-  data: Prisma.XOR<Prisma.PeopleUpdateWithoutEnrichQueueInput, Prisma.PeopleUncheckedUpdateWithoutEnrichQueueInput>
+  data: Prisma.XOR<Prisma.PeopleUpdateWithoutTagsInput, Prisma.PeopleUncheckedUpdateWithoutTagsInput>
 }
 
-export type PeopleUpdateWithoutEnrichQueueInput = {
+export type PeopleUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3711,17 +3711,17 @@ export type PeopleUpdateWithoutEnrichQueueInput = {
   addresses?: Prisma.PeopleAddressUpdateManyWithoutPersonNestedInput
   importantDates?: Prisma.PeopleImportantDateUpdateManyWithoutPersonNestedInput
   groups?: Prisma.PeopleGroupUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUpdateManyWithoutPersonNestedInput
   linkedin?: Prisma.PeopleLinkedinUpdateOneWithoutPersonNestedInput
   interactionParticipant?: Prisma.InteractionParticipantUpdateManyWithoutPersonNestedInput
   relationshipsFrom?: Prisma.PeopleRelationshipUpdateManyWithoutSourcePersonNestedInput
   relationshipsTo?: Prisma.PeopleRelationshipUpdateManyWithoutTargetPersonNestedInput
   mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUpdateManyWithoutLeftPersonNestedInput
   mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutPersonNestedInput
   interactionsLast?: Prisma.InteractionUpdateManyWithoutPeopleLastActiveNestedInput
 }
 
-export type PeopleUncheckedUpdateWithoutEnrichQueueInput = {
+export type PeopleUncheckedUpdateWithoutTagsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3748,13 +3748,13 @@ export type PeopleUncheckedUpdateWithoutEnrichQueueInput = {
   addresses?: Prisma.PeopleAddressUncheckedUpdateManyWithoutPersonNestedInput
   importantDates?: Prisma.PeopleImportantDateUncheckedUpdateManyWithoutPersonNestedInput
   groups?: Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput
-  tags?: Prisma.PeopleTagUncheckedUpdateManyWithoutPersonNestedInput
   linkedin?: Prisma.PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput
   interactionParticipant?: Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput
   relationshipsFrom?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutSourcePersonNestedInput
   relationshipsTo?: Prisma.PeopleRelationshipUncheckedUpdateManyWithoutTargetPersonNestedInput
   mergeRecommendationsLeft?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutLeftPersonNestedInput
   mergeRecommendationsRight?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutRightPersonNestedInput
+  enrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutPersonNestedInput
   interactionsLast?: Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput
 }
 

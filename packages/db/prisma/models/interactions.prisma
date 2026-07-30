@@ -1,0 +1,28 @@
+model Interaction {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  title       String?
+  description String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  participants     InteractionParticipant[]
+  peopleLastActive People[] @relation("LastInteractionActivity")
+  peopleWithLastInteraction People[] @relation("PeopleLastInteraction")
+
+  @@map("interactions")
+}
+
+model InteractionParticipant {
+  interactionId String      @map("interaction_id") @db.Uuid
+  interaction   Interaction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  personId      String      @map("person_id") @db.Uuid
+  person        People      @relation(fields: [personId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  @@id([interactionId, personId])
+  @@map("interaction_participants")
+}

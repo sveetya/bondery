@@ -9,6 +9,7 @@ Package scripts in `packages/db/package.json`:
 | Command | Purpose |
 |---------|---------|
 | `npm run db:generate -w @bondery/db` | Generate Prisma client |
+| `npm run db:validate -w @bondery/db` | Validate merged multi-file schema |
 | `npm run db:migrate:dev -w @bondery/db` | Create/apply development migration |
 | `npm run db:migrate:deploy -w @bondery/db` | Apply committed Prisma migrations |
 | `npm run db:functions -w @bondery/db` | Apply idempotent SQL functions/indexes |

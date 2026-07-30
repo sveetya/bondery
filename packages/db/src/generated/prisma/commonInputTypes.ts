@@ -320,40 +320,6 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
-export type EnumSupportedLocaleFilter<$PrismaModel = never> = {
-  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
-  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel> | $Enums.SupportedLocale
-}
-
-export type EnumColorSchemeFilter<$PrismaModel = never> = {
-  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
-  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel> | $Enums.ColorScheme
-}
-
-export type EnumSupportedLocaleWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
-  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel> | $Enums.SupportedLocale
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
-}
-
-export type EnumColorSchemeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
-  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel> | $Enums.ColorScheme
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
-}
-
 export type FloatNullableFilter<$PrismaModel = never> = {
   equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
   in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
@@ -484,6 +450,40 @@ export type BigIntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
+}
+
+export type EnumSupportedLocaleFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel> | $Enums.SupportedLocale
+}
+
+export type EnumColorSchemeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
+  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel> | $Enums.ColorScheme
+}
+
+export type EnumSupportedLocaleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel> | $Enums.SupportedLocale
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
+}
+
+export type EnumColorSchemeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
+  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel> | $Enums.ColorScheme
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
 }
 
 export type NestedUuidFilter<$PrismaModel = never> = {
@@ -774,40 +774,6 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
-export type NestedEnumSupportedLocaleFilter<$PrismaModel = never> = {
-  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
-  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel> | $Enums.SupportedLocale
-}
-
-export type NestedEnumColorSchemeFilter<$PrismaModel = never> = {
-  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
-  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel> | $Enums.ColorScheme
-}
-
-export type NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
-  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel> | $Enums.SupportedLocale
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
-}
-
-export type NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
-  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel> | $Enums.ColorScheme
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
-}
-
 export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
   in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null
@@ -889,6 +855,40 @@ export type NestedBigIntWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntFilter<$PrismaModel>
+}
+
+export type NestedEnumSupportedLocaleFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel> | $Enums.SupportedLocale
+}
+
+export type NestedEnumColorSchemeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
+  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel> | $Enums.ColorScheme
+}
+
+export type NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportedLocale | Prisma.EnumSupportedLocaleFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportedLocale[] | Prisma.ListEnumSupportedLocaleFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportedLocaleWithAggregatesFilter<$PrismaModel> | $Enums.SupportedLocale
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportedLocaleFilter<$PrismaModel>
+}
+
+export type NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ColorScheme | Prisma.EnumColorSchemeFieldRefInput<$PrismaModel>
+  in?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ColorScheme[] | Prisma.ListEnumColorSchemeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumColorSchemeWithAggregatesFilter<$PrismaModel> | $Enums.ColorScheme
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumColorSchemeFilter<$PrismaModel>
 }
 
 

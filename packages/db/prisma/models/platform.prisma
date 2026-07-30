@@ -1,0 +1,172 @@
+model GeocodeCache {
+  id              String   @id @default(uuid()) @db.Uuid
+  placeKey        String   @unique @map("place_key")
+  placeOriginal    String   @map("place_original")
+  geocodeFound     Boolean  @default(false) @map("geocode_found")
+  formattedLabel   String?  @map("formatted_label")
+  name             String?
+  city             String?
+  state            String?
+  stateCode        String?  @map("state_code")
+  country          String?
+  countryCode      String?  @map("country_code")
+  lat              Float?
+  lon              Float?
+  locationEwkt     String?  @map("location_ewkt")
+  timezone         String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("geocode_cache")
+}
+
+/// Better Auth `@better-auth/api-key` storage. Hard cutover from legacy `api_keys`.
+model Apikey {
+  id                  String    @id @default(uuid()) @db.Uuid
+  configId            String    @default("default") @map("config_id")
+  name                String?
+  start               String?
+  prefix              String?
+  key                 String
+  referenceId         String    @map("reference_id") @db.Uuid
+  user                User      @relation(fields: [referenceId], references: [id], onDelete: Cascade)
+  refillInterval      Int?      @map("refill_interval")
+  refillAmount        Int?      @map("refill_amount")
+  lastRefillAt        DateTime? @map("last_refill_at")
+  enabled             Boolean   @default(true)
+  rateLimitEnabled    Boolean   @default(false) @map("rate_limit_enabled")
+  rateLimitTimeWindow Int?      @map("rate_limit_time_window")
+  rateLimitMax        Int?      @map("rate_limit_max")
+  requestCount        Int       @default(0) @map("request_count")
+  remaining           Int?
+  lastRequest         DateTime? @map("last_request")
+  expiresAt           DateTime? @map("expires_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  permissions         String?
+  metadata            String?
+
+  @@index([referenceId])
+  @@index([configId])
+  @@index([key])
+  @@map("apikey")
+}
+
+model ChatSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  messages ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid()) @db.Uuid
+  sessionId String      @map("session_id") @db.Uuid
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String
+  content   Json
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@map("chat_messages")
+}
+
+model Subscription {
+  id                      String    @id @default(uuid()) @db.Uuid
+  userId                  String    @map("user_id") @db.Uuid
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeCustomerId        String    @map("stripe_customer_id")
+  stripeSubscriptionId    String    @unique @map("stripe_subscription_id")
+  status                  String
+  stripeStatus            String?   @map("stripe_status")
+  currentPeriodStart      DateTime? @map("current_period_start")
+  currentPeriodEnd        DateTime? @map("current_period_end")
+  trialEndsAt             DateTime? @map("trial_ends_at")
+  billingInterval         String?   @map("billing_interval")
+  priceId                 String?   @map("price_id")
+  unitAmount              Int?      @map("unit_amount")
+  currency                String?
+  productName             String?   @map("product_name")
+  paymentFailureCount     Int       @default(0) @map("payment_failure_count")
+  trialEndingEmailSentAt  DateTime? @map("trial_ending_email_sent_at")
+  cancelAtPeriodEnd       Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model PendingSubscription {
+  email                String    @id
+  stripeCustomerId     String    @map("stripe_customer_id")
+  stripeSubscriptionId String    @map("stripe_subscription_id")
+  status               String
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@map("pending_subscriptions")
+}
+
+model StripeWebhookEvent {
+  eventId     String   @id @map("event_id")
+  eventType   String   @map("event_type")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("stripe_webhook_events")
+}
+
+model ReminderDispatchLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminderDate DateTime @map("reminder_date") @db.Date
+  timezone     String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, reminderDate])
+  @@map("reminder_dispatch_log")
+}
+
+model SyncChangeLog {
+  serverSequence BigInt   @id @map("server_sequence")
+  userId         String   @map("user_id") @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tableName      String   @map("table_name")
+  entityId       String   @map("entity_id")
+  operation      String
+  rowData        Json?    @map("row_data")
+  changeIndex    Int      @map("change_index")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("sync_change_log")
+  @@index([userId, serverSequence])
+}
+
+model SyncMutationReceipt {
+  userId            String   @map("user_id") @db.Uuid
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clientMutationId  String   @map("client_mutation_id")
+  mutationType      String   @map("mutation_type")
+  payloadHash       String   @map("payload_hash")
+  serverSequence    BigInt   @map("server_sequence")
+  result            Json
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@id([userId, clientMutationId])
+  @@map("sync_mutation_receipts")
+}
+
+model SyncUserSequence {
+  userId       String @id @map("user_id") @db.Uuid
+  user         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastSequence BigInt @default(0) @map("last_sequence")
+
+  @@map("sync_user_sequence")
+}

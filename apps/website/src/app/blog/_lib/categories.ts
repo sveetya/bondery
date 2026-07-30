@@ -1,4 +1,4 @@
-import { type Icon, IconStar, IconTopologyStar } from "@tabler/icons-react";
+import { type Icon, IconCpu, IconHistory, IconTopologyStar } from "@tabler/icons-react";
 
 import type { PostCategory } from "./types";
 
@@ -27,14 +27,24 @@ export type BlogCategoryConfig = {
  *   2. Add a BlogCategoryConfig entry here.
  *   3. Create the matching folder under content/blog/<slug>/.
  */
-export const productCategoryConfig: BlogCategoryConfig = {
+export const updatesCategoryConfig: BlogCategoryConfig = {
   discordTagId: "1485722208033702041",
-  discordThreadName: "Product Updates",
+  discordThreadName: "Updates",
   emoji: "⭐",
-  icon: IconStar,
-  label: "Product",
+  icon: IconHistory,
+  label: "Updates",
   redditFlairId: "d66897b8-26fc-11f1-9219-7272b72b91c8",
-  slug: "product",
+  slug: "updates",
+};
+
+export const techCategoryConfig: BlogCategoryConfig = {
+  discordTagId: "",
+  discordThreadName: "Tech",
+  emoji: "🔧",
+  icon: IconCpu,
+  label: "Tech",
+  redditFlairId: "",
+  slug: "tech",
 };
 
 export const bondsCategoryConfig: BlogCategoryConfig = {
@@ -48,7 +58,8 @@ export const bondsCategoryConfig: BlogCategoryConfig = {
 };
 
 export const BLOG_CATEGORY_CONFIGS: BlogCategoryConfig[] = [
-  productCategoryConfig,
+  updatesCategoryConfig,
+  techCategoryConfig,
   bondsCategoryConfig,
 ];
 

@@ -2,7 +2,7 @@
 export type TeamMember = {
   /** Display name — also used as `author` in PostMeta. */
   name: string;
-  /** Avatar image path relative to /public (e.g. "/images/team/marek.jpg"). */
+  /** Avatar image path relative to /public (e.g. "/images/team/sveetya.png"). */
   image: string;
   /** Short role label shown under the name. */
   role: string;
@@ -20,7 +20,7 @@ export type TeamMember = {
  */
 export const sveetya: TeamMember = {
   description: "Built the foundation.",
-  image: "/images/team/marek.jpg",
+  image: "/images/team/sveetya.png",
   linkedin: "https://linkedin.com/in/mareksvitek",
   name: "Sveetya",
   role: "Engineering",

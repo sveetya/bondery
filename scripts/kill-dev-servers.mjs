@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { killDevPort } from "./kill-dev-port.mjs";
 
-const ports = [26631, 26632];
+const ports = [26630, 26631, 26632];
 let ok = true;
 
 for (const port of ports) {

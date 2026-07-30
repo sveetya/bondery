@@ -1,13 +1,11 @@
-import { Anchor, Blockquote, Code, List, ListItem, Text, Title } from "@mantine/core";
+import { Blockquote, Code, List, ListItem, Text, Title } from "@mantine/core";
 import type { MDXComponents } from "mdx/types";
+import { MdxTable } from "@/components/mdx-table";
+import { RichAnchor } from "@/components/RichAnchor";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
-    a: ({ href, children }) => (
-      <Anchor href={href} rel="noopener noreferrer" target="_blank">
-        {children}
-      </Anchor>
-    ),
+    a: ({ href, children }) => <RichAnchor href={href ?? ""}>{children}</RichAnchor>,
     blockquote: ({ children }) => <Blockquote mb="md">{children}</Blockquote>,
     code: ({ children }) => <Code>{children}</Code>,
     h1: ({ children }) => (
@@ -25,6 +23,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </Title>
     ),
+    h4: ({ children }) => (
+      <Title mb="xs" mt="md" order={4}>
+        {children}
+      </Title>
+    ),
     li: ({ children }) => <ListItem>{children}</ListItem>,
     ol: ({ children }) => (
       <List mb="md" size="lg" spacing="sm" type="ordered" withPadding>
@@ -32,7 +35,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </List>
     ),
     p: ({ children }) => (
-      <Text lh={1.8} mb="md" size="lg">
+      <Text component="p" lh={1.8} mb="md" size="lg">
         {children}
       </Text>
     ),
@@ -42,5 +45,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </List>
     ),
     ...components,
+    table: MdxTable,
   };
 }

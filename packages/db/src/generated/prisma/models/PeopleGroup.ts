@@ -325,48 +325,6 @@ export type PeopleGroupMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type PeopleGroupCreateNestedManyWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
-  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
-  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-}
-
-export type PeopleGroupUncheckedCreateNestedManyWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
-  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
-  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-}
-
-export type PeopleGroupUpdateManyWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
-  upsert?: Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput[]
-  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
-  set?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  disconnect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  delete?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  update?: Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput[]
-  updateMany?: Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput | Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput[]
-  deleteMany?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
-}
-
-export type PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
-  upsert?: Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput[]
-  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
-  set?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  disconnect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  delete?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
-  update?: Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput[]
-  updateMany?: Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput | Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput[]
-  deleteMany?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
-}
-
 export type PeopleGroupCreateNestedManyWithoutGroupInput = {
   create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutGroupInput, Prisma.PeopleGroupUncheckedCreateWithoutGroupInput> | Prisma.PeopleGroupCreateWithoutGroupInput[] | Prisma.PeopleGroupUncheckedCreateWithoutGroupInput[]
   connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutGroupInput | Prisma.PeopleGroupCreateOrConnectWithoutGroupInput[]
@@ -409,55 +367,46 @@ export type PeopleGroupUncheckedUpdateManyWithoutGroupNestedInput = {
   deleteMany?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
 }
 
-export type PeopleGroupCreateWithoutPersonInput = {
-  id?: string
-  userId: string
-  createdAt?: Date | string
-  group: Prisma.GroupCreateNestedOneWithoutPeopleInput
+export type PeopleGroupCreateNestedManyWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
+  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
+  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
 }
 
-export type PeopleGroupUncheckedCreateWithoutPersonInput = {
-  id?: string
-  userId: string
-  groupId: string
-  createdAt?: Date | string
+export type PeopleGroupUncheckedCreateNestedManyWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
+  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
+  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
 }
 
-export type PeopleGroupCreateOrConnectWithoutPersonInput = {
-  where: Prisma.PeopleGroupWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput>
+export type PeopleGroupUpdateManyWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
+  upsert?: Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput[]
+  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
+  set?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  disconnect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  delete?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  update?: Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput[]
+  updateMany?: Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput | Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput[]
+  deleteMany?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
 }
 
-export type PeopleGroupCreateManyPersonInputEnvelope = {
-  data: Prisma.PeopleGroupCreateManyPersonInput | Prisma.PeopleGroupCreateManyPersonInput[]
-  skipDuplicates?: boolean
-}
-
-export type PeopleGroupUpsertWithWhereUniqueWithoutPersonInput = {
-  where: Prisma.PeopleGroupWhereUniqueInput
-  update: Prisma.XOR<Prisma.PeopleGroupUpdateWithoutPersonInput, Prisma.PeopleGroupUncheckedUpdateWithoutPersonInput>
-  create: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput>
-}
-
-export type PeopleGroupUpdateWithWhereUniqueWithoutPersonInput = {
-  where: Prisma.PeopleGroupWhereUniqueInput
-  data: Prisma.XOR<Prisma.PeopleGroupUpdateWithoutPersonInput, Prisma.PeopleGroupUncheckedUpdateWithoutPersonInput>
-}
-
-export type PeopleGroupUpdateManyWithWhereWithoutPersonInput = {
-  where: Prisma.PeopleGroupScalarWhereInput
-  data: Prisma.XOR<Prisma.PeopleGroupUpdateManyMutationInput, Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonInput>
-}
-
-export type PeopleGroupScalarWhereInput = {
-  AND?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
-  OR?: Prisma.PeopleGroupScalarWhereInput[]
-  NOT?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
-  id?: Prisma.UuidFilter<"PeopleGroup"> | string
-  userId?: Prisma.UuidFilter<"PeopleGroup"> | string
-  personId?: Prisma.UuidFilter<"PeopleGroup"> | string
-  groupId?: Prisma.UuidFilter<"PeopleGroup"> | string
-  createdAt?: Prisma.DateTimeFilter<"PeopleGroup"> | Date | string
+export type PeopleGroupUncheckedUpdateManyWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput> | Prisma.PeopleGroupCreateWithoutPersonInput[] | Prisma.PeopleGroupUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.PeopleGroupCreateOrConnectWithoutPersonInput | Prisma.PeopleGroupCreateOrConnectWithoutPersonInput[]
+  upsert?: Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpsertWithWhereUniqueWithoutPersonInput[]
+  createMany?: Prisma.PeopleGroupCreateManyPersonInputEnvelope
+  set?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  disconnect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  delete?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  connect?: Prisma.PeopleGroupWhereUniqueInput | Prisma.PeopleGroupWhereUniqueInput[]
+  update?: Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput | Prisma.PeopleGroupUpdateWithWhereUniqueWithoutPersonInput[]
+  updateMany?: Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput | Prisma.PeopleGroupUpdateManyWithWhereWithoutPersonInput[]
+  deleteMany?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
 }
 
 export type PeopleGroupCreateWithoutGroupInput = {
@@ -500,32 +449,55 @@ export type PeopleGroupUpdateManyWithWhereWithoutGroupInput = {
   data: Prisma.XOR<Prisma.PeopleGroupUpdateManyMutationInput, Prisma.PeopleGroupUncheckedUpdateManyWithoutGroupInput>
 }
 
-export type PeopleGroupCreateManyPersonInput = {
+export type PeopleGroupScalarWhereInput = {
+  AND?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
+  OR?: Prisma.PeopleGroupScalarWhereInput[]
+  NOT?: Prisma.PeopleGroupScalarWhereInput | Prisma.PeopleGroupScalarWhereInput[]
+  id?: Prisma.UuidFilter<"PeopleGroup"> | string
+  userId?: Prisma.UuidFilter<"PeopleGroup"> | string
+  personId?: Prisma.UuidFilter<"PeopleGroup"> | string
+  groupId?: Prisma.UuidFilter<"PeopleGroup"> | string
+  createdAt?: Prisma.DateTimeFilter<"PeopleGroup"> | Date | string
+}
+
+export type PeopleGroupCreateWithoutPersonInput = {
+  id?: string
+  userId: string
+  createdAt?: Date | string
+  group: Prisma.GroupCreateNestedOneWithoutPeopleInput
+}
+
+export type PeopleGroupUncheckedCreateWithoutPersonInput = {
   id?: string
   userId: string
   groupId: string
   createdAt?: Date | string
 }
 
-export type PeopleGroupUpdateWithoutPersonInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  group?: Prisma.GroupUpdateOneRequiredWithoutPeopleNestedInput
+export type PeopleGroupCreateOrConnectWithoutPersonInput = {
+  where: Prisma.PeopleGroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput>
 }
 
-export type PeopleGroupUncheckedUpdateWithoutPersonInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type PeopleGroupCreateManyPersonInputEnvelope = {
+  data: Prisma.PeopleGroupCreateManyPersonInput | Prisma.PeopleGroupCreateManyPersonInput[]
+  skipDuplicates?: boolean
 }
 
-export type PeopleGroupUncheckedUpdateManyWithoutPersonInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  groupId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type PeopleGroupUpsertWithWhereUniqueWithoutPersonInput = {
+  where: Prisma.PeopleGroupWhereUniqueInput
+  update: Prisma.XOR<Prisma.PeopleGroupUpdateWithoutPersonInput, Prisma.PeopleGroupUncheckedUpdateWithoutPersonInput>
+  create: Prisma.XOR<Prisma.PeopleGroupCreateWithoutPersonInput, Prisma.PeopleGroupUncheckedCreateWithoutPersonInput>
+}
+
+export type PeopleGroupUpdateWithWhereUniqueWithoutPersonInput = {
+  where: Prisma.PeopleGroupWhereUniqueInput
+  data: Prisma.XOR<Prisma.PeopleGroupUpdateWithoutPersonInput, Prisma.PeopleGroupUncheckedUpdateWithoutPersonInput>
+}
+
+export type PeopleGroupUpdateManyWithWhereWithoutPersonInput = {
+  where: Prisma.PeopleGroupScalarWhereInput
+  data: Prisma.XOR<Prisma.PeopleGroupUpdateManyMutationInput, Prisma.PeopleGroupUncheckedUpdateManyWithoutPersonInput>
 }
 
 export type PeopleGroupCreateManyGroupInput = {
@@ -553,6 +525,34 @@ export type PeopleGroupUncheckedUpdateManyWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   personId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PeopleGroupCreateManyPersonInput = {
+  id?: string
+  userId: string
+  groupId: string
+  createdAt?: Date | string
+}
+
+export type PeopleGroupUpdateWithoutPersonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.GroupUpdateOneRequiredWithoutPeopleNestedInput
+}
+
+export type PeopleGroupUncheckedUpdateWithoutPersonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PeopleGroupUncheckedUpdateManyWithoutPersonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 

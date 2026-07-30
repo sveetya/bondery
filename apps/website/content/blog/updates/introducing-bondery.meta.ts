@@ -1,4 +1,4 @@
-import { productCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
 import { sveetya } from "../../../src/data/team";
 
@@ -11,7 +11,7 @@ export const postMeta: PostMeta = {
     enabled: true,
   },
   author: sveetya.name,
-  category: productCategoryConfig.slug,
+  category: updatesCategoryConfig.slug,
   date: "2026-03-22",
   description:
     "Meet Bondery: the open-source Personal Relationship Manager that helps you build a better network.",

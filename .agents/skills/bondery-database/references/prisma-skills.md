@@ -1,6 +1,6 @@
 # Upstream Prisma skills
 
-Bondery uses **Prisma ORM 7** (classic): `schema.prisma`, `@prisma/client`, `prisma migrate`, and the shared singleton in `packages/db/src/client.ts`. Day-to-day schema, migration, and query work is governed by this skill's Bondery-specific references — not by the upstream Prisma Next skills.
+Bondery uses **Prisma ORM 7** (classic): multi-file schema under `packages/db/prisma/`, `@prisma/client`, `prisma migrate`, and the shared singleton in `packages/db/src/client.ts`. Day-to-day schema, migration, and query work is governed by this skill's Bondery-specific references — not by the upstream Prisma Next skills.
 
 The upstream skills installed from `prisma/prisma-next/skills` document **Prisma Next** — a separate contract-first data layer (`contract.prisma`, `prisma-next` CLI, `db.orm` / `db.sql`). Do not apply Prisma Next commands or APIs to the Bondery codebase unless an explicit migration project is underway.
 
@@ -37,7 +37,7 @@ Use this when reading Prisma Next docs for ideas; implement with classic Prisma 
 
 | Bondery (classic Prisma 7) | Prisma Next analogue | Bondery reference |
 |----------------------------|----------------------|-------------------|
-| `packages/db/prisma/schema.prisma` | `contract.prisma` / contract builder | [schema-conventions.md](./schema-conventions.md) |
+| `packages/db/prisma/` (multi-file) | `contract.prisma` / contract builder | [schema-conventions.md](./schema-conventions.md) |
 | `npm run db:migrate:dev -w @bondery/db` | `migration plan` + `migrate` (or dev `db update`) | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `npm run release-migrate -w @bondery/db` | `migrate` + `db verify` in deploy pipeline | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `prisma` from `@bondery/db` | `db` from `src/prisma/db.ts` | [migrations-and-connections.md](./migrations-and-connections.md) |

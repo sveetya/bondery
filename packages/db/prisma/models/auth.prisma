@@ -1,0 +1,122 @@
+// ---------------------------------------------------------------------------
+// Better Auth
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false) @map("email_verified")
+  image         String?
+  role          String?   @default("user")
+  banned        Boolean?  @default(false)
+  banReason     String?   @map("ban_reason")
+  banExpires    DateTime? @map("ban_expires")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  sessions Session[]
+  accounts Account[]
+
+  // App-domain relations (FK preserved from the Supabase migration: user_id -> user.id)
+  userSettings              UserSettings?
+  people                    People[]
+  groups                    Group[]
+  tags                      Tag[]
+  interactions              Interaction[]
+  apikeys                   Apikey[]
+  chatSessions              ChatSession[]
+  subscriptions             Subscription[]
+  linkedinEnrichQueue       LinkedinEnrichQueue[]
+  peopleMergeRecommendations PeopleMergeRecommendation[]
+  reminderDispatchLogs      ReminderDispatchLog[]
+  syncChangeLogs            SyncChangeLog[]
+  syncMutationReceipts      SyncMutationReceipt[]
+  syncUserSequence          SyncUserSequence?
+
+  oauthClients       OauthClient[]
+  oauthRefreshTokens OauthRefreshToken[]
+  oauthAccessTokens  OauthAccessToken[]
+  oauthConsents      OauthConsent[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(uuid()) @db.Uuid
+  expiresAt DateTime @map("expires_at")
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  ipAddress       String?  @map("ip_address")
+  userAgent       String?  @map("user_agent")
+  impersonatedBy  String?  @map("impersonated_by")
+  userId          String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  oauthRefreshTokens OauthRefreshToken[]
+  oauthAccessTokens  OauthAccessToken[]
+
+  @@map("session")
+}
+
+/// One row per linked OAuth identity (github / linkedin) — replaces
+/// Supabase `auth.identities`.
+///
+/// Better Auth 1.7 renamed `accountId` -> `providerAccountId` and made
+/// `issuer` a required field. We keep the underlying column names
+/// (`account_id`) via `@map` so this is a zero-data-movement rename at the
+/// Prisma layer; only `issuer` is a real backfilled column (see the
+/// `add_oauth_provider_1_7` migration for the deterministic
+/// `local:oauth:<providerId>` backfill used for our only two social
+/// providers, github and linkedin).
+model Account {
+  id                    String    @id @default(uuid()) @db.Uuid
+  providerAccountId     String    @map("account_id")
+  providerId            String    @map("provider_id")
+  issuer                String
+  userId                String    @map("user_id") @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@unique([issuer, providerAccountId])
+  // Legacy index kept through the rollback window so a reverted deploy can
+  // still rely on the pre-1.7 (providerId, accountId) uniqueness guarantee.
+  // Both indexes cover the same two physical columns (provider_id,
+  // account_id); drop this one in the follow-up contract migration.
+  @@unique([providerId, providerAccountId], map: "account_provider_id_account_id_key")
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @default(uuid()) @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime? @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  @@map("verification")
+}
+
+/// Signing keys for the `jwt` plugin (used to mint access tokens the API
+/// verifies, replacing Supabase's JWKS-based access tokens).
+model Jwks {
+  id         String    @id @default(uuid()) @db.Uuid
+  publicKey  String    @map("public_key")
+  privateKey String    @map("private_key")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  expiresAt  DateTime? @map("expires_at")
+  alg        String?
+  crv        String?
+
+  @@map("jwks")
+}

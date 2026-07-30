@@ -25,8 +25,8 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
    - `node apps/api/dist/cli/release-migrate.js` — `prisma migrate deploy`, `functions.sql`, OAuth clients, platform admins
    - `node apps/api/dist/cli/ensure-storage-buckets.js` — create required S3 buckets if missing
 
-2. **Main API process** handles only runtime concerns:
-   - Env validation → Fastify build → `listen()` → `verifyAuthAtStartup()` (JWKS self-check over HTTP)
+2. **Main API process** handles runtime concerns in `buildServer()` before `listen()`:
+   - Env validation → `buildServer()` (`initializeRuntime()` for Postgres, storage, SMTP, Redis, pg-boss → rate-limit → `registerAuthRoutes()` → `verifyAuthRuntime()` via `fastify.inject('/auth/jwks')`) → `listen()`
 
 3. **No separate `migrate` Compose service** — upgrades re-run `pre_start` when the API image or init definition changes.
 
@@ -36,7 +36,7 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 
 ## Why JWKS stays in the main process
 
-`verifyAuthAtStartup` fetches JWKS on loopback (`http://127.0.0.1:{port}/api/auth/jwks`) after `listen()` — validates the in-process auth stack without Traefik/DNS hairpin. The public issuer URL is logged for operators. Running this in `pre_start` is circular (no server yet).
+`verifyAuthRuntime()` runs inside `buildServer()` after auth routes are mounted and **before** `listen()`. It calls `fastify.inject({ method: 'GET', url: '/auth/jwks' })` — same integration coverage as an HTTP probe, but in-process (no loopback socket, no Traefik/DNS hairpin to `BONDERY_PUBLIC_API_URL`). The public issuer URL is still logged for operators. Running this in `pre_start` is circular (no Fastify app yet); folding it into `initializeRuntime()` is the wrong seam (infra deps vs in-process auth wiring).
 
 ## Why not `pre_start` on `seaweedfs-s3`
 
@@ -48,11 +48,12 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 - **Positive:** `webapp` remains gated on `api: service_healthy` — init completes before HTTP traffic.
 - **Trade-off:** Requires Docker Compose v2.38+ (`pre_start` support).
 - **Trade-off:** API image must ship compiled CLI entrypoints and `packages/db/prisma` migrations.
-- **Out of scope:** pg-boss worker wiring; JWKS check in init; legacy Compose fallback files.
+- **Out of scope:** pg-boss worker wiring; JWKS check in `pre_start`; legacy Compose fallback files.
 
 ## References
 
 - [Docker Compose init containers](https://docs.docker.com/compose/how-tos/init-containers/)
 - [ADR 0003: SeaweedFS object storage](./0003-seaweedfs-storage.mdx)
 - [`packages/db/scripts/release-migrate.ts`](../../packages/db/scripts/release-migrate.ts)
+- [`apps/api/src/build-server.ts`](../../apps/api/src/build-server.ts)
 - [`apps/api/src/index.ts`](../../apps/api/src/index.ts)

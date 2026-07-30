@@ -1,16 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { METADATA_TITLE_DIVIDER, WEBAPP_NAME } from "@bondery/helpers";
-import { bonderyTheme } from "@bondery/mantine-next";
-import {
-  ColorSchemeScript,
-  MantineProvider,
-  mantineHtmlProps,
-  v8CssVariablesResolver,
-} from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { ColorSchemeScript } from "@mantine/core";
 import { Lexend } from "next/font/google";
-import { Footer, Header } from "@/components/landing";
 import { WEBSITE_URL } from "@/lib/config";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo/copy";
 import { JsonLd } from "@/lib/seo/json-ld";
@@ -68,7 +60,7 @@ export default async function RootLayout({
   const nonce = await getCspNonce();
 
   return (
-    <html lang="en" {...mantineHtmlProps} className={lexend.variable}>
+    <html className={lexend.variable} lang="en" suppressHydrationWarning>
       <head>
         <ColorSchemeScript defaultColorScheme="auto" nonce={nonce} />
       </head>
@@ -80,16 +72,7 @@ export default async function RootLayout({
           id="schema-software-application"
           nonce={nonce}
         />
-        <MantineProvider
-          cssVariablesResolver={v8CssVariablesResolver}
-          defaultColorScheme="dark"
-          theme={bonderyTheme}
-        >
-          <Notifications autoClose={6000} position="top-center" />
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </MantineProvider>
+        {children}
       </body>
     </html>
   );

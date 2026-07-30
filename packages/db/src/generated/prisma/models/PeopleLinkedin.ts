@@ -316,11 +316,6 @@ export type PeopleLinkedinUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type PeopleLinkedinNullableScalarRelationFilter = {
-  is?: Prisma.PeopleLinkedinWhereInput | null
-  isNot?: Prisma.PeopleLinkedinWhereInput | null
-}
-
 export type PeopleLinkedinCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -353,36 +348,9 @@ export type PeopleLinkedinScalarRelationFilter = {
   isNot?: Prisma.PeopleLinkedinWhereInput
 }
 
-export type PeopleLinkedinCreateNestedOneWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
-  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
-  connect?: Prisma.PeopleLinkedinWhereUniqueInput
-}
-
-export type PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
-  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
-  connect?: Prisma.PeopleLinkedinWhereUniqueInput
-}
-
-export type PeopleLinkedinUpdateOneWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
-  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
-  upsert?: Prisma.PeopleLinkedinUpsertWithoutPersonInput
-  disconnect?: Prisma.PeopleLinkedinWhereInput | boolean
-  delete?: Prisma.PeopleLinkedinWhereInput | boolean
-  connect?: Prisma.PeopleLinkedinWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput, Prisma.PeopleLinkedinUpdateWithoutPersonInput>, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
-}
-
-export type PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
-  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
-  upsert?: Prisma.PeopleLinkedinUpsertWithoutPersonInput
-  disconnect?: Prisma.PeopleLinkedinWhereInput | boolean
-  delete?: Prisma.PeopleLinkedinWhereInput | boolean
-  connect?: Prisma.PeopleLinkedinWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput, Prisma.PeopleLinkedinUpdateWithoutPersonInput>, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
+export type PeopleLinkedinNullableScalarRelationFilter = {
+  is?: Prisma.PeopleLinkedinWhereInput | null
+  isNot?: Prisma.PeopleLinkedinWhereInput | null
 }
 
 export type PeopleLinkedinCreateNestedOneWithoutWorkHistoryInput = {
@@ -413,60 +381,36 @@ export type PeopleLinkedinUpdateOneRequiredWithoutEducationHistoryNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleLinkedinUpdateToOneWithWhereWithoutEducationHistoryInput, Prisma.PeopleLinkedinUpdateWithoutEducationHistoryInput>, Prisma.PeopleLinkedinUncheckedUpdateWithoutEducationHistoryInput>
 }
 
-export type PeopleLinkedinCreateWithoutPersonInput = {
-  id?: string
-  userId: string
-  bio?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  workHistory?: Prisma.PeopleWorkHistoryCreateNestedManyWithoutPeopleLinkedinInput
-  educationHistory?: Prisma.PeopleEducationHistoryCreateNestedManyWithoutPeopleLinkedinInput
+export type PeopleLinkedinCreateNestedOneWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
+  connect?: Prisma.PeopleLinkedinWhereUniqueInput
 }
 
-export type PeopleLinkedinUncheckedCreateWithoutPersonInput = {
-  id?: string
-  userId: string
-  bio?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  workHistory?: Prisma.PeopleWorkHistoryUncheckedCreateNestedManyWithoutPeopleLinkedinInput
-  educationHistory?: Prisma.PeopleEducationHistoryUncheckedCreateNestedManyWithoutPeopleLinkedinInput
+export type PeopleLinkedinUncheckedCreateNestedOneWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
+  connect?: Prisma.PeopleLinkedinWhereUniqueInput
 }
 
-export type PeopleLinkedinCreateOrConnectWithoutPersonInput = {
-  where: Prisma.PeopleLinkedinWhereUniqueInput
-  create: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+export type PeopleLinkedinUpdateOneWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
+  upsert?: Prisma.PeopleLinkedinUpsertWithoutPersonInput
+  disconnect?: Prisma.PeopleLinkedinWhereInput | boolean
+  delete?: Prisma.PeopleLinkedinWhereInput | boolean
+  connect?: Prisma.PeopleLinkedinWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput, Prisma.PeopleLinkedinUpdateWithoutPersonInput>, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
 }
 
-export type PeopleLinkedinUpsertWithoutPersonInput = {
-  update: Prisma.XOR<Prisma.PeopleLinkedinUpdateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
-  create: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
-  where?: Prisma.PeopleLinkedinWhereInput
-}
-
-export type PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput = {
-  where?: Prisma.PeopleLinkedinWhereInput
-  data: Prisma.XOR<Prisma.PeopleLinkedinUpdateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
-}
-
-export type PeopleLinkedinUpdateWithoutPersonInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  workHistory?: Prisma.PeopleWorkHistoryUpdateManyWithoutPeopleLinkedinNestedInput
-  educationHistory?: Prisma.PeopleEducationHistoryUpdateManyWithoutPeopleLinkedinNestedInput
-}
-
-export type PeopleLinkedinUncheckedUpdateWithoutPersonInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  workHistory?: Prisma.PeopleWorkHistoryUncheckedUpdateManyWithoutPeopleLinkedinNestedInput
-  educationHistory?: Prisma.PeopleEducationHistoryUncheckedUpdateManyWithoutPeopleLinkedinNestedInput
+export type PeopleLinkedinUncheckedUpdateOneWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+  connectOrCreate?: Prisma.PeopleLinkedinCreateOrConnectWithoutPersonInput
+  upsert?: Prisma.PeopleLinkedinUpsertWithoutPersonInput
+  disconnect?: Prisma.PeopleLinkedinWhereInput | boolean
+  delete?: Prisma.PeopleLinkedinWhereInput | boolean
+  connect?: Prisma.PeopleLinkedinWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput, Prisma.PeopleLinkedinUpdateWithoutPersonInput>, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
 }
 
 export type PeopleLinkedinCreateWithoutWorkHistoryInput = {
@@ -579,6 +523,62 @@ export type PeopleLinkedinUncheckedUpdateWithoutEducationHistoryInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   workHistory?: Prisma.PeopleWorkHistoryUncheckedUpdateManyWithoutPeopleLinkedinNestedInput
+}
+
+export type PeopleLinkedinCreateWithoutPersonInput = {
+  id?: string
+  userId: string
+  bio?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workHistory?: Prisma.PeopleWorkHistoryCreateNestedManyWithoutPeopleLinkedinInput
+  educationHistory?: Prisma.PeopleEducationHistoryCreateNestedManyWithoutPeopleLinkedinInput
+}
+
+export type PeopleLinkedinUncheckedCreateWithoutPersonInput = {
+  id?: string
+  userId: string
+  bio?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  workHistory?: Prisma.PeopleWorkHistoryUncheckedCreateNestedManyWithoutPeopleLinkedinInput
+  educationHistory?: Prisma.PeopleEducationHistoryUncheckedCreateNestedManyWithoutPeopleLinkedinInput
+}
+
+export type PeopleLinkedinCreateOrConnectWithoutPersonInput = {
+  where: Prisma.PeopleLinkedinWhereUniqueInput
+  create: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+}
+
+export type PeopleLinkedinUpsertWithoutPersonInput = {
+  update: Prisma.XOR<Prisma.PeopleLinkedinUpdateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
+  create: Prisma.XOR<Prisma.PeopleLinkedinCreateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedCreateWithoutPersonInput>
+  where?: Prisma.PeopleLinkedinWhereInput
+}
+
+export type PeopleLinkedinUpdateToOneWithWhereWithoutPersonInput = {
+  where?: Prisma.PeopleLinkedinWhereInput
+  data: Prisma.XOR<Prisma.PeopleLinkedinUpdateWithoutPersonInput, Prisma.PeopleLinkedinUncheckedUpdateWithoutPersonInput>
+}
+
+export type PeopleLinkedinUpdateWithoutPersonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workHistory?: Prisma.PeopleWorkHistoryUpdateManyWithoutPeopleLinkedinNestedInput
+  educationHistory?: Prisma.PeopleEducationHistoryUpdateManyWithoutPeopleLinkedinNestedInput
+}
+
+export type PeopleLinkedinUncheckedUpdateWithoutPersonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  workHistory?: Prisma.PeopleWorkHistoryUncheckedUpdateManyWithoutPeopleLinkedinNestedInput
+  educationHistory?: Prisma.PeopleEducationHistoryUncheckedUpdateManyWithoutPeopleLinkedinNestedInput
 }
 
 

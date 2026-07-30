@@ -1,3 +1,4 @@
+import { formatMetadataTitle } from "@bondery/helpers";
 import { Container, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -21,15 +22,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     all: "Stay up to date with Bondery — product updates, relationship tips, and networking insights from the team behind the open-source PRM.",
     bonds:
       "Tips and insights on building meaningful relationships, effective networking, and strong networks.",
-    product: "Product updates, feature releases, and development news from Bondery.",
+    tech: "Technical deep-dives on Bondery's architecture, infrastructure, and engineering decisions.",
+    updates: "Product updates, feature releases, and development news from Bondery.",
   };
+
+  const description = descriptions[category] ?? descriptions.all;
 
   return {
     alternates: {
       canonical: `/blog/${category}`,
     },
-    description: descriptions[category] ?? descriptions.all,
+    description,
+    openGraph: {
+      description,
+      title: formatMetadataTitle(label),
+      type: "website",
+      url: `/blog/${category}`,
+    },
     title: label,
+    twitter: {
+      description,
+      title: formatMetadataTitle(label),
+    },
   };
 }
 

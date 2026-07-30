@@ -1,0 +1,4 @@
+/* Mantine styles for marketing pages and docs API reference UI only. */
+@import "@mantine/core/styles.css";
+@import "@mantine/notifications/styles.css";
+@import "@bondery/mantine-next/styles";

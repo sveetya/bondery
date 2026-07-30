@@ -210,36 +210,30 @@ export function registerAuthStrategies(fastify: AppFastifyInstance): void {
 }
 
 /**
- * Verifies Better Auth JWKS is reachable at startup. Call after listen().
+ * Verifies the in-process Better Auth JWKS endpoint before listen.
  *
- * Uses loopback by default so container startup does not depend on Traefik/DNS
+ * Uses Fastify inject (no loopback HTTP) so boot does not depend on Traefik/DNS
  * hairpin to BONDERY_PUBLIC_API_URL. The public issuer URL is still logged.
  */
-export async function verifyAuthAtStartup(
-  fastify: AppFastifyInstance,
-  options?: { listenPort: number },
-): Promise<void> {
+export async function verifyAuthRuntime(fastify: AppFastifyInstance): Promise<void> {
   const publicBaseUrl = fastify.config.BONDERY_PUBLIC_API_URL.replace(/\/+$/, "");
   const publicJwksUrl = `${publicBaseUrl}${betterAuthPath("/jwks")}`;
+  const jwksPath = betterAuthPath("/jwks");
 
-  const probeBaseUrl =
-    options?.listenPort !== undefined ? `http://127.0.0.1:${options.listenPort}` : publicBaseUrl;
-  const probeJwksUrl = `${probeBaseUrl}${betterAuthPath("/jwks")}`;
+  await fastify.ready();
 
-  try {
-    const response = await fetch(probeJwksUrl);
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-  } catch (error) {
+  const response = await fastify.inject({ method: "GET", url: jwksPath });
+  if (response.statusCode !== 200) {
     fastify.log.error(
-      { err: error, probeJwksUrl, publicJwksUrl },
+      { publicJwksUrl, statusCode: response.statusCode },
       "Better Auth JWKS is not reachable",
     );
-    throw new Error(`Better Auth JWKS is not reachable at ${probeJwksUrl}`);
+    throw new Error(
+      `Better Auth JWKS is not reachable at ${jwksPath} (HTTP ${response.statusCode})`,
+    );
   }
 
-  fastify.log.info({ probeJwksUrl, publicJwksUrl }, "Better Auth JWKS reachable");
+  fastify.log.info({ jwksPath, publicJwksUrl }, "Better Auth JWKS reachable");
 }
 
 // ── Helper for handlers ──────────────────────────────────────────────────────

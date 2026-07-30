@@ -639,6 +639,48 @@ export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountsInput, Prisma.UserUpdateWithoutAccountsInput>, Prisma.UserUncheckedUpdateWithoutAccountsInput>
 }
 
+export type UserCreateNestedOneWithoutGroupsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGroupsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutGroupsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGroupsInput
+  upsert?: Prisma.UserUpsertWithoutGroupsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGroupsInput, Prisma.UserUpdateWithoutGroupsInput>, Prisma.UserUncheckedUpdateWithoutGroupsInput>
+}
+
+export type UserCreateNestedOneWithoutInteractionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInteractionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutInteractionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInteractionsInput
+  upsert?: Prisma.UserUpsertWithoutInteractionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInteractionsInput, Prisma.UserUpdateWithoutInteractionsInput>, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
+}
+
+export type UserCreateNestedOneWithoutLinkedinEnrichQueueInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkedinEnrichQueueInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLinkedinEnrichQueueNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkedinEnrichQueueInput
+  upsert?: Prisma.UserUpsertWithoutLinkedinEnrichQueueInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLinkedinEnrichQueueInput, Prisma.UserUpdateWithoutLinkedinEnrichQueueInput>, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
+}
+
 export type UserCreateNestedOneWithoutOauthClientsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutOauthClientsInput, Prisma.UserUncheckedCreateWithoutOauthClientsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutOauthClientsInput
@@ -701,20 +743,6 @@ export type UserUpdateOneWithoutOauthConsentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOauthConsentsInput, Prisma.UserUpdateWithoutOauthConsentsInput>, Prisma.UserUncheckedUpdateWithoutOauthConsentsInput>
 }
 
-export type UserCreateNestedOneWithoutUserSettingsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSettingsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutUserSettingsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSettingsInput
-  upsert?: Prisma.UserUpsertWithoutUserSettingsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserSettingsInput, Prisma.UserUpdateWithoutUserSettingsInput>, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
-}
-
 export type UserCreateNestedOneWithoutPeopleInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPeopleInput, Prisma.UserUncheckedCreateWithoutPeopleInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPeopleInput
@@ -729,48 +757,6 @@ export type UserUpdateOneRequiredWithoutPeopleNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPeopleInput, Prisma.UserUpdateWithoutPeopleInput>, Prisma.UserUncheckedUpdateWithoutPeopleInput>
 }
 
-export type UserCreateNestedOneWithoutGroupsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGroupsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutGroupsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGroupsInput
-  upsert?: Prisma.UserUpsertWithoutGroupsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGroupsInput, Prisma.UserUpdateWithoutGroupsInput>, Prisma.UserUncheckedUpdateWithoutGroupsInput>
-}
-
-export type UserCreateNestedOneWithoutTagsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTagsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutTagsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTagsInput
-  upsert?: Prisma.UserUpsertWithoutTagsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTagsInput, Prisma.UserUpdateWithoutTagsInput>, Prisma.UserUncheckedUpdateWithoutTagsInput>
-}
-
-export type UserCreateNestedOneWithoutInteractionsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInteractionsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutInteractionsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInteractionsInput
-  upsert?: Prisma.UserUpsertWithoutInteractionsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInteractionsInput, Prisma.UserUpdateWithoutInteractionsInput>, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
-}
-
 export type UserCreateNestedOneWithoutPeopleMergeRecommendationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPeopleMergeRecommendationsInput, Prisma.UserUncheckedCreateWithoutPeopleMergeRecommendationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPeopleMergeRecommendationsInput
@@ -783,20 +769,6 @@ export type UserUpdateOneRequiredWithoutPeopleMergeRecommendationsNestedInput = 
   upsert?: Prisma.UserUpsertWithoutPeopleMergeRecommendationsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPeopleMergeRecommendationsInput, Prisma.UserUpdateWithoutPeopleMergeRecommendationsInput>, Prisma.UserUncheckedUpdateWithoutPeopleMergeRecommendationsInput>
-}
-
-export type UserCreateNestedOneWithoutLinkedinEnrichQueueInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkedinEnrichQueueInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutLinkedinEnrichQueueNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLinkedinEnrichQueueInput
-  upsert?: Prisma.UserUpsertWithoutLinkedinEnrichQueueInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLinkedinEnrichQueueInput, Prisma.UserUpdateWithoutLinkedinEnrichQueueInput>, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
 }
 
 export type UserCreateNestedOneWithoutApikeysInput = {
@@ -895,6 +867,34 @@ export type UserUpdateOneRequiredWithoutSyncUserSequenceNestedInput = {
   upsert?: Prisma.UserUpsertWithoutSyncUserSequenceInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSyncUserSequenceInput, Prisma.UserUpdateWithoutSyncUserSequenceInput>, Prisma.UserUncheckedUpdateWithoutSyncUserSequenceInput>
+}
+
+export type UserCreateNestedOneWithoutUserSettingsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserSettingsInput
+  upsert?: Prisma.UserUpsertWithoutUserSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserSettingsInput, Prisma.UserUpdateWithoutUserSettingsInput>, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
+}
+
+export type UserCreateNestedOneWithoutTagsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTagsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTagsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTagsInput
+  upsert?: Prisma.UserUpsertWithoutTagsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTagsInput, Prisma.UserUpdateWithoutTagsInput>, Prisma.UserUncheckedUpdateWithoutTagsInput>
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1182,6 +1182,450 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutGroupsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutGroupsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGroupsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
+}
+
+export type UserUpsertWithoutGroupsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGroupsInput, Prisma.UserUncheckedUpdateWithoutGroupsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGroupsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGroupsInput, Prisma.UserUncheckedUpdateWithoutGroupsInput>
+}
+
+export type UserUpdateWithoutGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGroupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutInteractionsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutInteractionsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutInteractionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
+}
+
+export type UserUpsertWithoutInteractionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInteractionsInput, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInteractionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInteractionsInput, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
+}
+
+export type UserUpdateWithoutInteractionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInteractionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutLinkedinEnrichQueueInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutLinkedinEnrichQueueInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutLinkedinEnrichQueueInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
+}
+
+export type UserUpsertWithoutLinkedinEnrichQueueInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLinkedinEnrichQueueInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
+}
+
+export type UserUpdateWithoutLinkedinEnrichQueueInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLinkedinEnrichQueueInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
   reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
   syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
@@ -1785,154 +2229,6 @@ export type UserUncheckedUpdateWithoutOauthConsentsInput = {
   oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutUserSettingsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutUserSettingsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutUserSettingsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
-}
-
-export type UserUpsertWithoutUserSettingsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutUserSettingsInput, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutUserSettingsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutUserSettingsInput, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
-}
-
-export type UserUpdateWithoutUserSettingsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutUserSettingsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
-}
-
 export type UserCreateWithoutPeopleInput = {
   id?: string
   name?: string | null
@@ -2066,450 +2362,6 @@ export type UserUncheckedUpdateWithoutPeopleInput = {
   groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
   tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
   interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutGroupsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutGroupsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutGroupsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
-}
-
-export type UserUpsertWithoutGroupsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutGroupsInput, Prisma.UserUncheckedUpdateWithoutGroupsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutGroupsInput, Prisma.UserUncheckedCreateWithoutGroupsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutGroupsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutGroupsInput, Prisma.UserUncheckedUpdateWithoutGroupsInput>
-}
-
-export type UserUpdateWithoutGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutGroupsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutTagsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutTagsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutTagsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
-}
-
-export type UserUpsertWithoutTagsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutTagsInput, Prisma.UserUncheckedUpdateWithoutTagsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutTagsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutTagsInput, Prisma.UserUncheckedUpdateWithoutTagsInput>
-}
-
-export type UserUpdateWithoutTagsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutTagsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutInteractionsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutInteractionsInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutInteractionsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
-}
-
-export type UserUpsertWithoutInteractionsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutInteractionsInput, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutInteractionsInput, Prisma.UserUncheckedCreateWithoutInteractionsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutInteractionsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutInteractionsInput, Prisma.UserUncheckedUpdateWithoutInteractionsInput>
-}
-
-export type UserUpdateWithoutInteractionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutInteractionsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
@@ -2663,154 +2515,6 @@ export type UserUncheckedUpdateWithoutPeopleMergeRecommendationsInput = {
   chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
   subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
   linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutLinkedinEnrichQueueInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutLinkedinEnrichQueueInput = {
-  id?: string
-  name?: string | null
-  email: string
-  emailVerified?: boolean
-  image?: string | null
-  role?: string | null
-  banned?: boolean | null
-  banReason?: string | null
-  banExpires?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
-  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
-  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
-  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
-  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
-  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
-  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
-  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
-  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
-  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
-  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
-  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutLinkedinEnrichQueueInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
-}
-
-export type UserUpsertWithoutLinkedinEnrichQueueInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedCreateWithoutLinkedinEnrichQueueInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutLinkedinEnrichQueueInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutLinkedinEnrichQueueInput, Prisma.UserUncheckedUpdateWithoutLinkedinEnrichQueueInput>
-}
-
-export type UserUpdateWithoutLinkedinEnrichQueueInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
-  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
-  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
-  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
-  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
-  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
-  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
-  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
-  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutLinkedinEnrichQueueInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
-  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
-  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
-  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
-  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
-  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
-  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
-  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
   reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
   syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
   syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
@@ -3851,6 +3555,302 @@ export type UserUncheckedUpdateWithoutSyncUserSequenceInput = {
   reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
   syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
   syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUserSettingsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutUserSettingsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutUserSettingsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
+}
+
+export type UserUpsertWithoutUserSettingsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserSettingsInput, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserSettingsInput, Prisma.UserUncheckedCreateWithoutUserSettingsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserSettingsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserSettingsInput, Prisma.UserUncheckedUpdateWithoutUserSettingsInput>
+}
+
+export type UserUpdateWithoutUserSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserSettingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutTagsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTagsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  userSettings?: Prisma.UserSettingsUncheckedCreateNestedOneWithoutUserInput
+  people?: Prisma.PeopleUncheckedCreateNestedManyWithoutUserInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutUserInput
+  interactions?: Prisma.InteractionUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chatSessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedCreateNestedManyWithoutUserInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedCreateNestedManyWithoutUserInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedCreateNestedManyWithoutUserInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedCreateNestedManyWithoutUserInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedCreateNestedManyWithoutUserInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedCreateNestedOneWithoutUserInput
+  oauthClients?: Prisma.OauthClientUncheckedCreateNestedManyWithoutUserInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedCreateNestedManyWithoutUserInput
+  oauthConsents?: Prisma.OauthConsentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTagsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
+}
+
+export type UserUpsertWithoutTagsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTagsInput, Prisma.UserUncheckedUpdateWithoutTagsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTagsInput, Prisma.UserUncheckedCreateWithoutTagsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTagsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTagsInput, Prisma.UserUncheckedUpdateWithoutTagsInput>
+}
+
+export type UserUpdateWithoutTagsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUpdateOneWithoutUserNestedInput
+  oauthClients?: Prisma.OauthClientUpdateManyWithoutUserNestedInput
+  oauthRefreshTokens?: Prisma.OauthRefreshTokenUpdateManyWithoutUserNestedInput
+  oauthAccessTokens?: Prisma.OauthAccessTokenUpdateManyWithoutUserNestedInput
+  oauthConsents?: Prisma.OauthConsentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTagsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  userSettings?: Prisma.UserSettingsUncheckedUpdateOneWithoutUserNestedInput
+  people?: Prisma.PeopleUncheckedUpdateManyWithoutUserNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutUserNestedInput
+  interactions?: Prisma.InteractionUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chatSessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  linkedinEnrichQueue?: Prisma.LinkedinEnrichQueueUncheckedUpdateManyWithoutUserNestedInput
+  peopleMergeRecommendations?: Prisma.PeopleMergeRecommendationUncheckedUpdateManyWithoutUserNestedInput
+  reminderDispatchLogs?: Prisma.ReminderDispatchLogUncheckedUpdateManyWithoutUserNestedInput
+  syncChangeLogs?: Prisma.SyncChangeLogUncheckedUpdateManyWithoutUserNestedInput
+  syncMutationReceipts?: Prisma.SyncMutationReceiptUncheckedUpdateManyWithoutUserNestedInput
+  syncUserSequence?: Prisma.SyncUserSequenceUncheckedUpdateOneWithoutUserNestedInput
   oauthClients?: Prisma.OauthClientUncheckedUpdateManyWithoutUserNestedInput
   oauthRefreshTokens?: Prisma.OauthRefreshTokenUncheckedUpdateManyWithoutUserNestedInput
   oauthAccessTokens?: Prisma.OauthAccessTokenUncheckedUpdateManyWithoutUserNestedInput

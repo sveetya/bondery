@@ -1,0 +1,168 @@
+model People {
+  id                       String    @id @default(uuid()) @db.Uuid
+  userId                   String    @map("user_id") @db.Uuid
+  user                     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName                String    @map("first_name")
+  middleName               String?   @map("middle_name")
+  lastName                 String?   @map("last_name")
+  headline                 String?
+  notes                    String?
+  notesUpdatedAt           DateTime? @map("notes_updated_at")
+  myself                   Boolean?  @default(false)
+  hasAvatar                Boolean   @default(false) @map("has_avatar")
+  language                 String?
+  timezone                 String?
+  location                 String?
+  latitude                 Float?
+  longitude                Float?
+  gisPoint                 Unsupported("geography(Point,4326)")?
+  keepFrequencyDays        Int?      @map("keep_frequency_days")
+  lastInteraction          DateTime? @map("last_interaction")
+  lastInteractionActivityId String?   @map("last_interaction_activity_id") @db.Uuid
+  lastInteractionActivity  Interaction? @relation("PeopleLastInteraction", fields: [lastInteractionActivityId], references: [id])
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+
+  phones               PeoplePhone[]
+  emails               PeopleEmail[]
+  socials              PeopleSocial[]
+  addresses            PeopleAddress[]
+  importantDates       PeopleImportantDate[]
+  groups               PeopleGroup[]
+  tags                 PeopleTag[]
+  linkedin             PeopleLinkedin?
+  interactionParticipant InteractionParticipant[]
+  relationshipsFrom    PeopleRelationship[] @relation("SourcePerson")
+  relationshipsTo      PeopleRelationship[] @relation("TargetPerson")
+  mergeRecommendationsLeft  PeopleMergeRecommendation[] @relation("LeftPerson")
+  mergeRecommendationsRight PeopleMergeRecommendation[] @relation("RightPerson")
+  enrichQueue          LinkedinEnrichQueue[]
+  interactionsLast     Interaction[] @relation("LastInteractionActivity")
+
+  @@map("people")
+  @@index([userId])
+}
+
+model PeoplePhone {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  personId   String   @map("person_id") @db.Uuid
+  person     People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  value      String
+  type       String   @default("mobile")
+  prefix     String   @default("")
+  preferred  Boolean  @default(false)
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("people_phones")
+}
+
+model PeopleEmail {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  personId   String   @map("person_id") @db.Uuid
+  person     People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  value      String
+  type       String   @default("personal")
+  preferred  Boolean  @default(false)
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@map("people_emails")
+}
+
+model PeopleSocial {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  personId    String    @map("person_id") @db.Uuid
+  person      People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  platform    String
+  handle      String
+  connectedAt DateTime? @map("connected_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_socials")
+}
+
+model PeopleAddress {
+  id                    String    @id @default(uuid()) @db.Uuid
+  userId                String    @map("user_id") @db.Uuid
+  personId              String    @map("person_id") @db.Uuid
+  person                People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  label                 String?
+  type                  String    @default("home")
+  value                 String
+  addressLine1          String?   @map("address_line1")
+  addressLine2          String?   @map("address_line2")
+  addressCity           String?   @map("address_city")
+  addressState          String?   @map("address_state")
+  addressStateCode      String?   @map("address_state_code")
+  addressPostalCode     String?   @map("address_postal_code")
+  addressCountry        String?   @map("address_country")
+  addressCountryCode    String?   @map("address_country_code")
+  addressFormatted      String?   @map("address_formatted")
+  addressGranularity    String    @default("unknown") @map("address_granularity")
+  addressGeocodeSource  String?   @map("address_geocode_source")
+  geocodeConfidence     String?   @map("geocode_confidence")
+  latitude              Float?
+  longitude             Float?
+  gisPoint              Unsupported("geography(Point,4326)")?
+  timezone              String?
+  sortOrder             Int       @default(0) @map("sort_order")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_addresses")
+}
+
+model PeopleImportantDate {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  personId         String    @map("person_id") @db.Uuid
+  person           People    @relation(fields: [personId], references: [id], onDelete: Cascade)
+  type             String
+  date             DateTime  @db.Date
+  note             String?
+  notifyOn         DateTime? @map("notify_on") @db.Date
+  notifyDaysBefore  Int?      @map("notify_days_before")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@map("people_important_dates")
+}
+
+model PeopleRelationship {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  sourcePersonId   String   @map("source_person_id") @db.Uuid
+  sourcePerson     People   @relation("SourcePerson", fields: [sourcePersonId], references: [id], onDelete: Cascade)
+  targetPersonId   String   @map("target_person_id") @db.Uuid
+  targetPerson     People   @relation("TargetPerson", fields: [targetPersonId], references: [id], onDelete: Cascade)
+  relationshipType String   @map("relationship_type")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("people_relationships")
+}
+
+model PeopleMergeRecommendation {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leftPersonId     String   @map("left_person_id") @db.Uuid
+  leftPerson       People   @relation("LeftPerson", fields: [leftPersonId], references: [id], onDelete: Cascade)
+  rightPersonId    String   @map("right_person_id") @db.Uuid
+  rightPerson      People   @relation("RightPerson", fields: [rightPersonId], references: [id], onDelete: Cascade)
+  score            Float
+  reasons          String[]
+  algorithmVersion String   @default("v1") @map("algorithm_version")
+  isDeclined       Boolean  @default(false) @map("is_declined")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@map("people_merge_recommendations")
+}

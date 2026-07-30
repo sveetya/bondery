@@ -7,6 +7,7 @@ import { registerAuthRoutes } from "./lib/auth/routes.js";
 import { shutdownRedis } from "./lib/data/redis.js";
 import { stopJobs } from "./lib/jobs/index.js";
 import { shutdownEmailTransporter } from "./lib/notifications/transporter.js";
+import { verifyAuthRuntime } from "./lib/platform/auth/strategies.js";
 import type { AppFastifyInstance } from "./lib/platform/fastify-types.js";
 import { initializeRuntime } from "./lib/platform/init-runtime.js";
 import { registerNotFoundRateLimit, registerRateLimit } from "./lib/platform/rate-limit.js";
@@ -33,6 +34,8 @@ export async function buildServer(): Promise<AppFastifyInstance> {
     await shutdownSyncWakeRuntime();
     await shutdownRedis();
   });
+
+  await verifyAuthRuntime(fastify);
 
   return fastify;
 }

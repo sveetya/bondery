@@ -1,4 +1,3 @@
-import { formatMetadataTitle } from "@bondery/helpers";
 import { PersonChip } from "@bondery/mantine-next";
 import { Container, Flex, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
@@ -41,15 +40,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       modifiedTime,
       publishedTime: meta.date,
       tags: meta.tags,
-      title: formatMetadataTitle(meta.title),
+      title: meta.title,
       type: "article",
       url: `/blog/${category}/${slug}`,
     },
-    title: meta.title,
+    title: {
+      absolute: meta.title,
+    },
     twitter: {
       description: meta.description,
       images: [`/og/blog/${category}/${slug}/image.webp`],
-      title: formatMetadataTitle(meta.title),
+      title: meta.title,
     },
   };
 }

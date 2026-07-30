@@ -371,11 +371,6 @@ export type InteractionOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type InteractionNullableScalarRelationFilter = {
-  is?: Prisma.InteractionWhereInput | null
-  isNot?: Prisma.InteractionWhereInput | null
-}
-
 export type InteractionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -412,6 +407,11 @@ export type InteractionMinOrderByAggregateInput = {
 export type InteractionScalarRelationFilter = {
   is?: Prisma.InteractionWhereInput
   isNot?: Prisma.InteractionWhereInput
+}
+
+export type InteractionNullableScalarRelationFilter = {
+  is?: Prisma.InteractionWhereInput | null
+  isNot?: Prisma.InteractionWhereInput | null
 }
 
 export type InteractionCreateNestedManyWithoutUserInput = {
@@ -454,6 +454,20 @@ export type InteractionUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.InteractionUpdateWithWhereUniqueWithoutUserInput | Prisma.InteractionUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.InteractionUpdateManyWithWhereWithoutUserInput | Prisma.InteractionUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.InteractionScalarWhereInput | Prisma.InteractionScalarWhereInput[]
+}
+
+export type InteractionCreateNestedOneWithoutParticipantsInput = {
+  create?: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
+  connectOrCreate?: Prisma.InteractionCreateOrConnectWithoutParticipantsInput
+  connect?: Prisma.InteractionWhereUniqueInput
+}
+
+export type InteractionUpdateOneRequiredWithoutParticipantsNestedInput = {
+  create?: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
+  connectOrCreate?: Prisma.InteractionCreateOrConnectWithoutParticipantsInput
+  upsert?: Prisma.InteractionUpsertWithoutParticipantsInput
+  connect?: Prisma.InteractionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.InteractionUpdateToOneWithWhereWithoutParticipantsInput, Prisma.InteractionUpdateWithoutParticipantsInput>, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
 }
 
 export type InteractionCreateNestedOneWithoutPeopleWithLastInteractionInput = {
@@ -508,20 +522,6 @@ export type InteractionUncheckedUpdateManyWithoutPeopleLastActiveNestedInput = {
   update?: Prisma.InteractionUpdateWithWhereUniqueWithoutPeopleLastActiveInput | Prisma.InteractionUpdateWithWhereUniqueWithoutPeopleLastActiveInput[]
   updateMany?: Prisma.InteractionUpdateManyWithWhereWithoutPeopleLastActiveInput | Prisma.InteractionUpdateManyWithWhereWithoutPeopleLastActiveInput[]
   deleteMany?: Prisma.InteractionScalarWhereInput | Prisma.InteractionScalarWhereInput[]
-}
-
-export type InteractionCreateNestedOneWithoutParticipantsInput = {
-  create?: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
-  connectOrCreate?: Prisma.InteractionCreateOrConnectWithoutParticipantsInput
-  connect?: Prisma.InteractionWhereUniqueInput
-}
-
-export type InteractionUpdateOneRequiredWithoutParticipantsNestedInput = {
-  create?: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
-  connectOrCreate?: Prisma.InteractionCreateOrConnectWithoutParticipantsInput
-  upsert?: Prisma.InteractionUpsertWithoutParticipantsInput
-  connect?: Prisma.InteractionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.InteractionUpdateToOneWithWhereWithoutParticipantsInput, Prisma.InteractionUpdateWithoutParticipantsInput>, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
 }
 
 export type InteractionCreateWithoutUserInput = {
@@ -588,6 +588,74 @@ export type InteractionScalarWhereInput = {
   date?: Prisma.DateTimeFilter<"Interaction"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Interaction"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Interaction"> | Date | string
+}
+
+export type InteractionCreateWithoutParticipantsInput = {
+  id?: string
+  type: string
+  title?: string | null
+  description?: string | null
+  date?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutInteractionsInput
+  peopleLastActive?: Prisma.PeopleCreateNestedManyWithoutInteractionsLastInput
+  peopleWithLastInteraction?: Prisma.PeopleCreateNestedManyWithoutLastInteractionActivityInput
+}
+
+export type InteractionUncheckedCreateWithoutParticipantsInput = {
+  id?: string
+  userId: string
+  type: string
+  title?: string | null
+  description?: string | null
+  date?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  peopleLastActive?: Prisma.PeopleUncheckedCreateNestedManyWithoutInteractionsLastInput
+  peopleWithLastInteraction?: Prisma.PeopleUncheckedCreateNestedManyWithoutLastInteractionActivityInput
+}
+
+export type InteractionCreateOrConnectWithoutParticipantsInput = {
+  where: Prisma.InteractionWhereUniqueInput
+  create: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
+}
+
+export type InteractionUpsertWithoutParticipantsInput = {
+  update: Prisma.XOR<Prisma.InteractionUpdateWithoutParticipantsInput, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
+  create: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
+  where?: Prisma.InteractionWhereInput
+}
+
+export type InteractionUpdateToOneWithWhereWithoutParticipantsInput = {
+  where?: Prisma.InteractionWhereInput
+  data: Prisma.XOR<Prisma.InteractionUpdateWithoutParticipantsInput, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
+}
+
+export type InteractionUpdateWithoutParticipantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutInteractionsNestedInput
+  peopleLastActive?: Prisma.PeopleUpdateManyWithoutInteractionsLastNestedInput
+  peopleWithLastInteraction?: Prisma.PeopleUpdateManyWithoutLastInteractionActivityNestedInput
+}
+
+export type InteractionUncheckedUpdateWithoutParticipantsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  peopleLastActive?: Prisma.PeopleUncheckedUpdateManyWithoutInteractionsLastNestedInput
+  peopleWithLastInteraction?: Prisma.PeopleUncheckedUpdateManyWithoutLastInteractionActivityNestedInput
 }
 
 export type InteractionCreateWithoutPeopleWithLastInteractionInput = {
@@ -703,74 +771,6 @@ export type InteractionUpdateWithWhereUniqueWithoutPeopleLastActiveInput = {
 export type InteractionUpdateManyWithWhereWithoutPeopleLastActiveInput = {
   where: Prisma.InteractionScalarWhereInput
   data: Prisma.XOR<Prisma.InteractionUpdateManyMutationInput, Prisma.InteractionUncheckedUpdateManyWithoutPeopleLastActiveInput>
-}
-
-export type InteractionCreateWithoutParticipantsInput = {
-  id?: string
-  type: string
-  title?: string | null
-  description?: string | null
-  date?: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutInteractionsInput
-  peopleLastActive?: Prisma.PeopleCreateNestedManyWithoutInteractionsLastInput
-  peopleWithLastInteraction?: Prisma.PeopleCreateNestedManyWithoutLastInteractionActivityInput
-}
-
-export type InteractionUncheckedCreateWithoutParticipantsInput = {
-  id?: string
-  userId: string
-  type: string
-  title?: string | null
-  description?: string | null
-  date?: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  peopleLastActive?: Prisma.PeopleUncheckedCreateNestedManyWithoutInteractionsLastInput
-  peopleWithLastInteraction?: Prisma.PeopleUncheckedCreateNestedManyWithoutLastInteractionActivityInput
-}
-
-export type InteractionCreateOrConnectWithoutParticipantsInput = {
-  where: Prisma.InteractionWhereUniqueInput
-  create: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
-}
-
-export type InteractionUpsertWithoutParticipantsInput = {
-  update: Prisma.XOR<Prisma.InteractionUpdateWithoutParticipantsInput, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
-  create: Prisma.XOR<Prisma.InteractionCreateWithoutParticipantsInput, Prisma.InteractionUncheckedCreateWithoutParticipantsInput>
-  where?: Prisma.InteractionWhereInput
-}
-
-export type InteractionUpdateToOneWithWhereWithoutParticipantsInput = {
-  where?: Prisma.InteractionWhereInput
-  data: Prisma.XOR<Prisma.InteractionUpdateWithoutParticipantsInput, Prisma.InteractionUncheckedUpdateWithoutParticipantsInput>
-}
-
-export type InteractionUpdateWithoutParticipantsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutInteractionsNestedInput
-  peopleLastActive?: Prisma.PeopleUpdateManyWithoutInteractionsLastNestedInput
-  peopleWithLastInteraction?: Prisma.PeopleUpdateManyWithoutLastInteractionActivityNestedInput
-}
-
-export type InteractionUncheckedUpdateWithoutParticipantsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  peopleLastActive?: Prisma.PeopleUncheckedUpdateManyWithoutInteractionsLastNestedInput
-  peopleWithLastInteraction?: Prisma.PeopleUncheckedUpdateManyWithoutLastInteractionActivityNestedInput
 }
 
 export type InteractionCreateManyUserInput = {

@@ -77,6 +77,46 @@ export type Verification = Prisma.VerificationModel
  */
 export type Jwks = Prisma.JwksModel
 /**
+ * Model Group
+ * 
+ */
+export type Group = Prisma.GroupModel
+/**
+ * Model PeopleGroup
+ * 
+ */
+export type PeopleGroup = Prisma.PeopleGroupModel
+/**
+ * Model Interaction
+ * 
+ */
+export type Interaction = Prisma.InteractionModel
+/**
+ * Model InteractionParticipant
+ * 
+ */
+export type InteractionParticipant = Prisma.InteractionParticipantModel
+/**
+ * Model PeopleLinkedin
+ * 
+ */
+export type PeopleLinkedin = Prisma.PeopleLinkedinModel
+/**
+ * Model PeopleWorkHistory
+ * 
+ */
+export type PeopleWorkHistory = Prisma.PeopleWorkHistoryModel
+/**
+ * Model PeopleEducationHistory
+ * 
+ */
+export type PeopleEducationHistory = Prisma.PeopleEducationHistoryModel
+/**
+ * Model LinkedinEnrichQueue
+ * 
+ */
+export type LinkedinEnrichQueue = Prisma.LinkedinEnrichQueueModel
+/**
  * Model OauthClient
  * OAuth 2.1 authorization-server tables added by `@better-auth/oauth-provider`
  * (Better Auth 1.7). Field names/shapes were extracted directly from
@@ -117,11 +157,6 @@ export type OauthConsent = Prisma.OauthConsentModel
  */
 export type OauthClientAssertion = Prisma.OauthClientAssertionModel
 /**
- * Model UserSettings
- * 
- */
-export type UserSettings = Prisma.UserSettingsModel
-/**
  * Model People
  * 
  */
@@ -157,60 +192,10 @@ export type PeopleImportantDate = Prisma.PeopleImportantDateModel
  */
 export type PeopleRelationship = Prisma.PeopleRelationshipModel
 /**
- * Model Group
- * 
- */
-export type Group = Prisma.GroupModel
-/**
- * Model PeopleGroup
- * 
- */
-export type PeopleGroup = Prisma.PeopleGroupModel
-/**
- * Model Tag
- * 
- */
-export type Tag = Prisma.TagModel
-/**
- * Model PeopleTag
- * 
- */
-export type PeopleTag = Prisma.PeopleTagModel
-/**
- * Model Interaction
- * 
- */
-export type Interaction = Prisma.InteractionModel
-/**
- * Model InteractionParticipant
- * 
- */
-export type InteractionParticipant = Prisma.InteractionParticipantModel
-/**
- * Model PeopleLinkedin
- * 
- */
-export type PeopleLinkedin = Prisma.PeopleLinkedinModel
-/**
- * Model PeopleWorkHistory
- * 
- */
-export type PeopleWorkHistory = Prisma.PeopleWorkHistoryModel
-/**
- * Model PeopleEducationHistory
- * 
- */
-export type PeopleEducationHistory = Prisma.PeopleEducationHistoryModel
-/**
  * Model PeopleMergeRecommendation
  * 
  */
 export type PeopleMergeRecommendation = Prisma.PeopleMergeRecommendationModel
-/**
- * Model LinkedinEnrichQueue
- * 
- */
-export type LinkedinEnrichQueue = Prisma.LinkedinEnrichQueueModel
 /**
  * Model GeocodeCache
  * 
@@ -266,3 +251,18 @@ export type SyncMutationReceipt = Prisma.SyncMutationReceiptModel
  * 
  */
 export type SyncUserSequence = Prisma.SyncUserSequenceModel
+/**
+ * Model UserSettings
+ * 
+ */
+export type UserSettings = Prisma.UserSettingsModel
+/**
+ * Model Tag
+ * 
+ */
+export type Tag = Prisma.TagModel
+/**
+ * Model PeopleTag
+ * 
+ */
+export type PeopleTag = Prisma.PeopleTagModel

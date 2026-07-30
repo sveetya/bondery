@@ -1,0 +1,26 @@
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  color     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  people PeopleTag[]
+
+  @@map("tags")
+}
+
+model PeopleTag {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  tagId     String   @map("tag_id") @db.Uuid
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([personId, tagId])
+  @@map("people_tags")
+}

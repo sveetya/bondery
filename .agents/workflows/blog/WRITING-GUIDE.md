@@ -20,7 +20,7 @@ apps/website/content/blog/<category>/<slug>.mdx
 ```
 
 - **Slug** = URL-safe filename, lowercase, hyphens only (e.g. `my-new-feature.mdx`)
-- **Category** must match an existing folder: `product` or `bonds`
+- **Category** must match an existing folder: `updates`, `tech`, or `bonds`
 - To add a new category, add an entry to `BLOG_CATEGORY_CONFIGS` in `src/app/blog/_lib/categories.ts` (includes the label, icon, and Discord thread name), then add the slug to the `PostCategory` union in `src/app/blog/_lib/types.ts`
 
 ## 2. Add the metadata sidecar
@@ -35,7 +35,8 @@ This file contains the `postMeta` object as plain TypeScript (no Markdown). Keep
 
 ```ts
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
-import { productCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { techCategoryConfig } from "../../../src/app/blog/_lib/categories";
 import { sveetya } from "../../../src/data/team";
 
 export const postMeta: PostMeta = {
@@ -43,7 +44,7 @@ export const postMeta: PostMeta = {
   slug: "your-post-slug",
   date: "2026-04-15",
   description: "A one-sentence summary under 160 characters for SEO and blog cards.",
-  category: productCategoryConfig.slug,
+  category: updatesCategoryConfig.slug,
   author: sveetya.name,
   tags: ["tag1", "tag2", "tag3"],
 };
@@ -66,7 +67,7 @@ export { postMeta } from "./your-post-slug.meta";
 | `date` | Yes | ISO format `YYYY-MM-DD`. |
 | `modifiedDate` | No | Set when substantially updating a post. Falls back to `date`. |
 | `description` | Yes | Max 160 chars. Used in meta description, OG, and blog cards. |
-| `category` | Yes | Use `productCategoryConfig.slug` or `bondsCategoryConfig.slug` imported from `categories.ts`. |
+| `category` | Yes | Use `updatesCategoryConfig.slug`, `techCategoryConfig.slug`, or `bondsCategoryConfig.slug` imported from `categories.ts`. |
 | `author` | No | Use `sveetya.name` or `martin.name` imported from `src/data/team.ts`. |
 | `tags` | No | Array of keywords for OG `article:tag` and meta keywords. 3–7 tags recommended. |
 | `announce` | No | Controls whether and where this post is announced. See below. |
@@ -103,7 +104,7 @@ Open **both** registry files and add your import:
 **`apps/website/content/blog/posts.ts`** (for the Next.js app):
 
 ```ts
-import MyNewPost, { postMeta as myNewPost } from "./product/my-new-post.mdx";
+import MyNewPost, { postMeta as myNewPost } from "./updates/my-new-post.mdx";
 
 export const allPosts: PostMeta[] = [
   introducingBondery,
@@ -119,7 +120,7 @@ export const postComponents: Record<string, ComponentType> = {
 **`apps/website/content/blog/metadata.ts`** (for the announce script):
 
 ```ts
-import { postMeta as myNewPost } from "./product/my-new-post.meta";
+import { postMeta as myNewPost } from "./updates/my-new-post.meta";
 
 export const allPostMeta: PostMeta[] = [introducingBondery, myNewPost];
 ```
@@ -194,6 +195,22 @@ For internal links, use plain Markdown links with relative paths:
 ```mdx
 Read [our guide on relationships](/blog/bonds/relationship-tips).
 ```
+
+### Ordered and bullet lists
+
+Use standard Markdown. Ordered lists (`1.`) render as Mantine `List` with `type="ordered"`.
+
+### Tables
+
+GitHub-flavored Markdown tables are supported in blog posts. Pipe syntax is compiled via `remark-gfm` in `next.config.ts`; `mdx-components.tsx` maps `table`, `thead`, `tbody`, `tr`, `th`, and `td` to Mantine `Table` components.
+
+```mdx
+| Column | Value |
+|--------|-------|
+| Auth   | Better Auth |
+```
+
+Docs pages use **Fumadocs MDX** (`fumadocs-ui/mdx`) with its own table styling — do not assume blog and docs share the same MDX component map.
 
 ### Code blocks
 
@@ -275,7 +292,8 @@ For each new post, create two files.
 
 ```ts
 import type { PostMeta } from "../../../src/app/blog/_lib/types";
-import { productCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { updatesCategoryConfig } from "../../../src/app/blog/_lib/categories";
+import { techCategoryConfig } from "../../../src/app/blog/_lib/categories";
 import { sveetya } from "../../../src/data/team";
 
 export const postMeta: PostMeta = {
@@ -283,7 +301,7 @@ export const postMeta: PostMeta = {
   slug: "",
   date: "",
   description: "",
-  category: productCategoryConfig.slug,
+  category: updatesCategoryConfig.slug,
   author: sveetya.name,
   tags: [],
   announce: {

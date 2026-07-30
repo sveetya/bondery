@@ -1,0 +1,27 @@
+model Group {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String
+  color     String?
+  emoji     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  people PeopleGroup[]
+
+  @@map("groups")
+}
+
+model PeopleGroup {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  personId  String   @map("person_id") @db.Uuid
+  person    People   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  groupId   String   @map("group_id") @db.Uuid
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([personId, groupId])
+  @@map("people_groups")
+}

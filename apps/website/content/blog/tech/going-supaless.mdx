@@ -1,0 +1,103 @@
+export { postMeta } from "./going-supaless.meta";
+
+## Bondery is Supaless now
+
+We finished migrating Bondery off Supabase. No GoTrue, no PostgREST, no Supabase Storage. Just Postgres, our API, and the services we actually need.
+
+If you have never heard of [Supabase](https://supabase.com), it is an open-source backend platform built around Postgres. Auth, auto-generated REST APIs, realtime, storage, and edge functions, all wired together so you can ship an MVP in a weekend. For early Bondery, that was exactly the point.
+
+This post is for the builders: why we left, what we considered, what we run today, and what changed.
+
+## What Supabase gave us
+
+Supabase is genuinely great at one job: **get from zero to working product fast**.
+
+When you are validating an idea, you do not want to spend two weeks wiring auth flows, storage buckets, and database migrations by hand. Supabase bundles those pieces, documents them well, and keeps the happy path short. We shipped early versions of Bondery on that stack: Auth for sign-in, Postgres for data, Storage for avatars and LinkedIn logos.
+
+That velocity has a cost. The more your product diverges from Supabase's opinions, the more you fight the platform instead of building features.
+
+## Why we moved
+
+Two forces pushed us off, and they reinforce each other.
+
+### 1. Privacy is the product
+
+Bondery is a Personal Relationship Manager. People store **private contact data**: notes, birthdays, interaction history, enrichment from LinkedIn. That is not marketing analytics. It is personal.
+
+#### One less vendor
+
+Running on Supabase meant another vendor in the data path: their Auth service, their storage layer, their hosted control plane. Even with strong security practices on their side, that is an extra subprocessor between us and your contacts.
+
+Our mission is to give you control over your network. Owning the database layer on infrastructure we operate in the EU removes that middleman. One fewer party with access to the system that holds your relationships.
+
+We are working toward **full self-hostability** for the same reason. Operators should be able to run Bondery on a modest server without paying for a managed platform on top.
+
+#### End-to-end encryption
+
+We are also heading toward **end-to-end encryption** for contact data. That kind of work needs a database you own end to end: encryption at the application layer, key handling you control, storage layouts you can reason about. Bare Postgres fits that model. Fighting through Supabase's abstractions (RLS tied to their auth model, PostgREST as the data plane, storage and auth as separate services) would slow us down without making the crypto story simpler.
+
+### 2. Self-hosting Supabase did not scale down
+
+Why not self-host Supabase and call it a day?
+
+We tried the self-hosted route. The full Supabase Compose stack (Kong, GoTrue, PostgREST, Realtime, Storage API, imgproxy, and Postgres) is a lot of moving parts for a product that mostly needs **a database, auth, and object storage**.
+
+On comparable hardware, a plain Postgres container used noticeably less RAM and CPU than the bundled Supabase services. For a privacy-focused app that we want people to run at home, that overhead matters.
+
+## Features Supabase did not ship
+
+Supabase simplifies auth and database setup enormously. That simplicity is also the bottleneck. Here is what blocked us:
+
+| Need | On Supabase | What we needed |
+|------|-------------|----------------|
+| **Passkeys** | Not available yet | WebAuthn is on our roadmap; we want it in the auth layer we control |
+| **API keys** | Roll your own hashing and verification | [Better Auth's API key plugin](https://www.better-auth.com/docs/plugins/api-key): hashed keys, route allowlists, built in |
+| **UUIDv7** | Hosted projects run Postgres 17 by default | Time-sortable IDs improve index locality; Postgres 18 (released [September 2025](https://www.postgresql.org/about/news/postgresql-18-released-3142/)) adds native `uuidv7()`. We wanted freedom to move with Postgres, not wait on a platform pin |
+| **OAuth branding** | Custom auth domain is a paid add-on (on top of an existing subscription) | Our own domain for LinkedIn and GitHub redirects, with no extra line item |
+| **End-to-end encryption** | RLS and platform auth, not app-layer crypto | Application-layer encryption with keys we control; fighting Supabase's auth and data-plane abstractions would add complexity without simplifying the crypto story |
+| **Cron jobs** | pg_cron or external schedulers talking to PostgREST | Jobs that call our Fastify API (transactional email, digests, and similar) need reliable server-to-server communication; wiring crons through Supabase's stack to our API never felt clean |
+
+None of these are "Supabase is bad" problems. They are **fit** problems. Bondery outgrew the bundled opinions.
+
+For a deeper look at why UUIDv7 beats v4 for database performance, [Ciro Gomes wrote a clear comparison](https://medium.com/@ciro-gomes-dev/uuidv4-vs-uuidv7-vs-ulid-choosing-the-right-identifier-for-database-performance-1f7d1a0fe0ba).
+
+## What we run instead
+
+The migration is not "we replaced Supabase with five random tools." It is a smaller, explicit stack:
+
+| Layer | Before | Now |
+|-------|--------|-----|
+| **Database** | Supabase Postgres | [Postgres](https://www.postgresql.org/), [PostGIS](https://postgis.net/), [Prisma](https://www.prisma.io/) |
+| **Auth** | Supabase GoTrue | [Better Auth](https://www.better-auth.com/) |
+| **Background jobs** | Mixed (cron, ad hoc) | [pg-boss](https://github.com/timgit/pg-boss) |
+| **Object storage** | Supabase Storage + imgproxy | [SeaweedFS](https://seaweedfs.com/) |
+
+Webapp and mobile talk to **one API**. No Supabase JS client. No PostgREST. Sessions and API keys go through Better Auth; data goes through Prisma; files go through our storage adapter.
+
+The default Docker Compose stack for self-hosters is now Postgres + SeaweedFS + the API. Not a mini Supabase datacenter.
+
+## What we gained
+
+1. **Better privacy.** We own the database path, run on EU infrastructure we control, and removed Supabase as a subprocessor.
+2. **A lighter self-host footprint.** Fewer containers, less idle RAM, faster cold starts on a VPS.
+3. **A modern auth library.** [Better Auth](https://www.better-auth.com) gives us a richer ecosystem than Supabase Auth: passkeys on the roadmap, native API keys, first-party OAuth for the extension, and session handling we can change in our own codebase.
+
+## Would we recommend Supabase?
+
+**Yes, for the right stage.**
+
+If you are building an MVP and your auth, storage, and API needs match what Supabase ships, use it. Ship. Learn. Do not premature-optimize your infrastructure on day one.
+
+We left when Bondery's constraints were clearer than Supabase's defaults.
+
+## What's next
+
+Self-hosting documentation is catching up with the new stack. Mobile sync, passkeys, and MCP integration are active work. The codebase is fully open source. Inspect the auth layer, the Prisma schema, and the Compose files yourself.
+
+{/*
+## Images to generate
+
+1. Hero: Mascot unplugging a cable labeled "Supabase" from a server rack, looking satisfied (below the opening section)
+2. Stack diagram: Mascot pointing at a simple diagram (Postgres + Better Auth + SeaweedFS) vs a crowded Supabase services diagram ("What we run instead")
+3. Closing: Mascot at a home server / Raspberry Pi with a "self-host" sticker ("What's next")
+*/}

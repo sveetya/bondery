@@ -281,48 +281,6 @@ export type InteractionParticipantMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type InteractionParticipantCreateNestedManyWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
-  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
-  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-}
-
-export type InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput = {
-  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
-  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
-  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-}
-
-export type InteractionParticipantUpdateManyWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
-  upsert?: Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput[]
-  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
-  set?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  disconnect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  delete?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  update?: Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput[]
-  updateMany?: Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput | Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput[]
-  deleteMany?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
-}
-
-export type InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput = {
-  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
-  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
-  upsert?: Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput[]
-  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
-  set?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  disconnect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  delete?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
-  update?: Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput[]
-  updateMany?: Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput | Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput[]
-  deleteMany?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
-}
-
 export type InteractionParticipantCreateNestedManyWithoutInteractionInput = {
   create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutInteractionInput, Prisma.InteractionParticipantUncheckedCreateWithoutInteractionInput> | Prisma.InteractionParticipantCreateWithoutInteractionInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutInteractionInput[]
   connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutInteractionInput | Prisma.InteractionParticipantCreateOrConnectWithoutInteractionInput[]
@@ -365,49 +323,46 @@ export type InteractionParticipantUncheckedUpdateManyWithoutInteractionNestedInp
   deleteMany?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
 }
 
-export type InteractionParticipantCreateWithoutPersonInput = {
-  createdAt?: Date | string
-  interaction: Prisma.InteractionCreateNestedOneWithoutParticipantsInput
+export type InteractionParticipantCreateNestedManyWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
+  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
+  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
 }
 
-export type InteractionParticipantUncheckedCreateWithoutPersonInput = {
-  interactionId: string
-  createdAt?: Date | string
+export type InteractionParticipantUncheckedCreateNestedManyWithoutPersonInput = {
+  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
+  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
+  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
 }
 
-export type InteractionParticipantCreateOrConnectWithoutPersonInput = {
-  where: Prisma.InteractionParticipantWhereUniqueInput
-  create: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput>
+export type InteractionParticipantUpdateManyWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
+  upsert?: Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput[]
+  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
+  set?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  disconnect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  delete?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  update?: Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput[]
+  updateMany?: Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput | Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput[]
+  deleteMany?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
 }
 
-export type InteractionParticipantCreateManyPersonInputEnvelope = {
-  data: Prisma.InteractionParticipantCreateManyPersonInput | Prisma.InteractionParticipantCreateManyPersonInput[]
-  skipDuplicates?: boolean
-}
-
-export type InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput = {
-  where: Prisma.InteractionParticipantWhereUniqueInput
-  update: Prisma.XOR<Prisma.InteractionParticipantUpdateWithoutPersonInput, Prisma.InteractionParticipantUncheckedUpdateWithoutPersonInput>
-  create: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput>
-}
-
-export type InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput = {
-  where: Prisma.InteractionParticipantWhereUniqueInput
-  data: Prisma.XOR<Prisma.InteractionParticipantUpdateWithoutPersonInput, Prisma.InteractionParticipantUncheckedUpdateWithoutPersonInput>
-}
-
-export type InteractionParticipantUpdateManyWithWhereWithoutPersonInput = {
-  where: Prisma.InteractionParticipantScalarWhereInput
-  data: Prisma.XOR<Prisma.InteractionParticipantUpdateManyMutationInput, Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonInput>
-}
-
-export type InteractionParticipantScalarWhereInput = {
-  AND?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
-  OR?: Prisma.InteractionParticipantScalarWhereInput[]
-  NOT?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
-  interactionId?: Prisma.UuidFilter<"InteractionParticipant"> | string
-  personId?: Prisma.UuidFilter<"InteractionParticipant"> | string
-  createdAt?: Prisma.DateTimeFilter<"InteractionParticipant"> | Date | string
+export type InteractionParticipantUncheckedUpdateManyWithoutPersonNestedInput = {
+  create?: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput> | Prisma.InteractionParticipantCreateWithoutPersonInput[] | Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput[]
+  connectOrCreate?: Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput | Prisma.InteractionParticipantCreateOrConnectWithoutPersonInput[]
+  upsert?: Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput[]
+  createMany?: Prisma.InteractionParticipantCreateManyPersonInputEnvelope
+  set?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  disconnect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  delete?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  connect?: Prisma.InteractionParticipantWhereUniqueInput | Prisma.InteractionParticipantWhereUniqueInput[]
+  update?: Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput | Prisma.InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput[]
+  updateMany?: Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput | Prisma.InteractionParticipantUpdateManyWithWhereWithoutPersonInput[]
+  deleteMany?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
 }
 
 export type InteractionParticipantCreateWithoutInteractionInput = {
@@ -446,24 +401,49 @@ export type InteractionParticipantUpdateManyWithWhereWithoutInteractionInput = {
   data: Prisma.XOR<Prisma.InteractionParticipantUpdateManyMutationInput, Prisma.InteractionParticipantUncheckedUpdateManyWithoutInteractionInput>
 }
 
-export type InteractionParticipantCreateManyPersonInput = {
+export type InteractionParticipantScalarWhereInput = {
+  AND?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
+  OR?: Prisma.InteractionParticipantScalarWhereInput[]
+  NOT?: Prisma.InteractionParticipantScalarWhereInput | Prisma.InteractionParticipantScalarWhereInput[]
+  interactionId?: Prisma.UuidFilter<"InteractionParticipant"> | string
+  personId?: Prisma.UuidFilter<"InteractionParticipant"> | string
+  createdAt?: Prisma.DateTimeFilter<"InteractionParticipant"> | Date | string
+}
+
+export type InteractionParticipantCreateWithoutPersonInput = {
+  createdAt?: Date | string
+  interaction: Prisma.InteractionCreateNestedOneWithoutParticipantsInput
+}
+
+export type InteractionParticipantUncheckedCreateWithoutPersonInput = {
   interactionId: string
   createdAt?: Date | string
 }
 
-export type InteractionParticipantUpdateWithoutPersonInput = {
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  interaction?: Prisma.InteractionUpdateOneRequiredWithoutParticipantsNestedInput
+export type InteractionParticipantCreateOrConnectWithoutPersonInput = {
+  where: Prisma.InteractionParticipantWhereUniqueInput
+  create: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput>
 }
 
-export type InteractionParticipantUncheckedUpdateWithoutPersonInput = {
-  interactionId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type InteractionParticipantCreateManyPersonInputEnvelope = {
+  data: Prisma.InteractionParticipantCreateManyPersonInput | Prisma.InteractionParticipantCreateManyPersonInput[]
+  skipDuplicates?: boolean
 }
 
-export type InteractionParticipantUncheckedUpdateManyWithoutPersonInput = {
-  interactionId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type InteractionParticipantUpsertWithWhereUniqueWithoutPersonInput = {
+  where: Prisma.InteractionParticipantWhereUniqueInput
+  update: Prisma.XOR<Prisma.InteractionParticipantUpdateWithoutPersonInput, Prisma.InteractionParticipantUncheckedUpdateWithoutPersonInput>
+  create: Prisma.XOR<Prisma.InteractionParticipantCreateWithoutPersonInput, Prisma.InteractionParticipantUncheckedCreateWithoutPersonInput>
+}
+
+export type InteractionParticipantUpdateWithWhereUniqueWithoutPersonInput = {
+  where: Prisma.InteractionParticipantWhereUniqueInput
+  data: Prisma.XOR<Prisma.InteractionParticipantUpdateWithoutPersonInput, Prisma.InteractionParticipantUncheckedUpdateWithoutPersonInput>
+}
+
+export type InteractionParticipantUpdateManyWithWhereWithoutPersonInput = {
+  where: Prisma.InteractionParticipantScalarWhereInput
+  data: Prisma.XOR<Prisma.InteractionParticipantUpdateManyMutationInput, Prisma.InteractionParticipantUncheckedUpdateManyWithoutPersonInput>
 }
 
 export type InteractionParticipantCreateManyInteractionInput = {
@@ -483,6 +463,26 @@ export type InteractionParticipantUncheckedUpdateWithoutInteractionInput = {
 
 export type InteractionParticipantUncheckedUpdateManyWithoutInteractionInput = {
   personId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InteractionParticipantCreateManyPersonInput = {
+  interactionId: string
+  createdAt?: Date | string
+}
+
+export type InteractionParticipantUpdateWithoutPersonInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  interaction?: Prisma.InteractionUpdateOneRequiredWithoutParticipantsNestedInput
+}
+
+export type InteractionParticipantUncheckedUpdateWithoutPersonInput = {
+  interactionId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type InteractionParticipantUncheckedUpdateManyWithoutPersonInput = {
+  interactionId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 

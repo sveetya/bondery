@@ -1,0 +1,44 @@
+enum ColorScheme {
+  light
+  dark
+  auto
+
+  @@map("color_scheme")
+}
+
+enum SupportedLocale {
+  en
+  cs
+  de
+
+  @@map("supported_locale")
+}
+
+model UserSettings {
+  id                        String          @id @default(uuid()) @db.Uuid
+  userId                    String          @unique @map("user_id") @db.Uuid
+  user                      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language                  SupportedLocale @default(en)
+  timezone                  String?
+  timeFormat                String          @default("24h") @map("time_format")
+  colorScheme               ColorScheme     @default(auto) @map("color_scheme")
+  leftSwipeAction           String          @default("none") @map("left_swipe_action")
+  rightSwipeAction          String          @default("none") @map("right_swipe_action")
+  groupSortOrder            String          @default("alphabetical") @map("group_sort_order")
+  tagSortOrder              String          @default("alphabetical") @map("tag_sort_order")
+  reminderSendHour          String          @default("09:00") @map("reminder_send_hour")
+  nextReminderAtUtc         DateTime        @map("next_reminder_at_utc")
+  onboardingCompletedAt     DateTime?       @map("onboarding_completed_at")
+  welcomeEmailSentAt        DateTime?       @map("welcome_email_sent_at")
+  gettingStartedDismissedAt DateTime?       @map("getting_started_dismissed_at")
+  importCompletedAt         DateTime?       @map("import_completed_at")
+  importFollowupPlatform    String?         @map("import_followup_platform")
+  importFollowupStatus      String?         @map("import_followup_status")
+  aiMessagesUsed            Int             @default(0) @map("ai_messages_used")
+  aiMessagesThisMonth       Int             @default(0) @map("ai_messages_this_month")
+  aiMessagesMonthResetAt    DateTime        @map("ai_messages_month_reset_at")
+  createdAt                 DateTime        @default(now()) @map("created_at")
+  updatedAt                 DateTime        @updatedAt @map("updated_at")
+
+  @@map("user_settings")
+}
