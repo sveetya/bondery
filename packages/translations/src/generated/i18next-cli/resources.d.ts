@@ -2130,15 +2130,27 @@ export default interface Resources {
     "whyReceiving": "You're receiving this because you just created a Bondery account."
   },
   "platform/extension/ExtensionPopup": {
+    "LoggedIn": {
+      "OpenBondery": "Open Bondery"
+    },
     "LoggedOut": {
       "Description": "Connect your account to save contacts from social media.",
       "SignIn": "Sign in",
       "Title": "Sign in to Bondery"
     },
+    "PersonActions": {
+      "AddInteraction": "Add interaction with this person"
+    },
+    "Settings": {
+      "SignOut": "Sign out"
+    },
     "UpdateRequired": {
       "Description": "Your Bondery extension is outdated and may not work correctly. Please update to continue.",
       "OpenExtensionsPage": "Open Extensions Page",
       "Title": "Update Required"
+    },
+    "Welcome": {
+      "ConnectButton": "Connect your Bondery account"
     }
   },
   "platform/extension/ExtensionSocialButtons": {

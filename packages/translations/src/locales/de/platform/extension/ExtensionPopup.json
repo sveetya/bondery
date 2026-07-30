@@ -1,12 +1,24 @@
 {
+  "LoggedIn": {
+    "OpenBondery": "Bondery öffnen"
+  },
   "LoggedOut": {
-    "Description": "Connect your account to save contacts from social media.",
-    "SignIn": "Sign in",
-    "Title": "Sign in to Bondery"
+    "Description": "Verbinden Sie Ihr Konto, um Kontakte aus sozialen Medien zu speichern.",
+    "SignIn": "Anmelden",
+    "Title": "Bei Bondery anmelden"
+  },
+  "PersonActions": {
+    "AddInteraction": "Interaktion mit dieser Person hinzufügen"
+  },
+  "Settings": {
+    "SignOut": "Abmelden"
   },
   "UpdateRequired": {
-    "Description": "Your Bondery extension is outdated and may not work correctly. Please update to continue.",
-    "OpenExtensionsPage": "Open Extensions Page",
-    "Title": "Update Required"
+    "Description": "Ihre Bondery-Erweiterung ist veraltet und funktioniert möglicherweise nicht richtig. Bitte aktualisieren Sie sie, um fortzufahren.",
+    "OpenExtensionsPage": "Erweiterungsseite öffnen",
+    "Title": "Update erforderlich"
+  },
+  "Welcome": {
+    "ConnectButton": "Bondery-Konto verbinden"
   }
 }
