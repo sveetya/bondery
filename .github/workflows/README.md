@@ -37,7 +37,7 @@ shared/
 
 | Prefix | Meaning | Trigger |
 |--------|---------|---------|
-| `verify` | Quality gates | PR, push to `main` (website prod build path-filtered in `website-build` job) |
+| `verify` | Quality gates | PR, push to `main` (`website-build` path-filtered; `contract` always runs) |
 | `stage-*` | Integration/staging images | Push to `main` (path-filtered) |
 | `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website is Docker build-push only |
 | `release-*` | Versioned production releases | Git tags `*-X.Y.Z` |
@@ -60,9 +60,11 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 
 | Where | Mechanism |
 |-------|-----------|
-| `verify` `contract`, `auth`, `website-build` | `turbo-remote-cache` action |
+| `verify` `contract`, `website-build` | `turbo-remote-cache` action |
 | `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
 | Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
+
+**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. Auth integration tests (`npm run test:auth -w api`) are local-only until the suite is repaired.
 
 Docker builds also use GHA layer cache (`cache-from: type=gha`).
 
