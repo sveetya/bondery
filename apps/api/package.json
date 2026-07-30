@@ -63,6 +63,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
+    "check-api-schema-patterns": "tsx scripts/check-api-schema-patterns.ts",
     "check-env": "tsx scripts/check-env.ts",
     "check-no-route-writes": "tsx scripts/check-no-route-writes.ts",
     "check-openapi": "npm run generate-openapi && tsx scripts/check-openapi.ts && tsx scripts/check-api-route-order.ts",
