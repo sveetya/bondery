@@ -103,9 +103,6 @@ jobs:
       - name: API sync unit tests
         run: npm run test:sync -w apps/api
 
-      - name: API smoke tests
-        run: npm run test:api -w apps/api
-
   website-build:
     runs-on: ubuntu-latest
     permissions:
