@@ -3,7 +3,7 @@ import { Footer, Header } from "@/components/landing";
 import { MantineShell } from "@/components/mantine-shell";
 
 /**
- * Marketing / product-site chrome. Must not wrap `/docs` Fumadocs pages.
+ * Marketing site chrome (Header, Footer, Mantine). Docs are in `(chromeless)/docs`.
  */
 export default function MarketingLayout({
   children,

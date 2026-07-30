@@ -2,6 +2,7 @@ import { PersonChip } from "@bondery/mantine-next";
 import { Container, Flex, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { useMDXComponents as getBlogMdxComponents } from "@/components/blog-mdx";
 import { getTeamMember } from "@/data/team";
 import { JsonLd } from "@/lib/seo/json-ld";
 import { getCspNonce } from "@/lib/seo/nonce";
@@ -119,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
           </Stack>
 
           <article>
-            <Content />
+            <Content components={getBlogMdxComponents({})} />
           </article>
         </Stack>
       </Container>

@@ -2,13 +2,15 @@
 import { metaSchema, pageSchema } from "fumadocs-core/source/schema";
 import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 import lastModified from "fumadocs-mdx/plugins/last-modified";
+import remarkGfm from "remark-gfm";
 import { z } from "zod";
+
 var docs = defineDocs({
   dir: "../../docs",
   docs: {
     files: ["**/*.mdx"],
     postprocess: {
-      includeProcessedMarkdown: true
+      includeProcessedMarkdown: true,
     },
     schema: pageSchema.extend({
       description: z.string().optional(),
@@ -16,20 +18,19 @@ var docs = defineDocs({
       docPath: z.string().optional(),
       docSections: z.record(z.string(), z.string()).optional(),
       hidden: z.boolean().optional(),
-      icon: z.string().optional()
-    })
+      icon: z.string().optional(),
+    }),
   },
   meta: {
-    schema: metaSchema
-  }
+    schema: metaSchema,
+  },
 });
 var source_config_default = defineConfig({
   mdxOptions: {
-    providerImportSource: "@/components/mdx"
+    providerImportSource: "@/components/mdx",
+    remarkPlugins: [remarkGfm],
   },
-  plugins: [lastModified()]
+  plugins: [lastModified()],
 });
-export {
-  source_config_default as default,
-  docs
-};
+
+export { docs, source_config_default as default };

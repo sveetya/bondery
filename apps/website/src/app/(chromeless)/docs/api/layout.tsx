@@ -1,4 +1,4 @@
-import "../../marketing.css";
+import "../../../marketing.css";
 import type { ReactNode } from "react";
 import { MantineShell } from "@/components/mantine-shell";
 

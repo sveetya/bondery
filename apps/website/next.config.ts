@@ -1,4 +1,3 @@
-import createMDX from "@next/mdx";
 import { createMDX as createFumadocsMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 
@@ -55,14 +54,7 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@takumi-rs/core"],
 };
 
-const withMDX = createMDX({
-  options: {
-    // String plugin names only — Turbopack requires serializable loader options.
-    remarkPlugins: ["remark-gfm"],
-  },
-});
 const withFumadocsMDX = createFumadocsMDX();
-type WithMDXConfig = Parameters<typeof withMDX>[0];
 
-// withMDX resolves NextConfig from root node_modules; cast avoids monorepo type mismatch
-export default withFumadocsMDX(withMDX(nextConfig as WithMDXConfig));
+// Fumadocs MDX compiles all `.mdx` (docs + blog). Do not wrap with `@next/mdx` — it breaks frontmatter.
+export default withFumadocsMDX(nextConfig);

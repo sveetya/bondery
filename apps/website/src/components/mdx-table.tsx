@@ -44,7 +44,7 @@ function mapTableChildren(children: ReactNode): ReactNode {
   });
 }
 
-export function MdxTable({ children }: { children: ReactNode }) {
+export function MdxTable({ children }: { children?: ReactNode }) {
   return (
     <Box my="lg">
       <Table.ScrollContainer minWidth={500}>

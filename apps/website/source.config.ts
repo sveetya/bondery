@@ -1,6 +1,7 @@
 import { metaSchema, pageSchema } from "fumadocs-core/source/schema";
 import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 import lastModified from "fumadocs-mdx/plugins/last-modified";
+import remarkGfm from "remark-gfm";
 import { z } from "zod";
 
 export const docs = defineDocs({
@@ -27,6 +28,7 @@ export const docs = defineDocs({
 export default defineConfig({
   mdxOptions: {
     providerImportSource: "@/components/mdx",
+    remarkPlugins: [remarkGfm],
   },
   plugins: [lastModified()],
 });

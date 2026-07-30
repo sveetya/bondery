@@ -40,5 +40,9 @@ export function getDocsGithubUrl(page: (typeof source)["$inferPage"]): string {
 }
 
 export function getPageMarkdownUrl(page: (typeof source)["$inferPage"]): string {
-  return `${page.url}.md`;
+  if (page.slugs.length === 0) {
+    return "/llms.mdx/docs";
+  }
+
+  return `/llms.mdx/docs/${page.slugs.join("/")}`;
 }

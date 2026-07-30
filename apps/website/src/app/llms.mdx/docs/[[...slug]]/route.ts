@@ -8,9 +8,19 @@ type RouteContext = {
   params: Promise<{ slug?: string[] }>;
 };
 
+/** Strip `.md` / `.mdx` suffixes from legacy markdown shortcut URLs. */
+function normalizeMarkdownSlug(slug?: string[]): string[] | undefined {
+  if (!slug?.length) {
+    return slug;
+  }
+
+  const last = slug.length - 1;
+  return slug.map((segment, index) => (index === last ? segment.replace(/\.mdx?$/i, "") : segment));
+}
+
 export async function GET(_req: Request, { params }: RouteContext) {
   const { slug } = await params;
-  const page = source.getPage(slug);
+  const page = source.getPage(normalizeMarkdownSlug(slug));
   if (!page || page.type === "openapi") {
     notFound();
   }
