@@ -95,6 +95,7 @@
     "check-modal-patterns": "tsx scripts/check-modal-patterns.ts",
     "check-modal-patterns:strict": "cross-env CHECK_MODAL_PATTERNS_STRICT=1 tsx scripts/check-modal-patterns.ts",
     "check-schemas-imports": "tsx scripts/check-schemas-imports.ts",
+    "check-schemas-imports:strict": "cross-env CHECK_SCHEMAS_IMPORTS_STRICT=1 tsx scripts/check-schemas-imports.ts",
     "check-theme-patterns": "tsx scripts/check-theme-patterns.ts",
     "check-theme-patterns:strict": "cross-env CHECK_THEME_PATTERNS_STRICT=1 tsx scripts/check-theme-patterns.ts",
     "check-types": "node ../../scripts/tsc-native.mjs --noEmit && npm run check-api-fetch:strict && npm run check-modal-patterns:strict && npm run check-schemas-imports:strict && npm run check-theme-patterns:strict",
