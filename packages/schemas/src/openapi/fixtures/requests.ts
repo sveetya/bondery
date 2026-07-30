@@ -168,6 +168,12 @@ export const EXAMPLE_UPDATE_SETTINGS_REQUEST = {
   timeFormat: "24h" as const,
 };
 
+/** PATCH /api/me/onboarding/import-followup body. */
+export const EXAMPLE_UPDATE_IMPORT_FOLLOWUP_REQUEST = {
+  platform: "linkedin" as const,
+  status: "awaiting_export" as const,
+};
+
 /** POST /api/me/feedback body. */
 export const EXAMPLE_FEEDBACK_REQUEST = {
   generalFeedback: "Would love calendar sync.",

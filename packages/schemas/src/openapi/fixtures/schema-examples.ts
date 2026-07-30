@@ -360,6 +360,12 @@ export const EXAMPLE_SYNC_PUSH_RESPONSE = {
   serverTime: EXAMPLE_ISO_TIMESTAMP,
 };
 
+/** GET /api/sync/ws-ticket response. */
+export const EXAMPLE_SYNC_WS_TICKET_RESPONSE = {
+  expiresAt: 1_735_000_000,
+  ticket: "ws-ticket-example-abc123",
+};
+
 export const EXAMPLE_USER_SESSION_RESPONSE = {
   data: EXAMPLE_USER_SESSION,
   success: true as const,

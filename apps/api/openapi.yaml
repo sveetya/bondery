@@ -1492,6 +1492,57 @@ paths:
           description: Paginated contact list
           content:
             application/json:
+              example:
+                contacts:
+                  - firstName: Ada
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    lastName: Lovelace
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    avatar: null
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    emails:
+                      - preferred: true
+                        type: work
+                        value: ada.lovelace@example.com
+                    facebook: null
+                    gisPoint: null
+                    headline: Mathematician
+                    importantDates: null
+                    instagram: null
+                    keepFrequencyDays: 90
+                    language: en
+                    lastInteraction: 2026-01-15T12:00:00.000Z
+                    lastInteractionActivityId: null
+                    latitude: 51.5074
+                    linkedin: https://linkedin.com/in/ada-lovelace
+                    location: London, UK
+                    longitude: -0.1278
+                    middleName: null
+                    myself: false
+                    notes: null
+                    notesUpdatedAt: null
+                    phones:
+                      - preferred: true
+                        prefix: "+44"
+                        type: home
+                        value: "2079460958"
+                    position: null
+                    signal: null
+                    timezone: Europe/London
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    website: https://example.com
+                    whatsapp: null
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
+                stats:
+                  newContactsThisYear: 22
+                  thisMonthInteractions: 14
+                  totalContacts: 128
               schema:
                 type: object
                 properties:
@@ -1885,12 +1936,57 @@ paths:
                     - $ref: "#/components/schemas/ContactId"
               required:
                 - firstName
+            example:
+              firstName: Ada
+              lastName: Lovelace
       security: *a1
       responses:
         "201":
           description: Contact created
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
+                txid: tx-550e8400-e29b-41d4-a716-446655440000
               schema:
                 type: object
                 properties:
@@ -2204,6 +2300,23 @@ paths:
           description: Paginated selectable contact list
           content:
             application/json:
+              example:
+                contacts:
+                  - avatar: null
+                    firstName: Ada
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    lastName: Lovelace
+                    headline: Mathematician
+                    location: London, UK
+                    middleName: null
+                    myself: false
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
               schema:
                 type: object
                 properties:
@@ -2379,6 +2492,13 @@ paths:
           description: Matching contact
           content:
             application/json:
+              example:
+                contact:
+                  avatar: null
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                exists: true
               schema:
                 type: object
                 properties:
@@ -2562,6 +2682,19 @@ paths:
           description: Address map pins within the bounding box
           content:
             application/json:
+              example:
+                pins:
+                  - addressCity: London
+                    addressCountry: United Kingdom
+                    addressFormatted: London, UK
+                    addressId: addr-1
+                    addressType: home
+                    avatar: null
+                    firstName: Ada
+                    lastName: Lovelace
+                    latitude: 51.5074
+                    longitude: -0.1278
+                    personId: 550e8400-e29b-41d4-a716-446655440000
               schema:
                 type: object
                 properties:
@@ -2773,6 +2906,17 @@ paths:
           description: Map pins within the bounding box
           content:
             application/json:
+              example:
+                pins:
+                  - avatar: null
+                    firstName: Ada
+                    headline: Mathematician
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    lastInteraction: 2026-01-15T12:00:00.000Z
+                    lastName: Lovelace
+                    latitude: 51.5074
+                    location: London, UK
+                    longitude: -0.1278
               schema:
                 type: object
                 properties:
@@ -2940,6 +3084,26 @@ paths:
           description: Upcoming reminders
           content:
             application/json:
+              example:
+                reminders:
+                  - importantDate:
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      date: 1815-12-10
+                      id: aa0e8400-e29b-41d4-a716-446655440004
+                      note: Send a card
+                      notifyDaysBefore: 7
+                      notifyOn: 2026-12-03
+                      personId: 550e8400-e29b-41d4-a716-446655440000
+                      type: birthday
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    notificationSent: false
+                    notificationSentAt: null
+                    person:
+                      avatar: null
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
               schema:
                 type: object
                 properties:
@@ -3158,6 +3322,47 @@ paths:
           description: Contact details
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
               schema:
                 type: object
                 properties:
@@ -3520,6 +3725,8 @@ paths:
                 whatsapp:
                   nullable: true
                   type: string
+            example:
+              notes: Met at the Analytical Society dinner.
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -3533,6 +3740,48 @@ paths:
           description: Updated contact
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
+                txid: tx-550e8400-e29b-41d4-a716-446655440000
               schema:
                 type: object
                 properties:
@@ -3600,6 +3849,54 @@ paths:
           description: Contact was modified on another device
           content:
             application/json:
+              example:
+                error:
+                  code: sync_conflict
+                  doc_url: https://usebondery.com/docs/api/errors/sync_conflict
+                  message: Contact was modified on another device
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: conflict_error
+                  details:
+                    contact:
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      addresses: null
+                      avatar: null
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      emails:
+                        - preferred: true
+                          type: work
+                          value: ada.lovelace@example.com
+                      facebook: null
+                      gisPoint: null
+                      headline: Mathematician
+                      importantDates: null
+                      instagram: null
+                      keepFrequencyDays: 90
+                      language: en
+                      lastInteraction: 2026-01-15T12:00:00.000Z
+                      lastInteractionActivityId: null
+                      latitude: 51.5074
+                      linkedin: https://linkedin.com/in/ada-lovelace
+                      location: London, UK
+                      longitude: -0.1278
+                      middleName: null
+                      myself: false
+                      notes: null
+                      notesUpdatedAt: null
+                      phones:
+                        - preferred: true
+                          prefix: "+44"
+                          type: home
+                          value: "2079460958"
+                      position: null
+                      signal: null
+                      timezone: Europe/London
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      website: https://example.com
+                      whatsapp: null
               schema:
                 $ref: "#/components/schemas/SyncConflictError"
         "429":
@@ -3774,6 +4071,21 @@ paths:
           description: Groups for the contact
           content:
             application/json:
+              example:
+                groups:
+                  - color: "#6366f1"
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    emoji: ⭐
+                    id: 770e8400-e29b-41d4-a716-446655440001
+                    label: Inner Circle
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    contactCount: 12
+                    previewContacts:
+                      - avatar: null
+                        firstName: Ada
+                        id: 550e8400-e29b-41d4-a716-446655440000
+                        lastName: Lovelace
               schema:
                 type: object
                 properties:
@@ -4092,6 +4404,14 @@ paths:
           description: Contact tags
           content:
             application/json:
+              example:
+                tags:
+                  - color: "#f59e0b"
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    id: 880e8400-e29b-41d4-a716-446655440002
+                    label: VIP
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -4211,6 +4531,8 @@ paths:
                   minLength: 1
               required:
                 - tagId
+            example:
+              tagId: 880e8400-e29b-41d4-a716-446655440002
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -4224,6 +4546,14 @@ paths:
           description: Tag added to contact
           content:
             application/json:
+              example:
+                tag:
+                  color: "#f59e0b"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: 880e8400-e29b-41d4-a716-446655440002
+                  label: VIP
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -4462,6 +4792,9 @@ paths:
           description: Photo uploaded
           content:
             application/json:
+              example:
+                avatarUrl: https://cdn.example.com/avatars/ada.jpg
+                success: true
               schema:
                 type: object
                 properties:
@@ -4585,6 +4918,9 @@ paths:
           description: Photo deleted
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -4722,6 +5058,25 @@ paths:
           description: Contact relationships
           content:
             application/json:
+              example:
+                relationships:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    id: bb0e8400-e29b-41d4-a716-446655440005
+                    relationshipType: colleague
+                    sourcePersonId: 550e8400-e29b-41d4-a716-446655440000
+                    targetPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    sourcePerson:
+                      avatar: null
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                    targetPerson:
+                      avatar: null
+                      firstName: Charles
+                      id: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                      lastName: Babbage
               schema:
                 type: object
                 properties:
@@ -4933,6 +5288,9 @@ paths:
               required:
                 - relatedPersonId
                 - relationshipType
+            example:
+              relatedPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+              relationshipType: colleague
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -4946,6 +5304,15 @@ paths:
           description: Relationship created
           content:
             application/json:
+              example:
+                relationship:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: bb0e8400-e29b-41d4-a716-446655440005
+                  relationshipType: colleague
+                  sourcePersonId: 550e8400-e29b-41d4-a716-446655440000
+                  targetPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -5129,6 +5496,9 @@ paths:
               required:
                 - relatedPersonId
                 - relationshipType
+            example:
+              relatedPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+              relationshipType: friend
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -5148,6 +5518,15 @@ paths:
           description: Relationship updated
           content:
             application/json:
+              example:
+                relationship:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: bb0e8400-e29b-41d4-a716-446655440005
+                  relationshipType: colleague
+                  sourcePersonId: 550e8400-e29b-41d4-a716-446655440000
+                  targetPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -5438,6 +5817,18 @@ paths:
           description: Important dates
           content:
             application/json:
+              example:
+                dates:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    date: 1815-12-10
+                    id: aa0e8400-e29b-41d4-a716-446655440004
+                    note: Send a card
+                    notifyDaysBefore: 7
+                    notifyOn: 2026-12-03
+                    personId: 550e8400-e29b-41d4-a716-446655440000
+                    type: birthday
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -5661,6 +6052,18 @@ paths:
           description: Important dates replaced
           content:
             application/json:
+              example:
+                dates:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    date: 1815-12-10
+                    id: aa0e8400-e29b-41d4-a716-446655440004
+                    note: Send a card
+                    notifyDaysBefore: 7
+                    notifyOn: 2026-12-03
+                    personId: 550e8400-e29b-41d4-a716-446655440000
+                    type: birthday
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -5902,6 +6305,9 @@ paths:
                         type: string
                     required:
                       - companyName
+            example:
+              headline: Mathematician
+              location: London, UK
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -5915,6 +6321,9 @@ paths:
           description: Contact enriched
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -6055,6 +6464,10 @@ paths:
                         type: string
                     required:
                       - companyName
+            example:
+              workHistory:
+                - companyName: Analytical Engines Ltd
+                  title: Mathematician
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -6068,6 +6481,9 @@ paths:
           description: LinkedIn data upserted
           content:
             application/json:
+              example:
+                count: 3
+                success: true
               schema:
                 type: object
                 properties:
@@ -6189,6 +6605,11 @@ paths:
           description: LinkedIn data
           content:
             application/json:
+              example:
+                education: []
+                linkedinBio: Mathematician and writer.
+                syncedAt: 2026-01-15T12:00:00.000Z
+                workHistory: []
               schema:
                 type: object
                 properties:
@@ -6419,6 +6840,8 @@ paths:
           description: Merge recommendations count
           content:
             application/json:
+              example:
+                activeCount: 3
               schema:
                 type: object
                 properties:
@@ -6568,6 +6991,92 @@ paths:
           description: Merge recommendations
           content:
             application/json:
+              example:
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
+                recommendations:
+                  - id: cc0e8400-e29b-41d4-a716-446655440006
+                    leftPerson:
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      addresses: null
+                      avatar: null
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      emails:
+                        - preferred: true
+                          type: work
+                          value: ada.lovelace@example.com
+                      facebook: null
+                      gisPoint: null
+                      headline: Mathematician
+                      importantDates: null
+                      instagram: null
+                      keepFrequencyDays: 90
+                      language: en
+                      lastInteraction: 2026-01-15T12:00:00.000Z
+                      lastInteractionActivityId: null
+                      latitude: 51.5074
+                      linkedin: https://linkedin.com/in/ada-lovelace
+                      location: London, UK
+                      longitude: -0.1278
+                      middleName: null
+                      myself: false
+                      notes: null
+                      notesUpdatedAt: null
+                      phones:
+                        - preferred: true
+                          prefix: "+44"
+                          type: home
+                          value: "2079460958"
+                      position: null
+                      signal: null
+                      timezone: Europe/London
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      website: https://example.com
+                      whatsapp: null
+                    reasons:
+                      - fullName
+                    rightPerson:
+                      addresses: null
+                      avatar: null
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      emails: []
+                      facebook: null
+                      firstName: Ada
+                      gisPoint: null
+                      headline: null
+                      id: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                      importantDates: null
+                      instagram: null
+                      keepFrequencyDays: null
+                      language: null
+                      lastInteraction: null
+                      lastInteractionActivityId: null
+                      lastName: Lovelace
+                      latitude: null
+                      linkedin: null
+                      location: null
+                      longitude: null
+                      middleName: null
+                      myself: null
+                      notes: null
+                      notesUpdatedAt: null
+                      phones: []
+                      position: null
+                      signal: null
+                      timezone: null
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      website: null
+                      whatsapp: null
+                    score: 0.95
               schema:
                 type: object
                 properties:
@@ -6726,6 +7235,87 @@ paths:
           description: Merge recommendations refreshed
           content:
             application/json:
+              example:
+                recommendations:
+                  - id: cc0e8400-e29b-41d4-a716-446655440006
+                    leftPerson:
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      addresses: null
+                      avatar: null
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      emails:
+                        - preferred: true
+                          type: work
+                          value: ada.lovelace@example.com
+                      facebook: null
+                      gisPoint: null
+                      headline: Mathematician
+                      importantDates: null
+                      instagram: null
+                      keepFrequencyDays: 90
+                      language: en
+                      lastInteraction: 2026-01-15T12:00:00.000Z
+                      lastInteractionActivityId: null
+                      latitude: 51.5074
+                      linkedin: https://linkedin.com/in/ada-lovelace
+                      location: London, UK
+                      longitude: -0.1278
+                      middleName: null
+                      myself: false
+                      notes: null
+                      notesUpdatedAt: null
+                      phones:
+                        - preferred: true
+                          prefix: "+44"
+                          type: home
+                          value: "2079460958"
+                      position: null
+                      signal: null
+                      timezone: Europe/London
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      website: https://example.com
+                      whatsapp: null
+                    reasons:
+                      - fullName
+                    rightPerson:
+                      addresses: null
+                      avatar: null
+                      createdAt: 2026-01-15T12:00:00.000Z
+                      emails: []
+                      facebook: null
+                      firstName: Ada
+                      gisPoint: null
+                      headline: null
+                      id: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                      importantDates: null
+                      instagram: null
+                      keepFrequencyDays: null
+                      language: null
+                      lastInteraction: null
+                      lastInteractionActivityId: null
+                      lastName: Lovelace
+                      latitude: null
+                      linkedin: null
+                      location: null
+                      longitude: null
+                      middleName: null
+                      myself: null
+                      notes: null
+                      notesUpdatedAt: null
+                      phones: []
+                      position: null
+                      signal: null
+                      timezone: null
+                      updatedAt: 2026-01-15T12:00:00.000Z
+                      userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                      website: null
+                      whatsapp: null
+                    score: 0.95
+                recommendationsCount: 1
+                success: true
               schema:
                 type: object
                 properties:
@@ -6877,6 +7467,8 @@ paths:
           description: Merge recommendation declined
           content:
             application/json:
+              example:
+                success: true
               schema:
                 type: object
                 properties:
@@ -6996,6 +7588,8 @@ paths:
           description: Merge recommendation restored
           content:
             application/json:
+              example:
+                success: true
               schema:
                 type: object
                 properties:
@@ -7123,12 +7717,62 @@ paths:
               required:
                 - leftPersonId
                 - rightPersonId
+            example:
+              conflictResolutions:
+                firstName: left
+              leftPersonId: 550e8400-e29b-41d4-a716-446655440000
+              rightPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
       security: *a2
       responses:
         "200":
           description: Contacts merged
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
+                mergedFromPersonId: 6ba7b811-9dad-11d1-80b4-00c04fd430c8
+                mergedIntoPersonId: 550e8400-e29b-41d4-a716-446655440000
+                personId: 550e8400-e29b-41d4-a716-446655440000
+                userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -7255,6 +7899,8 @@ paths:
           description: Eligible enrichment count
           content:
             application/json:
+              example:
+                eligibleCount: 42
               schema:
                 type: object
                 properties:
@@ -7369,6 +8015,10 @@ paths:
           description: Enrichment queue status
           content:
             application/json:
+              example:
+                completed: 12
+                failed: 1
+                pending: 5
               schema:
                 type: object
                 properties:
@@ -7491,12 +8141,16 @@ paths:
               properties:
                 personId:
                   type: string
+            example:
+              personId: 550e8400-e29b-41d4-a716-446655440000
       security: *a2
       responses:
         "200":
           description: Enrichment queue initialized
           content:
             application/json:
+              example:
+                totalEligible: 42
               schema:
                 type: object
                 properties:
@@ -7609,6 +8263,13 @@ paths:
           description: Next enrichment batch
           content:
             application/json:
+              example:
+                items:
+                  - firstName: Ada
+                    lastName: Lovelace
+                    linkedinHandle: ada-lovelace
+                    personId: 550e8400-e29b-41d4-a716-446655440000
+                    queueItemId: queue-1
               schema:
                 type: object
                 properties:
@@ -7755,6 +8416,8 @@ paths:
                     - failed
               required:
                 - status
+            example:
+              status: completed
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -7768,6 +8431,9 @@ paths:
           description: Queue item updated
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -7882,6 +8548,9 @@ paths:
           description: Enrichment queue cancelled
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -7996,6 +8665,8 @@ paths:
           description: Keep in touch overdue count
           content:
             application/json:
+              example:
+                overdueCount: 2
               schema:
                 type: object
                 properties:
@@ -8110,6 +8781,25 @@ paths:
           description: Parsed LinkedIn contacts
           content:
             application/json:
+              example:
+                contacts:
+                  - alreadyExists: false
+                    company: Analytical Engines Ltd
+                    connectedAt: 2026-01-15T12:00:00.000Z
+                    connectedOnRaw: 15 Jan 2026
+                    email: ada.lovelace@example.com
+                    firstName: Ada
+                    issues: []
+                    isValid: true
+                    lastName: Lovelace
+                    linkedinUrl: https://linkedin.com/in/ada-lovelace
+                    linkedinUsername: ada-lovelace
+                    middleName: null
+                    position: Mathematician
+                    tempId: tmp-linkedin-1
+                invalidCount: 0
+                totalCount: 1
+                validCount: 1
               schema:
                 type: object
                 properties:
@@ -8348,12 +9038,32 @@ paths:
                       - tempId
               required:
                 - contacts
+            example:
+              contacts:
+                - alreadyExists: false
+                  company: Analytical Engines Ltd
+                  connectedAt: 2026-01-15T12:00:00.000Z
+                  connectedOnRaw: 15 Jan 2026
+                  email: ada.lovelace@example.com
+                  firstName: Ada
+                  issues: []
+                  isValid: true
+                  lastName: Lovelace
+                  linkedinUrl: https://linkedin.com/in/ada-lovelace
+                  linkedinUsername: ada-lovelace
+                  middleName: null
+                  position: Mathematician
+                  tempId: tmp-linkedin-1
       security: *a1
       responses:
         "200":
           description: LinkedIn import result
           content:
             application/json:
+              example:
+                importedCount: 5
+                skippedCount: 1
+                updatedCount: 2
               schema:
                 type: object
                 properties:
@@ -8472,6 +9182,25 @@ paths:
           description: Parsed Instagram contacts
           content:
             application/json:
+              example:
+                contacts:
+                  - alreadyExists: false
+                    connectedAt: null
+                    connectedOnRaw: null
+                    firstName: Ada
+                    instagramUrl: https://instagram.com/ada
+                    instagramUsername: ada
+                    issues: []
+                    isValid: true
+                    lastName: Lovelace
+                    likelyPerson: true
+                    middleName: null
+                    sources:
+                      - following
+                    tempId: tmp-instagram-1
+                invalidCount: 0
+                totalCount: 1
+                validCount: 1
               schema:
                 type: object
                 properties:
@@ -8710,12 +9439,32 @@ paths:
                       - tempId
               required:
                 - contacts
+            example:
+              contacts:
+                - alreadyExists: false
+                  connectedAt: null
+                  connectedOnRaw: null
+                  firstName: Ada
+                  instagramUrl: https://instagram.com/ada
+                  instagramUsername: ada
+                  issues: []
+                  isValid: true
+                  lastName: Lovelace
+                  likelyPerson: true
+                  middleName: null
+                  sources:
+                    - following
+                  tempId: tmp-instagram-1
       security: *a1
       responses:
         "200":
           description: Instagram import result
           content:
             application/json:
+              example:
+                importedCount: 8
+                skippedCount: 2
+                updatedCount: 0
               schema:
                 type: object
                 properties:
@@ -8834,6 +9583,36 @@ paths:
           description: Parsed vCard contacts
           content:
             application/json:
+              example:
+                contacts:
+                  - addresses: []
+                    avatarUri: null
+                    emails:
+                      - preferred: true
+                        type: work
+                        value: ada@example.com
+                    facebook: null
+                    firstName: Ada
+                    headline: Mathematician
+                    importantDates: null
+                    instagram: null
+                    issues: []
+                    isValid: true
+                    lastName: Lovelace
+                    linkedin: null
+                    middleName: null
+                    phones:
+                      - preferred: true
+                        prefix: "+44"
+                        type: home
+                        value: "2079460958"
+                    signal: null
+                    tempId: tmp-vcard-1
+                    website: null
+                    whatsapp: null
+                invalidCount: 0
+                totalCount: 1
+                validCount: 1
               schema:
                 type: object
                 properties:
@@ -9372,12 +10151,42 @@ paths:
                       - whatsapp
               required:
                 - contacts
+            example:
+              contacts:
+                - addresses: []
+                  avatarUri: null
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada@example.com
+                  facebook: null
+                  firstName: Ada
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  issues: []
+                  isValid: true
+                  lastName: Lovelace
+                  linkedin: null
+                  middleName: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  signal: null
+                  tempId: tmp-vcard-1
+                  website: null
+                  whatsapp: null
       security: *a1
       responses:
         "200":
           description: vCard import result
           content:
             application/json:
+              example:
+                importedCount: 12
+                skippedCount: 0
               schema:
                 type: object
                 properties:
@@ -9514,6 +10323,22 @@ paths:
           description: Group list
           content:
             application/json:
+              example:
+                groups:
+                  - color: "#6366f1"
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    emoji: ⭐
+                    id: 770e8400-e29b-41d4-a716-446655440001
+                    label: Inner Circle
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    contactCount: 12
+                    previewContacts:
+                      - avatar: null
+                        firstName: Ada
+                        id: 550e8400-e29b-41d4-a716-446655440000
+                        lastName: Lovelace
+                totalCount: 1
               schema:
                 type: object
                 properties:
@@ -9697,12 +10522,25 @@ paths:
                 - color
                 - emoji
                 - label
+            example:
+              color: "#6366f1"
+              emoji: ⭐
+              label: Inner Circle
       security: *a1
       responses:
         "201":
           description: Group created
           content:
             application/json:
+              example:
+                group:
+                  color: "#6366f1"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emoji: ⭐
+                  id: 770e8400-e29b-41d4-a716-446655440001
+                  label: Inner Circle
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -9946,6 +10784,15 @@ paths:
           description: Group details
           content:
             application/json:
+              example:
+                group:
+                  color: "#6366f1"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emoji: ⭐
+                  id: 770e8400-e29b-41d4-a716-446655440001
+                  label: Inner Circle
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -10068,6 +10915,8 @@ paths:
                   type: string
                   minLength: 1
                   maxLength: 100
+            example:
+              label: Close friends
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -10081,6 +10930,15 @@ paths:
           description: Updated group
           content:
             application/json:
+              example:
+                group:
+                  color: "#6366f1"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emoji: ⭐
+                  id: 770e8400-e29b-41d4-a716-446655440001
+                  label: Inner Circle
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -10365,6 +11223,56 @@ paths:
           description: Group members
           content:
             application/json:
+              example:
+                contacts:
+                  - firstName: Ada
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    lastName: Lovelace
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    avatar: null
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    emails:
+                      - preferred: true
+                        type: work
+                        value: ada.lovelace@example.com
+                    facebook: null
+                    gisPoint: null
+                    headline: Mathematician
+                    importantDates: null
+                    instagram: null
+                    keepFrequencyDays: 90
+                    language: en
+                    lastInteraction: 2026-01-15T12:00:00.000Z
+                    lastInteractionActivityId: null
+                    latitude: 51.5074
+                    linkedin: https://linkedin.com/in/ada-lovelace
+                    location: London, UK
+                    longitude: -0.1278
+                    middleName: null
+                    myself: false
+                    notes: null
+                    notesUpdatedAt: null
+                    phones:
+                      - preferred: true
+                        prefix: "+44"
+                        type: home
+                        value: "2079460958"
+                    position: null
+                    signal: null
+                    timezone: Europe/London
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    website: https://example.com
+                    whatsapp: null
+                group:
+                  id: 770e8400-e29b-41d4-a716-446655440001
+                  label: Inner Circle
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
               schema:
                 type: object
                 properties:
@@ -10773,6 +11681,9 @@ paths:
                         $ref: "#/components/schemas/ContactId"
                   required:
                     - contactFilter
+            example: &a3
+              personIds:
+                - 550e8400-e29b-41d4-a716-446655440000
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -10786,6 +11697,10 @@ paths:
           description: Contacts added to group
           content:
             application/json:
+              example:
+                addedCount: 3
+                message: Contacts added to group
+                skippedCount: 1
               schema:
                 type: object
                 properties:
@@ -10949,6 +11864,9 @@ paths:
           description: Contacts removed from group
           content:
             application/json:
+              example:
+                message: Members removed from group
+                removedCount: 2
               schema:
                 type: object
                 properties:
@@ -11084,6 +12002,21 @@ paths:
           description: Tag list
           content:
             application/json:
+              example:
+                tags:
+                  - color: "#f59e0b"
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    id: 880e8400-e29b-41d4-a716-446655440002
+                    label: VIP
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                    contactCount: 5
+                    previewContacts:
+                      - avatar: null
+                        firstName: Ada
+                        id: 550e8400-e29b-41d4-a716-446655440000
+                        lastName: Lovelace
+                totalCount: 1
               schema:
                 type: object
                 properties:
@@ -11255,12 +12188,22 @@ paths:
                   maxLength: 100
               required:
                 - label
+            example:
+              label: Investors
       security: *a1
       responses:
         "201":
           description: Tag created
           content:
             application/json:
+              example:
+                tag:
+                  color: "#f59e0b"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: 880e8400-e29b-41d4-a716-446655440002
+                  label: VIP
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -11504,6 +12447,14 @@ paths:
           description: Tag details
           content:
             application/json:
+              example:
+                tag:
+                  color: "#f59e0b"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: 880e8400-e29b-41d4-a716-446655440002
+                  label: VIP
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -11623,6 +12574,8 @@ paths:
                   type: string
                   minLength: 1
                   maxLength: 100
+            example:
+              color: "#6366F1"
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -11636,6 +12589,14 @@ paths:
           description: Tag updated
           content:
             application/json:
+              example:
+                tag:
+                  color: "#f59e0b"
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: 880e8400-e29b-41d4-a716-446655440002
+                  label: VIP
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -11920,6 +12881,19 @@ paths:
           description: Tag members
           content:
             application/json:
+              example:
+                contacts:
+                  - avatar: null
+                    firstName: Ada
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    lastName: Lovelace
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
               schema:
                 type: object
                 properties:
@@ -12061,6 +13035,7 @@ paths:
                     $ref: "#/components/schemas/ContactId"
               required:
                 - personIds
+            example: *a3
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -12074,6 +13049,8 @@ paths:
           description: Contacts added to tag
           content:
             application/json:
+              example:
+                addedCount: 3
               schema:
                 type: object
                 properties:
@@ -12206,6 +13183,8 @@ paths:
           description: Contacts removed from tag
           content:
             application/json:
+              example:
+                removedCount: 2
               schema:
                 type: object
                 properties:
@@ -12354,6 +13333,28 @@ paths:
           description: Paginated interactions
           content:
             application/json:
+              example:
+                interactions:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    date: 2026-01-15T12:00:00.000Z
+                    description: Discussed project updates.
+                    id: 990e8400-e29b-41d4-a716-446655440003
+                    participants:
+                      - avatar: null
+                        firstName: Ada
+                        id: 550e8400-e29b-41d4-a716-446655440000
+                        lastName: Lovelace
+                    title: Coffee catch-up
+                    type: Coffee
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
               schema:
                 type: object
                 properties:
@@ -12501,12 +13502,32 @@ paths:
                 - date
                 - participantIds
                 - type
+            example:
+              date: 2026-01-15T12:00:00.000Z
+              participantIds:
+                - 550e8400-e29b-41d4-a716-446655440000
+              title: Coffee catch-up
+              type: Coffee
       security: *a1
       responses:
         "201":
           description: Interaction created
           content:
             application/json:
+              example:
+                interaction:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  date: 2026-01-15T12:00:00.000Z
+                  description: Discussed project updates.
+                  id: 990e8400-e29b-41d4-a716-446655440003
+                  participants:
+                    - avatar: null
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                  title: Coffee catch-up
+                  type: Coffee
+                  updatedAt: 2026-01-15T12:00:00.000Z
               schema:
                 type: object
                 properties:
@@ -12678,6 +13699,20 @@ paths:
           description: Interaction details
           content:
             application/json:
+              example:
+                interaction:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  date: 2026-01-15T12:00:00.000Z
+                  description: Discussed project updates.
+                  id: 990e8400-e29b-41d4-a716-446655440003
+                  participants:
+                    - avatar: null
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                  title: Coffee catch-up
+                  type: Coffee
+                  updatedAt: 2026-01-15T12:00:00.000Z
               schema:
                 type: object
                 properties:
@@ -12852,6 +13887,8 @@ paths:
                     - Text/Messaging
                     - Competition/Hackathon
                     - Custom
+            example:
+              description: Discussed project updates.
       parameters:
         - schema:
             type: string
@@ -12881,6 +13918,20 @@ paths:
           description: Updated interaction
           content:
             application/json:
+              example:
+                interaction:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  date: 2026-01-15T12:00:00.000Z
+                  description: Discussed project updates.
+                  id: 990e8400-e29b-41d4-a716-446655440003
+                  participants:
+                    - avatar: null
+                      firstName: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      lastName: Lovelace
+                  title: Coffee catch-up
+                  type: Coffee
+                  updatedAt: 2026-01-15T12:00:00.000Z
               schema:
                 type: object
                 properties:
@@ -13184,12 +14235,25 @@ paths:
                 - recipientEmails
                 - selectedFields
                 - sendCopy
+            example:
+              message: Sharing Ada's contact card.
+              personId: 550e8400-e29b-41d4-a716-446655440000
+              recipientEmails:
+                - friend@example.com
+              selectedFields:
+                - name
+                - emails
+                - phones
+              sendCopy: true
       security: *a1
       responses:
         "200":
           description: Contact shared successfully
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -13701,12 +14765,24 @@ paths:
                   minLength: 1
                 surname:
                   type: string
+            example:
+              name: Ada
+              surname: Lovelace
       security: *a2
       responses:
         "200":
           description: Updated account
           content:
             application/json:
+              example:
+                data:
+                  email: ada@example.com
+                  id: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  user_metadata:
+                    avatar_url: null
+                    name: Ada
+                    surname: Lovelace
+                success: true
               schema:
                 type: object
                 properties:
@@ -13843,6 +14919,9 @@ paths:
           description: Account deleted
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -13974,6 +15053,47 @@ paths:
           description: Myself contact
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
               schema:
                 type: object
                 properties:
@@ -14214,6 +15334,9 @@ paths:
           description: Profile photo deleted
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -14337,6 +15460,17 @@ paths:
           description: User session
           content:
             application/json:
+              example:
+                data:
+                  avatarUrl: null
+                  colorScheme: auto
+                  displayName: Ada Lovelace
+                  isPlatformAdmin: false
+                  language: en
+                  onboardingCompletedAt: 2026-01-15T12:00:00.000Z
+                  timeFormat: 24h
+                  timezone: Europe/London
+                success: true
               schema:
                 type: object
                 properties:
@@ -14495,6 +15629,9 @@ paths:
           description: Onboarding completed
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -14622,12 +15759,18 @@ paths:
                     - dismissed
               required:
                 - status
+            example:
+              platform: linkedin
+              status: awaiting_export
       security: *a2
       responses:
         "200":
           description: Import follow-up updated
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -14742,6 +15885,34 @@ paths:
           description: User settings
           content:
             application/json:
+              example:
+                data:
+                  aiMessagesUsed: 12
+                  avatarUrl: null
+                  colorScheme: auto
+                  email: ada@example.com
+                  gettingStartedDismissedAt: 2026-01-15T12:00:00.000Z
+                  groupSortOrder: alpha-asc
+                  identities:
+                    - id: ee0e8400-e29b-41d4-a716-446655440008
+                      identity_id: identity-1
+                      provider: email
+                      user_id: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  importCompletedAt: null
+                  importFollowupPlatform: null
+                  importFollowupStatus: null
+                  language: en
+                  leftSwipeAction: call
+                  name: Ada Lovelace
+                  onboardingCompletedAt: 2026-01-15T12:00:00.000Z
+                  providers:
+                    - email
+                  reminderSendHour: 09:00
+                  rightSwipeAction: email
+                  tagSortOrder: count-desc
+                  timeFormat: 24h
+                  timezone: Europe/London
+                success: true
               schema:
                 type: object
                 properties:
@@ -15008,6 +16179,9 @@ paths:
                   type: string
                 onlyIfNewSignup:
                   type: boolean
+            example:
+              colorScheme: dark
+              timeFormat: 24h
       security: *a2
       responses:
         "200":
@@ -15187,6 +16361,9 @@ paths:
           description: Getting started dismissed
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -15314,12 +16491,19 @@ paths:
                 - generalFeedback
                 - npsReason
                 - npsScore
+            example:
+              generalFeedback: Would love calendar sync.
+              npsReason: Great contact management UX.
+              npsScore: 9
       security: *a2
       responses:
         "200":
           description: Feedback submitted
           content:
             application/json:
+              example:
+                message: Operation completed
+                success: true
               schema:
                 type: object
                 properties:
@@ -15434,6 +16618,15 @@ paths:
           description: API key list
           content:
             application/json:
+              example:
+                apiKeys:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    id: dd0e8400-e29b-41d4-a716-446655440007
+                    keyPrefix: bondery_key_dd0e8400
+                    label: Zapier integration
+                    lastUsedAt: 2026-01-15T12:00:00.000Z
+                    permission: read
+                totalCount: 1
               schema:
                 type: object
                 properties:
@@ -15591,12 +16784,23 @@ paths:
                     - full
               required:
                 - label
+            example:
+              label: Zapier integration
+              permission: read
       security: *a2
       responses:
         "201":
           description: API key created
           content:
             application/json:
+              example:
+                createdAt: 2026-01-15T12:00:00.000Z
+                id: dd0e8400-e29b-41d4-a716-446655440007
+                keyPrefix: bondery_key_dd0e8400
+                label: Zapier integration
+                lastUsedAt: 2026-01-15T12:00:00.000Z
+                permission: read
+                secret: bondery_key_dd0e8400_secret_example
               schema:
                 type: object
                 properties:
@@ -15754,6 +16958,8 @@ paths:
                   maxLength: 100
               required:
                 - label
+            example:
+              label: CRM sync
       parameters:
         - schema:
             $ref: "#/components/schemas/ContactId"
@@ -15767,6 +16973,13 @@ paths:
           description: Updated API key
           content:
             application/json:
+              example:
+                createdAt: 2026-01-15T12:00:00.000Z
+                id: dd0e8400-e29b-41d4-a716-446655440007
+                keyPrefix: bondery_key_dd0e8400
+                label: Zapier integration
+                lastUsedAt: 2026-01-15T12:00:00.000Z
+                permission: read
               schema:
                 type: object
                 properties:
@@ -16009,6 +17222,22 @@ paths:
           description: Sync bootstrap snapshot
           content:
             application/json:
+              example:
+                nextServerSequence: 1
+                tables:
+                  groups: []
+                  people:
+                    - first_name: Ada
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      last_name: Lovelace
+                  people_addresses: []
+                  people_emails: []
+                  people_groups: []
+                  people_important_dates: []
+                  people_phones: []
+                  people_socials: []
+                  people_tags: []
+                  tags: []
               schema:
                 type: object
                 properties:
@@ -16209,6 +17438,16 @@ paths:
           description: Sync change batches
           content:
             application/json:
+              example:
+                batches:
+                  - changes:
+                      - entityId: 550e8400-e29b-41d4-a716-446655440000
+                        operation: update
+                        table: people
+                        value:
+                          first_name: Ada
+                    serverSequence: 1
+                nextServerSequence: 2
               schema:
                 type: object
                 properties:
@@ -17084,12 +18323,70 @@ paths:
               required:
                 - deviceId
                 - mutations
+            example:
+              deviceId: 6ba7b812-9dad-11d1-80b4-00c04fd430c8
+              mutations:
+                - clientSequence: 1
+                  id: 6ba7b813-9dad-11d1-80b4-00c04fd430c8
+                  payload:
+                    firstName: Ada
+                    lastName: Lovelace
+                  type: contact.create
       security: *a2
       responses:
         "200":
           description: Sync push results
           content:
             application/json:
+              example:
+                nextServerSequence: 4
+                results:
+                  - data:
+                      contact:
+                        firstName: Ada
+                        id: 550e8400-e29b-41d4-a716-446655440000
+                        lastName: Lovelace
+                        userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                        addresses: null
+                        avatar: null
+                        createdAt: 2026-01-15T12:00:00.000Z
+                        emails:
+                          - preferred: true
+                            type: work
+                            value: ada.lovelace@example.com
+                        facebook: null
+                        gisPoint: null
+                        headline: Mathematician
+                        importantDates: null
+                        instagram: null
+                        keepFrequencyDays: 90
+                        language: en
+                        lastInteraction: 2026-01-15T12:00:00.000Z
+                        lastInteractionActivityId: null
+                        latitude: 51.5074
+                        linkedin: https://linkedin.com/in/ada-lovelace
+                        location: London, UK
+                        longitude: -0.1278
+                        middleName: null
+                        myself: false
+                        notes: null
+                        notesUpdatedAt: null
+                        phones:
+                          - preferred: true
+                            prefix: "+44"
+                            type: home
+                            value: "2079460958"
+                        position: null
+                        signal: null
+                        timezone: Europe/London
+                        updatedAt: 2026-01-15T12:00:00.000Z
+                        website: https://example.com
+                        whatsapp: null
+                    id: 550e8400-e29b-41d4-a716-446655440000
+                    serverSequence: 3
+                    status: applied
+                    txid: tx-1
+                serverTime: 2026-01-15T12:00:00.000Z
               schema:
                 type: object
                 properties:
@@ -17295,6 +18592,9 @@ paths:
           description: WebSocket ticket
           content:
             application/json:
+              example:
+                expiresAt: 1735000000
+                ticket: ws-ticket-example-abc123
               schema:
                 type: object
                 properties:
@@ -17613,12 +18913,58 @@ paths:
                         type: string
                     required:
                       - companyName
+            example:
+              firstName: Ada
+              lastName: Lovelace
+              linkedin: https://linkedin.com/in/ada-lovelace
       security: *a2
       responses:
         "200":
           description: Extension contact result
           content:
             application/json:
+              example:
+                contact:
+                  firstName: Ada
+                  id: 550e8400-e29b-41d4-a716-446655440000
+                  lastName: Lovelace
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+                  addresses: null
+                  avatar: null
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  emails:
+                    - preferred: true
+                      type: work
+                      value: ada.lovelace@example.com
+                  facebook: null
+                  gisPoint: null
+                  headline: Mathematician
+                  importantDates: null
+                  instagram: null
+                  keepFrequencyDays: 90
+                  language: en
+                  lastInteraction: 2026-01-15T12:00:00.000Z
+                  lastInteractionActivityId: null
+                  latitude: 51.5074
+                  linkedin: https://linkedin.com/in/ada-lovelace
+                  location: London, UK
+                  longitude: -0.1278
+                  middleName: null
+                  myself: false
+                  notes: null
+                  notesUpdatedAt: null
+                  phones:
+                    - preferred: true
+                      prefix: "+44"
+                      type: home
+                      value: "2079460958"
+                  position: null
+                  signal: null
+                  timezone: Europe/London
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  website: https://example.com
+                  whatsapp: null
+                existed: false
               schema:
                 type: object
                 properties:
@@ -17745,6 +19091,14 @@ paths:
               required:
                 - messages
                 - sessionId
+            example:
+              messages:
+                - id: msg-1
+                  parts:
+                    - text: Who should I follow up with?
+                      type: text
+                  role: user
+              sessionId: ff0e8400-e29b-41d4-a716-446655440009
       security: *a2
       responses:
         "200":
@@ -17872,6 +19226,20 @@ paths:
           description: Paginated chat sessions
           content:
             application/json:
+              example:
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
+                sessions:
+                  - createdAt: 2026-01-15T12:00:00.000Z
+                    id: ff0e8400-e29b-41d4-a716-446655440009
+                    title: Who should I follow up with?
+                    updatedAt: 2026-01-15T12:00:00.000Z
+                    userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -18009,6 +19377,13 @@ paths:
           description: Chat session created
           content:
             application/json:
+              example:
+                session:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: ff0e8400-e29b-41d4-a716-446655440009
+                  title: Who should I follow up with?
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -18147,6 +19522,8 @@ paths:
                   type: string
               required:
                 - title
+            example:
+              title: Follow-up ideas
       parameters:
         - schema:
             type: string
@@ -18159,6 +19536,13 @@ paths:
           description: Chat session updated
           content:
             application/json:
+              example:
+                session:
+                  createdAt: 2026-01-15T12:00:00.000Z
+                  id: ff0e8400-e29b-41d4-a716-446655440009
+                  title: Who should I follow up with?
+                  updatedAt: 2026-01-15T12:00:00.000Z
+                  userId: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
               schema:
                 type: object
                 properties:
@@ -18425,6 +19809,20 @@ paths:
           description: Paginated chat messages
           content:
             application/json:
+              example:
+                messages:
+                  - content: Who haven't I spoken to in 90 days?
+                    createdAt: 2026-01-15T12:00:00.000Z
+                    id: 000e8400-e29b-41d4-a716-44665544000a
+                    role: user
+                    sessionId: ff0e8400-e29b-41d4-a716-446655440009
+                pagination:
+                  hasMore: false
+                  limit: 50
+                  offset: 0
+                  search: null
+                  sort: null
+                  totalCount: 1
               schema:
                 type: object
                 properties:
