@@ -2,10 +2,17 @@
   "$schema": "https://v2-10-1.turborepo.dev/schema.json",
   "concurrency": "20",
   "globalPassThroughEnv": [
+    "BONDERY_DEV_SKIP_RELEASE_MIGRATE",
+    "BONDERY_DEV_SKIP_STORAGE_BUCKETS",
+    "BONDERY_INFRA_API_DOMAIN",
+    "BONDERY_INFRA_API_IMAGE_TAG",
     "BONDERY_INFRA_CHROME_EXTENSION_ID",
     "BONDERY_INFRA_GIT_SHA",
     "BONDERY_INFRA_STORAGE_DOMAIN",
     "BONDERY_INFRA_VERSION",
+    "BONDERY_INFRA_WEBAPP_DOMAIN",
+    "BONDERY_INFRA_WEBAPP_IMAGE_TAG",
+    "BONDERY_INFRA_WEBSITE_DOMAIN",
     "BONDERY_OPS_CHROME_EXTENSION_ID",
     "BONDERY_OPS_CHROME_PUBLISHER_ID",
     "BONDERY_OPS_DISCORD_WEBHOOK_URL",
@@ -88,54 +95,21 @@
   ],
   "tasks": {
     "@bondery/db#build": {
-      "dependsOn": ["db:generate", "^build"],
-      "env": ["DATABASE_URL"],
-      "outputs": ["dist/**", ".cache/tsconfig.tsbuildinfo"]
+      "dependsOn": [
+        "db:generate",
+        "^build"
+      ],
+      "env": [
+        "DATABASE_URL"
+      ],
+      "outputs": [
+        "dist/**",
+        ".cache/tsconfig.tsbuildinfo"
+      ]
     },
     "api#build": {
-      "dependsOn": ["^build"],
-      "env": [
-        "BONDERY_INFRA_CHROME_EXTENSION_ID",
-        "BONDERY_INFRA_STORAGE_DOMAIN",
-        "BONDERY_PRIVATE_ANTHROPIC_API_KEY",
-        "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
-        "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
-        "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID",
-        "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET",
-        "BONDERY_PRIVATE_BETTER_AUTH_SECRETS",
-        "BONDERY_PRIVATE_EMAIL_ADDRESS",
-        "BONDERY_PRIVATE_EMAIL_HOST",
-        "BONDERY_PRIVATE_EMAIL_PASS",
-        "BONDERY_PRIVATE_EMAIL_PORT",
-        "BONDERY_PRIVATE_EMAIL_USER",
-        "BONDERY_PRIVATE_MAPS_KEY",
-        "BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS",
-        "BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS",
-        "BONDERY_PRIVATE_POSTHOG_API_SECRET",
-        "BONDERY_PRIVATE_POSTHOG_PROJECT_ID",
-        "BONDERY_PRIVATE_REDIS_URL",
-        "BONDERY_PRIVATE_S3_ACCESS_KEY_ID",
-        "BONDERY_PRIVATE_S3_ENDPOINT",
-        "BONDERY_PRIVATE_S3_REGION",
-        "BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
-        "BONDERY_PRIVATE_SERVICE_SECRET",
-        "BONDERY_PRIVATE_STRIPE_SECRET_KEY",
-        "BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET",
-        "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
-        "BONDERY_PUBLIC_API_URL",
-        "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED",
-        "BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS",
-        "BONDERY_PUBLIC_MAPS_URL",
-        "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
-        "BONDERY_PUBLIC_STORAGE_URL",
-        "BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL",
-        "BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY",
-        "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-        "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
-        "BONDERY_PUBLIC_WEBAPP_URL",
-        "BONDERY_PUBLIC_WEBSITE_URL",
-        "DATABASE_URL",
-        "DO_NOT_TRACK"
+      "dependsOn": [
+        "^build"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -164,10 +138,7 @@
         "USERPROFILE",
         "HOMEDRIVE",
         "HOMEPATH"
-      ]
-    },
-    "api#dev": {
-      "cache": false,
+      ],
       "env": [
         "BONDERY_INFRA_CHROME_EXTENSION_ID",
         "BONDERY_INFRA_STORAGE_DOMAIN",
@@ -210,7 +181,10 @@
         "BONDERY_PUBLIC_WEBSITE_URL",
         "DATABASE_URL",
         "DO_NOT_TRACK"
-      ],
+      ]
+    },
+    "api#dev": {
+      "cache": false,
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.development.local",
@@ -218,15 +192,62 @@
         "apps/website/.env.development.local",
         "apps/api/.env.development.local"
       ],
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "BONDERY_INFRA_CHROME_EXTENSION_ID",
+        "BONDERY_INFRA_STORAGE_DOMAIN",
+        "BONDERY_PRIVATE_ANTHROPIC_API_KEY",
+        "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
+        "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
+        "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID",
+        "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET",
+        "BONDERY_PRIVATE_BETTER_AUTH_SECRETS",
+        "BONDERY_PRIVATE_EMAIL_ADDRESS",
+        "BONDERY_PRIVATE_EMAIL_HOST",
+        "BONDERY_PRIVATE_EMAIL_PASS",
+        "BONDERY_PRIVATE_EMAIL_PORT",
+        "BONDERY_PRIVATE_EMAIL_USER",
+        "BONDERY_PRIVATE_MAPS_KEY",
+        "BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS",
+        "BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS",
+        "BONDERY_PRIVATE_POSTHOG_API_SECRET",
+        "BONDERY_PRIVATE_POSTHOG_PROJECT_ID",
+        "BONDERY_PRIVATE_REDIS_URL",
+        "BONDERY_PRIVATE_S3_ACCESS_KEY_ID",
+        "BONDERY_PRIVATE_S3_ENDPOINT",
+        "BONDERY_PRIVATE_S3_REGION",
+        "BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
+        "BONDERY_PRIVATE_SERVICE_SECRET",
+        "BONDERY_PRIVATE_STRIPE_SECRET_KEY",
+        "BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET",
+        "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+        "BONDERY_PUBLIC_API_URL",
+        "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED",
+        "BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS",
+        "BONDERY_PUBLIC_MAPS_URL",
+        "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
+        "BONDERY_PUBLIC_STORAGE_URL",
+        "BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL",
+        "BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY",
+        "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DATABASE_URL",
+        "DO_NOT_TRACK"
+      ]
     },
     "api#generate-openapi": {
       "cache": true,
       "dependsOn": [],
-      "outputs": ["openapi.yaml"]
+      "outputs": [
+        "openapi.yaml"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.production.local",
@@ -257,21 +278,16 @@
       ]
     },
     "check-types": {
-      "dependsOn": ["transit"],
-      "outputs": [".cache/tsconfig.tsbuildinfo"]
+      "dependsOn": [
+        "transit"
+      ],
+      "outputs": [
+        ".cache/tsconfig.tsbuildinfo"
+      ]
     },
     "chrome-extension#build": {
-      "dependsOn": ["^build"],
-      "env": [
-        "BONDERY_OPS_CHROME_EXTENSION_ID",
-        "BONDERY_OPS_CHROME_PUBLISHER_ID",
-        "BONDERY_PUBLIC_API_URL",
-        "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
-        "BONDERY_PUBLIC_WEBAPP_URL",
-        "CI",
-        "GITHUB_ACTIONS",
-        "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",
-        "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON"
+      "dependsOn": [
+        "^build"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -300,10 +316,7 @@
         "USERPROFILE",
         "HOMEDRIVE",
         "HOMEPATH"
-      ]
-    },
-    "chrome-extension#dev": {
-      "cache": false,
+      ],
       "env": [
         "BONDERY_OPS_CHROME_EXTENSION_ID",
         "BONDERY_OPS_CHROME_PUBLISHER_ID",
@@ -314,7 +327,10 @@
         "GITHUB_ACTIONS",
         "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",
         "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON"
-      ],
+      ]
+    },
+    "chrome-extension#dev": {
+      "cache": false,
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.development.local",
@@ -322,17 +338,39 @@
         "apps/website/.env.development.local",
         "apps/api/.env.development.local"
       ],
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "BONDERY_OPS_CHROME_EXTENSION_ID",
+        "BONDERY_OPS_CHROME_PUBLISHER_ID",
+        "BONDERY_PUBLIC_API_URL",
+        "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "CI",
+        "GITHUB_ACTIONS",
+        "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",
+        "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON"
+      ]
     },
     "compile": {
-      "dependsOn": ["^compile"],
-      "outputs": ["dist/**"]
+      "dependsOn": [
+        "^compile"
+      ],
+      "outputs": [
+        "dist/**"
+      ]
     },
     "db:generate": {
       "cache": true,
-      "env": ["DATABASE_URL"],
-      "inputs": ["prisma/**", "prisma.config.ts"],
-      "outputs": ["src/generated/**"]
+      "env": [
+        "DATABASE_URL"
+      ],
+      "inputs": [
+        "prisma/**",
+        "prisma.config.ts"
+      ],
+      "outputs": [
+        "src/generated/**"
+      ]
     },
     "dev": {
       "cache": false,
@@ -346,14 +384,8 @@
       "persistent": true
     },
     "mobile#build": {
-      "dependsOn": ["^build"],
-      "env": [
-        "BONDERY_PUBLIC_API_URL",
-        "BONDERY_PUBLIC_STORAGE_URL",
-        "BONDERY_PUBLIC_SYNC_DEBUG",
-        "BONDERY_PUBLIC_WEBAPP_URL",
-        "BONDERY_PUBLIC_WEBSITE_URL",
-        "METRO_MAX_WORKERS"
+      "dependsOn": [
+        "^build"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -382,10 +414,7 @@
         "USERPROFILE",
         "HOMEDRIVE",
         "HOMEPATH"
-      ]
-    },
-    "mobile#dev": {
-      "cache": false,
+      ],
       "env": [
         "BONDERY_PUBLIC_API_URL",
         "BONDERY_PUBLIC_STORAGE_URL",
@@ -393,7 +422,10 @@
         "BONDERY_PUBLIC_WEBAPP_URL",
         "BONDERY_PUBLIC_WEBSITE_URL",
         "METRO_MAX_WORKERS"
-      ],
+      ]
+    },
+    "mobile#dev": {
+      "cache": false,
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.development.local",
@@ -401,11 +433,21 @@
         "apps/website/.env.development.local",
         "apps/api/.env.development.local"
       ],
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "BONDERY_PUBLIC_API_URL",
+        "BONDERY_PUBLIC_STORAGE_URL",
+        "BONDERY_PUBLIC_SYNC_DEBUG",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "METRO_MAX_WORKERS"
+      ]
     },
     "preview": {
       "cache": false,
-      "dependsOn": ["^compile"],
+      "dependsOn": [
+        "^compile"
+      ],
       "persistent": true
     },
     "start": {
@@ -413,26 +455,13 @@
       "persistent": true
     },
     "transit": {
-      "dependsOn": ["^transit"]
+      "dependsOn": [
+        "^transit"
+      ]
     },
     "webapp#build": {
-      "dependsOn": ["^build"],
-      "env": [
-        "BONDERY_INFRA_GIT_SHA",
-        "BONDERY_INFRA_VERSION",
-        "BONDERY_PRIVATE_POSTHOG_HOST",
-        "BONDERY_PRIVATE_POSTHOG_KEY",
-        "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
-        "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
-        "BONDERY_PUBLIC_API_URL",
-        "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED",
-        "BONDERY_PUBLIC_POSTHOG_HOST",
-        "BONDERY_PUBLIC_POSTHOG_KEY",
-        "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-        "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
-        "BONDERY_PUBLIC_WEBAPP_URL",
-        "BONDERY_PUBLIC_WEBSITE_URL",
-        "DO_NOT_TRACK"
+      "dependsOn": [
+        "^build"
       ],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -461,10 +490,35 @@
         "USERPROFILE",
         "HOMEDRIVE",
         "HOMEPATH"
+      ],
+      "env": [
+        "BONDERY_INFRA_GIT_SHA",
+        "BONDERY_INFRA_VERSION",
+        "BONDERY_PRIVATE_POSTHOG_HOST",
+        "BONDERY_PRIVATE_POSTHOG_KEY",
+        "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+        "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
+        "BONDERY_PUBLIC_API_URL",
+        "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED",
+        "BONDERY_PUBLIC_POSTHOG_HOST",
+        "BONDERY_PUBLIC_POSTHOG_KEY",
+        "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+        "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DO_NOT_TRACK"
       ]
     },
     "webapp#dev": {
       "cache": false,
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "apps/chrome-extension/.env.development.local",
+        "apps/webapp/.env.development.local",
+        "apps/website/.env.development.local",
+        "apps/api/.env.development.local"
+      ],
+      "persistent": true,
       "env": [
         "BONDERY_INFRA_GIT_SHA",
         "BONDERY_INFRA_VERSION",
@@ -481,19 +535,12 @@
         "BONDERY_PUBLIC_WEBAPP_URL",
         "BONDERY_PUBLIC_WEBSITE_URL",
         "DO_NOT_TRACK"
-      ],
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "apps/chrome-extension/.env.development.local",
-        "apps/webapp/.env.development.local",
-        "apps/website/.env.development.local",
-        "apps/api/.env.development.local"
-      ],
-      "persistent": true
+      ]
     },
     "website#build": {
-      "dependsOn": ["^build"],
-      "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
+      "dependsOn": [
+        "^build"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.production.local",
@@ -521,11 +568,15 @@
         "USERPROFILE",
         "HOMEDRIVE",
         "HOMEPATH"
+      ],
+      "env": [
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DO_NOT_TRACK"
       ]
     },
     "website#dev": {
       "cache": false,
-      "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.development.local",
@@ -533,7 +584,12 @@
         "apps/website/.env.development.local",
         "apps/api/.env.development.local"
       ],
-      "persistent": true
+      "persistent": true,
+      "env": [
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DO_NOT_TRACK"
+      ]
     }
   },
   "ui": "tui"

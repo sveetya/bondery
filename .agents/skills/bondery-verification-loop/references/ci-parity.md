@@ -9,7 +9,7 @@ There is **no** root `npm run verify` — mirror CI by running the steps below o
 
 | Tier | When | Typical commands |
 |------|------|------------------|
-| **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged |
+| **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check-types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` deploy gates | `stage-webapp.yml`, `stage-api.yml` subsets |

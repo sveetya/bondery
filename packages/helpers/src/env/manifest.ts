@@ -33,6 +33,103 @@ export type EnvTargetWrite = {
   transform?: "webapp-auth-callback";
 };
 
+/** Optional multi-line comments rendered under a group header in generated `*.example` files. */
+export const ENV_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
+  "API secrets": ["Generate:", "  openssl rand -hex 32   # BONDERY_PRIVATE_SERVICE_SECRET"],
+  Auth: [
+    "Local secrets you invent (not issued by GitHub/LinkedIn):",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_BETTER_AUTH_SECRETS → set as 1:<output>",
+    "  openssl rand -hex 16   # BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+    "  openssl rand -hex 16   # BONDERY_PUBLIC_OAUTH_CLIENT_ID (chrome extension)",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
+    "",
+    "GitHub / LinkedIn OAuth apps: callback URL must be on the API host (not the webapp):",
+    "  <BONDERY_PUBLIC_API_URL>/auth/callback/github  (or /linkedin)",
+    "  Local example: http://localhost:26631/auth/callback/github",
+    "  Then run: npm run provision-oauth-clients:dev -w api",
+  ],
+  Database: [
+    "Generate a Postgres password:",
+    "  openssl rand -base64 24 | tr -d '/+=' | head -c 32   # BONDERY_PRIVATE_POSTGRES_PASSWORD",
+    "Use the same password in DATABASE_URL (postgresql://postgres:<password>@...).",
+  ],
+  Storage: [
+    "Local dev: bundled SeaweedFS defaults below are fine.",
+    "Production secret key: openssl rand -hex 32   # BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
+  ],
+};
+
+/** Operator-facing sections in `deploy/bondery/.env.example` (order matters). */
+export const DEPLOY_GROUP_ORDER = [
+  "Image tags",
+  "Public hostnames",
+  "Redis",
+  "Postgres",
+  "Better Auth",
+  "Webapp OAuth",
+  "Chrome extension OAuth",
+  "Storage",
+  "Email",
+  "Stripe",
+  "Optional integrations (API)",
+  "Optional webapp analytics",
+  "Optional API admin analytics",
+  "Build metadata",
+] as const;
+
+/** Multi-line comments under deploy group headers in `deploy/bondery/.env.example`. */
+export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
+  "Better Auth": [
+    "Generate local secrets (not issued by GitHub/LinkedIn):",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_BETTER_AUTH_SECRETS → set as 1:<output>",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_SERVICE_SECRET",
+    "",
+    "GitHub / LinkedIn OAuth apps: callback URL on the API host (not the webapp):",
+    "  https://<BONDERY_INFRA_API_DOMAIN>/auth/callback/github  (or /linkedin)",
+    "OAuth clients are provisioned automatically on api pre_start (release-migrate).",
+  ],
+  "Chrome extension OAuth": ["Generate: openssl rand -hex 16   # BONDERY_PUBLIC_OAUTH_CLIENT_ID"],
+  Email: ["SMTP settings (env_file → api only)."],
+  "Image tags": [
+    "Omit to pull the floating production channel. Pin to semver for reproducible deploys / rollback.",
+  ],
+  Postgres: [
+    "Generate:",
+    "  openssl rand -base64 24 | tr -d '/+=' | head -c 32   # BONDERY_PRIVATE_POSTGRES_PASSWORD",
+    "Compose builds DATABASE_URL from this password — do not set DATABASE_URL in .env.",
+  ],
+  "Public hostnames": [
+    "Traefik Host() rules use these; Compose derives https://… URLs for the apps (no scheme here).",
+  ],
+  Redis: ["Bundled Redis (default). Advanced: run API alone with a managed Redis URL."],
+  Storage: [
+    "S3 credentials are rendered into SeaweedFS at container start (see deploy/bondery/seaweedfs/entrypoint.sh).",
+    "Production secret key: openssl rand -hex 32   # BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
+  ],
+  Stripe: ["Stripe live-mode placeholders — replace with Dashboard values."],
+  "Webapp OAuth": [
+    "Generate:",
+    "  openssl rand -hex 16   # BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+    "  openssl rand -hex 32   # BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
+    "Passed to the webapp container via compose environment (BFF OAuth session).",
+  ],
+};
+
+export type DeployExample = {
+  /** Include in generated `deploy/bondery/.env.example` */
+  include: boolean;
+  /** Override `exampleValue` for deploy operators */
+  value?: string;
+  /** Operator-facing section header */
+  group?: string;
+  /** Render as `# KEY=value` (optional image tag pins) */
+  commented?: boolean;
+};
+
+export type ExampleProfile = "development" | "production" | "deploy";
+
 export type EnvVarDef = {
   canonical: string;
   description: string;
@@ -43,9 +140,45 @@ export type EnvVarDef = {
   requiredIn: EnvEnvironment[];
   secret: boolean;
   targets: EnvTargetWrite[];
+  /** Self-host compose operator example (`deploy/bondery/.env.example`) */
+  deployExample?: DeployExample;
   /** When false, omit from turbo cache env arrays (rare) */
   turboAffectsCache?: boolean;
 };
+
+/** Resolve example value for a manifest entry and generation profile. */
+export function resolveExampleValue(entry: EnvVarDef, profile: ExampleProfile): string {
+  if (profile === "deploy") {
+    return entry.deployExample?.value ?? entry.exampleValue;
+  }
+
+  let value = entry.exampleValue;
+  if (profile === "production") {
+    if (entry.canonical.includes("WEBAPP_URL") && value.includes("localhost")) {
+      value = "https://app.usebondery.com";
+    } else if (entry.canonical.includes("WEBSITE_URL") && value.includes("localhost")) {
+      value = "https://usebondery.com";
+    } else if (entry.canonical.includes("API_URL") && value.includes("localhost")) {
+      value = "https://api.usebondery.com";
+    } else if (entry.canonical === "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED") {
+      value = "false";
+    }
+  }
+  return value;
+}
+
+/** Sort deploy example rows by DEPLOY_GROUP_ORDER then key. */
+export function sortDeployExampleRows<T extends { group: string; key: string }>(rows: T[]): T[] {
+  const groupRank = new Map(DEPLOY_GROUP_ORDER.map((group, index) => [group, index]));
+  return [...rows].sort((a, b) => {
+    const rankA = groupRank.get(a.group as (typeof DEPLOY_GROUP_ORDER)[number]) ?? 999;
+    const rankB = groupRank.get(b.group as (typeof DEPLOY_GROUP_ORDER)[number]) ?? 999;
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return a.key.localeCompare(b.key);
+  });
+}
 
 export type SyncTargetConfig = {
   id: TargetId;
@@ -148,12 +281,31 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     secret: true,
     targets: [t("api"), t("db")],
   },
+  {
+    canonical: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
+    deployExample: {
+      group: "Postgres",
+      include: true,
+      value: "your-super-secret-and-long-postgres-password",
+    },
+    description: "Postgres password for bundled self-hosted database",
+    exampleValue: "your-super-secret-and-long-postgres-password",
+    group: "Database",
+    requiredIn: [],
+    secret: true,
+    targets: [t("db")],
+  },
 
   // --- Auth (Better Auth) ---
   {
     canonical: "BONDERY_PRIVATE_BETTER_AUTH_SECRETS",
+    deployExample: {
+      group: "Better Auth",
+      include: true,
+      value: "1:your-super-secret-better-auth-secret-min-32-chars",
+    },
     description:
-      "Better Auth versioned secrets (format: version:secret[,version:secret...]; highest version first)",
+      "Better Auth versioned secrets (format: version:secret[,version:secret...]; highest version first)\nGenerate: openssl rand -hex 32 — then set as 1:<output>",
     exampleValue: "1:your-super-secret-better-auth-secret-min-32-chars",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -162,7 +314,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
-    description: "GitHub OAuth client id for Better Auth",
+    deployExample: { group: "Better Auth", include: true, value: "" },
+    description:
+      "GitHub OAuth client id for Better Auth (from GitHub → Settings → Developer settings → OAuth apps)",
     exampleValue: "",
     group: "Auth",
     requiredIn: [],
@@ -171,7 +325,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
-    description: "GitHub OAuth client secret for Better Auth",
+    deployExample: { group: "Better Auth", include: true, value: "" },
+    description:
+      "GitHub OAuth client secret for Better Auth (shown once when you create the OAuth app)",
     exampleValue: "",
     group: "Auth",
     requiredIn: [],
@@ -180,7 +336,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID",
-    description: "LinkedIn OAuth client id for Better Auth",
+    deployExample: { group: "Better Auth", include: true, value: "" },
+    description:
+      "LinkedIn OAuth client id for Better Auth (from LinkedIn Developer Portal → your app)",
     exampleValue: "",
     group: "Auth",
     requiredIn: [],
@@ -189,7 +347,8 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET",
-    description: "LinkedIn OAuth client secret for Better Auth",
+    deployExample: { group: "Better Auth", include: true, value: "" },
+    description: "LinkedIn OAuth client secret for Better Auth (from LinkedIn Developer Portal)",
     exampleValue: "",
     group: "Auth",
     requiredIn: [],
@@ -198,8 +357,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
+    deployExample: { group: "Chrome extension OAuth", include: true, value: "" },
     description:
-      "Chrome extension OAuth client id (synced as legacy name below). Also consumed by the API's deployment-time OAuth client provisioning.",
+      "Chrome extension OAuth client id. Also consumed by the API's deployment-time OAuth client provisioning.\nGenerate: openssl rand -hex 16",
     exampleValue: "",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -208,8 +368,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID",
+    deployExample: { group: "Webapp OAuth", include: true, value: "" },
     description:
-      "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)",
+      "Webapp's own OAuth client id (confidential BFF client of the API's oauth-provider)\nGenerate: openssl rand -hex 16",
     exampleValue: "",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -218,8 +379,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
+    deployExample: { group: "Webapp OAuth", include: true, value: "" },
     description:
-      "Webapp's own OAuth client secret (never exposed to the browser). The API only ever stores/verifies its hash via deployment-time provisioning; it never round-trips the plaintext value.",
+      "Webapp's own OAuth client secret (never exposed to the browser). The API only ever stores/verifies its hash via deployment-time provisioning; it never round-trips the plaintext value.\nGenerate: openssl rand -hex 32",
     exampleValue: "",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -228,7 +390,13 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
-    description: "Symmetric key (≥32 chars) for encrypting the webapp's own session cookie",
+    deployExample: {
+      group: "Webapp OAuth",
+      include: true,
+      value: "your-super-secret-webapp-session-secret-min-32-chars",
+    },
+    description:
+      "Symmetric key (≥32 chars) for encrypting the webapp's own session cookie\nGenerate: openssl rand -hex 32",
     exampleValue: "your-super-secret-webapp-session-secret-min-32-chars",
     group: "Auth",
     requiredIn: ["development", "production"],
@@ -239,8 +407,13 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   // --- Storage ---
   {
     canonical: "BONDERY_PUBLIC_STORAGE_URL",
+    deployExample: {
+      group: "Storage",
+      include: true,
+      value: "https://storage.usebondery.com",
+    },
     description: "Public base URL for SeaweedFS S3 objects (no trailing slash).",
-    exampleValue: "https://storage.usebondery.com",
+    exampleValue: "http://127.0.0.1:8333",
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: false,
@@ -248,8 +421,14 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_S3_ENDPOINT",
-    description: "Internal SeaweedFS S3 gateway URL (API container).",
-    exampleValue: "http://seaweedfs-s3:8333",
+    deployExample: {
+      group: "Storage",
+      include: true,
+      value: "http://seaweedfs-s3:8333",
+    },
+    description:
+      "SeaweedFS S3 gateway URL (local dev: 127.0.0.1; Compose: http://seaweedfs-s3:8333).",
+    exampleValue: "http://127.0.0.1:8333",
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: false,
@@ -257,6 +436,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_S3_REGION",
+    deployExample: { group: "Storage", include: true, value: "eu-central-1" },
     description: "S3 region accepted by SeaweedFS (any value).",
     exampleValue: "eu-central-1",
     group: "Storage",
@@ -266,6 +446,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_S3_ACCESS_KEY_ID",
+    deployExample: { group: "Storage", include: true, value: "bondery_access_key" },
     description: "SeaweedFS S3 access key id (API client + rendered into seaweedfs-s3 at startup).",
     exampleValue: "bondery_access_key",
     group: "Storage",
@@ -275,16 +456,99 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY",
+    deployExample: {
+      group: "Storage",
+      include: true,
+      value: "bondery_secret_key_change_me",
+    },
     description:
-      "SeaweedFS S3 secret access key (API client + rendered into seaweedfs-s3 at startup).",
-    exampleValue: "",
+      "SeaweedFS S3 secret access key (API client + rendered into seaweedfs-s3 at startup). Local dev: any string; production: openssl rand -hex 32",
+    exampleValue: "bondery_secret_key_change_me",
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: true,
     targets: [t("api")],
   },
   {
+    canonical: "BONDERY_INFRA_API_DOMAIN",
+    deployExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "api.usebondery.com",
+    },
+    description: "Public API hostname for Traefik Host() rules (no scheme).",
+    exampleValue: "api.usebondery.com",
+    group: "Infra",
+    requiredIn: ["production"],
+    secret: false,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_INFRA_WEBAPP_DOMAIN",
+    deployExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "app.usebondery.com",
+    },
+    description: "Public webapp hostname for Traefik Host() rules (no scheme).",
+    exampleValue: "app.usebondery.com",
+    group: "Infra",
+    requiredIn: ["production"],
+    secret: false,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_INFRA_WEBSITE_DOMAIN",
+    deployExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "usebondery.com",
+    },
+    description:
+      "Public marketing website hostname (no scheme). Compose derives BONDERY_PUBLIC_WEBSITE_URL for api/webapp.",
+    exampleValue: "usebondery.com",
+    group: "Infra",
+    requiredIn: ["production"],
+    secret: false,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_INFRA_API_IMAGE_TAG",
+    deployExample: {
+      commented: true,
+      group: "Image tags",
+      include: true,
+    },
+    description: "API container image tag (omit for floating production channel).",
+    exampleValue: "",
+    group: "Infra",
+    requiredIn: [],
+    secret: false,
+    targets: [],
+    turboAffectsCache: false,
+  },
+  {
+    canonical: "BONDERY_INFRA_WEBAPP_IMAGE_TAG",
+    deployExample: {
+      commented: true,
+      group: "Image tags",
+      include: true,
+    },
+    description: "Webapp container image tag (omit for floating production channel).",
+    exampleValue: "",
+    group: "Infra",
+    requiredIn: [],
+    secret: false,
+    targets: [],
+    turboAffectsCache: false,
+  },
+  {
     canonical: "BONDERY_INFRA_STORAGE_DOMAIN",
+    deployExample: {
+      group: "Storage",
+      include: true,
+      value: "storage.usebondery.com",
+    },
     description: "Public hostname for SeaweedFS S3 (Traefik Host rule in compose).",
     exampleValue: "storage.usebondery.com",
     group: "Storage",
@@ -296,7 +560,12 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   // --- API secrets ---
   {
     canonical: "BONDERY_PRIVATE_SERVICE_SECRET",
-    description: "Internal service-to-service HMAC secret",
+    deployExample: {
+      group: "Better Auth",
+      include: true,
+      value: "your-service-secret-min-32-chars",
+    },
+    description: "Internal service-to-service HMAC secret\nGenerate: openssl rand -hex 32",
     exampleValue: "<your-service-secret>",
     group: "API secrets",
     requiredIn: ["development", "production"],
@@ -325,6 +594,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_EMAIL_HOST",
+    deployExample: { group: "Email", include: true, value: "smtp.example.com" },
     description: "SMTP host",
     exampleValue: "smtp.example.com",
     group: "Email",
@@ -334,6 +604,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_EMAIL_PORT",
+    deployExample: { group: "Email", include: true, value: "587" },
     description: "SMTP port",
     exampleValue: "587",
     group: "Email",
@@ -343,6 +614,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_EMAIL_USER",
+    deployExample: { group: "Email", include: true, value: "username" },
     description: "SMTP username",
     exampleValue: "robot@example.com",
     group: "Email",
@@ -352,6 +624,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_EMAIL_PASS",
+    deployExample: { group: "Email", include: true, value: "your-email-password" },
     description: "SMTP password",
     exampleValue: "your-email-password",
     group: "Email",
@@ -361,6 +634,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_EMAIL_ADDRESS",
+    deployExample: { group: "Email", include: true, value: "robot@usebondery.com" },
     description: "From address for transactional email",
     exampleValue: "robot@example.com",
     group: "Email",
@@ -370,6 +644,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_REDIS_URL",
+    deployExample: { group: "Redis", include: true, value: "redis://redis:6379" },
     description: "Redis connection URL",
     exampleValue: "redis://127.0.0.1:26636",
     group: "Redis",
@@ -379,6 +654,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_STRIPE_SECRET_KEY",
+    deployExample: {
+      group: "Stripe",
+      include: true,
+      value: "sk_live_<your-stripe-secret-key>",
+    },
     description: "Stripe API secret key",
     exampleValue: "sk_test_<your-stripe-secret-key>",
     group: "Stripe",
@@ -388,6 +668,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET",
+    deployExample: {
+      group: "Stripe",
+      include: true,
+      value: "whsec_<your-stripe-webhook-secret>",
+    },
     description: "Stripe webhook signing secret",
     exampleValue: "whsec_<your-stripe-webhook-secret>",
     group: "Stripe",
@@ -397,6 +682,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED",
+    deployExample: { group: "Stripe", include: true, value: "false" },
     description: "Enable in-app subscription upgrades (true | false)",
     exampleValue: "false",
     group: "Stripe",
@@ -406,6 +692,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+    deployExample: {
+      group: "Stripe",
+      include: true,
+      value: "pk_live_<your-stripe-publishable-key>",
+    },
     description: "Stripe publishable key for embedded Checkout",
     exampleValue: "pk_test_<your-stripe-publishable-key>",
     group: "Stripe",
@@ -415,6 +706,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY",
+    deployExample: { group: "Stripe", include: true, value: "price_<monthly>" },
     description: "Stripe Price ID for monthly Premium",
     exampleValue: "price_<monthly>",
     group: "Stripe",
@@ -424,6 +716,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL",
+    deployExample: { group: "Stripe", include: true, value: "price_<annual>" },
     description: "Stripe Price ID for annual Premium",
     exampleValue: "price_<annual>",
     group: "Stripe",
@@ -433,6 +726,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_MAPS_URL",
+    deployExample: {
+      group: "Optional integrations (API)",
+      include: true,
+      value: "https://api.mapy.com",
+    },
     description: "Mapy.com API base URL",
     exampleValue: "https://api.mapy.com",
     group: "Maps",
@@ -442,6 +740,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_MAPS_KEY",
+    deployExample: { group: "Optional integrations (API)", include: true, value: "" },
     description: "Mapy.com API key",
     exampleValue: "<your-maps-api-key>",
     group: "Maps",
@@ -451,6 +750,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_ANTHROPIC_API_KEY",
+    deployExample: { group: "Optional integrations (API)", include: true, value: "" },
     description: "Anthropic API key for AI features",
     exampleValue: "sk-ant-<your-anthropic-api-key>",
     group: "AI",
@@ -462,6 +762,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   // --- Analytics ---
   {
     canonical: "BONDERY_PUBLIC_POSTHOG_KEY",
+    deployExample: { group: "Optional webapp analytics", include: true, value: "" },
     description: "PostHog project API key (browser)",
     exampleValue: "",
     group: "Analytics",
@@ -471,6 +772,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PUBLIC_POSTHOG_HOST",
+    deployExample: { group: "Optional webapp analytics", include: true, value: "" },
     description: "PostHog host URL",
     exampleValue: "",
     group: "Analytics",
@@ -480,6 +782,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_POSTHOG_KEY",
+    deployExample: { group: "Optional webapp analytics", include: true, value: "" },
     description: "PostHog personal/project key for server-side capture (optional)",
     exampleValue: "",
     group: "Analytics",
@@ -489,6 +792,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_POSTHOG_HOST",
+    deployExample: { group: "Optional webapp analytics", include: true, value: "" },
     description: "PostHog host for server-side capture (optional)",
     exampleValue: "",
     group: "Analytics",
@@ -498,6 +802,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_POSTHOG_API_SECRET",
+    deployExample: { group: "Optional API admin analytics", include: true, value: "" },
     description: "PostHog personal API key for admin analytics queries (optional)",
     exampleValue: "",
     group: "Analytics",
@@ -507,6 +812,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_PRIVATE_POSTHOG_PROJECT_ID",
+    deployExample: { group: "Optional API admin analytics", include: true, value: "" },
     description: "PostHog project id for admin analytics queries (optional)",
     exampleValue: "",
     group: "Analytics",
@@ -527,6 +833,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   // --- Infra (optional local) ---
   {
     canonical: "BONDERY_INFRA_VERSION",
+    deployExample: { group: "Build metadata", include: true },
     description: "App version surfaced in webapp runtime config",
     exampleValue: "",
     group: "Infra",
@@ -536,6 +843,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_INFRA_GIT_SHA",
+    deployExample: { group: "Build metadata", include: true, value: "" },
     description: "Git SHA surfaced in webapp runtime config",
     exampleValue: "",
     group: "Infra",
@@ -545,6 +853,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_INFRA_CHROME_EXTENSION_ID",
+    deployExample: {
+      group: "Public hostnames",
+      include: true,
+      value: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
+    },
     description:
       "Chrome Web Store extension ID. Used to derive the https://{id}.chromiumapp.org/ redirect URI registered for the extension's OAuth client (see scripts/provision-oauth-clients.ts).",
     exampleValue: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
@@ -552,15 +865,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     targets: [t("api")],
-  },
-  {
-    canonical: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
-    description: "Postgres password for bundled self-hosted database",
-    exampleValue: "your-super-secret-and-long-postgres-password",
-    group: "Database",
-    requiredIn: [],
-    secret: true,
-    targets: [t("db")],
   },
   {
     canonical: "BONDERY_PUBLIC_SYNC_DEBUG",

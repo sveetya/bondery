@@ -23,6 +23,8 @@ cp .env.example .env
 docker compose up -d
 ```
 
+`deploy/bondery/.env.example` is **generated** from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). After changing deploy env vars in the manifest, run `npm run env -- --write-examples`.
+
 Requires Docker Compose **v2.38+** (`pre_start` on `api`). First boot applies migrations, OAuth provisioning, and SeaweedFS buckets automatically via `api` init containers — no manual steps.
 
 Without Traefik (host ports):

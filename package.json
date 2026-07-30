@@ -97,6 +97,7 @@
     "dev:website": "turbo watch website#dev --concurrency 20",
     "env": "node --import tsx scripts/env.ts",
     "generate-doc-links": "node scripts/generate-doc-links.mjs",
+    "generate-env-examples": "node scripts/generate-env-examples.mjs",
     "generate-openapi": "turbo generate-openapi --filter=api",
     "i18n:lint": "npm run i18n:lint -w @bondery/translations",
     "i18n:status": "npm run i18n:status -w @bondery/translations",

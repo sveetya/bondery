@@ -56,12 +56,12 @@ npm run dev
 | --- | --- |
 | `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
 | `npm run env` | Sync root `.env.local` → per-app env files → validate |
+| `npm run generate-env-examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, and `turbo.json` from the manifest |
 
-Codegen / CI (not day-to-day DX):
+Pre-commit (via lint-staged) runs `generate-env-examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
 
 ```bash
-npm run env -- --write-examples --write-turbo   # regenerate committed examples + turbo.json
-npm run env -- --check                          # regenerate + fail if git dirty
+npm run env -- --check   # regenerate + fail if git dirty
 ```
 
 Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
@@ -71,9 +71,9 @@ Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,w
 | Edit | Do not edit |
 | --- | --- |
 | Root [`.env.local`](../../.env.local) (gitignored) | `apps/*/.env*.local` (generated) |
-| Manifest [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) | Generated `*.example` headers say “do not edit” |
+| Manifest [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) | Generated `*.example` files (headers say “do not edit”) |
 
-Template: [`.env.local.example`](../../.env.local.example).
+Templates: [`.env.local.example`](../../.env.local.example) (local dev) · [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) (self-host compose).
 
 ## Platform adapters (why not `NEXT_PUBLIC_` / `EXPO_PUBLIC_`)
 
@@ -86,8 +86,8 @@ Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from 
 
 ## Production / self-host
 
-Operators use [`deploy/bondery/.env`](../../deploy/bondery/.env.example) with Compose — same `BONDERY_*` names and `DATABASE_URL` for the API service. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
+Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `npm run env -- --write-examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
 
 ## Manifest
 
-[`@bondery/helpers/env`](../../packages/helpers/src/env/manifest.ts) is the single contract: canonical keys, which apps receive them, `requiredIn`, and turbo scopes. Per-app `check-env` scripts read required lists from the manifest (API also cross-checks `required-env.ts`).
+[`@bondery/helpers/env`](../../packages/helpers/src/env/manifest.ts) is the single contract: canonical keys, which apps receive them, `requiredIn`, deploy operator examples (`deployExample`), and turbo scopes. Per-app `check-env` scripts read required lists from the manifest (API also cross-checks `required-env.ts`).
