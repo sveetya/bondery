@@ -59,6 +59,11 @@ jobs:
       - name: Check OpenAPI spec
         run: npm run check-openapi
 
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+        with:
+          version: v2.38.2
+
       - name: Validate Bondery deploy compose
         run: |
           cp deploy/bondery/.env.example deploy/bondery/.env
