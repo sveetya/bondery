@@ -18703,136 +18703,6 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
-  /extension/manifest:
-    get:
-      tags:
-        - Extension
-      description: Public Chrome extension configuration. Returns the minimum supported extension version and store URL. Not a
-        health probe — use `GET /health/live` for liveness.
-      security: *a2
-      responses:
-        "200":
-          description: Extension manifest
-          content:
-            application/json:
-              example:
-                extension:
-                  minVersion: 1.0.0
-                  storeUrl: https://chrome.google.com/webstore/detail/bondery/example
-              schema:
-                type: object
-                properties:
-                  extension:
-                    type: object
-                    properties:
-                      minVersion:
-                        type: string
-                      storeUrl:
-                        type: string
-                    required:
-                      - minVersion
-                      - storeUrl
-                    additionalProperties: false
-                required:
-                  - extension
-                additionalProperties: false
-                example:
-                  extension:
-                    minVersion: 1.0.0
-                    storeUrl: https://chrome.google.com/webstore/detail/bondery/example
-        "400":
-          description: Invalid request
-          content:
-            application/json:
-              example:
-                error:
-                  code: validation_error
-                  doc_url: https://usebondery.com/docs/api/errors/validation_error
-                  message: body.email Invalid input
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: invalid_request_error
-                  param: body.email
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "401":
-          description: Authentication required
-          content:
-            application/json:
-              example:
-                error:
-                  code: auth_required
-                  doc_url: https://usebondery.com/docs/api/errors/auth_required
-                  message: Unauthorized - Please log in
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: authentication_error
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "403":
-          description: Forbidden
-          content:
-            application/json:
-              example:
-                error:
-                  code: admin_required
-                  doc_url: https://usebondery.com/docs/api/errors/admin_required
-                  message: Forbidden
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: authorization_error
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "404":
-          description: Resource not found
-          content:
-            application/json:
-              example:
-                error:
-                  code: contact_not_found
-                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
-                  message: Contact not found
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: not_found_error
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "429":
-          description: Too many requests
-          content:
-            application/json:
-              example:
-                error:
-                  code: rate_limit_exceeded
-                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
-                  message: Rate limit exceeded. Retry in 42 seconds.
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: rate_limit_error
-                  retry_after: 42
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              example:
-                error:
-                  code: internal_server_error
-                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
-                  message: Internal Server Error
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: api_error
-              schema:
-                $ref: "#/components/schemas/ApiError"
-        "503":
-          description: Service unavailable
-          content:
-            application/json:
-              example:
-                error:
-                  code: service_unavailable
-                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
-                  message: Service unavailable
-                  request_id: 00000000-0000-0000-0000-000000000000
-                  type: service_unavailable_error
-              schema:
-                $ref: "#/components/schemas/ApiError"
   /extension:
     post:
       tags:
@@ -18976,6 +18846,136 @@ paths:
                   - contact
                   - existed
                 additionalProperties: false
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  doc_url: https://usebondery.com/docs/api/errors/validation_error
+                  message: body.email Invalid input
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: invalid_request_error
+                  param: body.email
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              example:
+                error:
+                  code: auth_required
+                  doc_url: https://usebondery.com/docs/api/errors/auth_required
+                  message: Unauthorized - Please log in
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authentication_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                error:
+                  code: admin_required
+                  doc_url: https://usebondery.com/docs/api/errors/admin_required
+                  message: Forbidden
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authorization_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: contact_not_found
+                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
+                  message: Contact not found
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: not_found_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              example:
+                error:
+                  code: rate_limit_exceeded
+                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
+                  message: Rate limit exceeded. Retry in 42 seconds.
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: rate_limit_error
+                  retry_after: 42
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error:
+                  code: internal_server_error
+                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
+                  message: Internal Server Error
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: api_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              example:
+                error:
+                  code: service_unavailable
+                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
+                  message: Service unavailable
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: service_unavailable_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /extension/manifest:
+    get:
+      tags:
+        - Extension
+      description: Public Chrome extension configuration. Returns the minimum supported extension version and store URL. Not a
+        health probe — use `GET /health/live` for liveness.
+      security: *a2
+      responses:
+        "200":
+          description: Extension manifest
+          content:
+            application/json:
+              example:
+                extension:
+                  minVersion: 1.0.0
+                  storeUrl: https://chrome.google.com/webstore/detail/bondery/example
+              schema:
+                type: object
+                properties:
+                  extension:
+                    type: object
+                    properties:
+                      minVersion:
+                        type: string
+                      storeUrl:
+                        type: string
+                    required:
+                      - minVersion
+                      - storeUrl
+                    additionalProperties: false
+                required:
+                  - extension
+                additionalProperties: false
+                example:
+                  extension:
+                    minVersion: 1.0.0
+                    storeUrl: https://chrome.google.com/webstore/detail/bondery/example
         "400":
           description: Invalid request
           content:

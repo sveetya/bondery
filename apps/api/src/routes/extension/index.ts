@@ -14,6 +14,6 @@ export const extensionRoutes: AppRoutePlugin = async (fastify) => {
     }
   });
 
-  registerManifestRoute(fastify);
   registerPostRoute(fastify);
+  registerManifestRoute(fastify);
 };

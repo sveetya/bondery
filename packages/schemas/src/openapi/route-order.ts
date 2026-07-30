@@ -58,12 +58,15 @@ export function getHttpMethodRank(method: string): number {
  */
 export function getPathTier(path: string): number {
   const segments = path.split("/").filter(Boolean);
-  // Expect at least `api` + resource
-  if (segments.length <= 2) {
+  // OpenAPI paths omit the `/api` prefix; strip it when present.
+  const start = segments[0] === "api" ? 1 : 0;
+  const resourceSegments = segments.slice(start);
+
+  if (resourceSegments.length <= 1) {
     return 1;
   }
 
-  const afterResource = segments.slice(2);
+  const afterResource = resourceSegments.slice(1);
 
   if (afterResource.length === 0) {
     return 1;
