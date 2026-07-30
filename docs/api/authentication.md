@@ -38,7 +38,7 @@ The full key is shown **once**. Store it somewhere safe (e.g. a secrets manager)
 Each account can have up to **5** API keys. Deleting a key takes effect immediately.
 
 {% hint style="info" %}
-**Local development:** ensure Postgres, Redis, and `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` are configured — see [Local development setup](../contributing/local-setup.md).
+**Local development:** ensure Postgres, Redis, and `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` are configured — see [Local development setup](../contributing/local-setup.mdx).
 {% endhint %}
 
 ### Send the key

@@ -21,7 +21,7 @@ Update this file in the **same PR** that adds or removes a vendor integration.
 | **Postgres** (self-managed) | Primary database | Full app PII | EU (hosted) | `DATABASE_URL`, `packages/db/prisma/` | `drifted` — policy lists **Supabase** instead |
 | **Better Auth** | Identity, OAuth AS, sessions | Email, name, provider IDs, session IP/UA | EU (hosted) | `apps/api/src/lib/auth/index.ts` | `undisclosed` — policy lists Supabase for auth |
 | **PostHog** | Product analytics (webapp) | Events, pageviews; admin may query `person.properties.email` | EU | `apps/webapp/instrumentation-client.ts`, `BONDERY_PUBLIC_POSTHOG_*` | `in-sync` |
-| **SMTP** (generic nodemailer) | Transactional email | User email, contact share fields, reminder content | Depends on provider | `BONDERY_PRIVATE_EMAIL_*`, `services/notifications/`, `services/contacts/share.ts` | `drifted` — policy lists **Plunk** |
+| **Plunk** | Transactional email (SMTP relay) | User email, contact share fields, reminder content | EU/US (Plunk) | `BONDERY_PRIVATE_EMAIL_*` (SMTP → Plunk), `services/notifications/`, `services/contacts/share.ts` | `in-sync` — code uses generic SMTP env; production credentials are Plunk. See [bondery-emails](../../bondery-emails/SKILL.md) |
 | **Anthropic** | AI chat assistant | Chat messages + contact PII from tool results | US | `BONDERY_PRIVATE_ANTHROPIC_API_KEY`, `services/chat/` | `in-sync` |
 | **Stripe** | Subscriptions, billing | Email, user UUID, subscription metadata | US / EU | `BONDERY_PRIVATE_STRIPE_*`, `routes/subscriptions/`, `routes/webhooks/stripe.ts` | `in-sync` |
 | **GitHub** | OAuth sign-in | Email, name, avatar URL, provider account ID | US | `BONDERY_PRIVATE_AUTH_GITHUB_*`, Better Auth | `undisclosed` — not in subprocessor table |
@@ -31,7 +31,6 @@ Update this file in the **same PR** that adds or removes a vendor integration.
 | **S3-compatible / local disk** | Avatars, LinkedIn logos | Image binary | Config-dependent | `BONDERY_STORAGE_DRIVER`, `BONDERY_PRIVATE_S3_*`, `lib/storage/` | `drifted` — policy attributes storage to Supabase |
 | **Redis** | Rate limits, sync wake | Request/user IDs in keys | EU (hosted) | `BONDERY_PRIVATE_REDIS_URL` | `undisclosed` — described under Hetzner notes only |
 | **Supabase** | — | — | — | Legacy stubs only (`apps/api/src/lib/data/supabase.ts` unused) | `drifted` — **stale in policy** |
-| **Plunk** | — | — | — | Not found in app code | `drifted` — **stale in policy** |
 
 ## Data flows not involving third-party SaaS
 
@@ -50,6 +49,7 @@ No third-party enrichment API — extension scraping only.
 2. Add env vars to `packages/helpers/src/env/manifest.ts` if applicable
 3. Flag Privacy.tsx §15 update for human review (reality-sync or counsel)
 4. Read `bondery-security` for technical hardening (auth, secrets, webhooks)
+5. For email ESP changes, read [bondery-emails](../../bondery-emails/SKILL.md)
 
 ## Registry checklist
 

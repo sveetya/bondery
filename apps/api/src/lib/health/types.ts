@@ -32,11 +32,6 @@ export type HealthCheckConfig = {
   storageS3AccessKeyId: string;
   storageS3SecretAccessKey: string;
   redisUrl: string;
-  smtpHost: string;
-  smtpUser: string;
-  smtpPass: string;
-  smtpAddress: string;
-  smtpPort: number;
   anthropicApiKey: string;
   stripeSecretKey: string;
   stripePriceIdMonthly: string;

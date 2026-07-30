@@ -5,7 +5,7 @@
 #
 # Then: docker compose up -d
 # Reach API at http://localhost:26631, webapp at http://localhost:26632,
-# Supabase Kong at http://localhost:8000, Postgres at localhost:54322.
+# SeaweedFS S3 gateway at http://localhost:8333, Postgres at localhost:54322.
 #
 # You still need: docker network create dokploy-network
 # (services declare that network for Traefik-compatible labels; labels are inert without Traefik.)
@@ -19,9 +19,9 @@ services:
     ports:
       - "26632:26632"
 
-  kong:
+  seaweedfs-s3:
     ports:
-      - "8000:8000"
+      - "8333:8333"
 
   db:
     ports:

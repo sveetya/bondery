@@ -39,7 +39,7 @@ metadata:
 | Env vars | [references/env-vars.md](references/env-vars.md) |
 | API routes | [references/api-routes.md](references/api-routes.md) |
 | Webapp checkout | [references/client-integration.md](references/client-integration.md) |
-| Trial-ending email | [references/trial-ending-email.md](references/trial-ending-email.md) |
+| Trial-ending email (billing trigger) | [references/trial-ending-email.md](references/trial-ending-email.md) — template/delivery → [bondery-emails](../bondery-emails/references/catalog.md) |
 
 ## Pre-ship checklist
 

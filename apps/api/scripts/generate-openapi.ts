@@ -50,7 +50,9 @@ async function main() {
   writeFileSync(outputPath, yamlContent, "utf-8");
 
   console.log(`OpenAPI spec written to ${outputPath}`);
-  await server.close();
+  // Exit before Better Auth OAuth resource seeding races against server.close()
+  // when DATABASE_URL points at a dummy host during spec generation.
+  process.exit(0);
 }
 
 main().catch((err) => {

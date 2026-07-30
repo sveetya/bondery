@@ -1,14 +1,12 @@
 "use client";
 
 import { getAuthUserFacingError } from "@bondery/helpers/api";
-import { WEBAPP_ROUTES, WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
-import { AnchorLink, errorNotificationTemplate } from "@bondery/mantine-next";
-import { Card, Stack, Text } from "@mantine/core";
+import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
+import { errorNotificationTemplate } from "@bondery/mantine-next";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { LoginProviderButtons } from "@/app/(app)/login/components/LoginProviderButtons";
-import { Logo } from "@/app/(app)/login/components/Logo";
+import { SocialLoginCard } from "@/app/(app)/login/components/SocialLoginCard";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
@@ -85,31 +83,11 @@ export function OAuthLoginClient() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center ">
-      <Card className="max-w-md" p="xl">
-        <Stack align="center" gap="md">
-          <Logo href={websiteUrl} size={60} />
-          <Text size="md" ta="center">
-            {t("Description")}
-          </Text>
-
-          <LoginProviderButtons
-            authClient={authClient}
-            loading={loading}
-            onProviderClick={handleOAuthLogin}
-          />
-          <Text c="dimmed" size="xs" ta="center">
-            {t("TermsAgreement")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs">
-              {t("TermsOfService")}
-            </AnchorLink>{" "}
-            {t("And")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs">
-              {t("PrivacyPolicy")}
-            </AnchorLink>
-          </Text>
-        </Stack>
-      </Card>
-    </div>
+    <SocialLoginCard
+      authClient={authClient}
+      loading={loading}
+      onProviderClick={handleOAuthLogin}
+      websiteUrl={websiteUrl}
+    />
   );
 }

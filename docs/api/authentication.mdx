@@ -2,14 +2,30 @@
 title: Authentication
 icon: Key
 docId: api.authentication
-description: Authenticate REST API requests with long-lived API keys.
+description: Authenticate REST API requests with sessions or long-lived API keys.
 ---
 
-Use **API keys** for scripts, automation tools, and server-side integrations. Send the key as a `Bearer` token on every request.
+The Bondery API supports two authentication methods depending on how you call it.
 
 Replace `https://api.usebondery.com` with your self-hosted API domain when applicable.
 
+## Session authentication
+
+Use this when building on top of the webapp or mobile app, or when you have a Better Auth access token.
+
+1. Sign in at [app.usebondery.com](https://app.usebondery.com) (or your instance).
+2. The browser sends session cookies automatically, or you can send the access token in the `Authorization` header.
+
+```bash
+curl -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  https://api.usebondery.com/api/contacts
+```
+
+Session auth works on **all** authenticated endpoints, including profile settings, chat, subscriptions, and API key management.
+
 ## Create an API key
+
+Use **API keys** for scripts, automation tools, and server-side integrations. Send the key as a `Bearer` token on every request.
 
 1. Sign in to the webapp ([app.usebondery.com](https://app.usebondery.com) or your instance).
 2. Open **Settings → API keys**.
@@ -20,6 +36,10 @@ The full key is shown **once**. Store it in a secrets manager. Bondery only keep
 </Callout>
 
 Each account can have up to **5** keys. Deleting a key takes effect immediately.
+
+<Callout type="info">
+**Local development:** ensure Postgres, Redis, and `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` are configured — see [Local development setup](../contributing/local-setup.mdx).
+</Callout>
 
 ## Send the key
 

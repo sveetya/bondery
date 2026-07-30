@@ -1,0 +1,13 @@
+{
+  "generalFeedbackHeading": "General feedback:",
+  "heading": "New feedback received",
+  "notProvided": "(Not provided)",
+  "npsReasonHeading": "Why did they pick this score?",
+  "npsScoreLabel": "NPS score:",
+  "npsScoreValue": "{{npsScore}} / 10",
+  "preview": "New feedback from {{userEmail}} - NPS Score: {{npsScore}}",
+  "subject": "New feedback about Bondery",
+  "submittedAt": "Submitted at: {{timestamp}}",
+  "userEmailLabel": "User email:",
+  "userIdLabel": "User ID:"
+}

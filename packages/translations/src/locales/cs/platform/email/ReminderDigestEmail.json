@@ -1,0 +1,17 @@
+{
+  "dateTypes": {
+    "anniversary": "Výročí",
+    "birthday": "Narozeniny",
+    "graduation": "Promoce",
+    "nameday": "Svátek",
+    "other": "Důležité datum"
+  },
+  "dayMany": "{{count}} dní",
+  "dayOne": "1 den",
+  "heading": "Připomínky Bondery na {{headingDate}}",
+  "introMany": "Máte {{count}} připomínek:",
+  "introOne": "Máte 1 připomínku:",
+  "preview": "Máte {{count}} připomínek na {{targetDate}}",
+  "reminderLine": "{{emoji}} {{typeLabel}} se blíží za {{remainingLabel}} dne {{dateLabel}}.",
+  "subject": "Připomínky Bondery na {{targetDate}}"
+}

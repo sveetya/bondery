@@ -1,46 +1,52 @@
 import { Column, Heading, Section, Text } from "react-email";
+import { defaultTrialEndingCopy } from "#fixtures/default-copy.js";
 import { EmailWrapper } from "#shared/EmailWrapper.js";
 
+export interface TrialEndingEmailCopy {
+  body: string;
+  greeting: string;
+  greetingWithName: string;
+  heading: string;
+  manageBilling: string;
+  preview: string;
+  whyReceiving: string;
+}
+
 export interface TrialEndingEmailProps {
-  trialEndsAt?: string | null;
+  copy?: TrialEndingEmailCopy;
+  formattedEndDate: string;
   userName?: string;
 }
 
-function formatTrialEndDate(value: string | null | undefined): string {
-  if (!value) {
-    return "soon";
+function resolveGreeting(copy: TrialEndingEmailCopy, userName?: string): string {
+  const trimmed = userName?.trim();
+  if (trimmed) {
+    return copy.greetingWithName.replace("{{userName}}", trimmed);
   }
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return value;
-  }
-
-  return parsed.toLocaleDateString("en-US", {
-    dateStyle: "medium",
-    timeZone: "UTC",
-  });
+  return copy.greeting;
 }
 
-export default function TrialEndingEmail({ trialEndsAt, userName }: TrialEndingEmailProps) {
-  const greeting = userName ? `Hi ${userName},` : "Hi there,";
-  const endDate = formatTrialEndDate(trialEndsAt ?? null);
+export default function TrialEndingEmail({
+  copy = defaultTrialEndingCopy,
+  formattedEndDate,
+  userName,
+}: TrialEndingEmailProps) {
+  const greeting = resolveGreeting(copy, userName);
+  const body = copy.body.replace("{{endDate}}", formattedEndDate);
 
   return (
-    <EmailWrapper preview="Your Bondery Premium trial is ending soon">
+    <EmailWrapper preview={copy.preview}>
       <Section>
         <Column>
           <Heading as="h1" style={{ fontSize: "24px", marginBottom: "16px" }}>
-            Your Premium trial is ending soon
+            {copy.heading}
           </Heading>
           <Text style={{ fontSize: "16px", lineHeight: "24px" }}>{greeting}</Text>
-          <Text style={{ fontSize: "16px", lineHeight: "24px" }}>
-            Your Bondery Premium trial ends on {endDate}. After that, your subscription will renew
-            automatically unless you cancel from your account settings.
-          </Text>
-          <Text style={{ fontSize: "16px", lineHeight: "24px" }}>
-            Open Bondery and go to Settings → Subscription to manage billing or cancel before
-            renewal.
+          <Text style={{ fontSize: "16px", lineHeight: "24px" }}>{body}</Text>
+          <Text style={{ fontSize: "16px", lineHeight: "24px" }}>{copy.manageBilling}</Text>
+          <Text style={{ color: "#6b7280", fontSize: "14px", lineHeight: "20px" }}>
+            {copy.whyReceiving}
           </Text>
         </Column>
       </Section>

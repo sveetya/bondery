@@ -1,0 +1,13 @@
+{
+  "generalFeedbackHeading": "Obecná zpětná vazba:",
+  "heading": "Nová zpětná vazba",
+  "notProvided": "(Neuvedeno)",
+  "npsReasonHeading": "Proč zvolili toto skóre?",
+  "npsScoreLabel": "NPS skóre:",
+  "npsScoreValue": "{{npsScore}} / 10",
+  "preview": "Nová zpětná vazba od {{userEmail}} – NPS skóre: {{npsScore}}",
+  "subject": "Nová zpětná vazba k Bondery",
+  "submittedAt": "Odesláno: {{timestamp}}",
+  "userEmailLabel": "E-mail uživatele:",
+  "userIdLabel": "ID uživatele:"
+}

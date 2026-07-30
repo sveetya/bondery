@@ -67,7 +67,7 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 ## Formatting conventions
 
 - **GitBook frontmatter** — use `icon:` on sidebar pages; use `hidden: true` for internal/meta pages
-- **File names** — lowercase, hyphenated (`getting-started.md`, `local-setup.md`)
+- **File names** — lowercase, hyphenated (`getting-started.mdx`, `local-setup.mdx`)
 - **SUMMARY.md** — update the table of contents whenever you add, move, or rename a page
 - **Code blocks** — include the language tag; show real commands and env var names from the repo
 - **Hints** — use GitBook `{% hint %}` blocks sparingly for warnings or non-obvious caveats

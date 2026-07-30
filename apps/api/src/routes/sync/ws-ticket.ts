@@ -3,7 +3,7 @@ import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import { getAuth } from "../../lib/platform/auth/strategies.js";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { withOkResponse } from "../../lib/platform/openapi/responses.js";
-import { getSyncWakeRuntime, initSyncWakeRuntime } from "../../lib/sync/wake/index.js";
+import { requireSyncWakeRuntime } from "../../lib/sync/wake/index.js";
 
 export const syncWsTicketRoutes: AppRoutePlugin = async (fastify): Promise<void> => {
   fastify.addHook("onRoute", (routeOptions) => {
@@ -25,7 +25,7 @@ export const syncWsTicketRoutes: AppRoutePlugin = async (fastify): Promise<void>
     },
     async (request) => {
       const { user } = getAuth(request);
-      const runtime = getSyncWakeRuntime() ?? (await initSyncWakeRuntime(request.log));
+      const runtime = requireSyncWakeRuntime();
       return runtime.tickets.issue(user.id);
     },
   );

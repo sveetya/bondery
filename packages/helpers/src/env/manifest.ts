@@ -335,7 +335,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_PRIVATE_EMAIL_PORT",
     description: "SMTP port",
-    exampleValue: "465",
+    exampleValue: "587",
     group: "Email",
     requiredIn: ["development", "production"],
     secret: false,

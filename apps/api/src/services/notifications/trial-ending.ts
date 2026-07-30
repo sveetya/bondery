@@ -1,15 +1,23 @@
 import { TrialEndingEmail } from "@bondery/emails";
 import { render } from "@react-email/render";
 import type { FastifyBaseLogger } from "fastify";
+import { buildTrialEndingCopy } from "../../lib/notifications/email-copy-builders.js";
 import {
-  createEmailTransporter,
-  emailConfigFromProcessEnv,
+  formatEmailDate,
+  loadEmailNamespace,
+  readCopyString,
+  resolveEmailLocale,
+} from "../../lib/notifications/email-i18n.js";
+import {
+  getEmailConfig,
+  isEmailConfigured,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 
 export type SendTrialEndingEmailInput = {
   email: string;
   trialEndsAt: Date | null;
+  userId?: string | null;
   userName?: string | null;
 };
 
@@ -17,27 +25,33 @@ export async function sendTrialEndingEmail(
   input: SendTrialEndingEmailInput,
   log?: FastifyBaseLogger,
 ): Promise<void> {
-  const config = emailConfigFromProcessEnv();
-  if (!config) {
+  if (!isEmailConfigured()) {
     log?.warn("Skipping trial-ending email: SMTP is not configured");
     return;
   }
 
-  const transporter = createEmailTransporter(config);
+  const config = getEmailConfig()!;
+  const lng = await resolveEmailLocale(input.userId);
+  const bundle = loadEmailNamespace(lng, "TrialEndingEmail");
+  const copy = buildTrialEndingCopy(bundle);
+  const formattedEndDate = input.trialEndsAt
+    ? formatEmailDate(input.trialEndsAt, lng)
+    : readCopyString(bundle, "endDateFallback");
+
   const html = await render(
     TrialEndingEmail({
-      trialEndsAt: input.trialEndsAt?.toISOString() ?? null,
+      copy,
+      formattedEndDate,
       userName: input.userName ?? undefined,
     }),
   );
 
   await sendRenderedEmail(
-    transporter,
     {
       from: `Robot from Bondery <${config.fromAddress}>`,
       html,
       replyTo: config.fromAddress,
-      subject: "Your Bondery Premium trial is ending soon",
+      subject: readCopyString(bundle, "subject"),
       to: input.email,
     },
     log,

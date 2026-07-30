@@ -39,6 +39,17 @@ export type AboutPageCatalog = {
   WorkingOnBonderyTitle: string;
 };
 
+export type AccountDeletedEmailCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  greetingWithName: string;
+  greeting: string;
+  body: string;
+  feedback: string;
+  thanks: string;
+};
+
 export type AddPeopleToGroupSelectionModalCatalog = {
   AddedSummary_one_one: string;
   AddedSummary_one_other: string;
@@ -602,6 +613,20 @@ export type ExtensionVersionCheckCatalog = {
   UpdateRequiredTitle: string;
   WebappNotificationDescription: string;
   WebappNotificationTitle: string;
+};
+
+export type FeedbackEmailCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  userEmailLabel: string;
+  userIdLabel: string;
+  npsScoreLabel: string;
+  npsScoreValue: string;
+  npsReasonHeading: string;
+  generalFeedbackHeading: string;
+  notProvided: string;
+  submittedAt: string;
 };
 
 export type FeedbackPageCatalog = {
@@ -1751,6 +1776,24 @@ export type PersonTabsCatalog = {
   Organize: string;
 };
 
+export type ReminderDigestEmailCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  introOne: string;
+  introMany: string;
+  reminderLine: string;
+  dayOne: string;
+  dayMany: string;
+  dateTypes: {
+    anniversary: string;
+    birthday: string;
+    graduation: string;
+    nameday: string;
+    other: string;
+  };
+};
+
 export type SettingsPageCatalog = {
   ApiKeys: {
     Cancel: string;
@@ -2152,6 +2195,29 @@ export type SettingsPageCatalog = {
   Title: string;
 };
 
+export type ShareContactEmailBodyCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  defaultMessage: string;
+  noHeadline: string;
+  labels: {
+    phone: string;
+    email: string;
+    location: string;
+    address: string;
+    linkedin: string;
+    instagram: string;
+    facebook: string;
+    website: string;
+    whatsapp: string;
+    signal: string;
+    notes: string;
+    importantDates: string;
+  };
+  importantDateLine: string;
+};
+
 export type ShareContactModalCatalog = {
   ActionLabelMenu: string;
   AvatarDescription: string;
@@ -2376,6 +2442,18 @@ export type TagsSettingsCatalog = {
   Title: string;
 };
 
+export type TrialEndingEmailCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  greetingWithName: string;
+  greeting: string;
+  body: string;
+  manageBilling: string;
+  whyReceiving: string;
+  endDateFallback: string;
+};
+
 export type UnavailablePageCatalog = {
   CheckingAgain: string;
   Description: string;
@@ -2429,8 +2507,20 @@ export type ValidationCatalog = {
   title: string;
 };
 
+export type WelcomeEmailCatalog = {
+  subject: string;
+  preview: string;
+  heading: string;
+  greetingWithName: string;
+  greeting: string;
+  body: string;
+  getStarted: string;
+  whyReceiving: string;
+};
+
 export interface Catalog {
   "AboutPage": AboutPageCatalog;
+  "AccountDeletedEmail": AccountDeletedEmailCatalog;
   "AddPeopleToGroupSelectionModal": AddPeopleToGroupSelectionModalCatalog;
   "AppNavigation": AppNavigationCatalog;
   "ChatPage": ChatPageCatalog;
@@ -2450,6 +2540,7 @@ export interface Catalog {
   "ExtensionPopup": ExtensionPopupCatalog;
   "ExtensionSocialButtons": ExtensionSocialButtonsCatalog;
   "ExtensionVersionCheck": ExtensionVersionCheckCatalog;
+  "FeedbackEmail": FeedbackEmailCatalog;
   "FeedbackPage": FeedbackPageCatalog;
   "FixContactsPage": FixContactsPageCatalog;
   "GroupDetailPage": GroupDetailPageCatalog;
@@ -2486,14 +2577,18 @@ export interface Catalog {
   "PeopleSearchSpotlight": PeopleSearchSpotlightCatalog;
   "PersonRelationships": PersonRelationshipsCatalog;
   "PersonTabs": PersonTabsCatalog;
+  "ReminderDigestEmail": ReminderDigestEmailCatalog;
   "SettingsPage": SettingsPageCatalog;
+  "ShareContactEmailBody": ShareContactEmailBodyCatalog;
   "ShareContactModal": ShareContactModalCatalog;
   "SingleContactPage": SingleContactPageCatalog;
   "Socials": SocialsCatalog;
   "StatsPage": StatsPageCatalog;
   "TagsInput": TagsInputCatalog;
   "TagsSettings": TagsSettingsCatalog;
+  "TrialEndingEmail": TrialEndingEmailCatalog;
   "UnavailablePage": UnavailablePageCatalog;
+  "WelcomeEmail": WelcomeEmailCatalog;
   "common": CommonCatalog;
   "glossary": GlossaryCatalog;
   "validation": ValidationCatalog;

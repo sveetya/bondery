@@ -7,13 +7,24 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ## [Unreleased]
 
+### ✨ Added
+
+- API: Sends a welcome email when a new account is provisioned.
+- API: Transactional emails (reminder digest, share contact, trial ending, account deleted, feedback) use localized copy from `@bondery/translations`.
+
 ### 🔄 Changed
 
 - API: Liveness and readiness probes are now `GET /health/live` and `GET /health/ready` (removed `/status` and root `/health`). Chrome extension minimum version moved to `GET /extension/manifest`.
+- API: Boots with a single Postgres connection pool and verified Redis, SMTP, and object-storage dependencies before accepting traffic; rate limiting attaches after Redis is ready.
+- API: Reminder digest advances each user's next send time only after that user's email sends successfully.
 - Webapp: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`). API health is proxied at `GET /api/health/live` and `GET /api/health/ready`; extension manifest at `GET /api/extension/manifest`.
 - Website: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`).
 - Chrome extension: Version check reads `GET /extension/manifest` on the API host.
 - Mobile: Connectivity probe uses `GET /health/live` on the API host.
+
+### 🐛 Fixed
+
+- API: Reminder digest no longer logs all due users as dispatched or advances everyone's schedule when one SMTP send fails.
 
 ### Breaking
 

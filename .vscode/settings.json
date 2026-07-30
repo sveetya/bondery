@@ -14,6 +14,11 @@
       "label": "supabase-edge-inspector",
       "requireLocalPort": true
     },
+    "8333": {
+      "label": "seaweedfs",
+      "onAutoForward": "notify",
+      "requireLocalPort": true
+    },
     "26630": {
       "label": "website",
       "requireLocalPort": true

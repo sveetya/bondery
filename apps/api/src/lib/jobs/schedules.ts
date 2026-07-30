@@ -1,9 +1,9 @@
 import type { FastifyBaseLogger } from "fastify";
 import { getBoss } from "./boss.js";
-import { runEnrichQueueCleanup, runHourlyReminderDigest } from "./workers.js";
+import { runEnrichQueueCleanup } from "./workers.js";
 
-const HOURLY_REMINDER_QUEUE = "reminder-digest-hourly";
 const ENRICH_CLEANUP_QUEUE = "enrich-queue-cleanup";
+const HOURLY_REMINDER_QUEUE = "reminder-digest-hourly";
 
 const JOB_QUEUES = [HOURLY_REMINDER_QUEUE, ENRICH_CLEANUP_QUEUE] as const;
 
@@ -17,11 +17,6 @@ export async function ensureJobQueues(): Promise<void> {
 
 export async function registerJobWorkers(log: FastifyBaseLogger): Promise<void> {
   const boss = getBoss();
-
-  await boss.work(HOURLY_REMINDER_QUEUE, async () => {
-    log.info("Running hourly reminder digest job");
-    await runHourlyReminderDigest(log);
-  });
 
   await boss.work(ENRICH_CLEANUP_QUEUE, async () => {
     log.info("Running enrich queue cleanup job");

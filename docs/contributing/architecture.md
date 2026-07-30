@@ -117,7 +117,7 @@ Native iOS and Android client built with Expo. Offline-capable via local SQLite 
 | Authentication | Better Auth (`@better-auth/expo`, OAuth against API) |
 | Localization | i18next via `@bondery/translations` (`useMobileTranslations`) |
 
-See [Local development setup](local-setup.md#7-mobile-application-appsmobile) for running the sync stack locally.
+See [Local development setup](local-setup.mdx#mobile-application-appsmobile) for running the sync stack locally.
 
 ---
 
@@ -280,7 +280,7 @@ Protocol version headers (`X-Bondery-Sync-Protocol`, `X-Bondery-SQLite-Schema`) 
 
 ## Related docs
 
-* [Local development setup](local-setup.md)
+* [Local development setup](local-setup.mdx)
 * [Sync architecture (mobile)](sync-architecture.md)
 * [API design reference](../../.agents/skills/bondery-specific/references/api/api-design.md)
 * [API usage reference](../../.agents/skills/bondery-specific/references/api/api-usage.md)

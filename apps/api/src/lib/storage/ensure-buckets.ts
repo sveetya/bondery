@@ -1,6 +1,7 @@
 import {
   CreateBucketCommand,
   HeadBucketCommand,
+  PutBucketPolicyCommand,
   S3Client,
   type S3ClientConfig,
 } from "@aws-sdk/client-s3";
@@ -62,23 +63,48 @@ async function ensureBucket(client: S3Client, bucket: string): Promise<void> {
   try {
     await client.send(new HeadBucketCommand({ Bucket: bucket }));
     console.log(`Bucket exists: ${bucket}`);
-    return;
   } catch (error) {
     if (!isBucketMissingError(error)) {
       throw error;
     }
+
+    try {
+      await client.send(new CreateBucketCommand({ Bucket: bucket }));
+      console.log(`Created bucket: ${bucket}`);
+    } catch (createError) {
+      if (!isBucketAlreadyExistsError(createError)) {
+        throw createError;
+      }
+      console.log(`Bucket exists: ${bucket}`);
+    }
   }
 
-  try {
-    await client.send(new CreateBucketCommand({ Bucket: bucket }));
-    console.log(`Created bucket: ${bucket}`);
-  } catch (error) {
-    if (isBucketAlreadyExistsError(error)) {
-      console.log(`Bucket exists: ${bucket}`);
-      return;
-    }
-    throw error;
-  }
+  await ensureBucketPublicReadPolicy(client, bucket);
+}
+
+function buildPublicReadBucketPolicy(bucket: string): string {
+  return JSON.stringify({
+    Statement: [
+      {
+        Action: ["s3:GetObject"],
+        Effect: "Allow",
+        Principal: "*",
+        Resource: [`arn:aws:s3:::${bucket}/*`],
+      },
+    ],
+    Version: "2012-10-17",
+  });
+}
+
+/** SeaweedFS requires per-bucket policy for anonymous GetObject (global anonymous_actions is not enough). */
+async function ensureBucketPublicReadPolicy(client: S3Client, bucket: string): Promise<void> {
+  await client.send(
+    new PutBucketPolicyCommand({
+      Bucket: bucket,
+      Policy: buildPublicReadBucketPolicy(bucket),
+    }),
+  );
+  console.log(`Public read policy applied: ${bucket}`);
 }
 
 export type EnsureStorageBucketsOptions = {
@@ -91,19 +117,34 @@ export async function ensureStorageBuckets(
 ): Promise<void> {
   const client = options.client ?? createStorageAdminClient();
   const buckets = options.buckets ?? STORAGE_BUCKETS;
+  const failures: Array<{ bucket: string; error: unknown }> = [];
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      for (const bucket of buckets) {
+  for (const bucket of buckets) {
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      try {
         await ensureBucket(client, bucket);
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        if (attempt < MAX_ATTEMPTS) {
+          console.warn(
+            `ensureStorageBuckets(${bucket}) attempt ${attempt} failed, retrying…`,
+            error,
+          );
+          await sleep(RETRY_DELAY_MS);
+        }
       }
-      return;
-    } catch (error) {
-      if (attempt === MAX_ATTEMPTS) {
-        throw error;
-      }
-      console.warn(`ensureStorageBuckets attempt ${attempt} failed, retrying…`, error);
-      await sleep(RETRY_DELAY_MS);
     }
+
+    if (lastError) {
+      failures.push({ bucket, error: lastError });
+    }
+  }
+
+  if (failures.length > 0) {
+    const summary = failures.map(({ bucket }) => bucket).join(", ");
+    throw new Error(`ensureStorageBuckets failed for: ${summary}`, { cause: failures[0]?.error });
   }
 }

@@ -20,7 +20,7 @@ Requirements for the next storage generation:
 
 1. Run **SeaweedFS** (master, volume, filer, S3 gateway) in `deploy/bondery/` compose.
 2. API uses a single **`S3Storage`** implementation; `getStorage()` requires S3 env vars (no `BONDERY_STORAGE_DRIVER`).
-3. Use **real S3 buckets** `avatars` and `linkedin_logos` (not one physical bucket with key prefixes).
+3. Use **real S3 buckets** `avatars` and `linkedin-logos` (not one physical bucket with key prefixes).
 4. **Public reads:** `BONDERY_PUBLIC_STORAGE_URL` points at Traefik → SeaweedFS S3 gateway with **anonymous GetObject** on those buckets. `getPublicUrl` returns `{publicBaseUrl}/{bucket}/{key}`.
 5. **Uploads:** Sharp normalizes to JPEG (max edge ~512px avatars, ~256px logos) before `PutObject`.
 6. **Remove** `GET /files/*`, local disk adapter, Supabase storage adapter, and imgproxy transform query params on avatar URLs.

@@ -50,6 +50,7 @@ Do not duplicate content across skills — link and keep a single source of trut
 | Product changelog, commit prefixes, release notes | `bondery-changelog` |
 | Skill authoring | `bondery-skill-authoring` |
 | Verification loop, PR gates, change-scoped checks | `bondery-verification-loop` |
+| Transactional email, templates, SMTP/Plunk | `bondery-emails` |
 
 ## Agent configuration
 

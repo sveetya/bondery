@@ -4,6 +4,10 @@
       "path": "features/pages/AboutPage.json",
       "platforms": ["web"]
     },
+    "AccountDeletedEmail": {
+      "path": "platform/email/AccountDeletedEmail.json",
+      "platforms": ["email"]
+    },
     "AddPeopleToGroupSelectionModal": {
       "path": "features/modals/AddPeopleToGroupSelectionModal.json",
       "platforms": ["web"]
@@ -83,6 +87,10 @@
     "ExtensionVersionCheck": {
       "path": "features/sections/ExtensionVersionCheck.json",
       "platforms": ["web", "mobile", "extension"]
+    },
+    "FeedbackEmail": {
+      "path": "platform/email/FeedbackEmail.json",
+      "platforms": ["email"]
     },
     "FeedbackPage": {
       "path": "features/pages/FeedbackPage.json",
@@ -232,9 +240,17 @@
       "path": "features/sections/PersonTabs.json",
       "platforms": ["web", "mobile"]
     },
+    "ReminderDigestEmail": {
+      "path": "platform/email/ReminderDigestEmail.json",
+      "platforms": ["email"]
+    },
     "SettingsPage": {
       "path": "features/pages/SettingsPage.json",
       "platforms": ["web", "mobile"]
+    },
+    "ShareContactEmailBody": {
+      "path": "platform/email/ShareContactEmailBody.json",
+      "platforms": ["email"]
     },
     "ShareContactModal": {
       "path": "features/modals/ShareContactModal.json",
@@ -260,6 +276,10 @@
       "path": "features/sections/TagsSettings.json",
       "platforms": ["web", "mobile"]
     },
+    "TrialEndingEmail": {
+      "path": "platform/email/TrialEndingEmail.json",
+      "platforms": ["email"]
+    },
     "UnavailablePage": {
       "path": "features/pages/UnavailablePage.json",
       "platforms": ["web"]
@@ -267,6 +287,10 @@
     "validation": {
       "path": "validation.json",
       "platforms": ["web", "mobile", "extension"]
+    },
+    "WelcomeEmail": {
+      "path": "platform/email/WelcomeEmail.json",
+      "platforms": ["email"]
     }
   },
   "preload": {

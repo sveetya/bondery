@@ -67,6 +67,7 @@ export async function handleTrialWillEnd(
     {
       email,
       trialEndsAt,
+      userId,
       userName: null,
     },
     log,

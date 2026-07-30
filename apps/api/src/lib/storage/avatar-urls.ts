@@ -1,5 +1,5 @@
 import type { AvatarTransformOptions } from "@bondery/schemas";
-import { AVATARS_BUCKET, getStorage } from "./get-storage.js";
+import { AVATARS_BUCKET, getStorage, LINKEDIN_LOGOS_BUCKET } from "./get-storage.js";
 
 export function buildContactAvatarUrl(
   userId: string,
@@ -42,5 +42,5 @@ export function resolveContactAvatarUrl(
 
 export function buildLinkedinLogoUrl(userId: string, linkedinId: string): string {
   const storage = getStorage();
-  return storage.getPublicUrl("linkedin_logos", `${userId}/${linkedinId}.jpg`);
+  return storage.getPublicUrl(LINKEDIN_LOGOS_BUCKET, `${userId}/${linkedinId}.jpg`);
 }

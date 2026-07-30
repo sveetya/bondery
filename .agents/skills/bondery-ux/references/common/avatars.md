@@ -14,7 +14,7 @@ All avatar uploads and deletes go through `avatar-storage.ts` helpers that updat
 
 Use `PersonAvatar` / `ContactAvatar` / Mantine `Avatar` with `name` + `color` for initials fallback when `avatar` is null.
 
-LinkedIn company/school logos use the separate `linkedin_logos` bucket and are unrelated to `has_avatar`.
+LinkedIn company/school logos use the separate `linkedin-logos` bucket and are unrelated to `has_avatar`.
 
 ## Checklist
 

@@ -49,7 +49,6 @@ export const API_ROUTES = {
   GEOCODE_TIMEZONE: "/geocode/timezone",
   GROUPS: "/groups",
   INTERACTIONS: "/interactions",
-  INTERNAL_REMINDER_DIGEST: "/internal/reminder-digest",
   ME: "/me",
   ME_API_KEYS: "/me/api-keys",
   ME_FEEDBACK: "/me/feedback",

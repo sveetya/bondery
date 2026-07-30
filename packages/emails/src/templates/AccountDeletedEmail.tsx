@@ -1,36 +1,51 @@
 import { Container, Heading, Section, Text } from "react-email";
+import { defaultAccountDeletedCopy } from "#fixtures/default-copy.js";
 import { EmailWrapper } from "#shared/EmailWrapper.js";
 
+export interface AccountDeletedEmailCopy {
+  body: string;
+  feedback: string;
+  greeting: string;
+  greetingWithName: string;
+  heading: string;
+  preview: string;
+  thanks: string;
+}
+
 export interface AccountDeletedEmailProps {
+  copy?: AccountDeletedEmailCopy;
   userName?: string;
 }
 
-export default function AccountDeletedEmail({ userName }: AccountDeletedEmailProps) {
-  const greeting = userName?.trim() ? `Hi ${userName.trim()},` : "Hi,";
-  const previewText = "Your Bondery account and data have been deleted";
+function resolveGreeting(copy: AccountDeletedEmailCopy, userName?: string): string {
+  const trimmed = userName?.trim();
+  if (trimmed) {
+    return copy.greetingWithName.replace("{{userName}}", trimmed);
+  }
+
+  return copy.greeting;
+}
+
+export default function AccountDeletedEmail({
+  copy = defaultAccountDeletedCopy,
+  userName,
+}: AccountDeletedEmailProps) {
+  const greeting = resolveGreeting(copy, userName);
 
   return (
-    <EmailWrapper preview={previewText}>
+    <EmailWrapper preview={copy.preview}>
       <Container className="mx-auto mb-4 rounded-lg bg-white p-6 shadow-sm">
-        <Heading className="mb-6 text-md font-bold text-gray-900">
-          Your Bondery account has been deleted
-        </Heading>
+        <Heading className="mb-6 text-md font-bold text-gray-900">{copy.heading}</Heading>
 
         <Text className="mb-4 text-sm leading-6 text-gray-700">{greeting}</Text>
 
-        <Text className="mb-4 text-sm leading-6 text-gray-700">
-          This confirms that your Bondery account and associated data in our systems have been
-          deleted.
-        </Text>
+        <Text className="mb-4 text-sm leading-6 text-gray-700">{copy.body}</Text>
 
         <Section className="mb-4 rounded-lg bg-gray-50 p-4">
-          <Text className="text-sm leading-6 text-gray-700">
-            If you have feedback about Bondery or why you left, you can reply to this email. We read
-            every message.
-          </Text>
+          <Text className="text-sm leading-6 text-gray-700">{copy.feedback}</Text>
         </Section>
 
-        <Text className="text-sm text-gray-500">Thank you for trying Bondery.</Text>
+        <Text className="text-sm text-gray-500">{copy.thanks}</Text>
       </Container>
     </EmailWrapper>
   );

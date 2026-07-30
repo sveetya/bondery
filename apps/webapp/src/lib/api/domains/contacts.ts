@@ -279,7 +279,10 @@ export async function putContactImportantDates(
   });
 }
 
-export async function uploadContactPhoto(contactId: string, file: File): Promise<void> {
+export async function uploadContactPhoto(
+  contactId: string,
+  file: File,
+): Promise<{ avatarUrl: string | null }> {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -293,4 +296,7 @@ export async function uploadContactPhoto(contactId: string, file: File): Promise
     const error = (await response.json()) as { error?: string };
     throw new Error(error.error || "Failed to upload photo");
   }
+
+  const body = (await response.json()) as { avatarUrl?: string | null };
+  return { avatarUrl: body.avatarUrl ?? null };
 }

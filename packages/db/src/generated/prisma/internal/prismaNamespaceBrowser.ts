@@ -343,6 +343,7 @@ export const UserSettingsScalarFieldEnum = {
   reminderSendHour: 'reminderSendHour',
   nextReminderAtUtc: 'nextReminderAtUtc',
   onboardingCompletedAt: 'onboardingCompletedAt',
+  welcomeEmailSentAt: 'welcomeEmailSentAt',
   gettingStartedDismissedAt: 'gettingStartedDismissedAt',
   importCompletedAt: 'importCompletedAt',
   importFollowupPlatform: 'importFollowupPlatform',

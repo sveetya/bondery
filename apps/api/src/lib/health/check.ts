@@ -3,7 +3,7 @@ import {
   probeObjectStorage,
   probePostgres,
   probeRedis,
-  probeStorageBuckets,
+  probeSmtp,
 } from "./probes.js";
 import type { HealthCheckConfig, HealthReport, HealthServices, HealthStatus } from "./types.js";
 
@@ -11,16 +11,6 @@ const CACHE_TTL_MS = 60_000;
 
 let cachedReport: HealthReport | null = null;
 let cacheExpiresAt = 0;
-
-function isSmtpConfigured(config: HealthCheckConfig): boolean {
-  return Boolean(
-    config.smtpHost.trim() &&
-      config.smtpUser.trim() &&
-      config.smtpPass.trim() &&
-      config.smtpAddress.trim() &&
-      config.smtpPort,
-  );
-}
 
 function isStripeConfigured(config: HealthCheckConfig): boolean {
   return Boolean(
@@ -36,19 +26,15 @@ function isPosthogConfigured(config: HealthCheckConfig): boolean {
 }
 
 function deriveOverallStatus(services: HealthServices): HealthStatus {
-  const critical = [services.postgres, services.storage, services.smtp];
+  const critical = [services.postgres, services.storage, services.smtp, services.redis];
 
   if (critical.some((service) => !service.ok)) {
     return "unhealthy";
   }
 
-  const optionalLive = [services.redis];
   const optionalConfigured = [services.anthropic, services.stripe, services.mapy, services.posthog];
 
-  if (
-    optionalLive.some((service) => service.configured !== false && !service.ok) ||
-    optionalConfigured.some((service) => service.configured && !service.ok)
-  ) {
+  if (optionalConfigured.some((service) => service.configured && !service.ok)) {
     return "degraded";
   }
 
@@ -56,28 +42,19 @@ function deriveOverallStatus(services: HealthServices): HealthStatus {
 }
 
 async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
-  const [postgres, storageGateway, redis] = await Promise.all([
-    probePostgres(),
-    probeObjectStorage(config.storageS3Endpoint),
-    probeRedis(config.redisUrl),
-  ]);
+  const storageConfig = {
+    accessKeyId: config.storageS3AccessKeyId,
+    endpoint: config.storageS3Endpoint,
+    region: config.storageS3Region,
+    secretAccessKey: config.storageS3SecretAccessKey,
+  };
 
-  let storage = storageGateway;
-  if (
-    storageGateway.ok &&
-    config.storageS3AccessKeyId.trim() &&
-    config.storageS3SecretAccessKey.trim()
-  ) {
-    const buckets = await probeStorageBuckets({
-      accessKeyId: config.storageS3AccessKeyId,
-      endpoint: config.storageS3Endpoint,
-      region: config.storageS3Region,
-      secretAccessKey: config.storageS3SecretAccessKey,
-    });
-    if (!buckets.ok) {
-      storage = buckets;
-    }
-  }
+  const [postgres, storage, redis, smtp] = await Promise.all([
+    probePostgres(),
+    probeObjectStorage(storageConfig),
+    probeRedis(config.redisUrl),
+    probeSmtp(),
+  ]);
 
   return {
     anthropic: probeConfigured(Boolean(config.anthropicApiKey.trim())),
@@ -85,7 +62,7 @@ async function runProbes(config: HealthCheckConfig): Promise<HealthServices> {
     postgres,
     posthog: probeConfigured(isPosthogConfigured(config)),
     redis,
-    smtp: probeConfigured(isSmtpConfigured(config), { required: true }),
+    smtp,
     storage,
     stripe: probeConfigured(isStripeConfigured(config)),
   };

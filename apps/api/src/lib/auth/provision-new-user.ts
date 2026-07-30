@@ -6,8 +6,12 @@
  * can exist when settings were migrated or a prior hook attempt failed
  * mid-transaction.
  */
-import { prisma, type SupportedLocale } from "@bondery/db";
-import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
+import { type SupportedLocale as DbSupportedLocale, prisma } from "@bondery/db";
+import {
+  coerceSupportedLocale,
+  DEFAULT_LOCALE,
+  type SupportedLocale,
+} from "@bondery/schemas/locale/supported-locale";
 
 function splitDisplayName(name: string | null | undefined): {
   firstName: string;
@@ -29,7 +33,7 @@ export async function provisionNewUser(params: {
   locale?: SupportedLocale;
 }): Promise<void> {
   const { userId, name } = params;
-  const locale: SupportedLocale = params.locale ?? DEFAULT_LOCALE;
+  const locale = coerceSupportedLocale(params.locale ?? DEFAULT_LOCALE) as DbSupportedLocale;
   const now = new Date();
   const { firstName, lastName } = splitDisplayName(name);
 

@@ -9,7 +9,8 @@
  *    all first-party clients — webapp, mobile, chrome-extension
  *  - `expo` plugin for mobile deep-link + SecureStore session handling
  *
- * `databaseHooks.user.create.after` seeds `user_settings` + the "myself" `people` row.
+ * `databaseHooks.user.create.after` seeds `user_settings` + the "myself" `people` row,
+ * then sends a welcome email (idempotent via `user_settings.welcome_email_sent_at`).
  */
 
 import { apiKey } from "@better-auth/api-key";
@@ -26,6 +27,7 @@ import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { lastLoginMethod } from "better-auth/plugins";
+import type { AccessControl } from "better-auth/plugins/access";
 import { admin } from "better-auth/plugins/admin";
 import { bearer } from "better-auth/plugins/bearer";
 import { jwt } from "better-auth/plugins/jwt";
@@ -143,11 +145,25 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user, ctx) => {
+          const locale = resolveProvisionLocaleFromContext(ctx ?? undefined);
           await provisionNewUser({
-            locale: resolveProvisionLocaleFromContext(ctx),
+            locale,
             name: user.name,
             userId: user.id,
           });
+
+          void import("../../services/notifications/welcome.js")
+            .then(({ sendWelcomeEmailIfNeeded }) =>
+              sendWelcomeEmailIfNeeded({
+                email: user.email,
+                language: locale,
+                userId: user.id,
+                userName: user.name,
+              }),
+            )
+            .catch(() => {
+              // sendWelcomeEmailIfNeeded logs failures internally
+            });
         },
       },
       delete: {
@@ -177,7 +193,7 @@ export const auth = betterAuth({
     jwt(),
     expo(),
     admin({
-      ac: platformAdminAc,
+      ac: platformAdminAc as AccessControl,
       adminRoles: [PLATFORM_ADMIN_ROLE],
       defaultRole: PLATFORM_USER_ROLE,
       roles: platformAdminRoles,

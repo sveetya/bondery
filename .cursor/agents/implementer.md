@@ -32,7 +32,7 @@ Always read:
 - `next-best-practices` skill — Next.js routing, data fetching, and project conventions
 - `mantine-best-practices` skill — component usage, theming, and established UI patterns
 
-Then identify if the task touches any additional domains (auth, storage, background jobs, emails, payments, the Chrome extension, the API, shared packages, etc.) and read the corresponding skill file before proceeding. For auth, authorization, secrets, uploads, webhooks, payments, extension bridges, or sensitive data, read `bondery-security` (`/.agents/skills/bondery-security/SKILL.md`). For new third-party SDKs/vendors, analytics events, data exports, or retention/deletion changes, read `bondery-legal` (`/.agents/skills/bondery-legal/SKILL.md`).
+Then identify if the task touches any additional domains (auth, storage, background jobs, payments, the Chrome extension, the API, shared packages, etc.) and read the corresponding skill file before proceeding. For email templates, send paths, SMTP/Plunk env vars, or notification services, read `bondery-emails` (`/.agents/skills/bondery-emails/SKILL.md`). For auth, authorization, secrets, uploads, webhooks, payments, extension bridges, or sensitive data, read `bondery-security` (`/.agents/skills/bondery-security/SKILL.md`). For new third-party SDKs/vendors, analytics events, data exports, or retention/deletion changes, read `bondery-legal` (`/.agents/skills/bondery-legal/SKILL.md`).
 
 For user-visible changes, dependency updates, release preparation, or changelog edits, read `bondery-changelog` (`/.agents/skills/bondery-changelog/SKILL.md`).
 

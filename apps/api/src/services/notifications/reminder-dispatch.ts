@@ -1,6 +1,6 @@
 import { prisma } from "@bondery/db";
 import type { ReminderDigestRequest, ReminderDigestResponse } from "@bondery/schemas";
-import { sendReminderDigest } from "../notifications/reminder-digest.js";
+import { sendReminderDigest } from "./reminder-digest.js";
 
 type DigestPayloadRow = {
   payload: ReminderDigestRequest | null;
@@ -148,39 +148,7 @@ export async function runReminderDigestDispatch(): Promise<
     };
   }
 
-  const emailConfig = {
-    address: process.env.BONDERY_PRIVATE_EMAIL_ADDRESS ?? "",
-    host: process.env.BONDERY_PRIVATE_EMAIL_HOST ?? "",
-    pass: process.env.BONDERY_PRIVATE_EMAIL_PASS ?? "",
-    port: Number(process.env.BONDERY_PRIVATE_EMAIL_PORT ?? "587"),
-    user: process.env.BONDERY_PRIVATE_EMAIL_USER ?? "",
-  };
-
-  const result = await sendReminderDigest(emailConfig, row.payload);
-
-  for (const user of row.payload.users) {
-    await prisma.reminderDispatchLog
-      .create({
-        data: {
-          reminderDate: new Date(`${user.targetDate ?? row.payload.targetDate}T00:00:00.000Z`),
-          timezone: user.timezone ?? "UTC",
-          userId: user.userId,
-        },
-      })
-      .catch(() => {
-        // unique constraint — already dispatched
-      });
-  }
-
-  await prisma.$executeRaw`
-    UPDATE user_settings us
-    SET next_reminder_at_utc = compute_next_reminder_at_utc(
-      us.timezone,
-      us.reminder_send_hour,
-      now()
-    )
-    WHERE us.next_reminder_at_utc <= now()
-  `;
+  const result = await sendReminderDigest(row.payload);
 
   return result;
 }

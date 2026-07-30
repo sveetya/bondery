@@ -350,6 +350,7 @@ model UserSettings {
   reminderSendHour          String          @default("09:00") @map("reminder_send_hour")
   nextReminderAtUtc         DateTime        @map("next_reminder_at_utc")
   onboardingCompletedAt     DateTime?       @map("onboarding_completed_at")
+  welcomeEmailSentAt        DateTime?       @map("welcome_email_sent_at")
   gettingStartedDismissedAt DateTime?       @map("getting_started_dismissed_at")
   importCompletedAt         DateTime?       @map("import_completed_at")
   importFollowupPlatform    String?         @map("import_followup_platform")
@@ -813,6 +814,7 @@ model ReminderDispatchLog {
   timezone     String
   createdAt    DateTime @default(now()) @map("created_at")
 
+  @@unique([userId, reminderDate])
   @@map("reminder_dispatch_log")
 }
 

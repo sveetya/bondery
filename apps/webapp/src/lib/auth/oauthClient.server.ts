@@ -240,17 +240,20 @@ async function resolveSessionUserFromTokens(
 }
 
 function buildSessionPayload(
-  tokens: TokenResponse,
+  tokens: TokenResponse | null,
   user: WebappSessionUser,
+  fallbackRefreshToken?: string,
 ): WebappSessionPayload | null {
-  if (!tokens.access_token || !tokens.refresh_token) {
+  const accessToken = tokens?.access_token;
+  const refreshToken = tokens?.refresh_token ?? fallbackRefreshToken;
+  if (!accessToken || !refreshToken) {
     return null;
   }
 
   return {
-    accessToken: tokens.access_token,
-    accessTokenExpiresAt: Math.floor(Date.now() / 1000) + (tokens.expires_in ?? 3600),
-    refreshToken: tokens.refresh_token,
+    accessToken,
+    accessTokenExpiresAt: Math.floor(Date.now() / 1000) + (tokens?.expires_in ?? 3600),
+    refreshToken,
     user,
   };
 }
@@ -280,7 +283,8 @@ export async function refreshSessionPayload(
   session: WebappSessionPayload,
 ): Promise<WebappSessionPayload | null> {
   const tokens = await requestRefreshedTokens(session.refreshToken);
-  return tokens ? buildSessionPayload(tokens, session.user) : null;
+  // Refresh grants often return only a new access_token; keep the existing refresh token.
+  return buildSessionPayload(tokens, session.user, session.refreshToken);
 }
 
 async function encryptPayload(

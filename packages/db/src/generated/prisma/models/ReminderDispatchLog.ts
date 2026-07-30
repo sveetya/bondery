@@ -196,6 +196,7 @@ export type ReminderDispatchLogOrderByWithRelationInput = {
 
 export type ReminderDispatchLogWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  userId_reminderDate?: Prisma.ReminderDispatchLogUserIdReminderDateCompoundUniqueInput
   AND?: Prisma.ReminderDispatchLogWhereInput | Prisma.ReminderDispatchLogWhereInput[]
   OR?: Prisma.ReminderDispatchLogWhereInput[]
   NOT?: Prisma.ReminderDispatchLogWhereInput | Prisma.ReminderDispatchLogWhereInput[]
@@ -204,7 +205,7 @@ export type ReminderDispatchLogWhereUniqueInput = Prisma.AtLeast<{
   timezone?: Prisma.StringFilter<"ReminderDispatchLog"> | string
   createdAt?: Prisma.DateTimeFilter<"ReminderDispatchLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+}, "id" | "userId_reminderDate">
 
 export type ReminderDispatchLogOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -291,6 +292,11 @@ export type ReminderDispatchLogListRelationFilter = {
 
 export type ReminderDispatchLogOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ReminderDispatchLogUserIdReminderDateCompoundUniqueInput = {
+  userId: string
+  reminderDate: Date | string
 }
 
 export type ReminderDispatchLogCountOrderByAggregateInput = {

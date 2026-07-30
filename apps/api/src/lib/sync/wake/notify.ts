@@ -1,7 +1,7 @@
 import type { SyncWakeEvent } from "@bondery/schemas/sync";
 import type { FastifyBaseLogger } from "fastify";
 
-import { requireRedisCommands, requireRedisSubscriber } from "../../data/redis.js";
+import type { RedisClients } from "../../data/redis.js";
 import { SyncConnectionHub } from "./hub.js";
 import { RedisSyncWakeBus } from "./redis-bus.js";
 import { createSyncWsTicketStore, type SyncWsTicketStore } from "./tickets.js";
@@ -25,19 +25,13 @@ function isWakeEnabled(): boolean {
   return flag !== "0" && flag.toLowerCase() !== "false";
 }
 
-export function createSyncWakeRuntime(log?: FastifyBaseLogger): SyncWakeRuntime {
-  const redisUrl = process.env.BONDERY_PRIVATE_REDIS_URL?.trim();
-  if (!redisUrl) {
-    throw new Error(
-      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
-    );
-  }
-
+export function createSyncWakeRuntime(
+  redis: RedisClients,
+  log?: FastifyBaseLogger,
+): SyncWakeRuntime {
   const hub = new SyncConnectionHub(log);
-  const commands = requireRedisCommands(redisUrl);
-  const subscriber = requireRedisSubscriber(redisUrl);
-  const tickets = createSyncWsTicketStore(commands);
-  const redisWakeBus = new RedisSyncWakeBus(commands, subscriber);
+  const tickets = createSyncWsTicketStore(redis.commands);
+  const redisWakeBus = new RedisSyncWakeBus(redis.commands, redis.subscriber);
 
   return {
     bus: redisWakeBus,
@@ -48,12 +42,19 @@ export function createSyncWakeRuntime(log?: FastifyBaseLogger): SyncWakeRuntime 
   };
 }
 
-export async function initSyncWakeRuntime(log?: FastifyBaseLogger): Promise<SyncWakeRuntime> {
+export async function initSyncWakeRuntime(
+  log?: FastifyBaseLogger,
+  redis?: RedisClients,
+): Promise<SyncWakeRuntime> {
   if (runtime) {
     return runtime;
   }
 
-  runtime = createSyncWakeRuntime(log);
+  if (!redis) {
+    throw new Error("initSyncWakeRuntime requires injected Redis clients");
+  }
+
+  runtime = createSyncWakeRuntime(redis, log);
   await runtime.bus.start((userId, event) => {
     runtime?.hub.broadcastWake(userId, event);
   });
@@ -82,12 +83,22 @@ export function getSyncWakeRuntime(): SyncWakeRuntime | null {
   return runtime;
 }
 
+export function requireSyncWakeRuntime(): SyncWakeRuntime {
+  if (!runtime) {
+    throw new Error("Sync wake runtime is not initialized");
+  }
+  return runtime;
+}
+
 export async function notifySyncWake(
   userId: string,
   event: SyncWakeEvent,
   log?: FastifyBaseLogger,
 ): Promise<void> {
-  const rt = runtime ?? (await initSyncWakeRuntime(log));
+  const rt = runtime;
+  if (!rt) {
+    throw new Error("Sync wake runtime is not initialized");
+  }
   if (!rt.enabled) {
     return;
   }

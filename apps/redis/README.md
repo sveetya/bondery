@@ -36,4 +36,4 @@ In `apps/api/.env.development.local` (default in `.env.development.example`):
 BONDERY_PRIVATE_REDIS_URL="redis://127.0.0.1:26636"
 ```
 
-Full guide: [docs/contributing/local-setup.md](../../docs/contributing/local-setup.md#redis).
+Full guide: [docs/contributing/local-setup.mdx](../../docs/contributing/local-setup.mdx#redis).

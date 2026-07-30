@@ -21,7 +21,7 @@ metadata:
 - Code review for architectural fit
 - Understanding mobile local-first vs online-only data boundaries
 
-For API routes, transport, and sync protocol, see the `bondery-api` skill. For UI patterns and i18n, see the `bondery-ux` skill. For Prisma schema, migrations, and Bondery database conventions, see `bondery-database` (upstream `prisma-next-*` skills are routed from there for Prisma Next work only). For Postgres query performance and RLS, see `supabase-postgres-best-practices`. For E2E tests, see `bondery-e2e-tests`. For auth, tenant isolation, secrets, and security reviews, see `bondery-security`.
+For API routes, transport, and sync protocol, see the `bondery-api` skill. For UI patterns and i18n, see the `bondery-ux` skill. For transactional email (React Email templates, Plunk SMTP), see `bondery-emails`. For Prisma schema, migrations, and Bondery database conventions, see `bondery-database` (upstream `prisma-next-*` skills are routed from there for Prisma Next work only). For Postgres query performance and RLS, see `supabase-postgres-best-practices`. For E2E tests, see `bondery-e2e-tests`. For auth, tenant isolation, secrets, and security reviews, see `bondery-security`.
 
 ## Package boundaries
 

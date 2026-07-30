@@ -1,0 +1,22 @@
+{
+  "defaultMessage": "Hat diesen Kontakt über Bondery mit Ihnen geteilt.",
+  "heading": "Kontakt mit Ihnen geteilt",
+  "importantDateLine": "{{label}}: {{date}} ({{type}})",
+  "labels": {
+    "address": "Adresse",
+    "email": "E-Mail",
+    "facebook": "Facebook",
+    "importantDates": "Wichtige Daten",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "location": "Standort",
+    "notes": "Notizen",
+    "phone": "Telefon",
+    "signal": "Signal",
+    "website": "Website",
+    "whatsapp": "WhatsApp"
+  },
+  "noHeadline": "Keine Überschrift",
+  "preview": "{{senderName}} hat einen Kontakt mit Ihnen geteilt • {{contactName}}",
+  "subject": "{{senderName}} hat einen Kontakt mit Ihnen geteilt • {{contactName}}"
+}

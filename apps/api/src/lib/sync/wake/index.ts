@@ -5,6 +5,7 @@ export {
   getSyncWakeRuntime,
   initSyncWakeRuntime,
   notifySyncWake,
+  requireSyncWakeRuntime,
   type SyncWakeRuntime,
   shutdownSyncWakeRuntime,
 } from "./notify.js";

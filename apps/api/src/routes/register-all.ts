@@ -27,7 +27,6 @@ import { instagramImportRoutes } from "./import/instagram/index.js";
 import { linkedInImportRoutes } from "./import/linkedin/index.js";
 import { vcardImportRoutes } from "./import/vcard/index.js";
 import { interactionRoutes } from "./interactions/index.js";
-import { reminderDigestRoutes } from "./internal/reminder-digest.js";
 import { meApiKeysRoutes } from "./me/api-keys/index.js";
 import { meFeedbackRoutes } from "./me/feedback/index.js";
 import { meRoutes } from "./me/index.js";
@@ -108,11 +107,6 @@ const ROUTE_MOUNTS: RouteMount[] = [
   { area: "session", plugin: subscriptionSyncRoutes, prefix: API_ROUTES.SUBSCRIPTIONS_SYNC },
   { area: "admin", plugin: statsRoutes, prefix: API_ROUTES.ADMIN_STATS },
   { area: "webhook", plugin: stripeWebhookRoutes, prefix: API_ROUTES.WEBHOOKS_STRIPE },
-  {
-    area: "internal",
-    plugin: reminderDigestRoutes,
-    prefix: API_ROUTES.INTERNAL_REMINDER_DIGEST,
-  },
 ];
 
 export async function registerAllRoutes(fastify: AppFastifyInstance): Promise<void> {

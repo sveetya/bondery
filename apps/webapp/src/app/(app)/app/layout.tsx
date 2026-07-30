@@ -56,10 +56,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { session: userSession } = appSession;
   const bypassOnboarding = cookieStore.get(BYPASS_ONBOARDING_ONCE_COOKIE)?.value === "1";
 
-  if (bypassOnboarding) {
-    cookieStore.set(BYPASS_ONBOARDING_ONCE_COOKIE, "", { maxAge: 0, path: "/app" });
-  }
-
   if (
     !userSession.onboardingCompletedAt &&
     !bypassOnboarding &&

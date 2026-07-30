@@ -2,8 +2,8 @@ import { IMPORT_COMMIT_RATE_LIMIT } from "@bondery/schemas/constants";
 import { getErrorDocUrl } from "@bondery/schemas/errors";
 import type { FastifyRateLimitOptions } from "@fastify/rate-limit";
 import fastifyRateLimit from "@fastify/rate-limit";
-import type { FastifyRequest } from "fastify";
-import { requireRedisCommands } from "../data/redis.js";
+import type { FastifyReply, FastifyRequest } from "fastify";
+import type { Redis } from "ioredis";
 import { URLS } from "./config.js";
 import type { AppFastifyInstance } from "./fastify-types.js";
 
@@ -47,16 +47,7 @@ function buildErrorResponse(_request: FastifyRequest, context: { ttl: number }) 
   });
 }
 
-export async function registerRateLimit(fastify: AppFastifyInstance): Promise<void> {
-  const redisUrl = fastify.config.BONDERY_PRIVATE_REDIS_URL;
-  if (!redisUrl.trim()) {
-    throw new Error(
-      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
-    );
-  }
-
-  const redis = requireRedisCommands(redisUrl);
-
+export async function registerRateLimit(fastify: AppFastifyInstance, redis: Redis): Promise<void> {
   const options: FastifyRateLimitOptions = {
     allowList: (request: FastifyRequest) => request.method === "OPTIONS",
     errorResponseBuilder: buildErrorResponse,
@@ -89,22 +80,28 @@ export async function registerRateLimit(fastify: AppFastifyInstance): Promise<vo
   await fastify.register(fastifyRateLimit, options);
 }
 
+function notFoundHandler(request: FastifyRequest, reply: FastifyReply): void {
+  const website = (URLS.website ?? "https://usebondery.com").replace(/\/$/, "");
+  reply.status(404).send({
+    error: {
+      code: "not_found",
+      doc_url: getErrorDocUrl("not_found", website),
+      message: "Not found",
+      request_id: request.id,
+      type: "not_found_error",
+    },
+  });
+}
+
+export function registerDefaultNotFoundHandler(fastify: AppFastifyInstance): void {
+  fastify.setNotFoundHandler(notFoundHandler);
+}
+
 export function registerNotFoundRateLimit(fastify: AppFastifyInstance): void {
   fastify.setNotFoundHandler(
     {
       preHandler: fastify.rateLimit(NOT_FOUND_TIER),
     },
-    (request, reply) => {
-      const website = (URLS.website ?? "https://usebondery.com").replace(/\/$/, "");
-      reply.status(404).send({
-        error: {
-          code: "not_found",
-          doc_url: getErrorDocUrl("not_found", website),
-          message: "Not found",
-          request_id: request.id,
-          type: "not_found_error",
-        },
-      });
-    },
+    notFoundHandler,
   );
 }

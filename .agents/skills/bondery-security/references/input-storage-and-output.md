@@ -36,7 +36,7 @@ Schemas live in `@bondery/schemas`. Error catalog codes only (snake_case).
 
 `GET /files/:bucket/*` — **unauthenticated**, mounted under `composite` shell.
 
-- Public buckets: `avatars`, `linkedin_logos` only
+- Public buckets: `avatars`, `linkedin-logos` only
 - Avatar path: `{userId}/{contactId}.jpg` (`avatar-storage.ts`)
 - Local disk: path traversal guard via `resolvedFull.startsWith(resolvedRoot)` (`local-disk.ts`)
 - S3: public CDN URL in production

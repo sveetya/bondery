@@ -78,7 +78,7 @@ export async function updateContactPhoto(
 }
 
 /**
- * Downloads an image from a URL and uploads it to the linkedin_logos storage bucket.
+ * Downloads an image from a URL and uploads it to the linkedin-logos storage bucket.
  * Uses upsert so re-imports overwrite the existing file without duplicates.
  *
  * @returns The public URL of the stored logo, or null on failure.

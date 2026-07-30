@@ -9,4 +9,4 @@
 | [env-vars.md](./env-vars.md) | Configuration |
 | [api-routes.md](./api-routes.md) | Fastify routes |
 | [client-integration.md](./client-integration.md) | Webapp embedded checkout |
-| [trial-ending-email.md](./trial-ending-email.md) | Trial email flow |
+| [trial-ending-email.md](./trial-ending-email.md) | Trial email billing trigger (template → bondery-emails) |

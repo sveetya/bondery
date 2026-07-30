@@ -45,7 +45,7 @@ const SCAN_FILES = [
   "apps/api/scripts/generate-openapi.ts",
   "apps/api/src/test/load-test-env.ts",
   "docs/contributing/architecture.md",
-  "docs/contributing/local-setup.md",
+  "docs/contributing/local-setup.mdx",
   "apps/website/README.md",
   "archive/supabase-db/README.md",
   ".agents/workflows/CHROME-EXTENSION-OAUTH.md",

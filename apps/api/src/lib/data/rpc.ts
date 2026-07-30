@@ -145,4 +145,4 @@ export async function rpcGetTotalUsersGrowth(db: RpcClient = prisma): Promise<un
 }
 
 /** Default Prisma client for RPC helpers. */
-export const rpcDb = prisma;
+export const rpcDb: PrismaClient = prisma;

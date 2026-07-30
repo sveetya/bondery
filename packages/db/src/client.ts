@@ -6,7 +6,7 @@ import { injectCreateIds } from "./inject-create-ids.js";
 
 const globalForPrisma = globalThis as unknown as {
   pool?: Pool;
-  prisma?: ReturnType<typeof createPrismaClient>;
+  prisma?: ReturnType<typeof createPrismaClientFromPool>;
 };
 
 function resolveDatabaseUrl(): string {
@@ -17,12 +17,11 @@ function resolveDatabaseUrl(): string {
   return databaseUrl;
 }
 
-function createPool(): Pool {
-  return new Pool({ connectionString: resolveDatabaseUrl() });
+export function createPrismaPool(url: string): Pool {
+  return new Pool({ connectionString: url });
 }
 
-function createPrismaClient() {
-  const pool = globalForPrisma.pool ?? createPool();
+function createPrismaClientFromPool(pool: Pool) {
   const adapter = new PrismaPg(pool);
 
   return new BasePrismaClient({ adapter }).$extends({
@@ -45,18 +44,63 @@ function createPrismaClient() {
   });
 }
 
-export type PrismaClient = ReturnType<typeof createPrismaClient>;
+export type PrismaClient = ReturnType<typeof createPrismaClientFromPool>;
+
+let prismaInstance: PrismaClient | null = globalForPrisma.prisma ?? null;
+
+function ensurePrismaFromEnv(): PrismaClient {
+  if (prismaInstance) {
+    return prismaInstance;
+  }
+
+  const pool = globalForPrisma.pool ?? createPrismaPool(resolveDatabaseUrl());
+  return initializePrisma(pool);
+}
 
 /**
- * Singleton Prisma client. In dev, `tsx watch` re-evaluates modules on
- * every reload — stash the client on `globalThis` so we don't exhaust
- * Postgres connections across reloads.
+ * Wire Prisma to an API-owned pool. Call once at boot before any queries.
  */
-export const prisma: PrismaClient = globalForPrisma.prisma ?? createPrismaClient();
+export function initializePrisma(pool: Pool): PrismaClient {
+  if (prismaInstance) {
+    return prismaInstance;
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.pool = globalForPrisma.pool ?? createPool();
-  globalForPrisma.prisma = prisma;
+  globalForPrisma.pool = pool;
+  prismaInstance = createPrismaClientFromPool(pool);
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = prismaInstance;
+  }
+
+  return prismaInstance;
+}
+
+export function getPrismaPool(): Pool | undefined {
+  return globalForPrisma.pool;
+}
+
+/**
+ * Singleton Prisma client. Lazily initializes from DATABASE_URL when not
+ * explicitly wired via initializePrisma (CLI scripts, tests).
+ */
+export const prisma: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = ensurePrismaFromEnv();
+    const value = Reflect.get(client, prop, receiver);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+  set(_target, prop, value) {
+    const client = ensurePrismaFromEnv();
+    Reflect.set(client, prop, value);
+    return true;
+  },
+});
+
+/** @internal Test-only reset. */
+export function resetPrismaForTests(): void {
+  prismaInstance = null;
+  globalForPrisma.pool = undefined;
+  globalForPrisma.prisma = undefined;
 }
 
 export type { PrismaClient as BasePrismaClient } from "./generated/prisma/client.js";

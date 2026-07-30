@@ -1,15 +1,18 @@
 import { FeedbackEmail } from "@bondery/emails";
 import { render } from "@react-email/render";
-import nodemailer from "nodemailer";
+import type { FastifyBaseLogger } from "fastify";
+import { buildFeedbackCopy } from "../../lib/notifications/email-copy-builders.js";
+import {
+  loadEmailNamespace,
+  readCopyString,
+  resolveEmailLocale,
+} from "../../lib/notifications/email-i18n.js";
+import {
+  getEmailConfig,
+  isEmailConfigured,
+  sendRenderedEmail,
+} from "../../lib/notifications/transporter.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
-
-export type FeedbackEmailConfig = {
-  host: string;
-  port: number;
-  user: string;
-  pass: string;
-  address: string;
-};
 
 export type SendFeedbackEmailInput = {
   userEmail: string;
@@ -20,45 +23,44 @@ export type SendFeedbackEmailInput = {
 };
 
 export async function sendFeedbackEmail(
-  config: FeedbackEmailConfig,
   input: SendFeedbackEmailInput,
+  log?: FastifyBaseLogger,
 ): Promise<void> {
-  const { userEmail, userId, npsScore, npsReason, generalFeedback } = input;
-  const timestamp = new Date().toISOString();
+  if (!isEmailConfigured()) {
+    throw internal("email_service_not_configured");
+  }
 
-  const transporter = nodemailer.createTransport({
-    auth: {
-      pass: config.pass,
-      user: config.user,
-    },
-    host: config.host,
-    port: config.port,
-    secure: false,
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
+  const config = getEmailConfig()!;
+  const lng = await resolveEmailLocale(input.userId);
+  const bundle = loadEmailNamespace(lng, "FeedbackEmail");
+  const copy = buildFeedbackCopy(bundle);
+  const timestamp = new Date().toISOString();
+  const subject = readCopyString(bundle, "subject");
 
   try {
     const emailHtml = await render(
       FeedbackEmail({
-        generalFeedback: generalFeedback || undefined,
-        npsReason: npsReason || undefined,
-        npsScore,
+        copy,
+        generalFeedback: input.generalFeedback || undefined,
+        npsReason: input.npsReason || undefined,
+        npsScore: input.npsScore,
         timestamp,
-        userEmail,
-        userId,
+        userEmail: input.userEmail,
+        userId: input.userId,
       }),
     );
 
-    await transporter.sendMail({
-      cc: userEmail,
-      from: `Robot from Bondery <${config.address}>`,
-      html: emailHtml,
-      replyTo: userEmail,
-      subject: `New feedback about Bondery`,
-      to: `Robot from Bondery <${config.address}>`,
-    });
+    await sendRenderedEmail(
+      {
+        cc: input.userEmail,
+        from: `Robot from Bondery <${config.fromAddress}>`,
+        html: emailHtml,
+        replyTo: input.userEmail,
+        subject,
+        to: `Robot from Bondery <${config.fromAddress}>`,
+      },
+      log,
+    );
   } catch (cause) {
     throw internal("failed_to_render_or_send_feedback_email_", cause);
   }

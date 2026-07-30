@@ -11,12 +11,12 @@ Before you get started, please read through the guides in this section:
 * [Architecture](architecture.md) — How the monorepo is structured, what each app does, and the tech decisions behind them
 * [Environment configuration](environment.md) — Root `.env.local`, `BONDERY_*` naming, `npm run env`
 * [Sync architecture (mobile)](sync-architecture.md) — Offline-first mobile sync: pull/bootstrap, SQLite, mutation outbox
-* [Local development setup](local-setup.md) — Step-by-step instructions to run every app, including mobile sync
+* [Local development setup](local-setup.mdx) — Step-by-step instructions to run every app, including mobile sync
 
 ## Workflow
 
 1. Fork the repository and create a branch from `main`
-2. Follow the [local setup guide](local-setup.md) to get your environment running
+2. Follow the [local setup guide](local-setup.mdx) to get your environment running
 3. Make your changes, following the code quality guidelines in the codebase
 4. Open a pull request against `main` with a clear description of what was changed and why
 

@@ -1,15 +1,21 @@
+import { Prisma, prisma } from "@bondery/db";
 import { ReminderDigestEmail } from "@bondery/emails";
-import type { ReminderDigestRequest } from "@bondery/schemas";
+import type { ReminderDigestRequest, ReminderDigestUser } from "@bondery/schemas";
 import { render } from "@react-email/render";
-import nodemailer from "nodemailer";
-
-export type ReminderDigestEmailConfig = {
-  host: string;
-  port: number;
-  user: string;
-  pass: string;
-  address: string;
-};
+import { buildReminderDigestCopy } from "../../lib/notifications/email-copy-builders.js";
+import {
+  formatEmailDateFromIso,
+  getPreloadedCopy,
+  interpolateCopy,
+  preloadEmailNamespaces,
+  readCopyString,
+  resolveEmailLocalesForUsers,
+} from "../../lib/notifications/email-i18n.js";
+import {
+  getEmailConfig,
+  isEmailConfigured,
+  sendRenderedEmail,
+} from "../../lib/notifications/transporter.js";
 
 export type ReminderDigestResult = {
   success: boolean;
@@ -19,8 +25,161 @@ export type ReminderDigestResult = {
   failures: Array<{ userId: string; email: string; error: string }>;
 };
 
+export type SendOneUserDigestContext = {
+  defaultTargetDate: string;
+  namespaceCache: ReturnType<typeof preloadEmailNamespaces>;
+  localeByUserId: Map<string, string>;
+};
+
+function getDaysRemaining(targetDate: string, date: string): number | null {
+  const target = new Date(`${targetDate}T00:00:00Z`);
+  const event = new Date(`${date}T00:00:00Z`);
+
+  if (Number.isNaN(target.getTime()) || Number.isNaN(event.getTime())) {
+    return null;
+  }
+
+  const millisecondsInDay = 24 * 60 * 60 * 1000;
+  return Math.max(0, Math.round((event.getTime() - target.getTime()) / millisecondsInDay));
+}
+
+function buildRemainingLabel(
+  copy: ReturnType<typeof buildReminderDigestCopy>,
+  targetDate: string,
+  date: string,
+  notifyDaysBefore: number,
+): string {
+  const daysRemaining = getDaysRemaining(targetDate, date);
+  if (daysRemaining === null) {
+    return interpolateCopy(copy.dayMany, { count: notifyDaysBefore });
+  }
+
+  if (daysRemaining === 1) {
+    return copy.dayOne;
+  }
+
+  return interpolateCopy(copy.dayMany, { count: daysRemaining });
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
+}
+
+async function advanceUserReminderSchedule(userId: string): Promise<void> {
+  await prisma.$executeRaw`
+    UPDATE user_settings us
+    SET next_reminder_at_utc = compute_next_reminder_at_utc(
+      us.timezone,
+      us.reminder_send_hour,
+      now()
+    )
+    WHERE us.user_id = ${userId}::uuid
+  `;
+}
+
+async function recordDispatchLog(
+  userId: string,
+  reminderDate: Date,
+  timezone: string,
+): Promise<"created" | "already_sent"> {
+  try {
+    await prisma.reminderDispatchLog.create({
+      data: {
+        reminderDate,
+        timezone,
+        userId,
+      },
+    });
+    return "created";
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      return "already_sent";
+    }
+    throw error;
+  }
+}
+
+export async function sendOneUserDigest(
+  user: ReminderDigestUser,
+  ctx: SendOneUserDigestContext,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (user.reminders.length === 0) {
+    return { ok: true };
+  }
+
+  if (!isEmailConfigured()) {
+    return { error: "SMTP is not configured", ok: false };
+  }
+
+  const config = getEmailConfig()!;
+  const userTargetDate = user.targetDate ?? ctx.defaultTargetDate;
+  const lng = ctx.localeByUserId.get(user.userId) ?? "en";
+  const bundle = getPreloadedCopy(ctx.namespaceCache, lng);
+  const copy = buildReminderDigestCopy(bundle);
+  const formattedHeadingDate = formatEmailDateFromIso(userTargetDate, lng, "long");
+
+  try {
+    const emailHtml = await render(
+      ReminderDigestEmail({
+        copy,
+        formattedHeadingDate,
+        reminders: user.reminders.map((reminder) => {
+          const type = reminder.type;
+          const typeLabel = copy.dateTypes[type];
+          return {
+            date: reminder.date,
+            dateLabel: formatEmailDateFromIso(reminder.date, lng),
+            note: reminder.note ?? null,
+            notifyDaysBefore: reminder.notifyDaysBefore,
+            notifyOn: reminder.notifyOn,
+            personAvatar: reminder.personAvatar ?? null,
+            personId: reminder.personId,
+            personName: reminder.personName,
+            remainingLabel: buildRemainingLabel(
+              copy,
+              userTargetDate,
+              reminder.date,
+              reminder.notifyDaysBefore,
+            ),
+            type,
+            typeLabel,
+          };
+        }),
+        targetDate: userTargetDate,
+        userId: user.userId,
+      }),
+    );
+
+    const subject = readCopyString(bundle, "subject", { targetDate: userTargetDate });
+
+    await sendRenderedEmail({
+      from: `Robot from Bondery <${config.fromAddress}>`,
+      html: emailHtml,
+      subject,
+      to: user.email,
+    });
+
+    const reminderDate = new Date(`${userTargetDate}T00:00:00.000Z`);
+    const dispatchStatus = await recordDispatchLog(
+      user.userId,
+      reminderDate,
+      user.timezone ?? "UTC",
+    );
+
+    if (dispatchStatus === "created") {
+      await advanceUserReminderSchedule(user.userId);
+    }
+
+    return { ok: true };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : String(error),
+      ok: false,
+    };
+  }
+}
+
 export async function sendReminderDigest(
-  config: ReminderDigestEmailConfig,
   request: ReminderDigestRequest,
 ): Promise<ReminderDigestResult> {
   const { targetDate, users } = request;
@@ -35,62 +194,45 @@ export async function sendReminderDigest(
     };
   }
 
-  const transporter = nodemailer.createTransport({
-    auth: {
-      pass: config.pass,
-      user: config.user,
-    },
-    host: config.host,
-    port: config.port,
-    secure: false,
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
+  if (!isEmailConfigured()) {
+    return {
+      failedUsers: users.length,
+      failures: users.map((user) => ({
+        email: user.email,
+        error: "SMTP is not configured",
+        userId: user.userId,
+      })),
+      sentUsers: 0,
+      success: false,
+      targetDate,
+    };
+  }
+
+  const namespaceCache = preloadEmailNamespaces("ReminderDigestEmail");
+  const localeByUserId = await resolveEmailLocalesForUsers(users.map((user) => user.userId));
+  const ctx: SendOneUserDigestContext = {
+    defaultTargetDate: targetDate,
+    localeByUserId,
+    namespaceCache,
+  };
 
   const failures: Array<{ userId: string; email: string; error: string }> = [];
   let sentUsers = 0;
 
   for (const user of users) {
-    if (user.reminders.length === 0) {
+    const result = await sendOneUserDigest(user, ctx);
+    if (result.ok) {
+      if (user.reminders.length > 0) {
+        sentUsers += 1;
+      }
       continue;
     }
 
-    const userTargetDate = user.targetDate ?? targetDate;
-
-    try {
-      const emailHtml = await render(
-        ReminderDigestEmail({
-          reminders: user.reminders.map((reminder) => ({
-            date: reminder.date,
-            note: reminder.note ?? null,
-            notifyDaysBefore: reminder.notifyDaysBefore,
-            notifyOn: reminder.notifyOn,
-            personAvatar: reminder.personAvatar ?? null,
-            personId: reminder.personId,
-            personName: reminder.personName,
-            type: reminder.type,
-          })),
-          targetDate: userTargetDate,
-          userId: user.userId,
-        }),
-      );
-
-      await transporter.sendMail({
-        from: `Robot from Bondery <${config.address}>`,
-        html: emailHtml,
-        subject: `Bondery reminders for ${userTargetDate}`,
-        to: user.email,
-      });
-
-      sentUsers += 1;
-    } catch (error) {
-      failures.push({
-        email: user.email,
-        error: error instanceof Error ? error.message : String(error),
-        userId: user.userId,
-      });
-    }
+    failures.push({
+      email: user.email,
+      error: result.error,
+      userId: user.userId,
+    });
   }
 
   return {

@@ -2,6 +2,8 @@
 
 export type AboutPagePrefix = "Links";
 
+export type AccountDeletedEmailPrefix = never;
+
 export type AddPeopleToGroupSelectionModalPrefix = never;
 
 export type AppNavigationPrefix = never;
@@ -41,6 +43,8 @@ export type ExtensionPopupPrefix = "LoggedOut" | "UpdateRequired";
 export type ExtensionSocialButtonsPrefix = "Instagram" | "LinkedIn";
 
 export type ExtensionVersionCheckPrefix = never;
+
+export type FeedbackEmailPrefix = never;
 
 export type FeedbackPagePrefix = never;
 
@@ -116,7 +120,11 @@ export type PersonRelationshipsPrefix = "Types";
 
 export type PersonTabsPrefix = never;
 
+export type ReminderDigestEmailPrefix = "dateTypes";
+
 export type SettingsPagePrefix = "ApiKeys" | "DataManagement" | "DataManagement.InstagramImport" | "DataManagement.LinkedInImport" | "DataManagement.VCardImport" | "Integration" | "Integration.ChromeExtensionModal" | "Preferences" | "Profile" | "Subscription" | "Support";
+
+export type ShareContactEmailBodyPrefix = "labels";
 
 export type ShareContactModalPrefix = "Fields";
 
@@ -130,12 +138,17 @@ export type TagsInputPrefix = never;
 
 export type TagsSettingsPrefix = never;
 
+export type TrialEndingEmailPrefix = never;
+
 export type UnavailablePagePrefix = never;
 
 export type ValidationPrefix = "email" | "fields" | "fields.firstName" | "fields.generic" | "fields.headline" | "fields.label" | "fields.lastName" | "fields.location" | "fields.middleName" | "interaction";
 
+export type WelcomeEmailPrefix = never;
+
 export interface NamespacePrefixes {
   "AboutPage": AboutPagePrefix;
+  "AccountDeletedEmail": AccountDeletedEmailPrefix;
   "AddPeopleToGroupSelectionModal": AddPeopleToGroupSelectionModalPrefix;
   "AppNavigation": AppNavigationPrefix;
   "ChatPage": ChatPagePrefix;
@@ -156,6 +169,7 @@ export interface NamespacePrefixes {
   "ExtensionPopup": ExtensionPopupPrefix;
   "ExtensionSocialButtons": ExtensionSocialButtonsPrefix;
   "ExtensionVersionCheck": ExtensionVersionCheckPrefix;
+  "FeedbackEmail": FeedbackEmailPrefix;
   "FeedbackPage": FeedbackPagePrefix;
   "FixContactsPage": FixContactsPagePrefix;
   "glossary": GlossaryPrefix;
@@ -193,13 +207,17 @@ export interface NamespacePrefixes {
   "PeopleSearchSpotlight": PeopleSearchSpotlightPrefix;
   "PersonRelationships": PersonRelationshipsPrefix;
   "PersonTabs": PersonTabsPrefix;
+  "ReminderDigestEmail": ReminderDigestEmailPrefix;
   "SettingsPage": SettingsPagePrefix;
+  "ShareContactEmailBody": ShareContactEmailBodyPrefix;
   "ShareContactModal": ShareContactModalPrefix;
   "SingleContactPage": SingleContactPagePrefix;
   "Socials": SocialsPrefix;
   "StatsPage": StatsPagePrefix;
   "TagsInput": TagsInputPrefix;
   "TagsSettings": TagsSettingsPrefix;
+  "TrialEndingEmail": TrialEndingEmailPrefix;
   "UnavailablePage": UnavailablePagePrefix;
   "validation": ValidationPrefix;
+  "WelcomeEmail": WelcomeEmailPrefix;
 }

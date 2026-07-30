@@ -1,0 +1,240 @@
+import assert from "node:assert/strict";
+import { afterEach, describe, it } from "node:test";
+
+import { loadTestEnv } from "./load-test-env.js";
+
+loadTestEnv();
+
+const { prisma } = await import("@bondery/db");
+const { initPostgres, resetPostgresReadinessForTests, verifyPostgres } = await import(
+  "../lib/data/postgres.js"
+);
+const { resetDatabaseUrlBindingForTests } = await import("../lib/data/database-url.js");
+const { probePostgres, probeRedis } = await import("../lib/health/probes.js");
+const { initObjectStorage, resetStorageReadinessForTests, verifyObjectStorage } = await import(
+  "../lib/storage/init-storage.js"
+);
+const { initRedis, resetRedisClientsForTests, resetRedisReadinessForTests, verifyRedis } =
+  await import("../lib/data/redis.js");
+
+const storageConfig = {
+  accessKeyId: "access",
+  endpoint: "http://storage.example.com",
+  region: "eu-central-1",
+  secretAccessKey: "secret",
+};
+
+type EnvSnapshot = {
+  databaseUrl?: string;
+  nodeEnv?: string;
+  redisUrl?: string;
+};
+
+function snapshotEnv(): EnvSnapshot {
+  return {
+    databaseUrl: process.env.DATABASE_URL,
+    nodeEnv: process.env.NODE_ENV,
+    redisUrl: process.env.BONDERY_PRIVATE_REDIS_URL,
+  };
+}
+
+function restoreEnv(snapshot: EnvSnapshot): void {
+  const restore = (key: keyof EnvSnapshot, envKey: string) => {
+    const value = snapshot[key];
+    if (value === undefined) {
+      delete process.env[envKey];
+    } else {
+      process.env[envKey] = value;
+    }
+  };
+
+  restore("databaseUrl", "DATABASE_URL");
+  restore("nodeEnv", "NODE_ENV");
+  restore("redisUrl", "BONDERY_PRIVATE_REDIS_URL");
+}
+
+describe("postgres runtime readiness", () => {
+  const snapshot = snapshotEnv();
+  const originalQueryRaw = prisma.$queryRaw;
+
+  afterEach(() => {
+    prisma.$queryRaw = originalQueryRaw;
+    resetPostgresReadinessForTests();
+    resetDatabaseUrlBindingForTests();
+    restoreEnv(snapshot);
+  });
+
+  it("initPostgres skips verify when DATABASE_URL is missing in test", async () => {
+    process.env.NODE_ENV = "test";
+    delete process.env.DATABASE_URL;
+
+    const readiness = await initPostgres();
+
+    assert.equal(readiness.configured, false);
+    assert.equal(readiness.ok, true);
+  });
+
+  it("initPostgres throws when DATABASE_URL is missing in development", async () => {
+    process.env.NODE_ENV = "development";
+    delete process.env.DATABASE_URL;
+
+    await assert.rejects(() => initPostgres(), /DATABASE_URL must be set/);
+  });
+
+  it("initPostgres throws when query fails in development", async () => {
+    process.env.NODE_ENV = "development";
+    process.env.DATABASE_URL = "postgresql://user:pass@127.0.0.1:5432/bondery";
+    prisma.$queryRaw = (async () => {
+      throw new Error("connection refused");
+    }) as typeof prisma.$queryRaw;
+
+    await assert.rejects(() => initPostgres(), /Postgres verify failed/);
+  });
+
+  it("verifyPostgres returns unhealthy when DATABASE_URL is missing outside test", async () => {
+    process.env.NODE_ENV = "development";
+    delete process.env.DATABASE_URL;
+
+    const readiness = await verifyPostgres();
+
+    assert.equal(readiness.configured, false);
+    assert.equal(readiness.ok, false);
+    assert.equal(readiness.error, "not_configured");
+  });
+
+  it("probePostgres delegates to verifyPostgres", async () => {
+    process.env.NODE_ENV = "test";
+    delete process.env.DATABASE_URL;
+
+    const result = await probePostgres();
+
+    assert.deepEqual(result, { configured: false, ok: true });
+  });
+});
+
+describe("object storage runtime readiness", () => {
+  const snapshot = snapshotEnv();
+  const originalFetch = globalThis.fetch;
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    resetStorageReadinessForTests();
+    restoreEnv(snapshot);
+  });
+
+  it("initObjectStorage skips verify when S3 env is incomplete in test", async () => {
+    process.env.NODE_ENV = "test";
+
+    const readiness = await initObjectStorage(undefined, {
+      ...storageConfig,
+      accessKeyId: "",
+    });
+
+    assert.equal(readiness.configured, false);
+    assert.equal(readiness.ok, true);
+  });
+
+  it("initObjectStorage throws when S3 env is incomplete in development", async () => {
+    process.env.NODE_ENV = "development";
+
+    await assert.rejects(
+      () =>
+        initObjectStorage(undefined, {
+          ...storageConfig,
+          secretAccessKey: "",
+        }),
+      /BONDERY_PRIVATE_S3_\* must be set/,
+    );
+  });
+
+  it("initObjectStorage throws when gateway status check fails", async () => {
+    process.env.NODE_ENV = "development";
+    globalThis.fetch = (async () => new Response("", { status: 503 })) as typeof fetch;
+
+    await assert.rejects(
+      () => initObjectStorage(undefined, storageConfig),
+      /Object storage verify failed/,
+    );
+  });
+
+  it("verifyObjectStorage returns unhealthy when config is incomplete outside test", async () => {
+    process.env.NODE_ENV = "development";
+
+    const readiness = await verifyObjectStorage({
+      ...storageConfig,
+      endpoint: "",
+    });
+
+    assert.equal(readiness.configured, false);
+    assert.equal(readiness.ok, false);
+    assert.equal(readiness.error, "not_configured");
+  });
+});
+
+describe("prisma pool injection", () => {
+  const snapshot = snapshotEnv();
+
+  afterEach(async () => {
+    const { resetPrismaForTests } = await import("@bondery/db");
+    resetPrismaForTests();
+    restoreEnv(snapshot);
+  });
+
+  it("initializePrisma wires an explicit pool", async () => {
+    process.env.NODE_ENV = "test";
+    process.env.DATABASE_URL = "postgresql://user:pass@127.0.0.1:5432/bondery";
+
+    const { createPrismaPool, getPrismaPool, initializePrisma, resetPrismaForTests } = await import(
+      "@bondery/db"
+    );
+    resetPrismaForTests();
+
+    const pool = createPrismaPool(process.env.DATABASE_URL);
+    initializePrisma(pool);
+
+    assert.equal(getPrismaPool(), pool);
+  });
+});
+describe("redis runtime readiness", () => {
+  const snapshot = snapshotEnv();
+
+  afterEach(() => {
+    resetRedisClientsForTests();
+    resetRedisReadinessForTests();
+    restoreEnv(snapshot);
+  });
+
+  it("initRedis skips verify when URL is missing in test", async () => {
+    process.env.NODE_ENV = "test";
+
+    const result = await initRedis(undefined, "");
+
+    assert.equal(result.readiness.configured, false);
+    assert.equal(result.readiness.ok, true);
+    assert.equal(result.clients, null);
+  });
+
+  it("initRedis throws when URL is missing in development", async () => {
+    process.env.NODE_ENV = "development";
+
+    await assert.rejects(() => initRedis(undefined, ""), /BONDERY_PRIVATE_REDIS_URL must be set/);
+  });
+
+  it("verifyRedis returns unhealthy when URL is missing outside test", async () => {
+    process.env.NODE_ENV = "development";
+
+    const readiness = await verifyRedis("");
+
+    assert.equal(readiness.configured, false);
+    assert.equal(readiness.ok, false);
+    assert.equal(readiness.error, "not_configured");
+  });
+
+  it("probeRedis delegates to verifyRedis", async () => {
+    process.env.NODE_ENV = "test";
+
+    const result = await probeRedis("");
+
+    assert.deepEqual(result, { configured: false, ok: true });
+  });
+});

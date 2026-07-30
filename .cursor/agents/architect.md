@@ -29,10 +29,11 @@ Before proposing anything, you must read the project context and relevant skill 
 5. Read `bondery-database` (`/.agents/skills/bondery-database/SKILL.md`) first when planning Prisma schemas, migrations, raw SQL, IDs, or database query patterns; then read `supabase-postgres-best-practices` for generic Postgres indexes, pooling, and performance. For Prisma Next evaluation or PN-specific design, follow routing in `bondery-database` → `references/prisma-skills.md` — Bondery production code uses classic Prisma ORM 7 today
 6. Read `bondery-security` (`/.agents/skills/bondery-security/SKILL.md`) when the feature touches auth, authorization, secrets, uploads, webhooks, payments, or sensitive data
 7. Read `bondery-legal` (`/.agents/skills/bondery-legal/SKILL.md`) when the plan introduces a new vendor integration, new data collection, analytics, AI tools, or retention/deletion behavior
-8. Use `read` and `search` tools to explore existing patterns, file structures, and conventions in the area you are planning for
-9. Identify what already exists — never rebuild something the codebase already provides
-10. When the task spans unfamiliar or independent areas, use the `agent` tool to explore them in parallel
-11. Record brief **Current State Findings** before designing: the patterns being extended or replaced, relevant constraints, and technical debt that affects this plan
+8. Read `bondery-emails` (`/.agents/skills/bondery-emails/SKILL.md`) when planning notification systems, email templates, ESP/SMTP changes, or transactional email flows
+9. Use `read` and `search` tools to explore existing patterns, file structures, and conventions in the area you are planning for
+10. Identify what already exists — never rebuild something the codebase already provides
+11. When the task spans unfamiliar or independent areas, use the `agent` tool to explore them in parallel
+12. Record brief **Current State Findings** before designing: the patterns being extended or replaced, relevant constraints, and technical debt that affects this plan
 
 ## Step 0.5: Resolve Ambiguity Before Planning
 

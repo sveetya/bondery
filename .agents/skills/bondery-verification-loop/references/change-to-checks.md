@@ -76,6 +76,15 @@ npx biome ci .
 
 Policy scripts run inside `check-types` — see `apps/api/package.json`.
 
+## `packages/emails` (`@bondery/emails`)
+
+| Trigger | Commands |
+|---------|----------|
+| Template change | `npm run compile --workspace=@bondery/emails` |
+| Preview (manual) | `npm run preview --workspace=@bondery/emails` |
+
+When `apps/api/src/services/notifications/**` or `apps/api/src/lib/notifications/**` change, also run API typecheck. See [bondery-emails](../../bondery-emails/SKILL.md).
+
 ## `apps/webapp` (`webapp`)
 
 | Trigger | Commands |

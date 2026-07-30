@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-Bondery currently stores contact avatars and LinkedIn logos in **Supabase Storage** (`avatars`, `linkedin_logos` public buckets), with optional **local disk** and **generic S3** adapters behind a `StorageAdapter` factory. Supabase imgproxy serves on-the-fly resize/quality transforms via query parameters on avatar URLs.
+Bondery currently stores contact avatars and LinkedIn logos in **Supabase Storage** (`avatars`, `linkedin-logos` public buckets), with optional **local disk** and **generic S3** adapters behind a `StorageAdapter` factory. Supabase imgproxy serves on-the-fly resize/quality transforms via query parameters on avatar URLs.
 
 This migration moves **all object storage** to **bundled SeaweedFS** in the default Docker Compose stack (production and self-host). The API keeps the existing service layer (`StorageAdapter`, `getStorage()`, bucket/key helpers) but **only** implements S3 via `@aws-sdk/client-s3` talking to SeaweedFS’s S3 gateway.
 
@@ -50,7 +50,7 @@ This migration moves **all object storage** to **bundled SeaweedFS** in the defa
 ### Buckets
 
 - `avatars` — `{userId}/{contactId}.jpg`
-- `linkedin_logos` — `{userId}/{linkedinId}.jpg`
+- `linkedin-logos` — `{userId}/{linkedinId}.jpg`
 
 ### Call sites
 
@@ -85,7 +85,7 @@ Services: **master**, **volume**, **filer**, **s3** (gateway on `:8333`).
 
 ### S3 layout
 
-Use **real S3 buckets** `avatars` and `linkedin_logos` (refactor away from single-bucket key-prefix pattern in `s3.ts`).
+Use **real S3 buckets** `avatars` and `linkedin-logos` (refactor away from single-bucket key-prefix pattern in `s3.ts`).
 
 ### Public URLs
 
@@ -221,7 +221,7 @@ Implement `migrate-storage-from-supabase.ts`; production cutover runbook; trim S
 - External S3 (AWS, R2, standalone MinIO config)
 - Image proxy / imgproxy / presigned read URLs
 - CDN beyond Traefik TLS
-- New buckets beyond `avatars` / `linkedin_logos`
+- New buckets beyond `avatars` / `linkedin-logos`
 - Removing Supabase Postgres/Auth/Kong (only storage-api/imgproxy)
 - DB schema changes
 

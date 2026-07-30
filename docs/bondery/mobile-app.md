@@ -48,7 +48,7 @@ Deeper screens (contact detail, group view, notes editor) hide the tab bar until
 
 ## Getting the app
 
-Distribution is rolling out through TestFlight and Play Store internal testing. If you self-host, build from source — see [Local development setup](../contributing/local-setup.md#7-mobile-application-appsmobile).
+Distribution is rolling out through TestFlight and Play Store internal testing. If you self-host, build from source — see [Local development setup](../contributing/local-setup.mdx#mobile-application-appsmobile).
 
 ## Related
 

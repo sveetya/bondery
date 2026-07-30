@@ -1,6 +1,6 @@
 /**
  * Side-effect-free Fastify app factory: plugins, swagger, routes.
- * Use for OpenAPI generation and route tests. No Redis, JWKS verify, or listen.
+ * Use for OpenAPI generation and route tests. No Redis, rate-limit, JWKS verify, or listen.
  */
 
 import { createRequire } from "node:module";
@@ -29,7 +29,7 @@ import { registerAuthStrategies } from "./lib/platform/auth/strategies.js";
 import { mapErrorToResponse } from "./lib/platform/errors/map-to-response.js";
 import type { AppFastifyInstance } from "./lib/platform/fastify-types.js";
 import logger from "./lib/platform/logger.js";
-import { registerNotFoundRateLimit, registerRateLimit } from "./lib/platform/rate-limit.js";
+import { registerDefaultNotFoundHandler } from "./lib/platform/rate-limit.js";
 import { swaggerOpenApiConfig } from "./openapi/swagger-config.js";
 import { registerAllRoutes } from "./routes/register-all.js";
 
@@ -146,8 +146,7 @@ export async function buildApp(): Promise<AppFastifyInstance> {
 
   await fastify.register(fastifyAuth);
   registerAuthStrategies(fastify);
-  await registerRateLimit(fastify);
-  registerNotFoundRateLimit(fastify);
+  registerDefaultNotFoundHandler(fastify);
 
   registerExtensionVersionCheck(fastify);
 

@@ -1,15 +1,22 @@
 import type { FastifyBaseLogger } from "fastify";
+
+import { getDatabaseUrl, requireDatabaseUrl } from "../data/database-url.js";
+import { shouldSkipLiveRuntimeVerify } from "../platform/runtime-env.js";
 import { startBoss, stopBoss } from "./boss.js";
 import { ensureJobQueues, registerJobSchedules, registerJobWorkers } from "./schedules.js";
 
-export async function startJobs(log: FastifyBaseLogger): Promise<void> {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    log.warn("DATABASE_URL not set — pg-boss jobs disabled");
-    return;
+export async function startJobs(log: FastifyBaseLogger, databaseUrl?: string): Promise<void> {
+  const url = (databaseUrl ?? getDatabaseUrl())?.trim();
+  if (!url) {
+    if (shouldSkipLiveRuntimeVerify()) {
+      log.info("DATABASE_URL not set — pg-boss jobs disabled in test");
+      return;
+    }
+
+    requireDatabaseUrl();
   }
 
-  const boss = await startBoss();
+  const boss = await startBoss(url ?? requireDatabaseUrl());
   boss.on("error", (error) => {
     log.error({ err: error }, "pg-boss error");
   });

@@ -19,7 +19,7 @@ Webhooks, WebSockets, AI tools, extension bridges, and mobile privacy boundaries
 
 ### Internal callbacks
 
-`apps/api/src/routes/internal/reminder-digest.ts` — `internalRoutes` → `verifyServiceSecret`.
+No internal HTTP email routes — reminder digests are dispatched via pg-boss only (`services/notifications/reminder-dispatch.ts`).
 
 ## Sync WebSocket
 

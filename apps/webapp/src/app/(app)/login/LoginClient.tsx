@@ -1,8 +1,7 @@
 "use client";
 
-import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
-import { AnchorLink, errorNotificationTemplate } from "@bondery/mantine-next";
-import { Card, Stack, Text } from "@mantine/core";
+import { getAuthUserFacingError } from "@bondery/helpers/api";
+import { errorNotificationTemplate } from "@bondery/mantine-next";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -11,8 +10,7 @@ import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
-import { LoginProviderButtons } from "./components/LoginProviderButtons";
-import { Logo } from "./components/Logo";
+import { SocialLoginCard } from "./components/SocialLoginCard";
 
 export function LoginClient() {
   const t = useLoginPageTranslations();
@@ -26,74 +24,61 @@ export function LoginClient() {
   const redirectParam = searchParams.get(RETURN_INTENT_PARAM);
   const shouldForceDesktopLoginLayout = redirectParam?.startsWith("/oauth/consent") ?? false;
 
-  const handleOAuthLogin = async (_provider: "github" | "linkedin") => {
+  const handleOAuthLogin = async (provider: "github" | "linkedin") => {
     try {
       setLoading(true);
       await setLocalePreferencesCookie();
 
-      const startUrl = new URL("/auth/start", window.location.origin);
-      if (redirectParam) {
-        startUrl.searchParams.set(RETURN_INTENT_PARAM, redirectParam);
-      }
+      // Establish the API's native Better Auth session via social sign-in
+      // first, then resume the webapp's OAuth-BFF exchange. Starting at
+      // /auth/start without a native session stops on /oauth/login and forces
+      // a second provider click.
+      const callbackURL =
+        redirectParam?.startsWith("/oauth/consent") === true
+          ? new URL(redirectParam, window.location.origin).toString()
+          : (() => {
+              const startUrl = new URL("/auth/start", window.location.origin);
+              if (redirectParam) {
+                startUrl.searchParams.set(RETURN_INTENT_PARAM, redirectParam);
+              }
+              return startUrl.toString();
+            })();
 
-      window.location.assign(startUrl.toString());
-    } catch (_err) {
+      const { error } = await authClient.signIn.social({
+        callbackURL,
+        provider,
+      });
+
+      if (error) {
+        notifications.show(
+          errorNotificationTemplate({
+            description: getAuthUserFacingError(error, tCommon),
+            title: t("AuthenticationError"),
+          }),
+        );
+      }
+    } catch (err) {
       notifications.show(
         errorNotificationTemplate({
-          description: tCommon("errors.unknown"),
+          description: getAuthUserFacingError(err, tCommon),
           title: t("UnexpectedError"),
         }),
       );
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center ">
-      <Card className="max-w-md" p="xl">
-        {!shouldForceDesktopLoginLayout && (
-          <Stack align="center" gap="lg" hiddenFrom="sm">
-            <Logo href={websiteUrl} size={60} />
-            <Stack align="center" gap="0">
-              <Text fw={600} size="lg" ta="center">
-                {t("MobileNotAvailable")}
-              </Text>
-              <Text c="dimmed" size="md" ta="center">
-                {t("MobileNotAvailableMessage")}
-              </Text>
-            </Stack>
-          </Stack>
-        )}
-        <Stack
-          align="center"
-          gap="md"
-          {...(!shouldForceDesktopLoginLayout ? { visibleFrom: "sm" } : {})}
-        >
-          <Logo href={websiteUrl} size={60} />
-          <Text size="md" ta="center">
-            {t("Description")}
-          </Text>
-
-          <LoginProviderButtons
-            authClient={authClient}
-            getProviderTestId={(providerKey) =>
-              providerKey === "github" ? "login-github" : `login-${providerKey}`
-            }
-            loading={loading}
-            onProviderClick={handleOAuthLogin}
-          />
-          <Text c="dimmed" size="xs" ta="center">
-            {t("TermsAgreement")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs">
-              {t("TermsOfService")}
-            </AnchorLink>{" "}
-            {t("And")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs">
-              {t("PrivacyPolicy")}
-            </AnchorLink>
-          </Text>
-        </Stack>
-      </Card>
-    </div>
+    <SocialLoginCard
+      authClient={authClient}
+      getProviderTestId={(providerKey) =>
+        providerKey === "github" ? "login-github" : `login-${providerKey}`
+      }
+      hideOnMobile={!shouldForceDesktopLoginLayout}
+      loading={loading}
+      onProviderClick={handleOAuthLogin}
+      websiteUrl={websiteUrl}
+    />
   );
 }

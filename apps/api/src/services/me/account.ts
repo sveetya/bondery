@@ -1,10 +1,8 @@
 import { prisma } from "@bondery/db";
-import type { FastifyRequest } from "fastify";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { DomainError } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
-import { auth } from "../../lib/auth/index.js";
-import { toFetchHeaders } from "../../lib/auth/request-headers.js";
+import { deleteUserWithTeardown } from "../../lib/auth/teardown-user.js";
 import {
   deleteContactAvatarAndClearFlag,
   uploadContactAvatarAndSetFlag,
@@ -91,25 +89,36 @@ export async function updateAccountMetadata(
   };
 }
 
-export async function deleteAccount(
-  ctx: DomainContext,
-  request: FastifyRequest,
-): Promise<{ success: true }> {
+export async function deleteAccount(ctx: DomainContext): Promise<{ success: true }> {
   const { user, log } = ctx;
-  const headers = toFetchHeaders(request);
 
   try {
-    const session = await auth.api.getSession({ headers });
-    if (session?.user) {
-      await auth.api.deleteUser({ body: {}, headers });
-      log?.info({ userId: user.id }, "Account deleted via Better Auth");
-      return { success: true };
+    const profile = await prisma.user.findUnique({
+      select: { email: true, id: true, name: true },
+      where: { id: user.id },
+    });
+
+    if (!profile) {
+      throw internal("account_failed_to_delete_account");
     }
+
+    await deleteUserWithTeardown(
+      {
+        email: profile.email,
+        id: profile.id,
+        name: profile.name,
+      },
+      log,
+    );
+
+    log?.info({ userId: user.id }, "Account deleted");
+    return { success: true };
   } catch (error) {
+    if (error instanceof DomainError) {
+      throw error;
+    }
     throw internal("account_failed_to_delete_account", error);
   }
-
-  throw internal("account_failed_to_delete_account");
 }
 
 export async function uploadProfilePhoto(

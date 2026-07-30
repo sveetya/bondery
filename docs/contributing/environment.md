@@ -20,7 +20,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 npm install
 npm run setup:dev
 # edit .env.local (OAuth clients, optional integrations)
-# start Postgres (see local-setup.md)
+# start Postgres (see local-setup.mdx)
 npm run env
 npm run dev
 ```

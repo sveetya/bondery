@@ -1,5 +1,6 @@
 import type * as React from "react";
 import { Column, Container, Heading, Hr, Img, Link, Row, Section, Text } from "react-email";
+import { defaultShareContactCopy } from "#fixtures/default-copy.js";
 import { EmailWrapper } from "#shared/EmailWrapper.js";
 
 export interface ShareContactEmailPhone {
@@ -23,10 +24,33 @@ export interface ShareContactEmailDate {
   type: string;
 }
 
+export interface ShareContactEmailCopy {
+  defaultMessage: string;
+  heading: string;
+  importantDateLine: string;
+  labels: {
+    phone: string;
+    email: string;
+    location: string;
+    address: string;
+    linkedin: string;
+    instagram: string;
+    facebook: string;
+    website: string;
+    whatsapp: string;
+    signal: string;
+    notes: string;
+    importantDates: string;
+  };
+  noHeadline: string;
+  preview: string;
+}
+
 export interface ShareContactEmailProps {
   addresses?: ShareContactEmailAddress[];
   contactAvatarUrl?: string;
   contactName: string;
+  copy?: ShareContactEmailCopy;
   emails?: ShareContactEmailEntry[];
   facebook?: string;
   headline?: string;
@@ -109,15 +133,20 @@ export default function ShareContactEmail({
   signal,
   notes,
   importantDates,
+  copy = defaultShareContactCopy,
 }: ShareContactEmailProps) {
-  const previewText = `${senderName} shared a contact with you • ${contactName}`;
-  const senderMessage = message?.trim() || "Shared this contact with you via Bondery.";
-  const resolvedHeadline = headline?.trim() || "No headline";
+  const preview = copy.preview
+    .replace("{{senderName}}", senderName)
+    .replace("{{contactName}}", contactName);
+  const senderMessage = message?.trim() || copy.defaultMessage;
+  const resolvedHeadline = headline?.trim() || copy.noHeadline;
 
   return (
-    <EmailWrapper preview={previewText}>
+    <EmailWrapper preview={preview}>
       <Container className="mx-auto mb-4 rounded-lg bg-white p-6 shadow-sm">
-        <Heading className="mb-4 text-lg font-bold text-gray-900">Contact shared with you</Heading>
+        <Heading as="h1" className="mb-4 text-lg font-bold text-gray-900">
+          {copy.heading}
+        </Heading>
 
         <Section className="mb-3 rounded-lg border border-gray-200 bg-gray-50 p-4">
           <Row>
@@ -148,7 +177,7 @@ export default function ShareContactEmail({
         <Hr className="my-4 border-gray-200" />
 
         {phones && phones.length > 0 && (
-          <InfoRow label="Phone">
+          <InfoRow label={copy.labels.phone}>
             {phones.map((phone) => (
               <Text
                 className="m-0 text-sm text-gray-900"
@@ -163,7 +192,7 @@ export default function ShareContactEmail({
         )}
 
         {emails && emails.length > 0 && (
-          <InfoRow label="Email">
+          <InfoRow label={copy.labels.email}>
             {emails.map((email) => (
               <Link
                 className="block text-sm text-brand"
@@ -178,13 +207,13 @@ export default function ShareContactEmail({
         )}
 
         {location && (
-          <InfoRow label="Location">
+          <InfoRow label={copy.labels.location}>
             <Text className="m-0 text-sm text-gray-900">{location}</Text>
           </InfoRow>
         )}
 
         {addresses && addresses.length > 0 && (
-          <InfoRow label="Address">
+          <InfoRow label={copy.labels.address}>
             {addresses.map((addr) =>
               addr.formatted ? (
                 <Text className="m-0 text-sm text-gray-900" key={addr.formatted}>
@@ -196,7 +225,7 @@ export default function ShareContactEmail({
         )}
 
         {linkedin && (
-          <InfoRow label="LinkedIn">
+          <InfoRow label={copy.labels.linkedin}>
             <Link className="text-sm text-brand" href={`https://linkedin.com/in/${linkedin}`}>
               {linkedin}
             </Link>
@@ -204,7 +233,7 @@ export default function ShareContactEmail({
         )}
 
         {instagram && (
-          <InfoRow label="Instagram">
+          <InfoRow label={copy.labels.instagram}>
             <Link className="text-sm text-brand" href={`https://instagram.com/${instagram}`}>
               @{instagram}
             </Link>
@@ -212,7 +241,7 @@ export default function ShareContactEmail({
         )}
 
         {facebook && (
-          <InfoRow label="Facebook">
+          <InfoRow label={copy.labels.facebook}>
             <Link className="text-sm text-brand" href={`https://facebook.com/${facebook}`}>
               {facebook}
             </Link>
@@ -220,7 +249,7 @@ export default function ShareContactEmail({
         )}
 
         {website && (
-          <InfoRow label="Website">
+          <InfoRow label={copy.labels.website}>
             <Link className="text-sm text-brand" href={website}>
               {website}
             </Link>
@@ -228,28 +257,31 @@ export default function ShareContactEmail({
         )}
 
         {whatsapp && (
-          <InfoRow label="WhatsApp">
+          <InfoRow label={copy.labels.whatsapp}>
             <Text className="m-0 text-sm text-gray-900">{whatsapp}</Text>
           </InfoRow>
         )}
 
         {signal && (
-          <InfoRow label="Signal">
+          <InfoRow label={copy.labels.signal}>
             <Text className="m-0 text-sm text-gray-900">{signal}</Text>
           </InfoRow>
         )}
 
         {notes && (
-          <InfoRow label="Notes">
+          <InfoRow label={copy.labels.notes}>
             <Text className="m-0 text-sm text-gray-700">{notes}</Text>
           </InfoRow>
         )}
 
         {importantDates && importantDates.length > 0 && (
-          <InfoRow label="Important dates">
+          <InfoRow label={copy.labels.importantDates}>
             {importantDates.map((d) => (
               <Text className="m-0 text-sm text-gray-900" key={`${d.label}-${d.date}`}>
-                {d.label}: {d.date} ({d.type})
+                {copy.importantDateLine
+                  .replace("{{label}}", d.label)
+                  .replace("{{date}}", d.date)
+                  .replace("{{type}}", d.type)}
               </Text>
             ))}
           </InfoRow>

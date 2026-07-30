@@ -1,4 +1,5 @@
 import { prisma } from "@bondery/db";
+import type { SupportedLocale } from "@bondery/schemas/locale/supported-locale";
 import type { FastifyBaseLogger } from "fastify";
 import {
   AVATARS_BUCKET,
@@ -10,6 +11,7 @@ import {
 export type UserDeletionSnapshot = {
   email: string;
   id: string;
+  language?: SupportedLocale | null;
   name?: string | null;
 };
 
@@ -19,6 +21,7 @@ export function snapshotUserForDeletion(user: UserDeletionSnapshot): void {
   pendingDeletionEmails.set(user.id, {
     email: user.email,
     id: user.id,
+    language: user.language ?? null,
     name: user.name ?? null,
   });
 }
@@ -82,7 +85,13 @@ export async function runUserDeleteBefore(
   user: UserDeletionSnapshot,
   log?: FastifyBaseLogger,
 ): Promise<void> {
-  snapshotUserForDeletion(user);
+  const { getUserSettingsLanguage } = await import("./get-user-settings-language.js");
+  const language = await getUserSettingsLanguage(user.id);
+
+  snapshotUserForDeletion({
+    ...user,
+    language,
+  });
   await deleteUserStorageFiles(user.id);
   await deleteOAuthArtifactsForUser(user.id);
   await cancelStripeSubscriptionIfAny(user.id, log);
@@ -108,6 +117,7 @@ export async function runUserDeleteAfter(
     await sendAccountDeletedEmail(
       {
         email: snapshot.email,
+        language: snapshot.language,
         userName: snapshot.name,
       },
       log,

@@ -4,11 +4,7 @@ import websocket from "@fastify/websocket";
 import type { WebSocket } from "ws";
 import type { AppRoutePlugin } from "../../lib/platform/fastify-types.js";
 import { getLastServerSequence } from "../../lib/sync/idempotency.js";
-import {
-  getSyncWakeRuntime,
-  initSyncWakeRuntime,
-  type SyncWakeSocket,
-} from "../../lib/sync/wake/index.js";
+import { requireSyncWakeRuntime, type SyncWakeSocket } from "../../lib/sync/wake/index.js";
 
 function toSyncWakeSocket(socket: WebSocket): SyncWakeSocket {
   return {
@@ -63,7 +59,7 @@ export const syncWsRoutes: AppRoutePlugin = async (fastify): Promise<void> => {
         return;
       }
 
-      const runtime = getSyncWakeRuntime() ?? (await initSyncWakeRuntime(request.log));
+      const runtime = requireSyncWakeRuntime();
       const userId = await runtime.tickets.consume(ticket);
       if (!userId) {
         socket.close(1008, "invalid ticket");

@@ -1,7 +1,7 @@
 import { PLATFORM_ADMIN_ROLE, PLATFORM_USER_ROLE } from "@bondery/helpers/auth/platform-admin";
-import { adminAc, defaultAc, defaultStatements, userAc } from "better-auth/plugins/admin/access";
+import { defaultAc, defaultStatements, userAc } from "better-auth/plugins/admin/access";
 
-const platformAdminUserPermissions = adminAc.statements.user.filter(
+const platformAdminUserPermissions = defaultStatements.user.filter(
   (permission) => permission !== "impersonate" && permission !== "impersonate-admins",
 );
 
@@ -10,7 +10,7 @@ export const platformAdminAc = defaultAc;
 
 /** Platform operator role — impersonation permissions deliberately omitted. */
 export const platformAdminRole = platformAdminAc.newRole({
-  session: [...adminAc.statements.session],
+  session: [...defaultStatements.session],
   user: [...platformAdminUserPermissions],
 });
 

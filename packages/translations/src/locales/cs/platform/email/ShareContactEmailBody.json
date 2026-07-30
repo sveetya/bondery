@@ -1,0 +1,22 @@
+{
+  "defaultMessage": "Sdílel vám tento kontakt přes Bondery.",
+  "heading": "Kontakt s vámi sdílen",
+  "importantDateLine": "{{label}}: {{date}} ({{type}})",
+  "labels": {
+    "address": "Adresa",
+    "email": "E-mail",
+    "facebook": "Facebook",
+    "importantDates": "Důležitá data",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "location": "Lokalita",
+    "notes": "Poznámky",
+    "phone": "Telefon",
+    "signal": "Signal",
+    "website": "Web",
+    "whatsapp": "WhatsApp"
+  },
+  "noHeadline": "Bez popisu",
+  "preview": "{{senderName}} s vámi sdílel kontakt • {{contactName}}",
+  "subject": "{{senderName}} s vámi sdílel kontakt • {{contactName}}"
+}

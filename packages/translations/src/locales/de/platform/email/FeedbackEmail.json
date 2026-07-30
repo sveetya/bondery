@@ -1,0 +1,13 @@
+{
+  "generalFeedbackHeading": "Allgemeines Feedback:",
+  "heading": "Neues Feedback eingegangen",
+  "notProvided": "(Nicht angegeben)",
+  "npsReasonHeading": "Warum wurde diese Bewertung gewählt?",
+  "npsScoreLabel": "NPS-Wert:",
+  "npsScoreValue": "{{npsScore}} / 10",
+  "preview": "Neues Feedback von {{userEmail}} – NPS-Wert: {{npsScore}}",
+  "subject": "Neues Feedback zu Bondery",
+  "submittedAt": "Gesendet am: {{timestamp}}",
+  "userEmailLabel": "Benutzer-E-Mail:",
+  "userIdLabel": "Benutzer-ID:"
+}

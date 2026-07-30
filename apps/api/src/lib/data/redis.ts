@@ -4,15 +4,48 @@
  * - commands: rate limit, WS tickets, wake PUBLISH
  * - subscriber: wake SUBSCRIBE only (Redis pub/sub constraint)
  *
+ * Eager verify via initRedis() during initializeRuntime() (before sync wake).
  * Container note: on SIGTERM, prefer graceful quit via Fastify onClose when the process
  * receives a shutdown signal. In-memory-only deployments may still lose connections abruptly.
  */
 
+import type { FastifyBaseLogger } from "fastify";
 import { Redis } from "ioredis";
+
+import { classifyProbeError } from "../health/errors.js";
+import {
+  assertRuntimeDependencyConfigured,
+  shouldSkipLiveRuntimeVerify,
+} from "../platform/runtime-env.js";
+
+export type RedisReadiness = {
+  configured: boolean;
+  error?: string;
+  latencyMs?: number;
+  ok: boolean;
+  verifiedAt: string;
+};
+
+export type RedisClients = {
+  commands: Redis;
+  subscriber: Redis;
+};
+
+export type InitRedisResult = {
+  readiness: RedisReadiness;
+  clients: RedisClients | null;
+};
+
+const UNCONFIGURED_READINESS: RedisReadiness = {
+  configured: false,
+  ok: true,
+  verifiedAt: new Date(0).toISOString(),
+};
 
 let configuredUrl: string | null = null;
 let commandsClient: Redis | null = null;
 let subscriberClient: Redis | null = null;
+let redisReadiness: RedisReadiness | null = null;
 
 function trimRedisUrl(redisUrl?: string): string {
   return (redisUrl ?? process.env.BONDERY_PRIVATE_REDIS_URL ?? "").trim();
@@ -87,6 +120,165 @@ export function requireRedisSubscriber(redisUrl?: string): Redis {
   return client;
 }
 
+function setUnconfiguredReadiness(): RedisReadiness {
+  redisReadiness = { ...UNCONFIGURED_READINESS, verifiedAt: new Date().toISOString() };
+  return redisReadiness;
+}
+
+function setMissingReadiness(): RedisReadiness {
+  redisReadiness = {
+    configured: false,
+    error: "not_configured",
+    ok: false,
+    verifiedAt: new Date().toISOString(),
+  };
+  return redisReadiness;
+}
+
+async function connectIfNeeded(client: Redis): Promise<void> {
+  if (client.status === "wait" || client.status === "end") {
+    await client.connect();
+  }
+}
+
+async function pingClient(client: Redis): Promise<{ ok: true } | { ok: false; error: string }> {
+  await connectIfNeeded(client);
+  const pong = await client.ping();
+  if (pong !== "PONG") {
+    return { error: "unexpected_response", ok: false };
+  }
+  return { ok: true };
+}
+
+async function runRedisVerify(redisUrl: string): Promise<RedisReadiness> {
+  const started = Date.now();
+  const verifiedAt = new Date().toISOString();
+
+  try {
+    const commands = requireRedisCommands(redisUrl);
+    const subscriber = requireRedisSubscriber(redisUrl);
+
+    const commandsPing = await pingClient(commands);
+    if (!commandsPing.ok) {
+      redisReadiness = {
+        configured: true,
+        error: commandsPing.error,
+        latencyMs: Date.now() - started,
+        ok: false,
+        verifiedAt,
+      };
+      return redisReadiness;
+    }
+
+    const subscriberPing = await pingClient(subscriber);
+    if (!subscriberPing.ok) {
+      redisReadiness = {
+        configured: true,
+        error: subscriberPing.error,
+        latencyMs: Date.now() - started,
+        ok: false,
+        verifiedAt,
+      };
+      return redisReadiness;
+    }
+
+    redisReadiness = {
+      configured: true,
+      latencyMs: Date.now() - started,
+      ok: true,
+      verifiedAt,
+    };
+    return redisReadiness;
+  } catch (error) {
+    redisReadiness = {
+      configured: true,
+      error: classifyProbeError(error),
+      latencyMs: Date.now() - started,
+      ok: false,
+      verifiedAt,
+    };
+    return redisReadiness;
+  }
+}
+
+export function getRedisReadiness(): RedisReadiness {
+  return redisReadiness ?? UNCONFIGURED_READINESS;
+}
+
+/**
+ * Eager Redis verify on startup. Required in development and production; skipped in test.
+ */
+export async function initRedis(
+  log: FastifyBaseLogger | undefined,
+  redisUrl: string,
+): Promise<InitRedisResult> {
+  const trimmed = redisUrl.trim();
+  if (!trimmed) {
+    assertRuntimeDependencyConfigured(
+      false,
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+    );
+    log?.info("Redis not configured — skipping verify in test");
+    return { clients: null, readiness: setUnconfiguredReadiness() };
+  }
+
+  if (shouldSkipLiveRuntimeVerify()) {
+    log?.info("Redis verify skipped in test environment");
+    const readiness = {
+      configured: true,
+      ok: true,
+      verifiedAt: new Date().toISOString(),
+    };
+    redisReadiness = readiness;
+    return {
+      clients: {
+        commands: requireRedisCommands(trimmed),
+        subscriber: requireRedisSubscriber(trimmed),
+      },
+      readiness,
+    };
+  }
+
+  const readiness = await runRedisVerify(trimmed);
+  if (readiness.ok) {
+    log?.info({ latencyMs: readiness.latencyMs }, "Redis verified");
+  } else {
+    log?.error({ error: readiness.error, latencyMs: readiness.latencyMs }, "Redis verify failed");
+    throw new Error(`Redis verify failed: ${readiness.error ?? "unknown"}`);
+  }
+
+  return {
+    clients: {
+      commands: requireRedisCommands(trimmed),
+      subscriber: requireRedisSubscriber(trimmed),
+    },
+    readiness,
+  };
+}
+
+/** Re-verify Redis (used by /health/ready when cache is cold). */
+export async function verifyRedis(redisUrl: string): Promise<RedisReadiness> {
+  const trimmed = redisUrl.trim();
+  if (!trimmed) {
+    if (shouldSkipLiveRuntimeVerify()) {
+      return setUnconfiguredReadiness();
+    }
+
+    return setMissingReadiness();
+  }
+
+  if (shouldSkipLiveRuntimeVerify()) {
+    redisReadiness = {
+      configured: true,
+      ok: true,
+      verifiedAt: new Date().toISOString(),
+    };
+    return redisReadiness;
+  }
+
+  return runRedisVerify(trimmed);
+}
+
 async function quitClient(client: Redis | null): Promise<void> {
   if (!client) {
     return;
@@ -109,6 +301,7 @@ export async function shutdownRedis(): Promise<void> {
   subscriberClient = null;
   commandsClient = null;
   configuredUrl = null;
+  redisReadiness = null;
 
   await quitClient(subscriber);
   await quitClient(commands);
@@ -119,4 +312,10 @@ export function resetRedisClientsForTests(): void {
   commandsClient = null;
   subscriberClient = null;
   configuredUrl = null;
+  redisReadiness = null;
+}
+
+/** @internal Test-only reset for readiness cache. */
+export function resetRedisReadinessForTests(): void {
+  redisReadiness = null;
 }

@@ -1,6 +1,6 @@
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { type NextRequest, NextResponse } from "next/server";
-import { WEBAPP_SESSION_COOKIE } from "@/lib/auth/constants";
+import { BYPASS_ONBOARDING_ONCE_COOKIE, WEBAPP_SESSION_COOKIE } from "@/lib/auth/constants";
 import {
   decryptWebappSession,
   encryptWebappSession,
@@ -57,6 +57,13 @@ export async function updateSession(request: NextRequest, requestHeaders?: Heade
     );
   } else if (sessionExpired) {
     response.cookies.set(WEBAPP_SESSION_COOKIE, "", { maxAge: 0, path: "/" });
+  }
+
+  if (
+    request.cookies.get(BYPASS_ONBOARDING_ONCE_COOKIE)?.value === "1" &&
+    request.nextUrl.pathname.startsWith(WEBAPP_ROUTES.APP_GROUP)
+  ) {
+    response.cookies.set(BYPASS_ONBOARDING_ONCE_COOKIE, "", { maxAge: 0, path: "/app" });
   }
 
   return response;

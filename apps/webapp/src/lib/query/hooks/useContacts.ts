@@ -316,7 +316,13 @@ export function useUploadContactPhotoMutation(
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (file: File) => uploadContactPhoto(contactId, file),
-    onSuccess: async () => {
+    onSuccess: async ({ avatarUrl }) => {
+      if (avatarUrl) {
+        queryClient.setQueryData<Contact | undefined>(contactKeys.detail(contactId), (current) =>
+          current ? { ...current, avatar: avatarUrl } : current,
+        );
+      }
+
       await Promise.all([
         invalidateContactDetail(queryClient, contactId),
         options?.syncSettings

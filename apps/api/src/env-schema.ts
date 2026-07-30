@@ -108,6 +108,9 @@ export const envSchema = {
     BONDERY_PUBLIC_WEBSITE_URL: {
       type: "string",
     },
+    DATABASE_URL: {
+      type: "string",
+    },
     LOG_LEVEL: {
       default: "info",
       type: "string",
@@ -132,6 +135,7 @@ declare module "fastify" {
       BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS: string;
       API_PORT: number;
       API_HOST: string;
+      DATABASE_URL: string;
       BONDERY_PRIVATE_EMAIL_HOST: string;
       BONDERY_PRIVATE_EMAIL_USER: string;
       BONDERY_PRIVATE_EMAIL_PASS: string;

@@ -1,11 +1,21 @@
 import { ShareContactEmail } from "@bondery/emails";
 import type { ShareableField } from "@bondery/schemas";
 import { render } from "@react-email/render";
-import nodemailer from "nodemailer";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras, type FullContactExtras } from "../../lib/contacts/enrichment.js";
 import { contactDetailSelect, mapContactDetailRecord } from "../../lib/data/prisma-mappers.js";
+import { buildShareContactCopy } from "../../lib/notifications/email-copy-builders.js";
+import {
+  loadEmailNamespace,
+  readCopyString,
+  resolveEmailLocale,
+} from "../../lib/notifications/email-i18n.js";
+import {
+  getEmailConfig,
+  isEmailConfigured,
+  sendRenderedEmail,
+} from "../../lib/notifications/transporter.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
 
@@ -272,43 +282,36 @@ export async function shareContact(
     whatsapp: has("whatsapp") ? (enriched.whatsapp ?? undefined) : undefined,
   };
 
-  const smtpHost = process.env.BONDERY_PRIVATE_EMAIL_HOST;
-  const smtpUser = process.env.BONDERY_PRIVATE_EMAIL_USER;
-  const smtpPass = process.env.BONDERY_PRIVATE_EMAIL_PASS;
-  const smtpAddress = process.env.BONDERY_PRIVATE_EMAIL_ADDRESS;
-  const smtpPort = Number(process.env.BONDERY_PRIVATE_EMAIL_PORT ?? 587);
+  const lng = await resolveEmailLocale(user.id);
+  const bundle = loadEmailNamespace(lng, "ShareContactEmailBody");
+  const copy = buildShareContactCopy(bundle);
+  const subject = readCopyString(bundle, "subject", {
+    contactName,
+    senderName,
+  });
 
-  if (!smtpHost || !smtpUser) {
+  if (!isEmailConfigured()) {
     throw internal("email_service_not_configured");
   }
 
+  const config = getEmailConfig()!;
+
   let emailHtml: string;
   try {
-    emailHtml = await render(ShareContactEmail(emailProps));
+    emailHtml = await render(ShareContactEmail({ ...emailProps, copy }));
   } catch {
     throw internal("contact_share_email_render_failed");
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      auth: { pass: smtpPass, user: smtpUser },
-      host: smtpHost,
-      port: smtpPort,
-      secure: false,
-      tls: { rejectUnauthorized: false },
-    });
-
-    const mailOptions: nodemailer.SendMailOptions = {
-      from: `Bondery <${smtpAddress}>`,
+    await sendRenderedEmail({
+      cc: user.email,
+      from: `Bondery <${config.fromAddress}>`,
       html: emailHtml,
       replyTo: user.email,
-      subject: `${senderName} shared a contact with you • ${contactName}`,
+      subject,
       to: recipientEmails.join(", "),
-    };
-
-    mailOptions.cc = user.email;
-
-    await transporter.sendMail(mailOptions);
+    });
   } catch {
     throw internal("contact_share_email_send_failed");
   }

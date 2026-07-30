@@ -1,19 +1,36 @@
 import { IMPORTANT_DATE_TYPE_META } from "@bondery/helpers";
 import { Column, Container, Heading, Img, Link, Row, Section, Text } from "react-email";
+import { defaultReminderDigestCopy } from "#fixtures/default-copy.js";
 import { EmailWrapper } from "#shared/EmailWrapper.js";
 
 export interface ReminderDigestEmailItem {
   date: string;
+  dateLabel: string;
   note: string | null;
   notifyDaysBefore: 1 | 3 | 7;
   notifyOn: string;
   personAvatar: string | null;
   personId: string;
   personName: string;
+  remainingLabel: string;
   type: "birthday" | "anniversary" | "nameday" | "graduation" | "other";
+  typeLabel: string;
+}
+
+export interface ReminderDigestEmailCopy {
+  dateTypes: Record<ReminderDigestEmailItem["type"], string>;
+  dayMany: string;
+  dayOne: string;
+  heading: string;
+  introMany: string;
+  introOne: string;
+  preview: string;
+  reminderLine: string;
 }
 
 export interface ReminderDigestEmailProps {
+  copy?: ReminderDigestEmailCopy;
+  formattedHeadingDate: string;
   reminders: ReminderDigestEmailItem[];
   targetDate: string;
   userId: string;
@@ -29,70 +46,38 @@ function getInitials(name: string) {
     .join("");
 }
 
-function formatDateLabel(dateValue: string) {
-  const parsedDate = new Date(`${dateValue}T00:00:00Z`);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return dateValue;
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-    year: "numeric",
-  });
-}
-
-function formatTargetDate(dateValue: string) {
-  const parsedDate = new Date(`${dateValue}T00:00:00Z`);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return dateValue;
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  });
-}
-
-function getDaysRemaining(targetDate: string, date: string) {
-  const target = new Date(`${targetDate}T00:00:00Z`);
-  const event = new Date(`${date}T00:00:00Z`);
-
-  if (Number.isNaN(target.getTime()) || Number.isNaN(event.getTime())) {
-    return null;
-  }
-
-  const millisecondsInDay = 24 * 60 * 60 * 1000;
-  return Math.max(0, Math.round((event.getTime() - target.getTime()) / millisecondsInDay));
-}
-
-export default function ReminderDigestEmail({ targetDate, reminders }: ReminderDigestEmailProps) {
-  const previewText = `You have ${reminders.length} reminder${reminders.length === 1 ? "" : "s"} for ${targetDate}`;
-  const headingDate = formatTargetDate(targetDate);
+export default function ReminderDigestEmail({
+  copy = defaultReminderDigestCopy,
+  formattedHeadingDate,
+  reminders,
+  targetDate,
+}: ReminderDigestEmailProps) {
+  const preview = copy.preview
+    .replace("{{count}}", String(reminders.length))
+    .replace("{{targetDate}}", targetDate);
+  const heading = copy.heading.replace("{{headingDate}}", formattedHeadingDate);
+  const intro =
+    reminders.length === 1
+      ? copy.introOne
+      : copy.introMany.replace("{{count}}", String(reminders.length));
 
   return (
-    <EmailWrapper preview={previewText}>
+    <EmailWrapper preview={preview}>
       <Container className="mx-auto mb-4 rounded-lg bg-white p-6 shadow-sm">
-        <Heading className="mb-1 text-md font-bold text-gray-900">
-          Bondery reminders for {headingDate}
+        <Heading as="h1" className="mb-1 text-md font-bold text-gray-900">
+          {heading}
         </Heading>
-        <Text className="mb-4 text-sm text-gray-700">
-          You have {reminders.length} reminder
-          {reminders.length === 1 ? "" : "s"}:
-        </Text>
+        <Text className="mb-4 text-sm text-gray-700">{intro}</Text>
 
         {reminders.map((reminder) => {
           const personUrl = `https://app.usebondery.com/app/person/${encodeURIComponent(reminder.personId)}`;
           const dateMeta = IMPORTANT_DATE_TYPE_META[reminder.type];
-          const daysRemaining = getDaysRemaining(targetDate, reminder.date);
-          const remainingLabel =
-            daysRemaining === null
-              ? `${reminder.notifyDaysBefore} day${reminder.notifyDaysBefore === 1 ? "" : "s"}`
-              : `${daysRemaining} day${daysRemaining === 1 ? "" : "s"}`;
           const personInitials = getInitials(reminder.personName) || "?";
-          const dateLabel = formatDateLabel(reminder.date);
+          const reminderLine = copy.reminderLine
+            .replace("{{emoji}}", dateMeta.emoji)
+            .replace("{{typeLabel}}", reminder.typeLabel)
+            .replace("{{remainingLabel}}", reminder.remainingLabel)
+            .replace("{{dateLabel}}", reminder.dateLabel);
 
           return (
             <Section
@@ -138,10 +123,7 @@ export default function ReminderDigestEmail({ targetDate, reminders }: ReminderD
                   >
                     {reminder.personName}
                   </Link>
-                  <Text className="m-0 text-sm text-gray-700">
-                    {dateMeta.emoji} <strong>{dateMeta.label}</strong> is coming up in{" "}
-                    <strong>{remainingLabel}</strong> on {dateLabel}.
-                  </Text>
+                  <Text className="m-0 text-sm text-gray-700">{reminderLine}</Text>
                   {reminder.note ? (
                     <Text className="mt-1 mb-0 text-xs text-gray-600">{reminder.note}</Text>
                   ) : null}

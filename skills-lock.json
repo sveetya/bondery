@@ -23,6 +23,12 @@
       "source": "expo/skills",
       "sourceType": "github"
     },
+    "email-best-practices": {
+      "computedHash": "c7218333381fa335b8a912bd55b3bb58b5b567a174f9e1d8b41940ff82f1a6b6",
+      "skillPath": "skills/email-best-practices/SKILL.md",
+      "source": "resend/resend-skills",
+      "sourceType": "github"
+    },
     "expo-cicd-workflows": {
       "computedHash": "03a75cb140374ee4e53a7371b00eb7a182aa41d3a16373b08892bb6059646b72",
       "skillPath": "plugins/expo/skills/expo-cicd-workflows/SKILL.md",

@@ -40,7 +40,7 @@ export function getPublicStorageBaseUrl(): string {
 }
 
 export const AVATARS_BUCKET = "avatars";
-export const LINKEDIN_LOGOS_BUCKET = "linkedin_logos";
+export const LINKEDIN_LOGOS_BUCKET = "linkedin-logos";
 
 /** Copy a storage object within the same bucket (get + put). */
 export async function copyStorageObject(

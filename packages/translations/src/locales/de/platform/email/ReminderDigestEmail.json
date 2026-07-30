@@ -1,0 +1,17 @@
+{
+  "dateTypes": {
+    "anniversary": "Jahrestag",
+    "birthday": "Geburtstag",
+    "graduation": "Abschluss",
+    "nameday": "Namenstag",
+    "other": "Wichtiges Datum"
+  },
+  "dayMany": "{{count}} Tage",
+  "dayOne": "1 Tag",
+  "heading": "Bondery-Erinnerungen für {{headingDate}}",
+  "introMany": "Sie haben {{count}} Erinnerungen:",
+  "introOne": "Sie haben 1 Erinnerung:",
+  "preview": "Sie haben {{count}} Erinnerung(en) für {{targetDate}}",
+  "reminderLine": "{{emoji}} {{typeLabel}} steht in {{remainingLabel}} am {{dateLabel}} an.",
+  "subject": "Bondery-Erinnerungen für {{targetDate}}"
+}

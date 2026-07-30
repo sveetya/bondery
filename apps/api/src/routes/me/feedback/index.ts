@@ -33,22 +33,13 @@ export const meFeedbackRoutes: AppRoutePlugin = async (fastify) => {
       const { user } = getAuth(request);
       const { npsScore, npsReason, generalFeedback } = request.body;
 
-      await sendFeedbackEmail(
-        {
-          address: fastify.config.BONDERY_PRIVATE_EMAIL_ADDRESS,
-          host: fastify.config.BONDERY_PRIVATE_EMAIL_HOST,
-          pass: fastify.config.BONDERY_PRIVATE_EMAIL_PASS,
-          port: Number(fastify.config.BONDERY_PRIVATE_EMAIL_PORT),
-          user: fastify.config.BONDERY_PRIVATE_EMAIL_USER,
-        },
-        {
-          generalFeedback,
-          npsReason,
-          npsScore,
-          userEmail: user.email || "unknown",
-          userId: user.id,
-        },
-      );
+      await sendFeedbackEmail({
+        generalFeedback,
+        npsReason,
+        npsScore,
+        userEmail: user.email || "unknown",
+        userId: user.id,
+      });
 
       return { success: true };
     },

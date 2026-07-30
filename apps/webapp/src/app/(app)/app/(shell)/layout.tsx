@@ -36,10 +36,6 @@ export default async function AppShellLayout({ children }: { children: React.Rea
   const userSession = session.shell;
   const bypassOnboarding = cookieStore.get(BYPASS_ONBOARDING_ONCE_COOKIE)?.value === "1";
 
-  if (bypassOnboarding) {
-    cookieStore.set(BYPASS_ONBOARDING_ONCE_COOKIE, "", { maxAge: 0, path: "/app" });
-  }
-
   if (
     !userSession.onboardingCompletedAt &&
     !bypassOnboarding &&
