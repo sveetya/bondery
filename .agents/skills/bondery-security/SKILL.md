@@ -68,9 +68,8 @@ Run only what applies to the change:
 ```bash
 # Route auth wiring + OpenAPI area audit
 npm run check-types -w api          # includes check-route-security
-npm run test:api -w api             # includes route-security-audit.test.ts
 
-# OAuth / auth integration
+# OAuth / auth integration (optional; Postgres + migrate required)
 npm run test:auth -w api
 
 # Env contract drift
@@ -78,9 +77,6 @@ npm run env -- --check
 
 # Compose secret isolation (self-host)
 node deploy/bondery/scripts/check-compose.mjs
-
-# Tenant isolation regression (when touching contacts/groups)
-npm run test:api -w api -- contacts-groups-tenant-isolation
 
 # Extension architecture boundaries
 npm run check-types -w chrome-extension

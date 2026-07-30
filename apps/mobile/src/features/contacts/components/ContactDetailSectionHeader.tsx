@@ -57,8 +57,8 @@ export function ContactDetailSectionHeader({
     TagsInput: tTagsInput,
   } as const;
 
-  const t = tByNamespace[titleNamespace];
-  const resolvedTitle = title ?? (titleKey ? t(titleKey) : "");
+  const resolvedTitle =
+    title ?? (titleKey ? (tByNamespace[titleNamespace] as (key: string) => string)(titleKey) : "");
 
   return (
     <View style={contactDetailStyles.sectionHeaderRow}>

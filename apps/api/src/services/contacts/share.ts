@@ -12,8 +12,8 @@ import {
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
@@ -294,7 +294,7 @@ export async function shareContact(
     throw internal("email_service_not_configured");
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
 
   let emailHtml: string;
   try {

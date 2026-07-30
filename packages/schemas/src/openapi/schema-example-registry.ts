@@ -1,9 +1,8 @@
 /**
- * Validates OpenAPI fixture examples against their Zod schemas.
- *
- * Usage: npx tsx scripts/check-openapi-examples.ts
+ * Maps Zod schema instances to OpenAPI examples without attaching `.meta({ example })`
+ * on entity schemas (avoids Turbopack init cycles). Used by `getSchemaExample` and
+ * `scripts/check-openapi-examples.ts`.
  */
-
 import type { z } from "zod";
 import { messageResponseSchema } from "#entities/_shared/index.js";
 import {
@@ -106,6 +105,7 @@ import {
 import { userSessionResponseSchema } from "#entities/session/index.js";
 import {
   updateAccountInputSchema,
+  updateImportFollowupBodySchema,
   updateSettingsBodySchema,
   userAccountResponseSchema,
   userSettingsResponseSchema,
@@ -134,14 +134,15 @@ import {
 import { syncConflictErrorResponseSchema } from "#sync/conflict/index.js";
 import { syncBootstrapResponseSchema, syncPullResponseSchema } from "#sync/pull/index.js";
 import { syncPushRequestSchema, syncPushResponseSchema } from "#sync/push/index.js";
-import { OPENAPI_SCHEMA_EXAMPLES } from "./openapi-example-fixtures.js";
+import { syncWsTicketResponseSchema } from "#sync/ws/schema.js";
+import { OPENAPI_SCHEMA_EXAMPLES } from "./example-fixtures.js";
 
-type ExampleEntry = {
+export type OpenApiSchemaExampleEntry = {
   name: string;
   schema: z.ZodType;
 };
 
-const RESPONSE_SCHEMA_EXAMPLES: ExampleEntry[] = [
+export const RESPONSE_SCHEMA_EXAMPLES: OpenApiSchemaExampleEntry[] = [
   { name: "messageResponseSchema", schema: messageResponseSchema },
   { name: "apiSuccessResponseSchema", schema: apiSuccessResponseSchema },
   { name: "apiErrorResponseSchema", schema: apiErrorResponseSchema },
@@ -208,6 +209,7 @@ const RESPONSE_SCHEMA_EXAMPLES: ExampleEntry[] = [
   { name: "syncPullResponseSchema", schema: syncPullResponseSchema },
   { name: "syncBootstrapResponseSchema", schema: syncBootstrapResponseSchema },
   { name: "syncPushResponseSchema", schema: syncPushResponseSchema },
+  { name: "syncWsTicketResponseSchema", schema: syncWsTicketResponseSchema },
   { name: "userSessionResponseSchema", schema: userSessionResponseSchema },
   { name: "userSettingsResponseSchema", schema: userSettingsResponseSchema },
   { name: "userAccountResponseSchema", schema: userAccountResponseSchema },
@@ -224,19 +226,7 @@ const RESPONSE_SCHEMA_EXAMPLES: ExampleEntry[] = [
   { name: "geocodeTimezoneResponseWireSchema", schema: geocodeTimezoneResponseWireSchema },
 ];
 
-function getExample(name: string, schema: z.ZodType): unknown {
-  if (name in OPENAPI_SCHEMA_EXAMPLES) {
-    return OPENAPI_SCHEMA_EXAMPLES[name];
-  }
-
-  const meta = schema.meta();
-  if (meta && typeof meta === "object" && "example" in meta) {
-    return meta.example;
-  }
-  return undefined;
-}
-
-const REQUEST_SCHEMA_EXAMPLES: ExampleEntry[] = [
+export const REQUEST_SCHEMA_EXAMPLES: OpenApiSchemaExampleEntry[] = [
   { name: "createContactApiInputSchema", schema: createContactApiInputSchema },
   { name: "createContactBodySchema", schema: createContactBodySchema },
   { name: "updateContactInputSchema", schema: updateContactInputSchema },
@@ -269,6 +259,7 @@ const REQUEST_SCHEMA_EXAMPLES: ExampleEntry[] = [
   { name: "createApiKeyInputSchema", schema: createApiKeyInputSchema },
   { name: "updateApiKeyLabelInputSchema", schema: updateApiKeyLabelInputSchema },
   { name: "updateAccountInputSchema", schema: updateAccountInputSchema },
+  { name: "updateImportFollowupBodySchema", schema: updateImportFollowupBodySchema },
   { name: "updateSettingsBodySchema", schema: updateSettingsBodySchema },
   { name: "updateChatSessionBodySchema", schema: updateChatSessionBodySchema },
   { name: "chatRequestSchema", schema: chatRequestSchema },
@@ -276,38 +267,27 @@ const REQUEST_SCHEMA_EXAMPLES: ExampleEntry[] = [
   { name: "reminderDigestRequestSchema", schema: reminderDigestRequestSchema },
 ];
 
-function validateExamples(entries: ExampleEntry[], failures: string[]) {
-  for (const { name, schema } of entries) {
-    const example = getExample(name, schema);
-    if (example === undefined) {
-      failures.push(
-        `${name}: missing OpenAPI example (add to openapi-example-fixtures.ts or .meta({ example }))`,
-      );
-      continue;
-    }
+const schemaExampleByIdentity = new WeakMap<z.ZodType, unknown>();
 
-    const result = schema.safeParse(example);
-    if (!result.success) {
-      failures.push(`${name}: example failed validation — ${result.error.message}`);
-    }
+for (const { name, schema } of [...RESPONSE_SCHEMA_EXAMPLES, ...REQUEST_SCHEMA_EXAMPLES]) {
+  const example = OPENAPI_SCHEMA_EXAMPLES[name];
+  if (example !== undefined) {
+    schemaExampleByIdentity.set(schema, example);
   }
 }
 
-function run() {
-  const failures: string[] = [];
-
-  validateExamples(RESPONSE_SCHEMA_EXAMPLES, failures);
-  validateExamples(REQUEST_SCHEMA_EXAMPLES, failures);
-
-  if (failures.length > 0) {
-    console.error(
-      `OpenAPI example validation failed:\n${failures.map((f) => `  - ${f}`).join("\n")}`,
-    );
-    process.exit(1);
-  }
-
-  const total = RESPONSE_SCHEMA_EXAMPLES.length + REQUEST_SCHEMA_EXAMPLES.length;
-  console.log(`check-openapi-examples: ok (${total} schemas)`);
+export function getRegisteredSchemaExample(schema: z.ZodType): unknown | undefined {
+  return schemaExampleByIdentity.get(schema);
 }
 
-run();
+export function getNamedSchemaExample(name: string, schema: z.ZodType): unknown | undefined {
+  if (name in OPENAPI_SCHEMA_EXAMPLES) {
+    return OPENAPI_SCHEMA_EXAMPLES[name];
+  }
+
+  const meta = schema.meta();
+  if (meta && typeof meta === "object" && "example" in meta) {
+    return meta.example;
+  }
+  return undefined;
+}

@@ -3,6 +3,7 @@ import { Button, Card, Center, Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useState } from "react";
 import { browser } from "wxt/browser";
+import { useExtensionPopupTranslations } from "../../lib/i18n/generated/hooks";
 import type { LoginResult } from "../../lib/messaging/types";
 
 /**
@@ -10,6 +11,7 @@ import type { LoginResult } from "../../lib/messaging/types";
  * Prompts the user to connect their Bondery account.
  */
 export default function WelcomeApp() {
+  const t = useExtensionPopupTranslations("Welcome");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,7 +79,7 @@ export default function WelcomeApp() {
           </Stack>
 
           <Button fullWidth loading={loading} onClick={handleConnect} size="lg">
-            Connect your Bondery account
+            {t("ConnectButton")}
           </Button>
 
           {error && (

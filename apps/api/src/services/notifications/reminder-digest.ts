@@ -12,8 +12,8 @@ import {
   resolveEmailLocalesForUsers,
 } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 
@@ -111,7 +111,7 @@ export async function sendOneUserDigest(
     return { error: "SMTP is not configured", ok: false };
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
   const userTargetDate = user.targetDate ?? ctx.defaultTargetDate;
   const lng = ctx.localeByUserId.get(user.userId) ?? "en";
   const bundle = getPreloadedCopy(ctx.namespaceCache, lng);

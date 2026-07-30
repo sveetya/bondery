@@ -106,7 +106,7 @@ export function SettingsGroupSortScreen() {
     <Pressable
       accessibilityLabel={tMobileGroups("CreateGroup")}
       accessibilityRole="button"
-      hitSlop={MOBILE_HIT_SLOP}
+      hitSlop={MOBILE_HIT_SLOP.nav}
       onPress={() => setCreateOpen(true)}
       style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >

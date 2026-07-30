@@ -76,8 +76,8 @@ function orgId(
 
 function splitCompanyLine(line: string): { companyName: string; employmentType?: string } {
   const parts = line.split(" · ");
-  const last = parts[parts.length - 1];
-  if (parts.length >= 2 && EMPLOYMENT_TYPES.has(last)) {
+  const last = parts.length > 0 ? parts[parts.length - 1] : undefined;
+  if (parts.length >= 2 && last && EMPLOYMENT_TYPES.has(last)) {
     return { companyName: parts.slice(0, -1).join(" · "), employmentType: last };
   }
   return { companyName: line };
@@ -136,11 +136,13 @@ export function splitName(fullName: string): {
     return { firstName: "" };
   }
   if (parts.length === 1) {
-    return { firstName: parts[0] };
+    return { firstName: parts[0] ?? "" };
   }
+  const firstName = parts[0] ?? "";
+  const lastName = parts.length > 1 ? (parts[parts.length - 1] ?? "") : "";
   return {
-    firstName: parts[0],
-    lastName: parts[parts.length - 1],
+    firstName,
+    lastName,
     ...(parts.length > 2 ? { middleName: parts.slice(1, -1).join(" ") } : {}),
   };
 }
@@ -309,7 +311,7 @@ export function extractSduiEducation(doc?: Document): EducationEntry[] {
     const logoImg = logoEl instanceof HTMLImageElement ? logoEl : null;
 
     entries.push({
-      schoolName: schoolFromLogo || beforeDates.split(/\d{4}/)[0].trim() || line,
+      schoolName: schoolFromLogo || (beforeDates.split(/\d{4}/)[0]?.trim() ?? "") || line,
       ...(schoolLinkedinId ? { schoolLinkedinId } : {}),
       ...(logoImg?.src ? { schoolLogoUrl: logoImg.src } : {}),
       ...(degree ? { degree } : {}),

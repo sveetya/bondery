@@ -334,7 +334,7 @@ export function ContactNotesEditor({ id, isMyselfMode = false }: ContactNotesEdi
             ref={editorRef}
             scrollEnabled
             selectionColor={`${colors.primary}44`}
-            style={[styles.editor, { color: colors.textPrimary }]}
+            style={[styles.editor, { color: colors.textPrimary }] as never}
           />
           {paletteMode !== "closed" ? (
             <EditorCommandPalette

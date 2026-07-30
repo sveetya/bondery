@@ -31,8 +31,8 @@ describe("webapp runtime config", () => {
     assert.equal(cfg.apiBaseUrl, "https://api.example.com");
     assert.equal(cfg.webappUrl, "https://app.example.com");
     assert.equal(cfg.websiteUrl, "https://example.com");
-    assert.equal("PRIVATE_SHOULD_NOT_LEAK" in (cfg as Record<string, unknown>), false);
-    assert.equal(WEBAPP_INTERNAL_API_URL_ENV in (cfg as Record<string, unknown>), false);
+    assert.equal("PRIVATE_SHOULD_NOT_LEAK" in (cfg as unknown as Record<string, unknown>), false);
+    assert.equal(WEBAPP_INTERNAL_API_URL_ENV in (cfg as unknown as Record<string, unknown>), false);
     assert.equal(
       JSON.stringify(cfg).includes("http://api:26631"),
       false,

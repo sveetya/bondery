@@ -9,6 +9,10 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { API_ERROR_CODES, isApiErrorCode } from "@bondery/schemas/errors";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-route-errors");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const apiSrc = join(__dirname, "..", "src");
 const routesRoot = join(apiSrc, "routes");
@@ -158,12 +162,8 @@ if (statSync(fixturesPath).isFile()) {
   }
 }
 
-if (violations.length > 0) {
-  console.error("check-route-errors: violations found:\n");
-  for (const v of violations) {
-    console.error(`  - ${v}`);
-  }
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log(`check-route-errors: OK (${catalogCodes.size} catalog codes)`);
+check.ok(`${catalogCodes.size} catalog codes`);

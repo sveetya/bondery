@@ -126,7 +126,7 @@ export function extractLivePageJsonBlocks(): unknown[] {
 
     // LinkedIn wraps JSON in HTML comments: <!--{...}-->
     const commentMatch = raw.match(/^<!--(.+)-->$/s);
-    const jsonStr = commentMatch ? commentMatch[1] : raw;
+    const jsonStr = commentMatch?.[1] ?? raw;
 
     try {
       const parsed = JSON.parse(jsonStr);

@@ -134,15 +134,15 @@
   "private": true,
   "scripts": {
     "build": "node scripts/sync-locale-mirror.mjs && node scripts/run-i18next-cli.mjs types && node scripts/generate-resource-map.mjs && node scripts/generate-i18n-catalog.mjs && node scripts/generate-client-i18n-hooks.mjs && rimraf dist tsconfig.tsbuildinfo && tsc && node ../../scripts/rewrite-package-hash-imports-in-dist.mjs translations && node scripts/copy-json.mjs && node scripts/validate-manifest.mjs",
+    "check-i18n-lint": "node scripts/run-i18next-cli.mjs lint --quiet",
+    "check-i18n-types": "node scripts/run-i18next-cli.mjs types --ci",
+    "check-i18n-usage": "node scripts/check-i18n-usage.mjs",
     "check-types": "tsc --noEmit",
     "compile": "node scripts/sync-locale-mirror.mjs && node scripts/generate-resource-map.mjs && tsc && node scripts/copy-json.mjs",
     "dev": "node scripts/dev.mjs",
     "i18n:inlang": "node scripts/generate-inlang-settings.mjs",
-    "i18n:lint": "node scripts/run-i18next-cli.mjs lint --quiet",
     "i18n:status": "node scripts/sync-locale-mirror.mjs && node scripts/run-i18next-cli.mjs status",
-    "i18n:status:check": "node scripts/i18n-status-check.mjs",
-    "i18n:types": "node scripts/run-i18next-cli.mjs types",
-    "i18n:types:check": "node scripts/run-i18next-cli.mjs types --ci"
+    "i18n:types": "node scripts/run-i18next-cli.mjs types"
   },
   "type": "module",
   "types": "./src/index.ts",

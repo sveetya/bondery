@@ -12,10 +12,12 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 
 ## Continuous deploy
 
-1. Merge website/marketing changes to `main`.
+1. Merge website/marketing changes to `main` (PRs run path-filtered `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) — pruned `turbo build --filter=website`, same recipe as Docker).
 2. Promote: `git push origin main:release`.
-3. [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds and pushes `:production` + `:sha-<short>`.
-4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (must match the `refs/heads/release` payload from CI).
+3. [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds the Docker image and pushes `:production` + `:sha-<short>` (no separate host gate; release smoke validates the image).
+4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` GitHub **variable**) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (CI always sends `refs/heads/release` in the webhook payload, including manual workflow runs).
+
+Host CI uses `node:latest`; the production image uses `node:22-alpine`. Release `smoke` is the Alpine/runtime fidelity check.
 
 There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by temporarily overriding the image to a known `:sha-<short>` or using Dokploy's previous deployment.
 
@@ -29,7 +31,7 @@ There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by 
 
 ```bash
 cd deploy/ops
-cp .env.example .env
+cp .env.example .env   # generated from manifest (opsExample metadata)
 # Set BONDERY_INFRA_WEBAPP_DOMAIN + BONDERY_INFRA_WEBSITE_DOMAIN
 docker compose up -d
 ```
@@ -55,7 +57,7 @@ node deploy/ops/scripts/check-compose.mjs
 2. **Stop** the old Nixpacks/Railpack website Dokploy app (avoid Traefik `Host()` collision on `usebondery.com`).
 3. Create this Compose app, set `.env` domains, deploy.
 4. Smoke: `/health/live`, `/health/ready`, home page, blog.
-5. Optionally set `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` for automatic redeploys after release pushes.
+5. Optionally set `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` (repository variable) for automatic redeploys after release pushes.
 
 ## Security
 

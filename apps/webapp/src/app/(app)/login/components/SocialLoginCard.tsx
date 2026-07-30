@@ -5,6 +5,7 @@ import { AnchorLink } from "@bondery/mantine-next";
 import { Card, Stack, Text } from "@mantine/core";
 import type { WebappAuthClient } from "@/lib/auth/client";
 import { useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
+import { TypedTrans } from "@/lib/i18n/TypedTrans";
 import { LoginProviderButtons } from "./LoginProviderButtons";
 import { Logo } from "./Logo";
 
@@ -59,14 +60,22 @@ export function SocialLoginCard({
             onProviderClick={onProviderClick}
           />
           <Text c="dimmed" size="xs" ta="center">
-            {t("TermsAgreement")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs">
-              {t("TermsOfService")}
-            </AnchorLink>{" "}
-            {t("And")}{" "}
-            <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs">
-              {t("PrivacyPolicy")}
-            </AnchorLink>
+            <TypedTrans
+              components={{
+                privacyLink: (
+                  <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.PRIVACY}`} size="xs">
+                    {null}
+                  </AnchorLink>
+                ),
+                termsLink: (
+                  <AnchorLink href={`${websiteUrl}${WEBSITE_ROUTES.TERMS}`} size="xs">
+                    {null}
+                  </AnchorLink>
+                ),
+              }}
+              i18nKey="TermsText"
+              t={t}
+            />
           </Text>
         </Stack>
       </Card>

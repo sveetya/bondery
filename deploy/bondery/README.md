@@ -23,6 +23,8 @@ cp .env.example .env
 docker compose up -d
 ```
 
+`deploy/bondery/.env.example` is **generated** from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). After changing deploy env vars in the manifest, run `npm run env -- --write-examples`.
+
 Requires Docker Compose **v2.38+** (`pre_start` on `api`). First boot applies migrations, OAuth provisioning, and SeaweedFS buckets automatically via `api` init containers — no manual steps.
 
 Without Traefik (host ports):
@@ -64,6 +66,10 @@ BONDERY_INFRA_API_IMAGE_TAG=1.7.3 docker compose up -d --no-deps api
 ```
 
 Schema migrations run automatically via `api` `pre_start` on deploy — no separate `db:migrate:deploy` step for Compose deployments.
+
+### CI redeploy webhook (Bondery production)
+
+After `api-*.*.*` / `webapp-*.*.*` release tags push `:production` images, GitHub Actions calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (repository **variable**) with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
 
 ### Image tags (api / webapp)
 

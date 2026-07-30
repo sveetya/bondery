@@ -5,7 +5,7 @@ The public marketing website for [bondery.app](https://bondery.app), built with 
 ## Development
 
 ```bash
-npm run dev -w apps/website
+npm run dev -w website
 ```
 
 The dev server starts at `http://localhost:26630`.
@@ -14,11 +14,11 @@ The dev server starts at `http://localhost:26630`.
 
 | Script | Description |
 |---|---|
-| `npm run dev -w apps/website` | Start local dev server |
+| `npm run dev -w website` | Start local dev server |
 | `npx turbo build --filter=website` | Production build (from repo root) |
-| `npm run check-types -w apps/website` | TypeScript type check |
+| `npm run check-types -w website` | TypeScript type check |
 | `npm run lint` (repo root) | Biome format (write fixes) |
-| `npm run announce -w apps/website -- --slug <slug>` | Announce a blog post |
+| `npm run announce -w website -- --slug <slug>` | Announce a blog post |
 
 ## Blog
 
@@ -68,19 +68,19 @@ announce: {
 
 ```bash
 # Dry run — logs payloads without sending
-npm run announce -w apps/website -- --slug introducing-bondery --dry-run
+npm run announce -w website -- --slug introducing-bondery --dry-run
 
 # Real run
-npm run announce -w apps/website -- --slug introducing-bondery
+npm run announce -w website -- --slug introducing-bondery
 
 # Post to Discord only
-npm run announce -w apps/website -- --slug introducing-bondery --discord-only
+npm run announce -w website -- --slug introducing-bondery --discord-only
 
 # Post to Reddit only
-npm run announce -w apps/website -- --slug introducing-bondery --reddit-only
+npm run announce -w website -- --slug introducing-bondery --reddit-only
 
 # Force-announce even if announce.enabled = false
-npm run announce -w apps/website -- --slug introducing-bondery --force
+npm run announce -w website -- --slug introducing-bondery --force
 ```
 
 ### GitHub Actions

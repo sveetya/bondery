@@ -1,6 +1,13 @@
 import { shareContactEmailSchema } from "@bondery/schemas";
 import { IconPlus, IconSend, IconX } from "@tabler/icons-react-native";
-import { type RefObject, useEffect, useRef, useState } from "react";
+import {
+  type Dispatch,
+  type RefObject,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { type Control, type FieldErrors, type UseFormSetValue, useWatch } from "react-hook-form";
 import { Pressable, ScrollView, StyleSheet, Text, type TextInput, View } from "react-native";
 import { ActionSheetPopup } from "../../components/ActionSheetPopup";
@@ -164,7 +171,7 @@ function ShareContactEmailSheetContent({
   setValue: UseFormSetValue<ShareEmailFormValues>;
   handleSend: (recipients: string[]) => Promise<void>;
   emailInput: string;
-  setEmailInput: (value: string) => void;
+  setEmailInput: Dispatch<SetStateAction<string>>;
   inputError: string | null;
   setInputError: (value: string | null) => void;
   isSubmitting: boolean;

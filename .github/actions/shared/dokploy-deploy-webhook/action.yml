@@ -1,0 +1,40 @@
+name: Dokploy GitHub push webhook
+description: >-
+  POST a GitHub-style push payload so Dokploy redeploys a Compose app.
+  Use an explicit branch (default release) — not GITHUB_REF_NAME — so
+  workflow_dispatch and tag-based release flows match the Dokploy app branch setting.
+  Webhook URLs are repository variables (BONDERY_OPS_DOKPLOY_*_DEPLOY_WEBHOOK).
+
+inputs:
+  webhook_url:
+    description: Dokploy deploy webhook URL (empty skips)
+    required: false
+    default: ""
+  branch:
+    description: Git branch Dokploy expects in refs/heads/<branch>
+    required: false
+    default: release
+  repository:
+    description: GitHub repository full name (owner/repo); defaults to GITHUB_REPOSITORY
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Trigger Dokploy redeploy webhook
+      shell: bash
+      env:
+        WEBHOOK_URL: ${{ inputs.webhook_url }}
+        BRANCH: ${{ inputs.branch }}
+        REPOSITORY: ${{ inputs.repository }}
+      run: |
+        if [ -z "$WEBHOOK_URL" ]; then
+          echo "Dokploy webhook URL not set — skip (redeploy manually in Dokploy)."
+          exit 0
+        fi
+        REPO="${REPOSITORY:-$GITHUB_REPOSITORY}"
+        curl -fsS -X POST "$WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -H "X-GitHub-Event: push" \
+          -d "{\"ref\":\"refs/heads/${BRANCH}\",\"repository\":{\"full_name\":\"${REPO}\"}}"

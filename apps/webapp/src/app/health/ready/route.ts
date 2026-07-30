@@ -10,10 +10,9 @@ export async function GET() {
         headers: { "Cache-Control": "no-store" },
       },
     );
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Invalid runtime config";
+  } catch {
     return Response.json(
-      { error: message, ok: false },
+      { error: "Invalid runtime config", ok: false },
       {
         headers: { "Cache-Control": "no-store" },
         status: 503,

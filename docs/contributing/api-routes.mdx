@@ -98,11 +98,11 @@ When adding a new `*ResponseSchema`:
 
 1. Add `EXAMPLE_*` to [`packages/schemas/src/openapi/fixtures/responses.ts`](../../packages/schemas/src/openapi/fixtures/responses.ts) (compose from [`fixtures/entities.ts`](../../packages/schemas/src/openapi/fixtures/entities.ts) and [`fixtures/primitives.ts`](../../packages/schemas/src/openapi/fixtures/primitives.ts)).
 2. Chain `.meta({ example: EXAMPLE_* })` on the response schema export.
-3. Register the schema in [`packages/schemas/scripts/check-openapi-examples.ts`](../../packages/schemas/scripts/check-openapi-examples.ts) if it is a new export.
+3. Register the schema in [`packages/schemas/scripts/check-contracts-openapi-examples.ts`](../../packages/schemas/scripts/check-contracts-openapi-examples.ts) if it is a new export.
 
 For inline route-only schemas (e.g. admin stats), attach `.meta({ example })` on the schema in the route file and import the fixture from `@bondery/schemas`.
 
-`npm run test:contracts -w @bondery/schemas` validates every registered example with `schema.parse(example)`. `npm run check-openapi -w apps/api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
+`npm run check-contracts -w @bondery/schemas` validates every registered example with `schema.parse(example)`. `npm run check-openapi-spec -w api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
 
 ## OpenAPI request examples
 
@@ -112,7 +112,7 @@ When adding or changing a request body schema:
 
 1. Add `EXAMPLE_*_REQUEST` to [`packages/schemas/src/openapi/fixtures/requests.ts`](../../packages/schemas/src/openapi/fixtures/requests.ts) (compose from [`fixtures/entities.ts`](../../packages/schemas/src/openapi/fixtures/entities.ts) and [`fixtures/primitives.ts`](../../packages/schemas/src/openapi/fixtures/primitives.ts)).
 2. Chain `.meta({ example: EXAMPLE_*_REQUEST })` on the body schema export in `@bondery/schemas`.
-3. Register the schema in [`packages/schemas/scripts/check-openapi-examples.ts`](../../packages/schemas/scripts/check-openapi-examples.ts) under `REQUEST_SCHEMA_EXAMPLES`.
+3. Register the schema in [`packages/schemas/scripts/check-contracts-openapi-examples.ts`](../../packages/schemas/scripts/check-contracts-openapi-examples.ts) under `REQUEST_SCHEMA_EXAMPLES`.
 
 Guidelines:
 
@@ -145,7 +145,7 @@ The API separates **app assembly** from **runtime boot**:
 | `buildServer()` | [`apps/api/src/build-server.ts`](../../apps/api/src/build-server.ts) | `buildApp()` plus `onReady` (auth JWKS verify, sync wake) and `onClose` shutdown |
 | `registerAllRoutes()` | [`apps/api/src/routes/register-all.ts`](../../apps/api/src/routes/register-all.ts) | Ordered route mount table — add new route modules here |
 
-[`apps/api/scripts/generate-openapi.ts`](../../apps/api/scripts/generate-openapi.ts) imports `build-app.ts` directly so OpenAPI generation never loads `index.ts` side effects (auto-listen). New runtime startup hooks belong in `build-server.ts`, not `build-app.ts`.
+[`apps/api/scripts/generate-openapi.ts`](../../apps/api/scripts/generate-openapi.ts) imports `build-app.ts` directly so OpenAPI generation never loads `index.ts` side effects (auto-listen). New runtime startup hooks belong in `build-server.ts`, not `build-app.ts`. OpenAPI generation and API integration tests call `applyApiBootEnv()` from `@bondery/helpers/env` so no local `.env` is required — values come from the manifest boot profile (`boot.value` when `exampleValue` is empty or a placeholder).
 
 ### Redis
 
@@ -175,7 +175,7 @@ Runtime enforcement: [`assertApiKeyAccess`](../../apps/api/src/lib/platform/auth
 
 - **Contacts** — split across [`contactIntegrationRoutes`](../../apps/api/src/routes/contacts/index.ts) and [`contactSessionRoutes`](../../apps/api/src/routes/contacts/session-routes.ts) at the same prefix
 
-CI: `npm run check-route-security -w apps/api` (wired into `check-types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
+CI: `npm run check-route-security -w api` (wired into `check-types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
 
 ## Layering
 
@@ -298,11 +298,11 @@ Workspace packages follow the [Turborepo compiled-package model](https://turbore
 
 | Command | What it checks |
 |---------|----------------|
-| `npm run check-api-schema-patterns -w apps/api` | Route files have descriptions, responses, `FastifyZodOpenApiSchema` |
-| `npm run check-route-security -w apps/api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
+| `npm run check-api-schema-patterns -w api` | Route files have descriptions, responses, `FastifyZodOpenApiSchema` |
+| `npm run check-route-security -w api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
 | `npm run check-openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
-| `npm run check-route-errors -w apps/api` | Bans legacy error patterns; requires `code` on DomainError |
-| `npm run test:contracts -w @bondery/schemas` | Schema boundary assertions + OpenAPI example validation (`check-openapi-examples.ts`) |
+| `npm run check-route-errors -w api` | Bans legacy error patterns; requires `code` on DomainError |
+| `npm run check-contracts -w @bondery/schemas` | Schema boundary assertions + OpenAPI example validation (`check-contracts-openapi-examples.ts`) |
 
 CI runs all of the above on every pull request.
 
@@ -325,7 +325,7 @@ Every API error JSON body includes a human-readable `error` string and a stable 
 - **Codes**: `SCREAMING_SNAKE` in `apps/api/src/lib/platform/errors/codes.ts` (auth) or entity-specific at call sites (`CONTACT_NOT_FOUND`, `TAGS_LIST_FAILED`). Convention: `{ENTITY}_{ACTION}_{REASON}`.
 - **Auth**: migrated to helpers with `AUTH_*` / `API_KEY_*` codes — no `Error + statusCode`.
 
-`npm run check-route-errors -w apps/api` bans `handleDomainError`, `reply.status(5xx)` in routes, `Error + statusCode` in auth, and `DomainError` without `code`.
+`npm run check-route-errors -w api` bans `handleDomainError`, `reply.status(5xx)` in routes, `Error + statusCode` in auth, and `DomainError` without `code`.
 
 ## References
 

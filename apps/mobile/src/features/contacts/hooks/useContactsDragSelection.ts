@@ -1,5 +1,6 @@
 import type { FlashListRef } from "@shopify/flash-list";
 import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { UI_TIMING_MS } from "../../../lib/config";
@@ -295,7 +296,7 @@ export function useContactsDragSelection({
     [enabled, handleDragEnd, handleDragMove, handleDragStart],
   );
 
-  const onScroll = useCallback((event: { nativeEvent: { contentOffset: { y: number } } }) => {
+  const onScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!isDraggingRef.current) {
       scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
       animatedScrollOffsetRef.current = event.nativeEvent.contentOffset.y;

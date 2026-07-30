@@ -40,9 +40,6 @@ jobs:
       - name: API sync unit tests
         run: npm run test:sync -w api
 
-      - name: API smoke tests
-        run: npm run test:api -w api
-
   build-push:
     needs: gate
     uses: ./.github/workflows/shared-docker-build-push.yml

@@ -2,7 +2,7 @@
 title: Configuration
 ---
 
-Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) — do not hand-edit generated app env files.
+Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `.env` — that file is generated from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). Do not hand-edit the example; change the manifest and run `npm run env -- --write-examples`.
 
 ## Core secrets
 
@@ -72,7 +72,7 @@ Object storage uses **SeaweedFS** (S3-compatible gateway). The API uploads via p
 
 Buckets: `avatars` (contact photos) and `linkedin-logos` (cached LinkedIn company/school logos). Created and given anonymous read policy by `api` `pre_start` → `ensure-storage-buckets`.
 
-See [ADR 0003: SeaweedFS storage](../adr/0003-seaweedfs-storage.mdx) and [ADR 0005: API pre_start bootstrap](../adr/0005-api-pre-start-bootstrap.mdx).
+On every deploy, `api` `pre_start` runs `release-migrate` (schema, functions, OAuth clients, platform admins) then `ensure-storage-buckets` before the main API process starts. See [Get started](./get-started.mdx) and [Dokploy deployment](../contributing/dokploy.mdx).
 
 ## Local development parity
 

@@ -11,7 +11,7 @@ export type FlatRowLayoutEntry = {
 export function isSelectableFlatRow(
   row: ContactsFlatRow,
   myselfContactId: string | undefined,
-): boolean {
+): row is Extract<ContactsFlatRow, { type: "contact" }> {
   if (row.type !== "contact") {
     return false;
   }

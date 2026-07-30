@@ -49,16 +49,20 @@ function splitContainerStyle(containerStyle: StyleProp<ViewStyle>) {
     return { fillsWrapper: false, innerContainerStyle: undefined, wrapperStyle: undefined };
   }
 
-  const wrapperStyle: ViewStyle = {};
-  const innerContainerStyle: ViewStyle = {};
+  const wrapperStyle = {} as ViewStyle;
+  const innerContainerStyle = {} as ViewStyle;
 
   for (const [key, value] of Object.entries(flat) as Array<
     [keyof ViewStyle, ViewStyle[keyof ViewStyle]]
   >) {
+    if (value == null) {
+      continue;
+    }
+
     if (WRAPPER_LAYOUT_KEYS.has(key)) {
-      wrapperStyle[key] = value;
+      wrapperStyle[key] = value as never;
     } else {
-      innerContainerStyle[key] = value;
+      innerContainerStyle[key] = value as never;
     }
   }
 
@@ -191,8 +195,8 @@ export const MobileTextInput = memo(
             size === "compact" ? styles.containerCompact : styles.containerDefault,
             { backgroundColor: fieldBackgroundColor },
             fillsWrapper ? styles.containerFill : null,
-            animatedContainerStyle,
-            innerContainerStyle,
+            animatedContainerStyle as never,
+            innerContainerStyle as never,
           ]}
         >
           {leadingIcon ? <View style={styles.leadingIcon}>{leadingIcon}</View> : null}

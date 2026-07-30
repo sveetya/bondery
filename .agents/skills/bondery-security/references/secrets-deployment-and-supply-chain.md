@@ -18,8 +18,13 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **CLI:**
 - `npm run env` — sync root `.env.local` → per-app files
-- `npm run env -- --check` — regenerate examples + fail if git dirty (**CI**)
-- `npm run env -- --write-examples --write-turbo`
+- `npm run generate-env-examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
+- `npm run env -- --check` — regenerate + fail if git dirty (**CI**)
+
+**Adding a new secret:**
+1. Add to `ENV_MANIFEST` with `secret: true` (and `deployExample` if self-host operators set it)
+2. Commit — pre-commit regenerates examples when `manifest.ts` is staged
+3. Document in `docs/deploy/secrets.mdx` if rotation-relevant
 
 **API boot:** `assertRequiredEnvAtStartup()` via `checkEnvVariables` + manifest (`apps/api/src/index.ts`).
 
@@ -34,11 +39,6 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 - `.env.local` gitignored; production secrets in hosting platform
 - Webapp gets **allowlisted vars only** — no `env_file` with full secrets (`check-compose.mjs`)
 - API gets `env_file: .env` in compose
-
-**Adding a new secret:**
-1. Add to `ENV_MANIFEST` with `secret: true`
-2. Run `npm run env -- --write-examples`
-3. Document in `docs/deploy/secrets.mdx` if rotation-relevant
 
 ## Self-host deployment
 
@@ -107,8 +107,7 @@ Singleton enforcement: `check-redis-singleton.ts`.
 ```bash
 npm run env -- --check
 npm run check-types -w api     # route-security, no-route-writes, redis-singleton
-npm run test:api -w api        # route-security-audit
-npm run test:auth -w api       # OAuth PKCE integration
+npm run test:auth -w api       # OAuth PKCE integration (optional; Postgres required)
 node deploy/bondery/scripts/check-compose.mjs
 ```
 
@@ -117,7 +116,7 @@ node deploy/bondery/scripts/check-compose.mjs
 ## Deployment checklist
 
 - [ ] New secret in `ENV_MANIFEST` with `secret: true`
-- [ ] `npm run env -- --write-examples` run
+- [ ] Examples regenerated (automatic on commit when `manifest.ts` changes; CI `env --check` as safety net)
 - [ ] Webapp compose service has no `env_file` with private secrets
 - [ ] Redis required in production for rate limiting
 - [ ] Migrations run via `release-migrate` before app traffic

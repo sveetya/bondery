@@ -158,7 +158,7 @@ export function ContactEmailsSection({ emails, onSaveEmails }: ContactEmailsSect
           </Text>
         </View>
       ) : (
-        emails.map((email) => {
+        emails.map((email, index) => {
           const typeLabel =
             email.type === "work" ? tContactInfo("TypeWork") : tContactInfo("TypeHome");
           const accessibilityLabel = `${typeLabel} email, ${email.value}${email.preferred ? `, ${tContactInfo("Preferred")}` : ""}`;

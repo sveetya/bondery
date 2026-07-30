@@ -1,10 +1,14 @@
 /**
  * Guard: workspace packages must use NodeNext-style relative imports via #* with .js extensions.
- * Usage: node scripts/check-package-import-extensions.mjs
+ * Usage: node scripts/check-package-imports.mjs
  */
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { createCheck } from "./check-report.mjs";
+
+const check = createCheck("check-package-imports");
 
 const ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "..");
 const PACKAGE_SRC_DIRS = [
@@ -77,25 +81,17 @@ async function collectSourceFiles(dir) {
 }
 
 async function main() {
-  const violations = [];
-
   for (const dir of PACKAGE_SRC_DIRS) {
     const files = await collectSourceFiles(dir);
     for (const filePath of files) {
       const code = await readFile(filePath, "utf8");
-      violations.push(...collectViolations(code, filePath));
+      for (const { filePath: violationPath, specifier } of collectViolations(code, filePath)) {
+        check.add(`${violationPath}: ${specifier}`);
+      }
     }
   }
 
-  if (violations.length > 0) {
-    console.error("Extensionless relative imports found in packages (use #* with .js suffix):\n");
-    for (const { filePath, specifier } of violations) {
-      console.error(`  ${filePath}: ${specifier}`);
-    }
-    process.exit(1);
-  }
-
-  console.log("All package imports use #* hash paths or asset extensions.");
+  check.ok();
 }
 
 main().catch((error) => {

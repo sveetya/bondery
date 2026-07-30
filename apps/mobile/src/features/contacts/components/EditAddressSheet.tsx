@@ -335,7 +335,7 @@ export function EditAddressSheet({
       <SheetTextField
         autoCapitalize="words"
         autoCorrect={false}
-        control={control}
+        control={control as never}
         editable={!isSubmitting}
         enterKeyHint="search"
         inputRef={inputRef}
@@ -372,7 +372,7 @@ export function EditAddressSheet({
       <SheetTextField
         autoCapitalize="words"
         autoCorrect={false}
-        control={control}
+        control={control as never}
         editable={!isSubmitting}
         maxLength={64}
         name="label"
@@ -380,7 +380,7 @@ export function EditAddressSheet({
       />
 
       <SheetSelectField
-        control={control}
+        control={control as never}
         label={tContactAddress("TypeLabel")}
         name="type"
         options={typeOptions}

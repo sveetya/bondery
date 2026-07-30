@@ -1,18 +1,21 @@
 /**
  * Ban raw error.message in user-facing notification UI in webapp + mobile.
  *
- * Usage: node scripts/check-user-facing-errors.mjs
+ * Usage: node scripts/check-api-errors-client-display.mjs (npm run check-api-errors-client-display)
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "./check-report.mjs";
+
+const check = createCheck("check-api-errors-client-display");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, "..");
 const targets = [join(repoRoot, "apps", "webapp", "src"), join(repoRoot, "apps", "mobile", "src")];
 
-const violations = [];
 const banned = [
   /error instanceof Error \? error\.message/,
   /\berror\.message\b.*(?:description|title|Alert|notification|toast|showNotification)/i,
@@ -56,19 +59,11 @@ for (const root of targets) {
       }
       for (const pattern of banned) {
         if (pattern.test(line)) {
-          violations.push(`${rel}:${i + 1}: ${line.trim()}`);
+          check.add(`${rel}:${i + 1}: ${line.trim()}`);
         }
       }
     }
   }
 }
 
-if (violations.length > 0) {
-  console.error("check-user-facing-errors: violations found:\n");
-  for (const violation of violations) {
-    console.error(`  - ${violation}`);
-  }
-  process.exit(1);
-}
-
-console.log("check-user-facing-errors: OK");
+check.ok();

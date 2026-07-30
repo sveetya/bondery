@@ -7,6 +7,10 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-no-flat-error-responses");
+
 const repoRoot = join(import.meta.dirname, "..", "..", "..");
 const scanRoots = [
   join(repoRoot, "apps", "api", "src"),
@@ -67,12 +71,8 @@ for (const root of scanRoots) {
   }
 }
 
-if (violations.length > 0) {
-  console.error("Legacy flat API error responses found:\n");
-  for (const violation of violations) {
-    console.error(`  ${violation}`);
-  }
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.error("check-no-flat-error-responses: OK");
+check.ok();

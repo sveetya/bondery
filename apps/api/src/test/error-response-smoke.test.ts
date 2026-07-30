@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { API_ROUTES } from "@bondery/helpers";
 import { loadTestEnv } from "./load-test-env.js";
 
 describe("error response smoke", () => {
@@ -8,7 +9,7 @@ describe("error response smoke", () => {
 
     const { createTestApp } = await import("./create-test-app.js");
     const app = await createTestApp();
-    const response = await app.inject({ method: "GET", url: "/api/me/settings" });
+    const response = await app.inject({ method: "GET", url: API_ROUTES.ME_SETTINGS });
     assert.equal(response.statusCode, 401);
     const body = response.json() as {
       error: { code: string; message: string; request_id: string; doc_url: string };

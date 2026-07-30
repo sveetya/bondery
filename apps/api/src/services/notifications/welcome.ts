@@ -6,8 +6,8 @@ import type { FastifyBaseLogger } from "fastify";
 import { buildWelcomeCopy } from "../../lib/notifications/email-copy-builders.js";
 import { loadEmailNamespace, readCopyString } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 
@@ -31,7 +31,7 @@ export async function sendWelcomeEmail(
     return;
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
   const bundle = loadEmailNamespace(input.language, "WelcomeEmail");
   const copy = buildWelcomeCopy(bundle);
   const appUrl = resolveAppUrl();

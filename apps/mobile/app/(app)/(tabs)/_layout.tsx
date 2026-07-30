@@ -1,3 +1,4 @@
+import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { IconSettings, IconUser } from "@tabler/icons-react-native";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
@@ -25,7 +26,7 @@ function TabsLayoutContent() {
                 display: "none",
               },
             }}
-            tabBar={(props) => <TabBarPropsSync {...props} />}
+            tabBar={(props) => <TabBarPropsSync {...(props as unknown as BottomTabBarProps)} />}
           >
             <Tabs.Screen
               name="contacts"

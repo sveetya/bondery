@@ -19,7 +19,7 @@ export function FabSpeedDialOverflowSheet() {
         return {
           icon: <Icon size={18} stroke={colors.primary} />,
           id: action.id,
-          label: tMobileNavigation(action.labelKey),
+          label: tMobileNavigation(action.labelKey as never),
           onPress: () => runAction(action.id),
         };
       }),

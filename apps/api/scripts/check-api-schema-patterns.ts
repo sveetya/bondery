@@ -8,7 +8,11 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
 import { loadRouteNonPluginFiles } from "./load-route-non-plugin-files.js";
+
+const check = createCheck("check-api-schema-patterns");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const routesRoot = join(__dirname, "..", "src", "routes");
@@ -73,11 +77,8 @@ for (const file of collectRouteFiles(routesRoot)) {
   }
 }
 
-if (violations.length > 0) {
-  console.error(
-    `API schema pattern check failed:\n${violations.map((v) => `  - ${v}`).join("\n")}`,
-  );
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-api-schema-patterns: ok");
+check.ok();

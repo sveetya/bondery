@@ -7,6 +7,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-contracts-no-zod-infer-exports");
+
 const root = join(fileURLToPath(import.meta.url), "..", "..", "src");
 const forbidden = /export\s+type\s+\w+\s*=\s*z\.(infer|input|output)\s*</;
 
@@ -25,21 +29,12 @@ function walk(dir, acc = []) {
   return acc;
 }
 
-const violations = [];
 for (const file of walk(root)) {
   const rel = file.slice(root.length + 1);
   const content = readFileSync(file, "utf8");
   if (forbidden.test(content)) {
-    violations.push(rel);
+    check.add(rel);
   }
 }
 
-if (violations.length > 0) {
-  console.error("check-no-zod-infer-exports: forbidden z.infer/z.input/z.output exports:\n");
-  for (const file of violations.sort()) {
-    console.error(`  ${file}`);
-  }
-  process.exit(1);
-}
-
-console.log("check-no-zod-infer-exports: OK");
+check.ok();

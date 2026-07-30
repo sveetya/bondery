@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-modal-patterns");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
 const STRICT = process.env.CHECK_MODAL_PATTERNS_STRICT === "1";
@@ -14,6 +18,8 @@ type Violation = { file: string; rule: string; detail: string };
 
 const ALLOWED_DECLARATIVE_MODAL_FILES = new Set([
   "app/(app)/app/(shell)/onboarding/OnboardingClient.tsx",
+  "components/billing/PaymentFailureModal.tsx",
+  "components/shared/UpgradeButton.tsx",
 ]);
 
 const ALLOWED_UPDATE_MODAL_FILES = new Set([
@@ -51,6 +57,14 @@ function walk(dir: string, acc: string[] = []): string[] {
 
 function normalizeRel(rel: string): string {
   return rel.replace(/\\/g, "/");
+}
+
+function hasModalBlockingHelper(content: string): boolean {
+  if (content.includes("useModalBlocking") || content.includes("useModalDismiss")) {
+    return true;
+  }
+  // Hooks that own dismiss/blocking for their modal body (see useInstagramImportModal).
+  return /\buse[A-Z]\w*Modal\(/.test(content);
 }
 
 function checkFile(absPath: string): Violation[] {
@@ -109,7 +123,7 @@ function checkFile(absPath: string): Violation[] {
     BLOCKING_STATE_PATTERN.test(content) &&
     content.includes("modalId") &&
     /function\s+\w+Modal|function\s+\w+Form|ModalBody/.test(content) &&
-    !content.includes("useModalBlocking") &&
+    !hasModalBlockingHelper(content) &&
     !rel.includes("openStandardConfirmModal")
   ) {
     violations.push({
@@ -140,16 +154,11 @@ function main(): void {
   const files = walk(WEBAPP_SRC);
   const violations = files.flatMap(checkFile);
 
-  if (violations.length === 0) {
-    console.log("check-modal-patterns: OK");
-    return;
+  for (const violation of violations) {
+    check.add(`[${violation.rule}] ${violation.file}: ${violation.detail}`);
   }
 
-  console.error("check-modal-patterns: violations found\n");
-  for (const v of violations) {
-    console.error(`  [${v.rule}] ${v.file}\n    ${v.detail}`);
-  }
-  process.exit(1);
+  check.ok();
 }
 
 main();

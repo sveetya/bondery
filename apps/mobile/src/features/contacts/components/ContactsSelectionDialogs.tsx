@@ -82,6 +82,7 @@ export function ContactsSelectionDialogs({
       onClose={() => setDeleteConfirmOpen(false)}
       onOpenChange={setDeleteConfirmOpen}
       open={isDeleteConfirmOpen}
+      title={tMobileContacts("DeleteTitle")}
     />
   );
 }

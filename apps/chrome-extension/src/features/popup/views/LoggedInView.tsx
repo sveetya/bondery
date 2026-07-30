@@ -1,5 +1,6 @@
 import { Button, Stack, Text } from "@mantine/core";
 import { IconExternalLink, IconSettings } from "@tabler/icons-react";
+import { useExtensionPopupTranslations } from "../../../lib/i18n/generated/hooks";
 import { PopupBrandHeader } from "../components/PopupBrandHeader";
 import { UserCard } from "../components/UserCard";
 import type { UserInfo } from "../types";
@@ -17,6 +18,7 @@ export function LoggedInView({
   onOpenSettings,
   onOpenBondery,
 }: LoggedInViewProps) {
+  const t = useExtensionPopupTranslations("LoggedIn");
   return (
     <Stack gap="md" h={300} p="md">
       <PopupBrandHeader
@@ -48,7 +50,7 @@ export function LoggedInView({
           rightSection={<IconExternalLink size={16} />}
           variant="light"
         >
-          Open Bondery
+          {t("OpenBondery")}
         </Button>
       </Stack>
     </Stack>

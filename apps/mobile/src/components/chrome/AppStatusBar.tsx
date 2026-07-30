@@ -1,5 +1,4 @@
 import { StatusBar } from "expo-status-bar";
-import { Platform } from "react-native";
 import { useResolvedMobileTheme } from "../../theme/useResolvedMobileTheme";
 
 /**
@@ -9,11 +8,5 @@ import { useResolvedMobileTheme } from "../../theme/useResolvedMobileTheme";
 export function AppStatusBar() {
   const resolvedTheme = useResolvedMobileTheme();
 
-  return (
-    <StatusBar
-      animated
-      style={resolvedTheme === "dark" ? "light" : "dark"}
-      translucent={Platform.OS === "android"}
-    />
-  );
+  return <StatusBar animated style={resolvedTheme === "dark" ? "light" : "dark"} />;
 }

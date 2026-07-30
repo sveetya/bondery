@@ -92,16 +92,19 @@ export function OverflowMenu({
       </Popover.Trigger>
 
       <Popover.Content
-        {...POPOVER_MOTION}
+        animateOnly={[...POPOVER_MOTION.animateOnly]}
         backgroundColor={colors.surfaceElevated}
         borderColor={colors.border}
         bordered
         borderRadius={OVERFLOW_MENU_RADIUS}
         borderWidth={1}
         elevate
+        enterStyle={POPOVER_MOTION.enterStyle}
+        exitStyle={POPOVER_MOTION.exitStyle}
         minWidth={MOBILE_LAYOUT.menuMinWidth}
         overflow="hidden"
         padding={0}
+        transition={POPOVER_MOTION.transition}
       >
         {items.map((item, index) => {
           const isFirst = index === 0;

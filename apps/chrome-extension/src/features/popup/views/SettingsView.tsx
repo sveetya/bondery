@@ -1,5 +1,6 @@
 import { Button, Stack } from "@mantine/core";
 import { IconArrowLeft, IconLogout } from "@tabler/icons-react";
+import { useExtensionPopupTranslations } from "../../../lib/i18n/generated/hooks";
 import { PopupBrandHeader } from "../components/PopupBrandHeader";
 import { ThemePicker } from "../components/ThemePicker";
 import { UserCard } from "../components/UserCard";
@@ -20,6 +21,7 @@ export function SettingsView({
   onLogout,
   onBack,
 }: SettingsViewProps) {
+  const t = useExtensionPopupTranslations("Settings");
   return (
     <Stack gap="md" h={300} p="md">
       <PopupBrandHeader
@@ -53,7 +55,7 @@ export function SettingsView({
           onClick={onLogout}
           variant="light"
         >
-          Sign out
+          {t("SignOut")}
         </Button>
       </Stack>
     </Stack>

@@ -1,4 +1,7 @@
 import { z } from "zod";
+import type { WebappRuntimeConfig } from "./runtime-config.types.js";
+
+export type { WebappRuntimeConfig };
 
 /**
  * Public runtime configuration for the webapp.
@@ -18,6 +21,4 @@ export const webappRuntimeConfigSchema = z
     webappUrl: z.string().url(),
     websiteUrl: z.string().url(),
   })
-  .strict();
-
-export type WebappRuntimeConfig = z.infer<typeof webappRuntimeConfigSchema>;
+  .strict() satisfies z.ZodType<WebappRuntimeConfig>;

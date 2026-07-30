@@ -1,5 +1,6 @@
 import { Button, Stack, Text } from "@mantine/core";
 import { IconCalendarPlus, IconExternalLink, IconUserPlus } from "@tabler/icons-react";
+import { useExtensionPopupTranslations } from "../../../lib/i18n/generated/hooks";
 import { PersonChip } from "./PersonChip";
 
 interface PersonActionStackProps {
@@ -27,6 +28,7 @@ export function PersonActionStack({
   onPersonClick,
   onAddInteraction,
 }: PersonActionStackProps) {
+  const t = useExtensionPopupTranslations("PersonActions");
   return (
     <Stack gap="md" style={{ flex: 1 }}>
       <Text c="dimmed" size="sm">
@@ -61,7 +63,7 @@ export function PersonActionStack({
             onClick={onAddInteraction}
             variant="default"
           >
-            Add interaction with this person
+            {t("AddInteraction")}
           </Button>
         )}
       </Stack>

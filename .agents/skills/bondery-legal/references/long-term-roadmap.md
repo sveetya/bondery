@@ -21,7 +21,7 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 
 ## 2. CI drift check
 
-**Model:** `npm run env -- --check`, `npm run check-doc-links` in `.github/workflows/verify.yml`.
+**Model:** `npm run env -- --check`, `npm run check-docs` in `.github/workflows/verify.yml`.
 
 **Target script:** Scan `package.json` / env manifest for known vendor SDK identifiers; diff against subprocessor manifest; fail or warn on undeclared vendor.
 

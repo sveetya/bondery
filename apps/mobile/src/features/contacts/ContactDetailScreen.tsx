@@ -10,6 +10,7 @@ import { StackNavBar } from "../../components/chrome";
 import { LoadErrorCard, loadErrorStackInset } from "../../components/load-state";
 import {
   useCommonTranslations,
+  useMobileContactDetailTranslations,
   useMobileSettingsTranslations,
 } from "../../lib/i18n/generated/hooks";
 import { preloadMobileNamespaces } from "../../lib/i18n/preloadMobileNamespaces";
@@ -82,6 +83,7 @@ function ContactDetailScreenLoaded({
   tagsLoading,
 }: ContactDetailScreenLoadedProps) {
   const t = useCommonTranslations();
+  const tMobileContactDetail = useMobileContactDetailTranslations();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const colors = useMobileThemeColors();
@@ -133,6 +135,7 @@ function ContactDetailScreenLoaded({
         onClose={() => handlers.setDeleteConfirmOpen(false)}
         onOpenChange={handlers.setDeleteConfirmOpen}
         open={handlers.isDeleteConfirmOpen}
+        title={tMobileContactDetail("DeleteContactConfirmTitle").replace("{name}", handlers.name)}
       />
 
       <ShareContactEmailSheet

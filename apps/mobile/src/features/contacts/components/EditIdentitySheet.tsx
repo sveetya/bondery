@@ -201,7 +201,7 @@ export function EditIdentitySheet({
 
         <SheetTextField
           accessibilityLabel={tMobileContactIdentity("FirstNameLabel")}
-          control={control}
+          control={control as never}
           editable={!isBusy}
           inputRef={firstNameRef}
           maxLength={INPUT_MAX_LENGTHS.firstName}
@@ -212,7 +212,7 @@ export function EditIdentitySheet({
 
         <SheetTextField
           accessibilityLabel={tMobileContactIdentity("MiddleNameLabel")}
-          control={control}
+          control={control as never}
           editable={!isBusy}
           maxLength={INPUT_MAX_LENGTHS.middleName}
           name="middleName"
@@ -222,7 +222,7 @@ export function EditIdentitySheet({
 
         <SheetTextField
           accessibilityLabel={tMobileContactIdentity("LastNameLabel")}
-          control={control}
+          control={control as never}
           editable={!isBusy}
           maxLength={INPUT_MAX_LENGTHS.lastName}
           name="lastName"
@@ -232,7 +232,7 @@ export function EditIdentitySheet({
 
         <SheetTextField
           accessibilityLabel={tMobileContactIdentity("HeadlineLabel")}
-          control={control}
+          control={control as never}
           editable={!isBusy}
           leadingIcon={headlineLeadingIcon}
           maxLength={INPUT_MAX_LENGTHS.headline}

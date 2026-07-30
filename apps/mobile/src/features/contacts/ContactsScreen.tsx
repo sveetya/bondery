@@ -3,6 +3,7 @@ import type { FlashListRef } from "@shopify/flash-list";
 import { IconSearch } from "@tabler/icons-react-native";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { ActivityIndicator, View } from "react-native";
 import { useScrollBottomInset } from "../../components/chrome";
 import { LoadErrorCard, loadErrorTabRootInset } from "../../components/load-state";
@@ -93,7 +94,7 @@ export function ContactsScreen() {
   );
 
   const handleListScroll = useCallback(
-    (event: Parameters<NonNullable<typeof onScroll>>[0]) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       onScroll(event);
       fabScrollDismiss(event);
     },

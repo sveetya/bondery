@@ -14,7 +14,7 @@ Examples:
 | Task | Success criteria |
 |------|----------------|
 | Add validation | Unit test for invalid input passes → `npm test -w @bondery/helpers` (if helper changed) |
-| Fix API bug | Repro test passes → `npm run test:api -w api` |
+| Fix API bug | Repro test passes → targeted `test:sync` or optional `test:api` when DB-backed |
 | New route | OpenAPI in sync → `npm run check-openapi` |
 | Mobile sync change | Pattern lint clean → `npm run check-sync-patterns -w mobile` |
 

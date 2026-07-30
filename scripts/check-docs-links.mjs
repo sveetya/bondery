@@ -4,6 +4,9 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "./check-report.mjs";
+
+const check = createCheck("check-docs-links");
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(__dirname, "..");
 const DOCS_DIR = join(REPO_ROOT, "docs");
@@ -121,17 +124,11 @@ function main() {
     }
   }
 
-  if (errors.length > 0) {
-    console.error("\nDoc link validation failed:\n");
-    for (const error of errors) {
-      console.error(`  - ${error}`);
-    }
-    process.exit(1);
+  for (const error of errors) {
+    check.add(error);
   }
 
-  console.log(
-    `Doc links OK: ${registry.size} registry entries, ${usedIds.size} referenced docId(s) in app code.`,
-  );
+  check.ok(`${registry.size} registry entries, ${usedIds.size} referenced docId(s) in app code`);
 }
 
 main();

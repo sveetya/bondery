@@ -2,7 +2,7 @@
 
 Map changed paths to workspaces, then run the **minimum** command set for that change. Expand to consumer workspaces when shared packages change.
 
-**Workspace flags:** `-w webapp`, `-w api`, `-w apps/api`, and `-w @bondery/db` are all valid; prefer the form used in CI when matching `verify.yml`.
+**Workspace flags:** use each workspace's `package.json` `name` — `-w api`, `-w webapp`, `-w mobile`, `-w website`, `-w chrome-extension`, `-w @bondery/db`, `-w @bondery/schemas`, `-w @bondery/translations`. Do not use directory paths like `-w apps/api`. Match `verify.yml` when in doubt.
 
 ## Fast path (almost always)
 
@@ -23,21 +23,20 @@ npx biome ci .
 | Changed paths | Commands |
 |---------------|----------|
 | Any TS/JS across monorepo | `npm run check-types` (or scoped `-w` only if change is isolated) |
-| `scripts/check-dev-ports.mjs`, port constants | `npm run check-dev-ports` |
 | Package import patterns | `npm run check-package-imports` |
 | `packages/helpers/src/env/**`, `.env.example`, turbo env | `npm run env -- --check` |
-| `docs/**` (non-website) | `npm run check-doc-links` |
-| `apps/website/**` MDX/docs | `npm run check-doc-mdx-links` |
-| `apps/api/**` routes/schemas, `packages/schemas/**` | `npm run check-openapi` |
-| `packages/translations/**`, locale JSON, UI strings | `npm run check-translations`, `npm run check-api-error-translations`, `npm run i18n:types:check`, `npm run i18n:status:check`, `npm run i18n:lint` |
-| API error catalog/docs | `npm run check-error-docs`, `npm run check-user-facing-errors` |
+| `docs/**` (non-website) | `npm run check-docs` |
+| `apps/website/**` MDX/docs | `npm run check-docs` |
+| `apps/api/**` routes/schemas, `packages/schemas/**` | `npm run check-openapi`, `npm run check-contracts` |
+| `packages/translations/**`, locale JSON, UI strings | `npm run check-i18n` |
+| API error catalog/docs | `npm run check-api-errors` |
 | `deploy/bondery/**` | `docker compose -f deploy/bondery/docker-compose.yml config`, `node deploy/bondery/scripts/check-compose.mjs` |
 
 ## `packages/schemas` (`@bondery/schemas`)
 
 | Trigger | Commands |
 |---------|----------|
-| Any change | `npm run test:contracts`, `npm run check-types -w @bondery/schemas` |
+| Any change | `npm run check-contracts`, `npm run check-types -w @bondery/schemas` |
 | Public export surface | `npm run sync-exports` (review diff), `npm run build -w @bondery/schemas` |
 | Consumers | `npm run check-types -w api`, `npm run check-types -w webapp`, `npm run check-types -w mobile` as applicable |
 
@@ -54,23 +53,22 @@ npx biome ci .
 |---------|----------|
 | Prisma schema/migrations | `npm run check-types -w @bondery/db`, `npm run db:generate -w @bondery/db` |
 | Release/CI parity | `npm run release-migrate -w @bondery/db` (requires Postgres — see `ci-parity.md`) |
-| After migration | `npm run test:api -w api`, `npm run test:auth -w api` when API behavior depends on schema |
+| After migration | `npm run test:auth -w api` when auth behavior depends on schema |
 
 ## `packages/translations` (`@bondery/translations`)
 
 | Trigger | Commands |
 |---------|----------|
 | Locale files | Full translation block from `verify.yml` (see root table above) |
-| Hook extraction | `node packages/translations/scripts/verify-i18next-hook-extraction.mjs` |
+| Manifest / codegen | `npm run build -w @bondery/translations`, `npm run check-i18n-types` |
 
 ## `apps/api` (`api`)
 
 | Trigger | Commands |
 |---------|----------|
 | Any TS change | `npm run check-types -w api` |
-| Routes/OpenAPI | `npm run check-openapi -w api` or root `npm run check-openapi` |
+| Routes/OpenAPI | `npm run check-openapi-spec -w api` or root `npm run check-openapi` |
 | Sync/Redis | `npm run test:sync -w api` |
-| Routes/handlers | `npm run test:api -w api` (Postgres + migrate first) |
 | Auth/OAuth | `npm run test:auth -w api` (Postgres + migrate first) |
 | Security-sensitive | `bondery-security` verification commands |
 
@@ -96,14 +94,12 @@ When `apps/api/src/services/notifications/**` or `apps/api/src/lib/notifications
 | Login/OAuth flows | `npm run test:e2e -w webapp` (local; see `bondery-e2e-tests`) |
 | Production build confidence | `npm run build -w webapp`, optional `npm run smoke-ssr -w webapp` |
 
-**Known gap:** `check-types` calls `check-schemas-imports:strict` but the script may be undefined — if typecheck fails on missing script, run `npm run check-schemas-imports -w webapp` and note in report.
-
 ## `apps/website` (`website`)
 
 | Trigger | Commands |
 |---------|----------|
 | Any change | `npm run check-types -w website` |
-| MDX/docs content | `npm run check-doc-mdx-links -w website` |
+| MDX/docs content | `npm run check-docs` |
 | Release build | `npx turbo build --filter=website^...`, `npm run build -w website` |
 
 ## `apps/mobile` (`mobile`)

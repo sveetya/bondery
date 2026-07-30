@@ -1,6 +1,6 @@
 /** Static OpenAPI document metadata for @fastify/swagger. */
 
-import { DEV_URLS } from "@bondery/schemas/constants";
+import { DEV_URLS, PROJECT_OPENAPI_LICENSE } from "@bondery/schemas/constants";
 
 export const swaggerOpenApiConfig = {
   components: {
@@ -40,7 +40,7 @@ export const swaggerOpenApiConfig = {
       "Keys support `read` (GET/HEAD) or `full` access. See the authentication guide.\n\n" +
       "Endpoints under `/api/me/api-keys`, `/api/sync`, `/api/chat`, `/api/admin`, " +
       "`/api/subscriptions`, and `/api/extension` do not accept API keys.",
-    license: { name: "Proprietary" },
+    license: PROJECT_OPENAPI_LICENSE,
     title: "Bondery API",
     version: "1.0.0",
   },

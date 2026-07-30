@@ -89,7 +89,7 @@ Upgrade shared foundations first, then apps:
 |-----------|------------|-------|
 | **TypeScript** | Every workspace with `typescript` in `devDependencies` | Bump all to the same version. Run `check-types` everywhere, then build all touched workspaces. |
 | **React / react-dom** | All apps + `packages/emails` | Same exact version everywhere. Run `npm ls react` after install. |
-| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `npm run test:contracts -w packages/schemas`. |
+| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `npm run check-contracts -w packages/schemas`. |
 | **Mantine** | `apps/webapp`, `apps/website`, `packages/mantine-next` | Same version on every `@mantine/*`. See [mantine-best-practices](../../skills/mantine-best-practices/SKILL.md). |
 | **Next.js** | `apps/webapp`, `apps/website` | `npx @next/codemod@latest upgrade`. See [next-best-practices](../../skills/next-best-practices/SKILL.md). |
 | **Expo SDK** | `apps/mobile` | `npx expo install expo@<target>` then `npx expo install --fix`. See [upgrading-expo](../../skills/upgrading-expo/SKILL.md). |
@@ -161,7 +161,7 @@ npx turbo build --filter=./packages/*
 # Or per package: npm run build -w @bondery/schemas
 
 # Mobile — no build script; use:
-npm run check-types -w apps/mobile
+npm run check-types -w mobile
 npx expo-doctor                        # run inside apps/mobile
 
 # Large PR — full check before merge

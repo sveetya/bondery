@@ -54,7 +54,8 @@ export async function handleMessage(
         break;
 
       case "VERSION_CHECK_REQUEST": {
-        const { updateRequired = false } = await browser.storage.local.get("updateRequired");
+        const stored = await browser.storage.local.get("updateRequired");
+        const updateRequired = stored.updateRequired === true;
         sendResponse({
           payload: { updateRequired },
           type: "VERSION_CHECK_RESPONSE",

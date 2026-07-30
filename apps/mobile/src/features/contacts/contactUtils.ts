@@ -241,7 +241,7 @@ function getCountryDisplayName(countryCode: string | null | undefined): string |
   }
 
   try {
-    const locale = resolveDateLocale();
+    const locale = resolveDateLocale(i18n.language);
     const names = new Intl.DisplayNames([locale], { type: "region" });
     return names.of(countryCode.toUpperCase()) ?? countryCode.toUpperCase();
   } catch {

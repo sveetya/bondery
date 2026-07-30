@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const report = createCheck("check-sync-patterns");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const MOBILE_SRC = join(__dirname, "..", "src");
 const FEATURES_DIR = join(MOBILE_SRC, "features");
@@ -180,28 +184,18 @@ function main(): void {
   const errors = violations.filter((v) => v.severity === "error");
   const warnings = violations.filter((v) => v.severity === "warn");
 
-  if (violations.length === 0) {
-    console.log("check-mobile-sync-patterns: OK");
-    return;
+  for (const violation of warnings) {
+    console.warn(`  ${violation.file}: [${violation.rule}] ${violation.detail}`);
   }
-
   if (warnings.length > 0) {
-    console.warn("check-mobile-sync-patterns: warnings\n");
-    for (const v of warnings) {
-      console.warn(`  ${v.file}: [${v.rule}] ${v.detail}`);
-    }
     console.warn("");
   }
 
-  if (errors.length > 0) {
-    console.error("check-mobile-sync-patterns: FAILED\n");
-    for (const v of errors) {
-      console.error(`  ${v.file}: [${v.rule}] ${v.detail}`);
-    }
-    process.exit(1);
+  for (const violation of errors) {
+    report.add(`${violation.file}: [${violation.rule}] ${violation.detail}`);
   }
 
-  console.log("check-mobile-sync-patterns: OK (with warnings)");
+  report.ok(warnings.length > 0 && errors.length === 0 ? "with warnings" : undefined);
 }
 
 main();

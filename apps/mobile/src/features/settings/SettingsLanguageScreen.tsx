@@ -107,7 +107,7 @@ export function SettingsLanguageScreen() {
   const localeOptions = useMemo(
     () =>
       APP_LANGUAGES_DATA.map((language) => ({
-        label: formatAppLanguagePickerLabel(tLanguages, language),
+        label: formatAppLanguagePickerLabel((key) => tLanguages(key as never), language),
         leftSection: <Text style={styles.flag}>{countryCodeToFlagEmoji(language.flag)}</Text>,
         value: language.value as MobileLocale,
       })),

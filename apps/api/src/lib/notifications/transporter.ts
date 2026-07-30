@@ -250,6 +250,11 @@ export function getEmailConfig(): EmailConfig | null {
   return emailConfigFromProcessEnv();
 }
 
+/** SMTP config when env is complete; throws if email is not configured. */
+export function requireEmailConfig(): EmailConfig {
+  return ensureEmailConfig();
+}
+
 export function getEmailTransporter(): Transporter {
   if (transporter) {
     return transporter;

@@ -1,18 +1,37 @@
+export {
+  applyApiBootEnv,
+  applyTargetBootEnv,
+  getBootEnvVarNames,
+  getBootIncludeExtraVarNames,
+  resolveBootEnvValue,
+} from "#env/apply-boot-env.js";
 export type { EnvCheckConfig } from "#env/check-env.js";
 export { checkEnvVariables, parseEnvFile } from "#env/check-env.js";
 export {
   applyTransform,
+  type BootExample,
+  DEPLOY_GROUP_GUIDES,
+  DEPLOY_GROUP_ORDER,
+  type DeployExample,
+  ENV_GROUP_GUIDES,
   ENV_MANIFEST,
   type EnvEnvironment,
   type EnvTargetWrite,
   type EnvVarDef,
+  type ExampleProfile,
   getAllRuntimeNames,
   getRequiredVarsForTarget,
   getRuntimeNamesForTarget,
   OPS_ENV_VARS,
+  OPS_GROUP_GUIDES,
+  OPS_GROUP_ORDER,
+  type OpsExample,
   resolveCanonicalValue,
+  resolveExampleValue,
   SYNC_TARGETS,
   type SyncTargetConfig,
+  sortDeployExampleRows,
+  sortOpsExampleRows,
   type TargetId,
   TURBO_SYSTEM_PASSTHROUGH,
 } from "#env/manifest.js";

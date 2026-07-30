@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-no-route-writes");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const routesRoot = join(__dirname, "..", "src", "routes");
 const allowlistPath = join(__dirname, "route-writes-allowlist.json");
@@ -44,12 +48,8 @@ for (const file of walk(routesRoot)) {
   violations.push(rel);
 }
 
-if (violations.length > 0) {
-  console.error(
-    "check-no-route-writes: Database writes in routes not on allowlist:\n" +
-      violations.map((v) => `  - ${v}`).join("\n"),
-  );
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-no-route-writes: ok");
+check.ok();

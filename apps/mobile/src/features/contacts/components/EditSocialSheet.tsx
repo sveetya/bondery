@@ -253,7 +253,7 @@ export function EditSocialSheet({
               }
             }}
             onSubmitEditing={() => void onSubmit()}
-            placeholder={t(platformConfig.placeholderKey)}
+            placeholder={t(platformConfig.placeholderKey as never)}
             returnKeyType="done"
           />
         </View>

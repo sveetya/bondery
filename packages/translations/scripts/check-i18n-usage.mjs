@@ -1,13 +1,17 @@
 /**
- * Translation status gate for CI: validates used keys (regex + manifest paths) and
- * secondary-locale coverage, then runs i18next-cli status against the flat mirror.
+ * Authoritative i18n CI gate: validates used keys (regex + manifest paths),
+ * TypedTrans i18nKey usage, secondary-locale key parity, and representative-key
+ * regression coverage for namespace-scoped hooks.
  */
-import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import localeCatalog from "@bondery/schemas/locale/supported-locales.json" with { type: "json" };
+
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-i18n-usage");
 
 const packageRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repoRoot = path.resolve(packageRoot, "../..");
@@ -23,6 +27,16 @@ const SCAN_ROOTS = [
   path.join(repoRoot, "apps/website/src"),
 ];
 
+const REPRESENTATIVE_KEYS = [
+  "SettingsPage:DataManagement.VCardImport.ModalTitle",
+  "SettingsPage:DataManagement.LinkedInImport.ModalTitle",
+  "common:actions.cancel",
+  "validation:fields.firstName.required",
+  "UnavailablePage:StatusOnline",
+  "ChatPage:title",
+  "LoginPage:TermsText",
+];
+
 function namespaceFromGeneratedHook(hookSuffix) {
   if (hookSuffix === "Common") {
     return "common";
@@ -36,11 +50,8 @@ function namespaceFromGeneratedHook(hookSuffix) {
   return hookSuffix;
 }
 
-let failed = false;
-
 function fail(message) {
-  console.error(`FAIL: ${message}`);
-  failed = true;
+  check.add(message);
 }
 
 function walk(dir, acc = []) {
@@ -116,14 +127,19 @@ const hookBindingRes = [
 ];
 const tWithNsRe = /\b(\w+)\(\s*["']([^"']+)["']\s*,\s*\{[^}]*\bns:\s*["']([^"']+)["']/g;
 const tCallRe = /\b(\w+)\(\s*["']([^"']+)["'](?!\s*,\s*\{[^}]*\bns:)/g;
+const transI18nKeyFirstRe = /\bi18nKey=\{?"([^"']+)"\}?[\s\S]{0,1200}?\bt=\{(\w+)\}/g;
+const transTFirstRe = /\bt=\{(\w+)\}[\s\S]{0,1200}?\bi18nKey=\{?"([^"']+)"\}?/g;
 
 const usedKeys = new Map();
+const discovered = new Set();
 
 function addUsage(namespace, key) {
-  const full = key ? `${namespace}.${key}` : namespace;
-  if (!usedKeys.has(full)) {
-    usedKeys.set(full, new Set());
+  const dotFull = key ? `${namespace}.${key}` : namespace;
+  const colonFull = key ? `${namespace}:${key}` : namespace;
+  if (!usedKeys.has(dotFull)) {
+    usedKeys.set(dotFull, new Set());
   }
+  discovered.add(colonFull);
 }
 
 function collectBindings(content) {
@@ -142,6 +158,21 @@ function collectBindings(content) {
     }
   }
   return bindings;
+}
+
+function collectTransKeys(content, bindings) {
+  for (const re of [transI18nKeyFirstRe, transTFirstRe]) {
+    for (const match of content.matchAll(re)) {
+      const key = re === transTFirstRe ? match[2] : match[1];
+      const varName = re === transTFirstRe ? match[1] : match[2];
+      const ctx = bindings.get(varName);
+      if (!ctx) {
+        continue;
+      }
+      const fullKey = [ctx.prefix, key].filter(Boolean).join(".");
+      addUsage(ctx.ns, fullKey);
+    }
+  }
 }
 
 for (const root of SCAN_ROOTS) {
@@ -166,6 +197,7 @@ for (const root of SCAN_ROOTS) {
       const fullKey = [ctx.prefix, key].filter(Boolean).join(".");
       addUsage(ctx.ns, fullKey);
     }
+    collectTransKeys(content, bindings);
   }
 }
 
@@ -197,7 +229,6 @@ for (const locale of LOCALES) {
   }
 }
 
-// Structural key parity (cs/de vs en) for all manifest namespaces
 function isAllowedExtraKey(key) {
   return /_(few|many|zero)$/.test(key);
 }
@@ -220,35 +251,10 @@ for (const [name] of Object.entries(manifest.namespaces)) {
   }
 }
 
-const mirrorResult = spawnSync(
-  process.execPath,
-  [path.join(packageRoot, "scripts/sync-locale-mirror.mjs")],
-  { cwd: repoRoot, stdio: "inherit" },
-);
-if (mirrorResult.status !== 0) {
-  process.exit(mirrorResult.status ?? 1);
-}
-
-const i18nextCliPath = path.join(repoRoot, "node_modules/i18next-cli/dist/esm/cli.js");
-
-if (fs.existsSync(i18nextCliPath)) {
-  const statusResult = spawnSync(
-    process.execPath,
-    [i18nextCliPath, "status", "-c", "packages/translations/i18next.config.ts"],
-    { cwd: repoRoot, stdio: "inherit" },
-  );
-
-  if (statusResult.status !== 0) {
-    console.warn(
-      "WARN: i18next-cli status reported incomplete translations (namespace-scoped hooks use the custom scanner above).",
-    );
+for (const key of REPRESENTATIVE_KEYS) {
+  if (!discovered.has(key)) {
+    check.add(`representative key not discovered by hook scanner: ${key}`);
   }
-} else {
-  console.warn("WARN: i18next-cli not installed; skipped status subprocess.");
 }
 
-if (failed) {
-  process.exit(1);
-}
-
-console.log("\ni18n status check passed.");
+check.ok(`${discovered.size} keys discovered`);

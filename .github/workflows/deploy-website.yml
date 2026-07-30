@@ -27,51 +27,7 @@ permissions:
   packages: write
 
 jobs:
-  gate:
-    runs-on: ubuntu-latest
-    env:
-      TURBO_TELEMETRY_DISABLED: 1
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: latest
-          cache: npm
-
-      - uses: ./.github/actions/shared/turbo-remote-cache
-        with:
-          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
-          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
-
-      - name: Prune monorepo for website
-        run: npx turbo prune website --docker
-
-      - name: Install pruned dependencies
-        run: |
-          cp -r out/full/* out/json/
-          cp -r docs out/json/docs
-          cp -r scripts out/json/scripts
-          mkdir -p out/json/apps/api
-          cp apps/api/openapi.yaml out/json/apps/api/openapi.yaml
-          cd out/json
-          npm ci --ignore-scripts
-
-      - name: Build website
-        working-directory: out/json
-        env:
-          BONDERY_PUBLIC_WEBAPP_URL: https://app.example.com
-          BONDERY_PUBLIC_WEBSITE_URL: https://example.com
-        run: npx turbo build --filter=website
-
-      - name: Website typechecks
-        working-directory: out/json
-        run: npm run check-types -w website
-
   build-push:
-    needs: gate
     uses: ./.github/workflows/shared-docker-build-push.yml
     secrets: inherit
     with:
@@ -157,16 +113,7 @@ jobs:
     needs: [build-push, smoke]
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Dokploy redeploy webhook
-        env:
-          WEBHOOK_URL: ${{ secrets.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
-        run: |
-          if [ -z "$WEBHOOK_URL" ]; then
-            echo "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK not set — skip (redeploy manually in Dokploy)."
-            exit 0
-          fi
-          # Dokploy filters by branch — ref must match the branch configured on the Compose app.
-          curl -fsS -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -H "X-GitHub-Event: push" \
-            -d "{\"ref\":\"refs/heads/${GITHUB_REF_NAME}\",\"repository\":{\"full_name\":\"${GITHUB_REPOSITORY}\"}}"
+      - uses: ./.github/actions/shared/dokploy-deploy-webhook
+        with:
+          webhook_url: ${{ vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK }}
+          branch: release
