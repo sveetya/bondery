@@ -15,7 +15,7 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 1. Merge website/marketing changes to `main`.
 2. Promote: `git push origin main:release`.
 3. [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds and pushes `:production` + `:sha-<short>`.
-4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`) or redeploy manually.
+4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (must match the `refs/heads/release` payload from CI).
 
 There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by temporarily overriding the image to a known `:sha-<short>` or using Dokploy's previous deployment.
 

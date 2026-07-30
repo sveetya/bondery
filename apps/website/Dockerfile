@@ -10,6 +10,8 @@ COPY . .
 RUN npx --yes turbo@2.10.4 prune website --docker
 
 FROM base AS builder
+ARG TURBO_TEAM
+ENV TURBO_TEAM=$TURBO_TEAM
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/package-lock.json ./package-lock.json
 COPY --from=prune /app/out/full/ .
@@ -22,7 +24,9 @@ ENV npm_config_ignore_scripts=true
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
 RUN npm ci
-RUN npx turbo build --filter=website
+RUN --mount=type=secret,id=turbo_token \
+    export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
+    npx turbo build --filter=website
 RUN npm prune --omit=dev
 
 FROM node:22-alpine AS runner

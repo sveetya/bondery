@@ -109,7 +109,7 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: gcp_auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
           credentials_json: ${{ secrets.PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON }}
           token_format: access_token
@@ -160,7 +160,7 @@ jobs:
           echo "$PUBLISH_RESPONSE" | node -e "const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); const state=String(data.state||'').toUpperCase(); const status=data.status; const okStatus = Array.isArray(status) ? status.map(String).map(s=>s.toUpperCase()).includes('OK') : String(status||'').toUpperCase()==='OK'; const okState = ['PENDING_REVIEW','PUBLISHED'].includes(state); if(!(okStatus || okState)){ console.error(input); process.exit(1);} console.log('✅ publish accepted | state=' + (state || 'UNKNOWN'));"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -16,7 +16,6 @@ on:
       - "package-lock.json"
       - "turbo.json"
       - ".dockerignore.website"
-      - "apps/api/openapi.yaml"
       - ".github/actions/shared/**"
       - ".github/workflows/deploy-website.yml"
       - ".github/workflows/shared-docker-build-push.yml"
@@ -41,6 +40,11 @@ jobs:
         with:
           node-version: latest
           cache: npm
+
+      - uses: ./.github/actions/shared/turbo-remote-cache
+        with:
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
 
       - name: Prune monorepo for website
         run: npx turbo prune website --docker
@@ -161,4 +165,8 @@ jobs:
             echo "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK not set — skip (redeploy manually in Dokploy)."
             exit 0
           fi
-          curl -fsS -X POST "$WEBHOOK_URL"
+          # Dokploy filters by branch — ref must match the branch configured on the Compose app.
+          curl -fsS -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-GitHub-Event: push" \
+            -d "{\"ref\":\"refs/heads/${GITHUB_REF_NAME}\",\"repository\":{\"full_name\":\"${GITHUB_REPOSITORY}\"}}"
