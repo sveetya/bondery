@@ -9,8 +9,8 @@ import {
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 
@@ -30,7 +30,7 @@ export async function sendTrialEndingEmail(
     return;
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
   const lng = await resolveEmailLocale(input.userId);
   const bundle = loadEmailNamespace(lng, "TrialEndingEmail");
   const copy = buildTrialEndingCopy(bundle);

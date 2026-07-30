@@ -5,8 +5,8 @@ import type { FastifyBaseLogger } from "fastify";
 import { buildAccountDeletedCopy } from "../../lib/notifications/email-copy-builders.js";
 import { loadEmailNamespace, readCopyString } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 
@@ -25,7 +25,7 @@ export async function sendAccountDeletedEmail(
     return;
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
   const lng = input.language ?? "en";
   const bundle = loadEmailNamespace(lng, "AccountDeletedEmail");
   const copy = buildAccountDeletedCopy(bundle);

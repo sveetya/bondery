@@ -27,6 +27,7 @@ shared/
   ghcr-login/              -> .github/actions/shared/ghcr-login/
   turbo-remote-cache/      -> .github/actions/shared/turbo-remote-cache/
   website-prune-build/     -> .github/actions/shared/website-prune-build/
+  dokploy-deploy-webhook/  -> .github/actions/shared/dokploy-deploy-webhook/
   docker-build-push.yml    -> shared-docker-build-push.yml
   release-validate.yml     -> shared-release-validate.yml
   container-github-release.yml -> shared-container-github-release.yml
@@ -43,6 +44,8 @@ shared/
 | `shared-*` | Reusable workflows (not triggered directly) | `workflow_call` only |
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
+
+**Node on runners:** All host jobs use `node-version: latest` (`setup-node@v7`). Production Docker images intentionally pin `node:22-alpine` in Dockerfiles for reproducible releases; release `smoke` jobs validate the container runtime.
 
 ## Docker channels
 

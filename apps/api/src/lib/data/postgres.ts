@@ -5,7 +5,7 @@ import {
   assertRuntimeDependencyConfigured,
   shouldSkipLiveRuntimeVerify,
 } from "../platform/runtime-env.js";
-import { isDatabaseConfigured, requireDatabaseUrl } from "./database-url.js";
+import { isDatabaseConfigured } from "./database-url.js";
 
 export type PostgresReadiness = {
   configured: boolean;

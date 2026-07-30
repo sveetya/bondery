@@ -15,7 +15,7 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 1. Merge website/marketing changes to `main` (PRs run path-filtered `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) — pruned `turbo build --filter=website`, same recipe as Docker).
 2. Promote: `git push origin main:release`.
 3. [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds the Docker image and pushes `:production` + `:sha-<short>` (no separate host gate; release smoke validates the image).
-4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (must match the `refs/heads/release` payload from CI).
+4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK`) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (CI always sends `refs/heads/release` in the webhook payload, including manual workflow runs).
 
 Host CI uses `node:latest`; the production image uses `node:22-alpine`. Release `smoke` is the Alpine/runtime fidelity check.
 

@@ -8,8 +8,8 @@ import {
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
 import {
-  getEmailConfig,
   isEmailConfigured,
+  requireEmailConfig,
   sendRenderedEmail,
 } from "../../lib/notifications/transporter.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
@@ -30,7 +30,7 @@ export async function sendFeedbackEmail(
     throw internal("email_service_not_configured");
   }
 
-  const config = getEmailConfig()!;
+  const config = requireEmailConfig();
   const lng = await resolveEmailLocale(input.userId);
   const bundle = loadEmailNamespace(lng, "FeedbackEmail");
   const copy = buildFeedbackCopy(bundle);

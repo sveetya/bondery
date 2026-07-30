@@ -113,16 +113,7 @@ jobs:
     needs: [build-push, smoke]
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Dokploy redeploy webhook
-        env:
-          WEBHOOK_URL: ${{ secrets.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
-        run: |
-          if [ -z "$WEBHOOK_URL" ]; then
-            echo "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK not set — skip (redeploy manually in Dokploy)."
-            exit 0
-          fi
-          # Dokploy filters by branch — ref must match the branch configured on the Compose app.
-          curl -fsS -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -H "X-GitHub-Event: push" \
-            -d "{\"ref\":\"refs/heads/${GITHUB_REF_NAME}\",\"repository\":{\"full_name\":\"${GITHUB_REPOSITORY}\"}}"
+      - uses: ./.github/actions/shared/dokploy-deploy-webhook
+        with:
+          webhook_url: ${{ secrets.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
+          branch: release
