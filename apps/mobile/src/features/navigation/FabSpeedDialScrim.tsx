@@ -69,7 +69,7 @@ export function FabSpeedDialScrim({ visible, height, onDismiss }: FabSpeedDialSc
     >
       <Animated.View
         pointerEvents="none"
-        style={[StyleSheet.absoluteFillObject, { backgroundColor: colors.overlay }, animatedStyle]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: colors.overlay }, animatedStyle]}
       />
     </Pressable>
   );

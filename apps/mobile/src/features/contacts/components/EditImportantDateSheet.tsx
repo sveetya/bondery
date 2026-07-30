@@ -175,11 +175,11 @@ export function EditImportantDateSheet({
       }).map((value) => {
         const meta = IMPORTANT_DATE_TYPE_META[value];
         return {
-          label: `${meta.emoji} ${t(`ContactImportantDates.Types.${value}`)}`,
+          label: `${meta.emoji} ${tContactImportantDates(`Types.${value}` as never)}`,
           value,
         };
       }),
-    [usedTypes, t],
+    [usedTypes, tContactImportantDates],
   );
 
   const notifyOptions = useMemo(
@@ -248,11 +248,11 @@ export function EditImportantDateSheet({
   const sheetTitle = isDeleteConfirmOpen
     ? tMobileContactIdentity("DeleteDateConfirmTitle").replace(
         "{type}",
-        t(`ContactImportantDates.Types.${type}`),
+        tContactImportantDates(`Types.${type}` as never),
       )
     : mode === "add"
       ? tContactImportantDates("AddAction")
-      : t(`ContactImportantDates.Types.${type}`);
+      : tContactImportantDates(`Types.${type}` as never);
 
   return (
     <>
@@ -292,7 +292,7 @@ export function EditImportantDateSheet({
         ) : (
           <>
             <SheetSelectField
-              control={control}
+              control={control as never}
               label={tContactImportantDates("TypePlaceholder")}
               name="type"
               options={typeOptions}
@@ -319,7 +319,7 @@ export function EditImportantDateSheet({
 
             <SheetTextField
               accessibilityLabel={tContactImportantDates("NotePlaceholder")}
-              control={control}
+              control={control as never}
               editable={!isSubmitting}
               maxLength={INPUT_MAX_LENGTHS.dateName}
               name="note"
@@ -327,7 +327,7 @@ export function EditImportantDateSheet({
             />
 
             <SheetSelectField
-              control={control}
+              control={control as never}
               label={tMobileContactIdentity("RemindMeLabel")}
               name="notifyDaysBefore"
               options={notifyOptions}

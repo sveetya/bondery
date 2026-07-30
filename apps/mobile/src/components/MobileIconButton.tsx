@@ -51,7 +51,7 @@ export function MobileIconButton({
       justifyContent="center"
       onPress={onPress}
       opacity={disabled ? 0.5 : 1}
-      style={style}
+      style={style as never}
       variant="subtle"
       width={size}
     >

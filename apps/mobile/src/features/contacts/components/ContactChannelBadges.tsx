@@ -3,7 +3,6 @@ import type { ContactAddressType, ContactType } from "@bondery/schemas";
 import { IconStarFilled } from "@tabler/icons-react-native";
 import { Text, View } from "react-native";
 import {
-  useCommonTranslations,
   useContactAddressTranslations,
   useContactInfoTranslations,
 } from "@/lib/i18n/generated/hooks";
@@ -23,15 +22,18 @@ export function ContactChannelBadges({
 }: ContactChannelBadgesProps) {
   const tContactAddress = useContactAddressTranslations();
   const tContactInfo = useContactInfoTranslations();
-  const t = useCommonTranslations();
   const colors = useMobileThemeColors();
 
   const typeLabel =
     type === "work"
-      ? t(`${typeNamespace}.TypeWork`)
+      ? typeNamespace === "ContactAddress"
+        ? tContactAddress("TypeWork")
+        : tContactInfo("TypeWork")
       : type === "other"
         ? tContactAddress("TypeOther")
-        : t(`${typeNamespace}.TypeHome`);
+        : typeNamespace === "ContactAddress"
+          ? tContactAddress("TypeHome")
+          : tContactInfo("TypeHome");
 
   const typeEmoji =
     typeNamespace === "ContactAddress"

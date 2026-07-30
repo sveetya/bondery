@@ -24,7 +24,7 @@ export function FabSpeedDialMenuItem({
   const colors = useMobileThemeColors();
   const tMobileNavigation = useMobileNavigationTranslations();
   const Icon = action.icon;
-  const label = tMobileNavigation(action.labelKey);
+  const label = tMobileNavigation(action.labelKey as never);
   const containerRef = useRef<View>(null);
 
   const reportLayout = useCallback(() => {

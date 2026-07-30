@@ -83,6 +83,7 @@ export function GroupContactsRemoveFromGroupDialog({
       onClose={() => setRemoveFromGroupConfirmOpen(false)}
       onOpenChange={setRemoveFromGroupConfirmOpen}
       open={isRemoveFromGroupConfirmOpen}
+      title={tMobileContacts("RemoveFromGroup")}
     />
   );
 }

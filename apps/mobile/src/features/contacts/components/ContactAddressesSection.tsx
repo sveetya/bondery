@@ -253,7 +253,7 @@ export function ContactAddressesSection({
               accessibilityLabel={`${accessibilityAddressLabel}${isPreferred ? `, ${tContactInfo("Preferred")}` : ""}`}
               channelIcon={<IconMapPin size={16} stroke={colors.iconSecondary} />}
               isPreferred={isPreferred}
-              key={address.formatted || address.value}
+              key={address.addressFormatted ?? address.value}
               labelContent={
                 <View style={styles.addressLines}>
                   {cardLines.streetLine ? (

@@ -1,6 +1,7 @@
 import type { Contact } from "@bondery/schemas";
 import { FlashList, type FlashListRef } from "@shopify/flash-list";
 import { useCallback, useMemo } from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Text, View } from "react-native";
 import { GestureDetector, type GestureType } from "react-native-gesture-handler";
 import { useCommonTranslations, useMobileContactsTranslations } from "@/lib/i18n/generated/hooks";
@@ -24,7 +25,7 @@ interface GroupContactsScreenListProps {
   onExecuteAction: (contact: Contact, action: SwipeAction) => void;
   onLetterChange: (letter: string) => void;
   onOpenContact: (contactId: string) => void;
-  onScroll: (event: { nativeEvent: { contentOffset: { y: number } } }) => void;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   rightSwipeAction: SwipeAction;
   rowTexts: { call: string; email: string; message: string };
   scrollBottomInset: number;

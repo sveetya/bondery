@@ -1,6 +1,7 @@
 import type { Contact, GroupWithCount } from "@bondery/schemas";
 import { FlashList, type FlashListRef } from "@shopify/flash-list";
 import { useCallback, useMemo } from "react";
+import type { NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { ActivityIndicator, Text, View } from "react-native";
 import { GestureDetector, type GestureType } from "react-native-gesture-handler";
 import { useCommonTranslations, useMobileContactsTranslations } from "@/lib/i18n/generated/hooks";
@@ -20,7 +21,7 @@ interface ContactsScreenListProps {
   flashListRef: React.RefObject<FlashListRef<ContactsFlatRow> | null>;
   flatRows: ContactsFlatRow[];
   handleEndReached: () => void;
-  handleListScroll: (event: { nativeEvent: { contentOffset: { y: number } } }) => void;
+  handleListScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   isDragging: boolean;
   isLoadingMore: boolean;
   isSearchActive: boolean;

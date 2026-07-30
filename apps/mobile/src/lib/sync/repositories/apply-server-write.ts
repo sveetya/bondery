@@ -45,7 +45,7 @@ export function upsertContactFromServer(contact: Contact): void {
     contact.myself ? 1 : 0,
     contact.language,
     contact.timezone,
-    contact.gisPoint,
+    contact.gisPoint as string | null,
     contact.avatar ? 1 : 0,
     contact.notesUpdatedAt ?? null,
     contact.lastInteractionActivityId,

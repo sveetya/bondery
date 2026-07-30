@@ -92,7 +92,7 @@ export function SettingsTagsScreen() {
     <Pressable
       accessibilityLabel={tTagsSettings("AddNewTag")}
       accessibilityRole="button"
-      hitSlop={MOBILE_HIT_SLOP}
+      hitSlop={MOBILE_HIT_SLOP.nav}
       onPress={() => setCreateOpen(true)}
       style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
     >

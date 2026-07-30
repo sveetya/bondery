@@ -31,7 +31,7 @@ export function chunkEmojiRows<T extends { emoji: string }>(
   for (let index = 0; index < items.length; index += columns) {
     rows.push({
       id: `row-${items[index]?.emoji ?? index}`,
-      items: items.slice(index, index + columns),
+      items: items.slice(index, index + columns) as unknown as EmojiGridRow["items"],
     });
   }
 

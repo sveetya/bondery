@@ -65,7 +65,7 @@ export function EmojiPickerInput({
   const getCategoryLabel = useCallback(
     (categoryKey: string) => {
       const translationKey = CATEGORY_TRANSLATION_KEYS[categoryKey as EmojiCategoryName];
-      return translationKey ? tMobileEmojiPicker(translationKey) : categoryKey;
+      return translationKey ? tMobileEmojiPicker(translationKey as never) : categoryKey;
     },
     [tMobileEmojiPicker],
   );

@@ -2,7 +2,12 @@ import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { SyncErrorToasts } from "../../src/components/SyncErrorToasts";
 import { fetchSettings } from "../../src/lib/api/online-only";
-import type { MobilePreferencesState } from "../../src/lib/preferences/useMobilePreferences";
+import type {
+  GroupSortOrder,
+  MobilePreferencesState,
+  SwipeAction,
+  TagSortOrder,
+} from "../../src/lib/preferences/useMobilePreferences";
 import { useMobilePreferences } from "../../src/lib/preferences/useMobilePreferences";
 
 function PreferencesHydration() {
@@ -20,10 +25,10 @@ function PreferencesHydration() {
           return;
         }
         hydrateFromServer({
-          groupSortOrder: response.data.groupSortOrder,
-          leftSwipeAction: response.data.leftSwipeAction,
-          rightSwipeAction: response.data.rightSwipeAction,
-          tagSortOrder: response.data.tagSortOrder,
+          groupSortOrder: response.data.groupSortOrder as GroupSortOrder,
+          leftSwipeAction: response.data.leftSwipeAction as SwipeAction,
+          rightSwipeAction: response.data.rightSwipeAction as SwipeAction,
+          tagSortOrder: response.data.tagSortOrder as TagSortOrder,
         });
       } catch {
         // Ignore hydration errors; local persisted preferences remain in use.

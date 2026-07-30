@@ -5,7 +5,7 @@ import type {
   ImportantDate,
   PhoneEntry,
 } from "@bondery/schemas";
-import { resolveAvatarUrlFromBase, resolveLocalContactAvatarUrl } from "../sync/avatar";
+import { resolveLocalContactAvatarUrl } from "../sync/avatar";
 import { parseGisPointLatLon } from "../sync/materializer/read-row";
 
 export type PeopleRow = {
@@ -129,9 +129,7 @@ export function mapPeopleRowToContact(
 ): Contact {
   const { latitude, longitude } = parseGisPointLatLon(row.gis_point);
   const hasAvatar = row.has_avatar === 1;
-  const avatar =
-    resolveLocalContactAvatarUrl(row.user_id, row.id, hasAvatar, row.updated_at) ??
-    resolveAvatarUrlFromBase(row.user_id, row.id, hasAvatar, row.updated_at);
+  const avatar = resolveLocalContactAvatarUrl(row.user_id, row.id, hasAvatar, row.updated_at);
 
   const socials = children?.socials ?? EMPTY_SOCIALS;
 

@@ -1,6 +1,6 @@
-import { View } from "@tamagui/core";
+import { type TamaguiElement, View } from "@tamagui/core";
 import { type ComponentProps, forwardRef } from "react";
-import type { View as RNView } from "react-native";
+import type { GestureResponderEvent } from "react-native";
 import { TAMAGUI_TRANSITION } from "./animations";
 import { PRESS_SCALES, type PressScaleVariant } from "./pressFeedback";
 
@@ -9,13 +9,15 @@ type ViewProps = ComponentProps<typeof View>;
 export type TappableProps = ViewProps & {
   variant?: PressScaleVariant;
   squeezeScale?: number;
+  delayLongPress?: number;
+  onLongPress?: (event: GestureResponderEvent) => void;
 };
 
 /**
  * Tamagui-based pressable with consistent squeeze feedback via `transition` tokens.
  * Prefer this over raw Pressable for tappable controls.
  */
-export const Tappable = forwardRef<RNView, TappableProps>(function Tappable(
+export const Tappable = forwardRef<TamaguiElement, TappableProps>(function Tappable(
   {
     variant = "default",
     squeezeScale,
@@ -37,7 +39,7 @@ export const Tappable = forwardRef<RNView, TappableProps>(function Tappable(
     <View
       animateOnly={animateOnly}
       pressStyle={mergedPressStyle}
-      ref={ref}
+      ref={ref as never}
       scale={scale}
       transition={transition}
       {...props}

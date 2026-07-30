@@ -168,8 +168,11 @@ export function ContactImportantDatesSection({
         sortedDates.map((dateEntry) => {
           const sourceIndex = dates.findIndex((item) => item.id === dateEntry.id);
           const meta = IMPORTANT_DATE_TYPE_META[dateEntry.type];
-          const reminder = notifyLabel(dateEntry.notifyDaysBefore, tContactImportantDates);
-          const typeLabel = t(`ContactImportantDates.Types.${dateEntry.type}`);
+          const reminder = notifyLabel(
+            dateEntry.notifyDaysBefore,
+            tContactImportantDates as (key: string) => string,
+          );
+          const typeLabel = tContactImportantDates(`Types.${dateEntry.type}` as never);
 
           return (
             <View

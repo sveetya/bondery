@@ -160,7 +160,7 @@ export function ContactPhonesSection({ phones, onSavePhones }: ContactPhonesSect
           </Text>
         </View>
       ) : (
-        phones.map((phone) => {
+        phones.map((phone, index) => {
           const typeLabel =
             phone.type === "work" ? tContactInfo("TypeWork") : tContactInfo("TypeHome");
           const displayPhone = formatDisplayPhone(phone);

@@ -98,7 +98,7 @@ export function useContactDetailHandlers({
   }, [contact.id, contact.updatedAt, router, showToast, t, tMobileContactDetail]);
 
   const handleUpdateSocial = useCallback(
-    (platform: ContactSocialFieldKey, value: string) => {
+    async (platform: ContactSocialFieldKey, value: string) => {
       updateContact(
         contact.id,
         {
@@ -112,7 +112,7 @@ export function useContactDetailHandlers({
   );
 
   const handleSavePhones = useCallback(
-    (nextPhones: PhoneEntry[]) => {
+    async (nextPhones: PhoneEntry[]) => {
       updateContact(
         contact.id,
         {
@@ -126,7 +126,7 @@ export function useContactDetailHandlers({
   );
 
   const handleSaveEmails = useCallback(
-    (nextEmails: EmailEntry[]) => {
+    async (nextEmails: EmailEntry[]) => {
       updateContact(
         contact.id,
         {
@@ -140,7 +140,7 @@ export function useContactDetailHandlers({
   );
 
   const handleSaveAddresses = useCallback(
-    (nextAddresses: ContactAddressEntry[]) => {
+    async (nextAddresses: ContactAddressEntry[]) => {
       updateContact(
         contact.id,
         {

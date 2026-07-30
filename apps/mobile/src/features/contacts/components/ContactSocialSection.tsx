@@ -124,7 +124,7 @@ export function ContactSocialSection({
           return (
             <ContactSocialButton
               accessibilityHint="Long press to edit"
-              accessibilityLabel={`${t(platform.accessibilityLabelKey)}${nameSuffix}`}
+              accessibilityLabel={`${t(platform.accessibilityLabelKey as never)}${nameSuffix}`}
               color={platform.color}
               icon={platform.renderIcon(platform.color)}
               key={platform.key}

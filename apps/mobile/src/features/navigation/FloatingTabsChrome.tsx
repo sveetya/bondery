@@ -1,5 +1,5 @@
-import { type LayoutChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { type LayoutChangeEvent, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ContactsSelectionActionBar } from "../../components/ContactsSelectionActionBar";
 import { floatingBarStyles } from "../../theme/floatingBarStyles";
