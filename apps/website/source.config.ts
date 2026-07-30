@@ -1,8 +1,24 @@
+import { execSync } from "node:child_process";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { metaSchema, pageSchema } from "fumadocs-core/source/schema";
 import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 import lastModified from "fumadocs-mdx/plugins/last-modified";
 import remarkGfm from "remark-gfm";
 import { z } from "zod";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
+
+/** Git timestamps need a repo + binary; Docker/pruned CI builds have neither. */
+function isGitLastModifiedAvailable(): boolean {
+  try {
+    execSync("git --version", { stdio: "ignore" });
+    execSync("git rev-parse --show-toplevel", { cwd: repoRoot, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export const docs = defineDocs({
   dir: "../../docs",
@@ -30,5 +46,5 @@ export default defineConfig({
     providerImportSource: "@/components/mdx",
     remarkPlugins: [remarkGfm],
   },
-  plugins: [lastModified()],
+  plugins: isGitLastModifiedAvailable() ? [lastModified()] : [],
 });

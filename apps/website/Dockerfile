@@ -15,6 +15,7 @@ COPY --from=prune /app/out/package-lock.json ./package-lock.json
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
+COPY apps/api/openapi.yaml ./apps/api/openapi.yaml
 ENV npm_config_ignore_scripts=true
 # Placeholder public env vars for build-time check-env / static generation only.
 # Runtime injects real BONDERY_PUBLIC_* via deploy/ops Compose.
