@@ -11,31 +11,31 @@ import { API_ERROR_CODES } from "@bondery/schemas/errors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(__dirname, "..");
-const pageTemplate = join(
+const errorsDocsRoot = join(
   repoRoot,
   "apps",
   "website",
   "src",
   "app",
+  "(chromeless)",
   "docs",
   "api",
   "errors",
-  "[code]",
-  "page.tsx",
 );
+const pageTemplate = join(errorsDocsRoot, "[code]", "page.tsx");
 
 const violations = [];
 
 if (!existsSync(pageTemplate)) {
   violations.push(
-    "Missing dynamic docs page at apps/website/src/app/docs/api/errors/[code]/page.tsx",
+    "Missing dynamic docs page at apps/website/src/app/(chromeless)/docs/api/errors/[code]/page.tsx",
   );
 }
 
-if (
-  !existsSync(join(repoRoot, "apps", "website", "src", "app", "docs", "api", "errors", "page.tsx"))
-) {
-  violations.push("Missing docs index at apps/website/src/app/docs/api/errors/page.tsx");
+if (!existsSync(join(errorsDocsRoot, "page.tsx"))) {
+  violations.push(
+    "Missing docs index at apps/website/src/app/(chromeless)/docs/api/errors/page.tsx",
+  );
 }
 
 if (violations.length > 0) {
