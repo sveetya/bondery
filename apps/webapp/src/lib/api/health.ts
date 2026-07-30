@@ -40,7 +40,7 @@ export type UserHealthStatus = "checking" | "offline" | "degraded" | "online";
 
 const HEALTH_REPORT_STATUSES = new Set<HealthReportStatus>(["ok", "degraded", "unhealthy"]);
 
-/** Returns a parsed readiness summary for the client, or null when the body is not a /health payload. */
+/** Returns a parsed readiness summary for the client, or null when the body is not a /health/ready payload. */
 export function parseHealthReport(body: unknown): ClientHealthReport | null {
   if (!body || typeof body !== "object") {
     return null;
@@ -94,7 +94,7 @@ export function deriveUserHealthStatus(
 /** Fetches the BFF readiness report. Does not apply transport outage policy. */
 export async function fetchApiHealthReport(): Promise<HealthCheckResult> {
   try {
-    const response = await clientApiFetch("/api/health");
+    const response = await clientApiFetch("/api/health/ready");
     let report: ClientHealthReport | null = null;
 
     if (response.headers.get("Content-Type")?.includes("application/json")) {

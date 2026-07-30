@@ -1,8 +1,8 @@
 import { bffProxyFetch } from "@/lib/api/bffProxy";
 
-/** Readiness probe (proxied through webapp BFF). */
+/** Chrome extension manifest (proxied through webapp BFF). */
 export async function GET() {
-  const apiResponse = await bffProxyFetch("/health", undefined, {
+  const apiResponse = await bffProxyFetch("/extension/manifest", undefined, {
     cache: "no-store",
   });
   const body = await apiResponse.text();

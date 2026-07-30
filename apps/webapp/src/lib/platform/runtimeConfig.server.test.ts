@@ -79,8 +79,8 @@ describe("resolveServerApiBaseUrl", () => {
       "https://api.example.com/api/contacts",
     );
     assert.equal(
-      joinApiUrl("https://api.example.com", "/api/status"),
-      "https://api.example.com/api/status",
+      joinApiUrl("https://api.example.com", "/api/extension/manifest"),
+      "https://api.example.com/api/extension/manifest",
     );
   });
 });
