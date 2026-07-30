@@ -24,7 +24,6 @@ Prerequisites for steps 11–12: Postgres on `127.0.0.1:54322` (or CI-equivalent
 ```bash
 npm ci
 npx biome ci .
-npm run check-dev-ports
 npm run check-package-imports
 npm run env -- --check
 npm run check-doc-links
@@ -37,12 +36,7 @@ node deploy/bondery/scripts/check-compose.mjs
 npm run test:runtime-config -w webapp
 npm run test:contracts
 npm run check-types
-npm run check-translations
-npm run check-api-error-translations
-npm run i18n:types:check
-npm run i18n:status:check
-node packages/translations/scripts/verify-i18next-hook-extraction.mjs
-npm run i18n:lint
+npm run check-i18n
 npm run check-error-docs
 npm run check-user-facing-errors
 npm run test:sync -w apps/api

@@ -184,10 +184,14 @@ This rebuilds `Catalog` types, prefix unions, i18next augmentations, and per-app
 
 | Command | What it verifies |
 |---------|------------------|
-| `npm run i18n:types:check` | Generated i18next-cli types are current |
-| `npm run i18n:status:check` | Every key used in code exists in all locales |
-| `npm run i18n:lint` | No unexpected hardcoded UI strings (webapp + mobile) |
-| `npm run check-translations` | Locale file parity, manifest rules, Languages exonyms |
+| `npm run check-i18n` | All i18n CI gates below (umbrella) |
+| `npm run check-i18n-structure` | Locale file parity, manifest rules, Languages exonyms |
+| `npm run check-i18n-api-errors` | API error codes exist in all locales |
+| `npm run check-i18n-types` | Generated i18next-cli types are current |
+| `npm run check-i18n-usage` | Every key used in code (including `TypedTrans` `i18nKey`) exists in all locales; cs/de key parity vs en |
+| `npm run check-i18n-lint` | No unexpected hardcoded UI strings (webapp + mobile) |
+
+For rich text with embedded links or markup, prefer `TypedTrans` (webapp) with a single translation key and component placeholders — see `apps/webapp/src/lib/i18n/TypedTrans.tsx`.
 
 Run these before opening a PR that touches copy.
 

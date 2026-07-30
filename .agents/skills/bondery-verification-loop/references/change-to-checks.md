@@ -23,13 +23,12 @@ npx biome ci .
 | Changed paths | Commands |
 |---------------|----------|
 | Any TS/JS across monorepo | `npm run check-types` (or scoped `-w` only if change is isolated) |
-| `scripts/check-dev-ports.mjs`, port constants | `npm run check-dev-ports` |
 | Package import patterns | `npm run check-package-imports` |
 | `packages/helpers/src/env/**`, `.env.example`, turbo env | `npm run env -- --check` |
 | `docs/**` (non-website) | `npm run check-doc-links` |
 | `apps/website/**` MDX/docs | `npm run check-doc-mdx-links` |
 | `apps/api/**` routes/schemas, `packages/schemas/**` | `npm run check-openapi` |
-| `packages/translations/**`, locale JSON, UI strings | `npm run check-translations`, `npm run check-api-error-translations`, `npm run i18n:types:check`, `npm run i18n:status:check`, `npm run i18n:lint` |
+| `packages/translations/**`, locale JSON, UI strings | `npm run check-i18n` |
 | API error catalog/docs | `npm run check-error-docs`, `npm run check-user-facing-errors` |
 | `deploy/bondery/**` | `docker compose -f deploy/bondery/docker-compose.yml config`, `node deploy/bondery/scripts/check-compose.mjs` |
 
@@ -61,7 +60,7 @@ npx biome ci .
 | Trigger | Commands |
 |---------|----------|
 | Locale files | Full translation block from `verify.yml` (see root table above) |
-| Hook extraction | `node packages/translations/scripts/verify-i18next-hook-extraction.mjs` |
+| Manifest / codegen | `npm run build -w @bondery/translations`, `npm run check-i18n-types` |
 
 ## `apps/api` (`api`)
 

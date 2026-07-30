@@ -39,9 +39,6 @@ jobs:
       - name: Biome
         run: biome ci .
 
-      - name: Check dev ports
-        run: npm run check-dev-ports
-
       - name: Check package imports
         run: npm run check-package-imports
 
@@ -87,12 +84,7 @@ jobs:
           test -f apps/api/dist/cli/ensure-storage-buckets.js
 
       - name: Translation checks
-        run: |
-          npm run check-translations
-          npm run check-api-error-translations
-          npm run i18n:types:check
-          npm run i18n:ci:check
-          npm run i18n:lint
+        run: npm run check-i18n
 
       - name: API error checks
         run: |

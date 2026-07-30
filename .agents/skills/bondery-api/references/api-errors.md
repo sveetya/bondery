@@ -55,7 +55,7 @@ Standard error responses on routes: `standardErrorResponses` in `packages/schema
 ## CI
 
 - `check-route-errors` — inside `npm run check-types -w apps/api`
-- `check-api-error-translations`, `check-error-docs`, `check-user-facing-errors` — repo root
+- `check-i18n-api-errors`, `check-error-docs`, `check-user-facing-errors` — repo root
 
 ## Client display
 

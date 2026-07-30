@@ -64,5 +64,5 @@ For client error display and i18n, see the `bondery-ux` skill (`references/commo
 - [ ] New error code → catalog + `/docs/api/errors/{code}` + `en`/`cs`/`de` translations
 - [ ] `npm run generate-openapi -w apps/api` — confirm doc order in diff
 - [ ] `npm run check-openapi` passes (includes route-order CI check)
-- [ ] `check-route-errors`, `check-api-error-translations`, `check-error-docs` pass at repo root
+- [ ] `check-route-errors`, `check-i18n-api-errors`, `check-error-docs` pass at repo root
 - [ ] Auth, tenant scoping, webhooks, or uploads touched → `bondery-security` checklist satisfied
