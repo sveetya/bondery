@@ -1,6 +1,6 @@
 "use client";
 
-import { ActionIcon, Box, Card, Group, Image, Title } from "@mantine/core";
+import { ActionIcon, Box, Card, Group, Image, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -139,7 +139,9 @@ export function AnimatedPeople() {
                   {people[active].name}
                 </Title>
                 <Box>
-                  <p className="text-lg text-gray-600 dark:text-gray-300">{people[active].quote}</p>
+                  <Text c="dimmed" size="md">
+                    {people[active].quote}
+                  </Text>
                 </Box>
               </motion.div>
             </AnimatePresence>
