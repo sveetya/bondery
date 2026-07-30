@@ -47,6 +47,15 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 
 **Node on runners:** All host jobs use `node-version: latest` (`setup-node@v7`). Production Docker images intentionally pin `node:22-alpine` in Dockerfiles for reproducible releases; release `smoke` jobs validate the container runtime.
 
+**Dokploy webhooks** (optional repository **variables**, not secrets):
+
+| Variable | Workflow | Dokploy app |
+|----------|----------|-------------|
+| `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` | `deploy-website.yml` (after smoke) | `deploy/ops` marketing website |
+| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release-api.yml`, `release-webapp.yml` | `deploy/bondery` product stack |
+
+Payload always uses `refs/heads/release` so manual runs and tag releases match the Dokploy branch filter.
+
 ## Docker channels
 
 | Channel | Git trigger | Docker tags |

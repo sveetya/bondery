@@ -55,6 +55,12 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 - Link to source files or env examples when steps are non-obvious
 - Keep commands copy-pasteable and tested
 
+### Architecture decision records (`docs/adr/`)
+
+- **Do not link to ADRs** from user-facing or operator docs (`deploy/`, `getting-started`, `bondery/`, `concepts/`, etc.). ADRs are internal, hidden records (`hidden: true`); readers should not need them.
+- When a decision matters for operators or integrators, restate the relevant facts in the appropriate guide (e.g. storage and `pre_start` bootstrap belong in [Configuration](../deploy/configuration.mdx) and [Dokploy](./dokploy.mdx)).
+- New ADRs may still be added under `docs/adr/` for maintainers and agents; keep them out of `meta.json` and avoid cross-links from published doc pages.
+
 ### API docs
 
 - **Do not hand-write endpoint docs.** The contract is compiled from Zod schemas on Fastify routes.

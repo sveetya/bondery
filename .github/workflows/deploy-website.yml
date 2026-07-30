@@ -115,5 +115,5 @@ jobs:
     steps:
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:
-          webhook_url: ${{ secrets.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
+          webhook_url: ${{ vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK }}
           branch: release

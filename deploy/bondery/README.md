@@ -65,6 +65,10 @@ BONDERY_INFRA_API_IMAGE_TAG=1.7.3 docker compose up -d --no-deps api
 
 Schema migrations run automatically via `api` `pre_start` on deploy — no separate `db:migrate:deploy` step for Compose deployments.
 
+### CI redeploy webhook (Bondery production)
+
+After `api-*.*.*` / `webapp-*.*.*` release tags push `:production` images, GitHub Actions calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (repository **variable**) with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
+
 ### Image tags (api / webapp)
 
 - **`production` (default):** floating channel (`pull_policy: always`).
