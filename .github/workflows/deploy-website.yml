@@ -113,6 +113,10 @@ jobs:
     needs: [build-push, smoke]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:
           webhook_url: ${{ vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK }}
