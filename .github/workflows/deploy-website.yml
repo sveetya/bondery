@@ -16,6 +16,7 @@ on:
       - "package-lock.json"
       - "turbo.json"
       - ".dockerignore.website"
+      - "apps/api/openapi.yaml"
       - ".github/actions/shared/**"
       - ".github/workflows/deploy-website.yml"
       - ".github/workflows/shared-docker-build-push.yml"
