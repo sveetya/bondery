@@ -62,13 +62,13 @@ jobs:
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
         with:
-          version: v2.38.2
+          version: v2.40.2
 
       - name: Validate Bondery deploy compose
         run: |
           cp deploy/bondery/.env.example deploy/bondery/.env
-          docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
           node deploy/bondery/scripts/check-compose.mjs
+          docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 
       - name: Validate Bondery compose includes Supabase fragment
         run: |
