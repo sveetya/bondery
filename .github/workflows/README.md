@@ -56,6 +56,16 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 
 Payload always uses `refs/heads/release` so manual runs and tag releases match the Dokploy branch filter.
 
+**Turbo remote cache** (`BONDERY_OPS_TURBO_TOKEN` secret + `BONDERY_OPS_TURBO_TEAM` variable):
+
+| Where | Mechanism |
+|-------|-----------|
+| `verify` `contract`, `auth`, `website-build` | `turbo-remote-cache` action |
+| `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
+| Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
+
+Docker builds also use GHA layer cache (`cache-from: type=gha`).
+
 ## Docker channels
 
 | Channel | Git trigger | Docker tags |
