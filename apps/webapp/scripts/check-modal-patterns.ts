@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-modal-patterns");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
 const STRICT = process.env.CHECK_MODAL_PATTERNS_STRICT === "1";
@@ -150,16 +154,11 @@ function main(): void {
   const files = walk(WEBAPP_SRC);
   const violations = files.flatMap(checkFile);
 
-  if (violations.length === 0) {
-    console.log("check-modal-patterns: OK");
-    return;
+  for (const violation of violations) {
+    check.add(`[${violation.rule}] ${violation.file}: ${violation.detail}`);
   }
 
-  console.error("check-modal-patterns: violations found\n");
-  for (const v of violations) {
-    console.error(`  [${v.rule}] ${v.file}\n    ${v.detail}`);
-  }
-  process.exit(1);
+  check.ok();
 }
 
 main();

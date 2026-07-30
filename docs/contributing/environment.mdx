@@ -48,7 +48,7 @@ cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
 npm run db:migrate:deploy -w @bondery/db
 npm run env
-npm run provision-oauth-clients:dev -w apps/api
+npm run provision-oauth-clients:dev -w api
 npm run dev
 ```
 

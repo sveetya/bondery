@@ -35,7 +35,7 @@ npm run check-contracts
 npm run check-types
 npm run check-i18n
 npm run check-api-errors
-npm run test:sync -w apps/api
+npm run test:sync -w api
 ```
 
 ## Staging workflows (not full verify)
@@ -47,7 +47,7 @@ npm run test:sync -w apps/api
 
 **`stage-api.yml`** (on `main`, api paths):
 
-- `npm run test:sync -w apps/api`
+- `npm run test:sync -w api`
 
 ## Optional local checks (not in CI)
 
@@ -68,8 +68,6 @@ Document these as `SKIPPED` in PR parity reports unless the diff touches those a
 
 | Gap | Impact |
 |-----|--------|
-| Missing `check-schemas-imports:strict` npm script | Webapp `check-types` may fail until script is added |
-| `transit` turbo task with no package script | Typecheck dependency ordering may be incomplete |
 | Biome CI 2.5.0 vs local 2.5.3 | Rare formatter drift between local and Actions |
 | `stage-api` without `test:auth` | Auth suite local-only until repaired |
 | `verify` omits `test:theme` / `test:sync` for webapp | Stage-webapp covers; verify does not |

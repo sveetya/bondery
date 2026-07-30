@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: API sync unit tests
-        run: npm run test:sync -w apps/api
+        run: npm run test:sync -w api
 
   build-push:
     needs: gate

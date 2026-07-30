@@ -67,10 +67,10 @@ Run only what applies to the change:
 
 ```bash
 # Route auth wiring + OpenAPI area audit
-npm run check-types -w apps/api          # includes check-route-security
+npm run check-types -w api          # includes check-route-security
 
 # OAuth / auth integration (optional; Postgres + migrate required)
-npm run test:auth -w apps/api
+npm run test:auth -w api
 
 # Env contract drift
 npm run env -- --check
@@ -103,5 +103,5 @@ npm run check-types -w chrome-extension
 - [ ] Upload routes enforce MIME whitelist + magic-byte validation (+ intended size limit)
 - [ ] 5xx responses use catalog/generic messages — no stack traces to client
 - [ ] Negative tests for unauthenticated, unauthorized, and cross-tenant access where applicable
-- [ ] `npm run check-types -w apps/api` passes if API routes changed
+- [ ] `npm run check-types -w api` passes if API routes changed
 - [ ] Known gaps documented as review triggers, not silently assumed safe — see reference files

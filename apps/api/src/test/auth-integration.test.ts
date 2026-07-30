@@ -6,7 +6,7 @@
  * `oauthProvider` plugin seeds its resource row at boot, and the whole
  * authorization-code + refresh flow is exercised through real Fastify
  * injection against real Prisma-backed storage. Run via `npm run test:auth
- * -w apps/api` (see package.json), never as part of the DB-less `test:api`.
+ * -w api` (see package.json), never as part of the DB-less `test:api`.
  *
  * Requires the schema to already be migrated (`prisma migrate deploy`) —
  * this suite does not run migrations itself. Run locally after

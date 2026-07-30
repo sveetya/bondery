@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-schemas-imports");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
 const STRICT = process.env.CHECK_SCHEMAS_IMPORTS_STRICT === "1";
@@ -69,16 +73,11 @@ function main(): void {
   const files = walk(WEBAPP_SRC);
   const violations = files.flatMap(checkFile);
 
-  if (violations.length === 0) {
-    console.log("check-schemas-imports: OK");
-    return;
+  for (const violation of violations) {
+    check.add(`[${violation.rule}] ${violation.file}: ${violation.detail}`);
   }
 
-  console.error("check-schemas-imports: violations found\n");
-  for (const v of violations) {
-    console.error(`  [${v.rule}] ${v.file}\n    ${v.detail}`);
-  }
-  process.exit(1);
+  check.ok();
 }
 
 main();

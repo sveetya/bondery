@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const report = createCheck("check-theme-patterns");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
 const STRICT = process.env.CHECK_THEME_PATTERNS_STRICT === "1";
@@ -37,7 +41,7 @@ function walk(dir: string, acc: string[] = []): string[] {
   return acc;
 }
 
-function check(): Violation[] {
+function collectViolations(): Violation[] {
   const violations: Violation[] = [];
 
   for (const file of walk(WEBAPP_SRC)) {
@@ -59,19 +63,15 @@ function check(): Violation[] {
   return violations;
 }
 
-const violations = check();
+const violations = collectViolations();
 
-if (violations.length > 0) {
-  const header = STRICT
-    ? "Theme pattern check failed:"
-    : "Theme pattern warnings (set CHECK_THEME_PATTERNS_STRICT=1 to fail):";
-  console.error(header);
-  for (const v of violations) {
-    console.error(`  [${v.rule}] ${v.file}: ${v.detail}`);
-  }
+for (const violation of violations) {
+  const message = `[${violation.rule}] ${violation.file}: ${violation.detail}`;
   if (STRICT) {
-    process.exit(1);
+    report.add(message);
+  } else {
+    console.warn(`  ${message}`);
   }
-} else {
-  console.log("Theme pattern check passed.");
 }
+
+report.ok();

@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-lib-imports");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const libRoot = join(__dirname, "..", "src", "lib");
 
@@ -35,12 +39,8 @@ for (const file of walk(libRoot)) {
   }
 }
 
-if (violations.length > 0) {
-  console.error(
-    "check-lib-imports: lib/ must not import from routes/ or services/:\n" +
-      violations.map((v) => `  - ${v}`).join("\n"),
-  );
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-lib-imports: ok");
+check.ok();

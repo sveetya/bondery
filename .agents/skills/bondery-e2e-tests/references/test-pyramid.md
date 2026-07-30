@@ -15,7 +15,7 @@ Bondery follows a classic test pyramid. E2E is the smallest, slowest layer — r
 
 **Examples:** Zod schema validation, formatters in `@bondery/helpers`, route helpers, form normalizers.
 
-**Run:** workspace `test` script (e.g. `npm run test -w apps/api`).
+**Run:** workspace `test` script (e.g. `npm run test -w api`).
 
 ### Integration tests
 

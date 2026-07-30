@@ -90,7 +90,7 @@ jobs:
         run: npm run check-api-errors
 
       - name: API sync unit tests
-        run: npm run test:sync -w apps/api
+        run: npm run test:sync -w api
 
   website-build:
     runs-on: ubuntu-latest

@@ -6,6 +6,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const report = createCheck("check-extension-patterns");
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SRC = join(__dirname, "..", "src");
 
@@ -71,12 +75,8 @@ function checkFile(abs: string): Violation[] {
 
 const violations = walk(SRC).flatMap(checkFile);
 
-if (violations.length > 0) {
-  console.error("Extension pattern violations:\n");
-  for (const v of violations) {
-    console.error(`  [${v.rule}] ${v.file}\n    ${v.detail}`);
-  }
-  process.exit(1);
+for (const violation of violations) {
+  report.add(`[${violation.rule}] ${violation.file}: ${violation.detail}`);
 }
 
-console.log("check-extension-patterns: ok");
+report.ok();

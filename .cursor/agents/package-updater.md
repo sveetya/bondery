@@ -124,7 +124,7 @@ Build every touched workspace. Type-check and lint alone are not enough.
 
 ```bash
 npx turbo build --filter=<workspace>
-npm run check-types -w apps/mobile
+npm run check-types -w mobile
 npx expo-doctor                        # inside apps/mobile
 ```
 

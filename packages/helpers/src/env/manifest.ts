@@ -47,7 +47,7 @@ export const ENV_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
     "GitHub / LinkedIn OAuth apps: callback URL must be on the API host (not the webapp):",
     "  <BONDERY_PUBLIC_API_URL>/auth/callback/github  (or /linkedin)",
     "  Local example: http://localhost:26631/auth/callback/github",
-    "  Then run: npm run provision-oauth-clients:dev -w apps/api",
+    "  Then run: npm run provision-oauth-clients:dev -w api",
   ],
   Database: [
     "Generate a Postgres password:",

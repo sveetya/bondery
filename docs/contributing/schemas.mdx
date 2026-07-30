@@ -28,8 +28,8 @@ Route-level examples live in `@bondery/schemas/openapi/fixtures/*`. **Runtime mo
 OpenAPI example validation runs in CI only:
 
 - `scripts/openapi-example-fixtures.ts` — maps schema export names → fixture payloads
-- `scripts/check-openapi-examples.ts` — validates fixtures against runtime Zod schemas
-- `scripts/check-no-init-cycles.mjs` — blocks `#openapi/` imports in runtime paths
+- `scripts/check-contracts-openapi-examples.ts` — validates fixtures against runtime Zod schemas
+- `scripts/check-contracts-no-init-cycles.mjs` — blocks `#openapi/` imports in runtime paths
 
 `http/index.ts` may inline small request/response samples; it must not import `schema-examples` or `requests` fixture barrels.
 

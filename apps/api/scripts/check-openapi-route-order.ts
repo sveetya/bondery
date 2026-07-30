@@ -1,7 +1,7 @@
 /**
  * Validates API documentation route order in the generated OpenAPI spec.
  *
- * Usage: npx tsx scripts/check-api-route-order.ts
+ * Usage: npx tsx scripts/check-openapi-route-order.ts
  */
 
 import { readFileSync } from "node:fs";
@@ -13,6 +13,9 @@ import {
   OPENAPI_TAG_ORDER,
 } from "@bondery/schemas/openapi/route-order";
 import { parse } from "yaml";
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const check = createCheck("check-openapi-route-order");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const specPath = join(__dirname, "..", "openapi.yaml");
@@ -84,9 +87,8 @@ for (const [tag, operations] of opsByTag) {
   }
 }
 
-if (violations.length > 0) {
-  console.error(`API route order check failed:\n${violations.map((v) => `  - ${v}`).join("\n")}`);
-  process.exit(1);
+for (const violation of violations) {
+  check.add(violation);
 }
 
-console.log("check-api-route-order: ok");
+check.ok();

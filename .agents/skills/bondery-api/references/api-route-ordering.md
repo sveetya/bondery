@@ -76,9 +76,9 @@ In parent plugins (e.g. `contacts/index.ts`), call `register*Routes` at the tier
 - [ ] Route registered in the correct tier (not appended at file bottom by default)
 - [ ] Same-path methods follow GET → POST → PUT → PATCH → DELETE
 - [ ] New auxiliary workflow paths added to `AUXILIARY_FIRST_SEGMENTS` if tier 5
-- [ ] `npm run generate-openapi -w apps/api` — confirm doc order in the diff
+- [ ] `npm run generate-openapi -w api` — confirm doc order in the diff
 - [ ] `npm run check-openapi` passes (includes route-order CI check)
 
 ## Enforcement
 
-`apps/api/scripts/check-api-route-order.ts` validates tier and HTTP method order in the generated OpenAPI spec (tier must not decrease within a tag; same path must follow GET → POST → PUT → PATCH → DELETE). See also `docs/contributing/api-routes.mdx`.
+`apps/api/scripts/check-openapi-route-order.ts` validates tier and HTTP method order in the generated OpenAPI spec (tier must not decrease within a tag; same path must follow GET → POST → PUT → PATCH → DELETE). See also `docs/contributing/api-routes.mdx`.

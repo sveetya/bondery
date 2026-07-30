@@ -64,7 +64,7 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 | `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
 | Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
 
-**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`npm run test:auth -w apps/api`) is local-only until the suite is repaired.
+**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`npm run test:auth -w api`) is local-only until the suite is repaired.
 
 Docker builds also use GHA layer cache (`cache-from: type=gha`).
 

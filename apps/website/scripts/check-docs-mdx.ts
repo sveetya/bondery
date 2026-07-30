@@ -10,6 +10,10 @@ import {
 } from "next-validate-link";
 import { glob } from "tinyglobby";
 
+import { createCheck } from "../../../scripts/check-report.mjs";
+
+const report = createCheck("check-docs-mdx");
+
 const DOCS_DIR = join(process.cwd(), "../../docs");
 
 function isDocsPath(filePath: string): boolean {
@@ -157,9 +161,10 @@ async function checkLinks() {
     (count: number, result: ValidateResult) => count + result.errors.length,
     0,
   );
-  if (errorCount === 0) {
-    console.log(`Docs MDX links OK: ${files.length} files, ${scanned.urls.size} routes.`);
+  if (errorCount > 0) {
+    report.add(`${errorCount} link validation error(s)`);
   }
+  report.ok(`${files.length} files, ${scanned.urls.size} routes`);
 }
 
 void checkLinks();

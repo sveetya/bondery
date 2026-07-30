@@ -161,7 +161,7 @@ npx turbo build --filter=./packages/*
 # Or per package: npm run build -w @bondery/schemas
 
 # Mobile — no build script; use:
-npm run check-types -w apps/mobile
+npm run check-types -w mobile
 npx expo-doctor                        # run inside apps/mobile
 
 # Large PR — full check before merge
