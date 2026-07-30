@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { API_ROUTES } from "@bondery/helpers";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import {
   assertApiKeyAccess,
@@ -66,7 +67,7 @@ describe("assertApiKeyAccess", () => {
             method: "POST",
             openApiArea: "session",
             permission: "full",
-            url: "/api/contacts/merge",
+            url: API_ROUTES.CONTACTS_MERGE,
           }),
           mockReply(),
         ),
@@ -96,7 +97,7 @@ describe("assertApiKeyAccess", () => {
             method: "POST",
             openApiArea: "integration",
             permission: "read",
-            url: "/api/contacts",
+            url: API_ROUTES.CONTACTS,
           }),
           mockReply(),
         ),
@@ -121,7 +122,7 @@ describe("API key policy via HTTP", () => {
         leftPersonId: "00000000-0000-4000-8000-000000000001",
         rightPersonId: "00000000-0000-4000-8000-000000000002",
       },
-      url: "/api/contacts/merge",
+      url: API_ROUTES.CONTACTS_MERGE,
     });
 
     assert.equal(response.statusCode, 401);
@@ -138,7 +139,7 @@ describe("API key policy via HTTP", () => {
         authorization: "Bearer bondery_key_testid_testsecret",
       },
       method: "GET",
-      url: "/api/sync/pull?since=0",
+      url: `${API_ROUTES.SYNC_PULL}?since=0`,
     });
 
     assert.equal(response.statusCode, 401);

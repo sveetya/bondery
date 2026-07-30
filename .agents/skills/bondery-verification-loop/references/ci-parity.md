@@ -46,10 +46,9 @@ npm run i18n:lint
 npm run check-error-docs
 npm run check-user-facing-errors
 npm run test:sync -w apps/api
-# Postgres + OAuth env (see verify.yml L112–120):
+# Postgres + Redis + OAuth env (see verify.yml api-smoke job):
 npm run release-migrate -w @bondery/db
 npm run test:api -w apps/api
-npm run test:auth -w apps/api
 ```
 
 ## Staging workflows (not full verify)
@@ -62,7 +61,7 @@ npm run test:auth -w apps/api
 **`stage-api.yml`** (on `main`, api paths):
 
 - `npm run test:sync -w api`
-- `npm run test:api -w api` (no Postgres service in workflow — narrower than verify)
+- `npm run release-migrate -w @bondery/db` then `npm run test:api -w api` (Postgres + Redis service containers — see `verify.yml` `api-smoke` job)
 
 ## Not in CI (run locally when relevant)
 
@@ -86,7 +85,7 @@ Document these as `SKIPPED` in PR parity reports unless the diff touches those a
 | Missing `check-schemas-imports:strict` npm script | Webapp `check-types` may fail until script is added |
 | `transit` turbo task with no package script | Typecheck dependency ordering may be incomplete |
 | Biome CI 2.5.0 vs local 2.5.3 | Rare formatter drift between local and Actions |
-| `stage-api` without Postgres/`test:auth` | Staging gate narrower than verify |
+| `stage-api` without `test:auth` | Staging gate narrower than full local auth suite |
 | `verify` omits `test:theme` / `test:sync` for webapp | Stage-webapp covers; verify does not |
 
 ## Postgres setup for API integration tests
