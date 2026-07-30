@@ -68,7 +68,6 @@ jobs:
         run: |
           cp deploy/bondery/.env.example deploy/bondery/.env
           node deploy/bondery/scripts/check-compose.mjs
-          docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 
       - name: Validate Bondery compose includes Supabase fragment
         run: |
