@@ -23,6 +23,11 @@ function websiteBaseUrl(): string {
   return (URLS.website ?? "https://usebondery.com").replace(/\/$/, "");
 }
 
+function isPublicInfraPath(url: string): boolean {
+  const path = url.split("?")[0] ?? url;
+  return path.startsWith("/health/") || path === "/extension/manifest";
+}
+
 function isPublicAuthPath(url: string): boolean {
   const path = url.split("?")[0] ?? url;
   return (
@@ -44,7 +49,7 @@ export function registerExtensionVersionCheck(fastify: AppFastifyInstance): void
     }
 
     // Skip unauthenticated health-check routes and public Better Auth / OIDC discovery
-    if (request.url === "/status" || request.url === "/health" || isPublicAuthPath(request.url)) {
+    if (isPublicInfraPath(request.url) || isPublicAuthPath(request.url)) {
       return;
     }
 

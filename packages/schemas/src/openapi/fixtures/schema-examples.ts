@@ -495,12 +495,15 @@ export const EXAMPLE_GITHUB_STARS_RESPONSE = {
 };
 
 export const EXAMPLE_LIVENESS_STATUS_RESPONSE = {
+  status: "ok" as const,
+  timestamp: EXAMPLE_ISO_TIMESTAMP,
+};
+
+export const EXAMPLE_EXTENSION_MANIFEST_RESPONSE = {
   extension: {
     minVersion: "1.0.0",
     storeUrl: "https://chrome.google.com/webstore/detail/bondery/example",
   },
-  status: "ok" as const,
-  timestamp: EXAMPLE_ISO_TIMESTAMP,
 };
 
 export const EXAMPLE_HEALTH_OK_RESPONSE = {

@@ -1,4 +1,3 @@
-import { CHROME_EXTENSION_URL, MIN_EXTENSION_VERSION } from "@bondery/helpers";
 import { EXAMPLE_HEALTH_UNHEALTHY_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import type { AppFastifyInstance } from "../platform/fastify-types.js";
@@ -10,18 +9,38 @@ import { healthReportSchema, livenessStatusSchema } from "./schemas.js";
 const LIVENESS_DESCRIPTION =
   "Liveness probe. Returns 200 when the API process is running. " +
   "Does not check external dependencies. " +
-  "Use `GET /health` for a readiness probe that checks Postgres, storage, Redis, and other configured integrations.";
+  "Use `GET /health/ready` for a readiness probe that checks Postgres, storage, Redis, and other configured integrations.";
 
 const READINESS_DESCRIPTION =
   "Readiness probe. Checks configured dependencies and returns per-service status. " +
   "Results are cached in memory for one minute. Rate limited to five requests per minute per client. " +
   "Returns HTTP 503 when critical dependencies are unavailable (`status: unhealthy`). " +
   "Returns HTTP 200 when all critical dependencies are healthy (`status: ok` or `status: degraded`). " +
-  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status` and required bucket `HeadBucket` checks.";
+  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status` and required bucket `HeadBucket` checks; " +
+  "Redis via shared process clients `PING`; SMTP via live verify on the shared Nodemailer transporter pool. " +
+  "API boot runs the same live checks for Postgres, storage, Redis, and SMTP before accepting traffic.";
 
 export function registerHealthRoutes(fastify: AppFastifyInstance): void {
   fastify.get(
-    "/health",
+    "/health/live",
+    {
+      config: { rateLimit: false },
+      schema: {
+        description: LIVENESS_DESCRIPTION,
+        response: withOkResponse(livenessStatusSchema, "Liveness status"),
+        tags: ["Health"],
+      } satisfies FastifyZodOpenApiSchema,
+    },
+    async () => {
+      return {
+        status: "ok" as const,
+        timestamp: new Date().toISOString(),
+      };
+    },
+  );
+
+  fastify.get(
+    "/health/ready",
     {
       config: { rateLimit: HEALTH_TIER },
       schema: {
@@ -51,11 +70,6 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
         posthogApiSecret: fastify.config.BONDERY_PRIVATE_POSTHOG_API_SECRET,
         posthogProjectId: fastify.config.BONDERY_PRIVATE_POSTHOG_PROJECT_ID,
         redisUrl: fastify.config.BONDERY_PRIVATE_REDIS_URL,
-        smtpAddress: fastify.config.BONDERY_PRIVATE_EMAIL_ADDRESS,
-        smtpHost: fastify.config.BONDERY_PRIVATE_EMAIL_HOST,
-        smtpPass: fastify.config.BONDERY_PRIVATE_EMAIL_PASS,
-        smtpPort: fastify.config.BONDERY_PRIVATE_EMAIL_PORT,
-        smtpUser: fastify.config.BONDERY_PRIVATE_EMAIL_USER,
         storageS3AccessKeyId: fastify.config.BONDERY_PRIVATE_S3_ACCESS_KEY_ID,
         storageS3Endpoint: fastify.config.BONDERY_PRIVATE_S3_ENDPOINT,
         storageS3Region: fastify.config.BONDERY_PRIVATE_S3_REGION,
@@ -68,28 +82,6 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
 
       const statusCode = report.status === "unhealthy" ? 503 : 200;
       return reply.status(statusCode).send(report);
-    },
-  );
-
-  fastify.get(
-    "/status",
-    {
-      config: { rateLimit: false },
-      schema: {
-        description: LIVENESS_DESCRIPTION,
-        response: withOkResponse(livenessStatusSchema, "Liveness status"),
-        tags: ["Health"],
-      } satisfies FastifyZodOpenApiSchema,
-    },
-    async () => {
-      return {
-        extension: {
-          minVersion: MIN_EXTENSION_VERSION,
-          storeUrl: CHROME_EXTENSION_URL,
-        },
-        status: "ok" as const,
-        timestamp: new Date().toISOString(),
-      };
     },
   );
 }

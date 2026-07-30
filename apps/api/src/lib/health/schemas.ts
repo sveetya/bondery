@@ -35,10 +35,6 @@ export const healthReportSchema = z
 
 export const livenessStatusSchema = z
   .object({
-    extension: z.object({
-      minVersion: z.string(),
-      storeUrl: z.string(),
-    }),
     status: z.literal("ok"),
     timestamp: createdAtSchema,
   })
