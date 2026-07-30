@@ -46,5 +46,9 @@ export default defineConfig({
     providerImportSource: "@/components/mdx",
     remarkPlugins: [remarkGfm],
   },
-  plugins: isGitLastModifiedAvailable() ? [lastModified()] : [],
+  plugins: [
+    lastModified({
+      versionControl: isGitLastModifiedAvailable() ? "git" : async () => undefined,
+    }),
+  ],
 });
