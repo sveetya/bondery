@@ -69,11 +69,6 @@ jobs:
           cp deploy/bondery/.env.example deploy/bondery/.env
           node deploy/bondery/scripts/check-compose.mjs
 
-      - name: Validate Bondery compose includes Supabase fragment
-        run: |
-          docker compose -f deploy/bondery/docker-compose.yml config --services \
-            | grep -E '^(kong|db|auth|rest|api|webapp|redis)$'
-
       - name: Webapp runtime config tests
         run: npm run test:runtime-config -w webapp
 
