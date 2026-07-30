@@ -46,6 +46,8 @@ jobs:
         run: npm run check-package-imports
 
       - name: Build API workspace deps for contract checks
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: npx turbo build --filter=api^...
 
       - name: Check env sync (examples + turbo)

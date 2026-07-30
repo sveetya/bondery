@@ -4,7 +4,6 @@
  * Usage: npx tsx scripts/check-openapi-examples.ts
  */
 
-import type { z } from "zod";
 import {
   getNamedSchemaExample,
   type OpenApiSchemaExampleEntry,
