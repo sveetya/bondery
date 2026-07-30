@@ -58,7 +58,7 @@ Auth is wired **only** through shells in `apps/api/src/lib/platform/route-areas.
 - Every shelled route must have `openApiArea` metadata — `route-security-audit.test.ts` enforces.
 - Routes without `openApiArea` deny API keys and log `api_key.missing_open_api_area`.
 
-Docs: `docs/contributing/api-routes.md` (auth table).
+Docs: `docs/contributing/api-routes.mdx` (auth table).
 
 ## Tenant isolation (critical)
 

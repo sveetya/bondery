@@ -34,7 +34,7 @@ After route changes:
 
 1. `npm run generate-openapi -w apps/api`
 2. Confirm order in diff
-3. See `docs/contributing/api-routes.md`
+3. See `docs/contributing/api-routes.mdx`
 
 ## Path constants
 

@@ -14,7 +14,7 @@ function walkMarkdownFiles(dir, acc = []) {
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) {
       walkMarkdownFiles(full, acc);
-    } else if (entry.endsWith(".md")) {
+    } else if (entry.endsWith(".mdx")) {
       acc.push(full);
     }
   }
@@ -35,10 +35,14 @@ function parseFrontmatter(content) {
 
 function defaultDocPath(filePath) {
   const rel = relative(DOCS_DIR, filePath).split(sep).join("/");
-  if (rel === "README.md") {
+  if (rel === "index.mdx") {
     return "";
   }
-  return rel.replace(/\.md$/, "");
+  const withoutExt = rel.replace(/\.mdx$/, "");
+  if (withoutExt.endsWith("/index")) {
+    return withoutExt.slice(0, -"/index".length);
+  }
+  return withoutExt;
 }
 
 function main() {

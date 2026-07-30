@@ -27,13 +27,7 @@ function filePathToUrl(filePath: string): string {
 }
 
 function resolveDocsFilePath(path: string): string | undefined {
-  const candidates = [
-    path,
-    `${path}.mdx`,
-    join(path, "index.mdx"),
-    path.replace(/\.mdx$/, ".md"),
-    join(path.replace(/\.md$/, ""), "index.md"),
-  ];
+  const candidates = [path, `${path}.mdx`, join(path, "index.mdx")];
 
   for (const candidate of candidates) {
     if (isDocsPath(candidate) && existsSync(candidate)) {
@@ -138,7 +132,7 @@ async function checkLinks() {
     checkRelativePaths: "exists",
     checkRelativeUrls: true,
     determinatePathname: (pathname) => {
-      if (pathname.endsWith(".mdx") || pathname.endsWith(".md")) {
+      if (pathname.endsWith(".mdx")) {
         return "relative-file-path";
       }
       return "relative-url";

@@ -7,7 +7,7 @@ Authentication and session patterns across API and clients.
 Config: `apps/api/src/lib/auth/index.ts`
 
 - Social providers: GitHub, LinkedIn OIDC
-- Session: 30-day expiry, daily refresh; dual-write Postgres + Redis (`secondaryStorage`, `storeSessionInDatabase: true`, key prefix `bondery:auth:`). Redis miss falls back to Postgres — see `docs/adr/0001-better-auth-redis-secondary-storage.md`.
+- Session: 30-day expiry, daily refresh; dual-write Postgres + Redis (`secondaryStorage`, `storeSessionInDatabase: true`, key prefix `bondery:auth:`). Redis miss falls back to Postgres — see `docs/adr/0001-better-auth-redis-secondary-storage.mdx`.
 - `account.encryptOAuthTokens: true` — IdP tokens in `Account` encrypted at rest (AES-256-GCM via Better Auth secret). Do not read those columns via Prisma; use `auth.api.getAccessToken` when a plaintext provider token is required.
 - OAuth 2.1 / OIDC provider with PKCE required
 - Canonical resource: `BONDERY_PUBLIC_API_URL` with scope `api:access`

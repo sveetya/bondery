@@ -22,7 +22,7 @@ Applies to users of `app.usebondery.com` (or Bondery-operated instances):
 
 ## What self-hosters must own
 
-Operators who deploy via `deploy/bondery/` (`docs/deploy/self-host.md`):
+Operators who deploy via `deploy/bondery/` ([`docs/deploy/get-started.mdx`](../../../../docs/deploy/get-started.mdx)):
 
 - **Their own** subprocessors (if they use external SMTP, S3, etc.)
 - **Their own** privacy policy / terms for their users
@@ -43,7 +43,7 @@ Self-hosters are **not** bound by Bondery's published subprocessor table unless 
 
 ## Documented gap
 
-`docs/deploy/self-host.md` does not yet explicitly state that self-hosters are their own data controller and that the website Privacy Policy does not apply to their instance.
+[`docs/deploy/get-started.mdx`](../../../../docs/deploy/get-started.mdx) does not yet explicitly state that self-hosters are their own data controller and that the website Privacy Policy does not apply to their instance.
 
 **Flag for follow-up** — document in self-host guide, not in hosted Privacy.tsx.
 

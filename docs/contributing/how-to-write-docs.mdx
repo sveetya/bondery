@@ -37,7 +37,7 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 
 ### Every page
 
-1. **Title** — frontmatter `title` (rendered by the docs site) plus matching `#` heading in the body when useful for GitHub readers
+1. **Title** — frontmatter `title` (rendered by the docs site) plus matching `#` heading in the body when useful for readers on GitHub
 2. **Lead** — one or two sentences: what this is and why it matters
 3. **Body** — sections with `##` headings; tables and lists where they reduce ambiguity
 4. **Related links** — point to the next doc a reader likely needs
@@ -70,7 +70,7 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 - **File format** — use **MDX only** (`.mdx`). Plain `.md` is not compiled by the docs site. MDX gives us Callouts, Cards, Steps, Files, and other Fumadocs components without a parallel format.
 - **Frontmatter** — `title` (required), optional `icon`, `description`, `docId` / `docSections` for in-app links, `hidden: true` only for pages that should not appear in the sidebar
 - **File names** — lowercase, hyphenated (`getting-started.mdx`, `local-setup.mdx`)
-- **Navigation** — update the nearest `meta.json` whenever you add, move, or rename a page
+- **Navigation** — sidebar order and grouping come from the nearest `meta.json` only (add, move, or rename pages there)
 - **Code blocks** — include the language tag; show real commands and env var names from the repo
 - **Callouts** — use `<Callout type="info">` / `warn` / `error` sparingly for warnings or non-obvious caveats
 - **Cards** — use `<Cards>` / `<Card>` for navigation hubs (e.g. welcome page modes), not for every link list

@@ -1,7 +1,12 @@
+---
+title: Bondery Storage Migration to SeaweedFS
+hidden: true
+---
+
 # Bondery Storage Migration to SeaweedFS
 
 **Status:** Implemented (2026-07-29)  
-**Related ADR:** [0003-seaweedfs-storage](../adr/0003-seaweedfs-storage.md)  
+**Related ADR:** [0003-seaweedfs-storage](../adr/0003-seaweedfs-storage.mdx)  
 **Plane epic:** MAIN-306 (tasks MAIN-307 through MAIN-314)
 
 ---
@@ -131,7 +136,7 @@ export function getStorage(): StorageAdapter {
 
 | Path | Purpose |
 |------|---------|
-| `docs/adr/0003-seaweedfs-storage.md` | ADR |
+| `docs/adr/0003-seaweedfs-storage.mdx` | ADR |
 | `deploy/bondery/docker-compose.seaweedfs.yml` | SeaweedFS services |
 | `deploy/bondery/seaweedfs/entrypoint.sh` | S3 config render (from env) |
 | `deploy/bondery/scripts/bootstrap-seaweedfs-buckets.mjs` | Bucket bootstrap |

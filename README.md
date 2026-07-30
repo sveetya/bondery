@@ -25,7 +25,7 @@ Visit [usebondery.com](https://usebondery.com) to learn about the project. To le
 
 Contributions are welcome! Before you start, please read the [contribution guide](https://usebondery.com/docs/contributing).
 
-Local env: `npm run setup:dev` — see [Environment configuration](docs/contributing/environment.md).
+Local env: `npm run setup:dev` — see [Environment configuration](docs/contributing/environment.mdx).
 
 To report a bug or request a feature, open an issue on the [GitHub repository](https://github.com/usebondery/bondery/issues).
 

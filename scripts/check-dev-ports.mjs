@@ -44,7 +44,7 @@ const SCAN_FILES = [
   "apps/api/src/openapi/swagger-config.ts",
   "apps/api/scripts/generate-openapi.ts",
   "apps/api/src/test/load-test-env.ts",
-  "docs/contributing/architecture.md",
+  "docs/contributing/architecture.mdx",
   "docs/contributing/local-setup.mdx",
   "apps/website/README.md",
   "archive/supabase-db/README.md",
@@ -110,7 +110,7 @@ function main() {
     for (const error of errors) {
       console.error(`  - ${error}`);
     }
-    console.error("\nUse the Dial BOND ports (2663x). See docs/contributing/architecture.md");
+    console.error("\nUse the Dial BOND ports (2663x). See docs/contributing/architecture.mdx");
     process.exit(1);
   }
 

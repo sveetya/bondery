@@ -9,7 +9,7 @@ Local development:
 - Redis: **[`apps/redis`](../../apps/redis/)** (`npm run start -w redis`, port 26636)
 - Postgres: **`deploy/bondery/docker-compose.dev-db.yml`** or `packages/db` migrations — not this Compose file
 
-Docs: [docs/deploy/self-host.md](../../docs/deploy/self-host.md) · [docs/deploy/dokploy.md](../../docs/deploy/dokploy.md) · [docs/deploy/api-container.md](../../docs/deploy/api-container.md)
+Docs: [docs/deploy/get-started.mdx](../../docs/deploy/get-started.mdx) · [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx) · [docs/contributing/api-container.mdx](../../docs/contributing/api-container.mdx)
 
 ## Quick start
 
@@ -19,7 +19,7 @@ docker network create dokploy-network
 
 cd deploy/bondery
 cp .env.example .env
-# Fill domains + secrets (see docs/deploy/self-host.md)
+# Fill domains + secrets (see docs/deploy/get-started.mdx)
 docker compose up -d
 ```
 

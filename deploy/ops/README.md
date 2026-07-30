@@ -2,7 +2,7 @@
 
 **Bondery production only** — not part of the self-host product. Self-hosters use [`deploy/bondery`](../bondery/) (api + webapp + redis + Postgres + SeaweedFS).
 
-Docs: [docs/deploy/dokploy.md](../../docs/deploy/dokploy.md)
+Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 
 ## What this is
 

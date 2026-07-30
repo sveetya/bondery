@@ -81,4 +81,4 @@ In parent plugins (e.g. `contacts/index.ts`), call `register*Routes` at the tier
 
 ## Enforcement
 
-`apps/api/scripts/check-api-route-order.ts` validates tier and HTTP method order in the generated OpenAPI spec (tier must not decrease within a tag; same path must follow GET → POST → PUT → PATCH → DELETE). See also `docs/contributing/api-routes.md`.
+`apps/api/scripts/check-api-route-order.ts` validates tier and HTTP method order in the generated OpenAPI spec (tier must not decrease within a tag; same path must follow GET → POST → PUT → PATCH → DELETE). See also `docs/contributing/api-routes.mdx`.

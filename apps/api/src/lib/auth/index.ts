@@ -261,7 +261,7 @@ export const auth = betterAuth({
   session: {
     // 30-day session; refreshed by client plugins (web cookie, expoClient, bearer).
     expiresIn: 60 * 60 * 24 * 30, // 30 days
-    // Dual-write Postgres + Redis (see docs/adr/0001-better-auth-redis-secondary-storage.md).
+    // Dual-write Postgres + Redis (see docs/adr/0001-better-auth-redis-secondary-storage.mdx).
     storeSessionInDatabase: true,
     updateAge: 60 * 60 * 24, // refresh cookie once per day of activity
   },

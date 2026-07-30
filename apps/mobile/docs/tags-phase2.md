@@ -24,7 +24,7 @@ Phase 1 ships contact-level tagging and Settings tag management. The items below
 
 ## List filtering (API-dependent)
 
-- **`GET /api/contacts?tagId=…`** — not implemented on API or web today; `docs/concepts/tags.md` describes aspirational filter behavior
+- **`GET /api/contacts?tagId=…`** — not implemented on API or web today; `docs/concepts/tags.mdx` describes aspirational filter behavior
 - Until API support exists, use `GET /api/tags/:id/contacts` via tag detail screen only
 - Optional: show 1–2 tag chips on `ContactListItem` after performance review
 

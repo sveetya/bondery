@@ -163,7 +163,7 @@ Every implementation plan must contain these sections:
 
 - **Feature Overview** — what is being built and why, in one paragraph
 - **Current State Findings** — existing patterns being extended or replaced, relevant constraints, and technical debt that affects this plan
-- **Architecture Decision Record** — Context, Decision, Alternatives Considered (including why each was rejected), and Consequences. The first implementation task must create `docs/adr/NNNN-<slug>.md` with this content; use the count of existing ADR files plus one, zero-padded to four digits
+- **Architecture Decision Record** — Context, Decision, Alternatives Considered (including why each was rejected), and Consequences. The first implementation task must create `docs/adr/NNNN-<slug>.mdx` with this content; use the count of existing ADR files plus one, zero-padded to four digits
 - **File & Module Structure** — proposed folder layout and new files
 - **Implementation Tasks** — independently reviewable steps grouped into Phase 1 (minimal working slice), Phase 2 (core functionality), Phase 3 (edge cases), and Phase 4 (polish and optimization). Put the ADR file creation first; mark a phase not applicable instead of inventing work
 - **Config & Environment Variables** — new keys needed, with defaults and descriptions

@@ -1,3 +1,8 @@
+---
+title: "ADR 0005: API pre_start bootstrap"
+hidden: true
+---
+
 # ADR 0005: API `pre_start` bootstrap
 
 ## Status
@@ -48,6 +53,6 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 ## References
 
 - [Docker Compose init containers](https://docs.docker.com/compose/how-tos/init-containers/)
-- [ADR 0003: SeaweedFS object storage](./0003-seaweedfs-storage.md)
+- [ADR 0003: SeaweedFS object storage](./0003-seaweedfs-storage.mdx)
 - [`packages/db/scripts/release-migrate.ts`](../../packages/db/scripts/release-migrate.ts)
 - [`apps/api/src/index.ts`](../../apps/api/src/index.ts)

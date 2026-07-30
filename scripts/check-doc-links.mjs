@@ -52,9 +52,13 @@ function loadRegistry() {
 
 function resolveDocFile(docPath) {
   if (!docPath) {
-    return join(DOCS_DIR, "README.md");
+    return join(DOCS_DIR, "index.mdx");
   }
-  return join(DOCS_DIR, `${docPath}.md`);
+  return join(DOCS_DIR, `${docPath}.mdx`);
+}
+
+function hasAnchor(content, hash) {
+  return content.includes(`{#${hash}}`) || content.includes(`id="${hash}"`);
 }
 
 function main() {
@@ -69,7 +73,7 @@ function main() {
     const filePath = resolveDocFile(entry.path);
     try {
       const content = readFileSync(filePath, "utf8");
-      if (entry.hash && !content.includes(`{#${entry.hash}}`)) {
+      if (entry.hash && !hasAnchor(content, entry.hash)) {
         errors.push(
           `Missing anchor {#${entry.hash}} in ${relative(REPO_ROOT, filePath)} (docId: ${id})`,
         );

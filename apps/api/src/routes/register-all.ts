@@ -1,6 +1,6 @@
 /**
  * Ordered route registration table.
- * Order = published API doc order within shared tags (see docs/contributing/api-routes.md).
+ * Order = published API doc order within shared tags (see docs/contributing/api-routes.mdx).
  * `area` selects the route shell (auth + openApiArea) in lib/platform/route-areas.ts.
  */
 
