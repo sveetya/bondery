@@ -194,6 +194,19 @@ function writeExamples(dryRun) {
   }
 }
 
+function sortObjectKeys<T>(value: T): T {
+  if (Array.isArray(value)) {
+    return value.map((item) => sortObjectKeys(item)) as T;
+  }
+  if (value !== null && typeof value === "object") {
+    const sorted = Object.entries(value as Record<string, unknown>)
+      .toSorted(([a], [b]) => a.localeCompare(b))
+      .map(([key, nested]) => [key, sortObjectKeys(nested)]);
+    return Object.fromEntries(sorted) as T;
+  }
+  return value;
+}
+
 function writeTurbo(dryRun) {
   const turboPath = join(repoRoot, "turbo.json");
   const turbo = JSON.parse(readFileSync(turboPath, "utf-8"));
@@ -255,12 +268,13 @@ function writeTurbo(dryRun) {
     }
   }
 
-  const out = `${JSON.stringify(turbo, null, 2)}\n`;
+  const out = `${JSON.stringify(sortObjectKeys(turbo), null, 2)}\n`;
   if (dryRun) {
     log.info("Would update turbo.json env sections");
     return;
   }
   writeFileSync(turboPath, out, "utf-8");
+  execSync("npx biome check --write turbo.json", { cwd: repoRoot, stdio: "pipe" });
   log.success("Updated turbo.json env sections from manifest");
 }
 
