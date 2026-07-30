@@ -182,11 +182,23 @@ export function installInstagramNetworkInterceptor(): void {
 
     xhr.__bonderyRequestHeaders = {};
 
-    const originalOpen = xhr.open.bind(xhr);
-    xhr.open = (method: string, url: string | URL, ...args: unknown[]) => {
+    const originalOpen = xhr.open.bind(xhr) as (
+      method: string,
+      url: string | URL,
+      async?: boolean,
+      username?: string | null,
+      password?: string | null,
+    ) => void;
+    xhr.open = (
+      method: string,
+      url: string | URL,
+      isAsync = true,
+      username?: string | null,
+      password?: string | null,
+    ) => {
       xhr.__bonderyRequestMethod = method.toUpperCase();
       xhr.__bonderyRequestUrl = typeof url === "string" ? url : url.toString();
-      return originalOpen(method, url, ...(args as [boolean?, string?, string?]));
+      return originalOpen(method, url, Boolean(isAsync), username, password);
     };
 
     const originalSetRequestHeader = xhr.setRequestHeader.bind(xhr);

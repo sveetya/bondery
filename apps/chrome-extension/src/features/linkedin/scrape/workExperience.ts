@@ -106,8 +106,12 @@ function parseMonthYear(text: string): string | undefined {
   // [A-Za-zÀ-ž] covers English and most European scripts (Czech, German, French…).
   const wordYearMatch = text.match(/([A-Za-zÀ-ž]+)\.?\s+((19|20)\d{2})/);
   if (wordYearMatch) {
-    const monthKey = wordYearMatch[1].toLowerCase().replace(/\.$/, "");
+    const monthToken = wordYearMatch[1];
     const year = wordYearMatch[2];
+    if (!monthToken || !year) {
+      return undefined;
+    }
+    const monthKey = monthToken.toLowerCase().replace(/\.$/, "");
     const month = MONTH_ABBR[monthKey];
     // Return YYYY-MM when month is known, YYYY-only otherwise (still useful).
     return month ? `${year}-${month}` : year;
@@ -132,7 +136,7 @@ const PRESENT_RE =
 
 export function parseDateRange(text: string): { startDate?: string; endDate?: string } {
   // Strip the duration suffix "· X years Y months" so it doesn't confuse the parser.
-  const mainPart = text.split("·")[0].trim();
+  const mainPart = (text.split("·")[0] ?? "").trim();
   // Split on en-dash (–), em-dash (—), or a plain hyphen.
   const parts = mainPart.split(/\s*[–—\u2013-]\s*/);
   const startRaw = parts[0]?.trim();

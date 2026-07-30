@@ -283,11 +283,14 @@ function extractNestedPositions(
   }
 
   if (positions.length > 0) {
-    extLog.debug(
-      `[linkedin][fetchDetails] Extracted ${positions.length} nested positions from group`,
-      `keys of first:`,
-      Object.keys(positions[0]),
-    );
+    const first = positions[0];
+    if (first) {
+      extLog.debug(
+        `[linkedin][fetchDetails] Extracted ${positions.length} nested positions from group`,
+        `keys of first:`,
+        Object.keys(first),
+      );
+    }
   }
 
   return positions;

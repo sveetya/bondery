@@ -149,7 +149,11 @@ export function decodeJwtPayload(token: string): Record<string, unknown> | null 
     if (parts.length !== 3) {
       return null;
     }
-    const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const payloadPart = parts[1];
+    if (!payloadPart) {
+      return null;
+    }
+    const payload = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
     const decoded = atob(payload);
     return JSON.parse(decoded);
   } catch {
