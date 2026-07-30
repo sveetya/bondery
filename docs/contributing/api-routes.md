@@ -83,7 +83,7 @@ Integrator dependency order in the `tags` array in [`apps/api/src/openapi/swagge
 - [ ] **OpenAPI example** on every success response schema (see below)
 - [ ] **OpenAPI example** on every JSON request body schema (see below)
 - [ ] If the route returns **409**, spread `conflictResponse` or `syncConflictResponse` from `@bondery/schemas/http/responses`
-- [ ] If an error status returns a **non-ApiError JSON body**, override that status in `response` (see `GET /health` 503)
+- [ ] If an error status returns a **non-ApiError JSON body**, override that status in `response` (see `GET /health/ready` 503)
 - [ ] `npm run build:api` or `npx turbo build --filter=api` from repo root after route/schema changes
 - [ ] OpenAPI spec updates automatically via the pre-commit hook when `apps/api` or `packages/schemas` change; run `npm run check-openapi` manually before release if needed
 

@@ -29,17 +29,17 @@ Requests are keyed in priority order:
 | `ENRICH_TIER` | 100 | 10 min | Contact enrich, LinkedIn data |
 | `GEOCODE_TIER` | 120 | 60s | `GET /geocode/suggest`, `/geocode/timezone` |
 | `IMPORT_TIER` | 80 | 10 min | Import commit (`ceil(2000/25)` from `@bondery/schemas/constants`) |
-| `HEALTH_TIER` | 5 | 1 min | `GET /health` |
+| `HEALTH_TIER` | 5 | 1 min | `GET /health/ready` |
 | `NOT_FOUND_TIER` | 60 | 60s | 404 handler only |
 
 Override via `config: { rateLimit: TIER }` on route options.
 
 ### Rate limit disabled (`rateLimit: false`)
 
-- `GET /status`
+- `GET /health/live`
+- `GET /extension/manifest`
 - `GET /sync/ws`, `GET /sync/ws-ticket`
 - `POST /webhooks/stripe`
-- `POST /internal/reminder-digest`
 - All `/admin/stats/*` routes
 
 ## 429 response

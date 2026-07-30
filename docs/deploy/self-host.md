@@ -45,8 +45,8 @@ Without Traefik (laptop / smoke):
 ```bash
 cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
-curl -sf http://localhost:26631/status
-curl -sf http://localhost:26632/api/live
+curl -sf http://localhost:26631/health/live
+curl -sf http://localhost:26632/health/live
 ```
 
 ## Secrets
@@ -83,8 +83,9 @@ Operators use **`BONDERY_*` only**. See [`deploy/bondery/.env.example`](../../de
 Before opening traffic:
 
 ```bash
-curl -sf https://api.example.com/health
-curl -sf https://app.example.com/api/ready
+curl -sf https://api.example.com/health/ready
+curl -sf https://app.example.com/health/ready
+curl -sf https://app.example.com/api/health/ready
 ```
 
 Manual: OAuth login, API key auth, avatar upload, reminder dispatch (`pg_cron`).
@@ -100,13 +101,13 @@ DATABASE_URL="postgresql://postgres:$BONDERY_PRIVATE_POSTGRES_PASSWORD@127.0.0.1
   npm run release-migrate -w @bondery/db
 ```
 
-`/health` does **not** check for pending migrations — it probes live dependencies only.
+`/health/ready` does **not** check for pending migrations — it probes live dependencies only.
 
 ## Upgrades
 
 1. Test new api/webapp image tags on staging.
 2. Redeploy Dokploy compose app (pulls new images; recreates `api` → `pre_start` applies pending migrations).
-3. Verify `/health` and `/api/ready`.
+3. Verify `/health/ready` on api and webapp, and `/api/health/ready` on webapp (API deps via BFF).
 
 ## Backups
 
@@ -121,4 +122,4 @@ Restore checklist:
 1. Stop `api` and `webapp`.
 2. Restore dump into `db`.
 3. Restore storage volume archive if needed.
-4. Start apps; verify `/health` and `/api/ready`.
+4. Start apps; verify `/health/ready` on api and webapp, and `/api/health/ready` on webapp.

@@ -79,7 +79,7 @@ Singleton enforcement: `check-redis-singleton.ts`.
 
 - API: Pino via `request.log` / `lib/platform/logger.ts`
 - 5xx: full `err` logged server-side; client gets generic message
-- Health: `/status` (liveness), `/health` (readiness) — rate limited 5 req/min
+- Health: `/health/live` (liveness), `/health/ready` (readiness) — readiness rate limited 5 req/min
 - Request IDs in error responses
 
 **No centralized log redaction** — see input-storage-and-output.md review trigger.

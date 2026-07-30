@@ -4,7 +4,7 @@ Bondery API contracts, transport, and mobile sync.
 
 | File | Topic |
 |------|--------|
-| [api-design.md](./api-design.md) | URL naming, response shapes, list tiers, pagination, search, sort |
+| [health-probes.md](./health-probes.md) | Liveness, readiness, BFF health proxy, extension manifest |
 | [status-codes.md](./status-codes.md) | HTTP status code reference |
 | [api-usage.md](./api-usage.md) | Transport wrappers, 401/outage, webapp domains |
 | [api-mutations.md](./api-mutations.md) | Create/update return full objects |

@@ -19,7 +19,9 @@ This mirrors how Stripe SDKs work: a thin HTTP client (`StripeClient`) plus opti
 
 **Webapp server session:** Route guards and server transport share `resolveServerSession()` (`lib/auth/resolveServerSession.ts`) — one cached `getUser()` + access token per request. Layout, BFF, `serverApiFetch`, and `getAppSession` all read from it. Do not call `supabase.auth.getUser()` directly in server code for auth gates.
 
-**Status probe (webapp):** The webapp exposes `GET /api/status` as a BFF route (`app/api/status/route.ts`) that proxies to Fastify `/status` with normal auth headers. Browser code calls `clientApiFetch("/api/status")` — same as other BFF routes. The chrome extension calls `${config.apiUrl}/status` directly (no webapp hop).
+**Extension manifest (webapp):** `GET /api/extension/manifest` proxies Fastify `GET /extension/manifest`. Browser code calls `clientApiFetch("/api/extension/manifest")`. The chrome extension calls `${config.apiUrl}/extension/manifest` directly (no webapp hop).
+
+**Health probes:** See [health-probes.md](./health-probes.md). Webapp container probes use `GET /health/live` and `GET /health/ready`. API health via BFF: `GET /api/health/live` and `GET /api/health/ready`.
 
 ---
 
@@ -147,7 +149,9 @@ Layout loads **session** (who you are, shell + locale inputs, onboarding guard).
 | `*JsonOrNull` 401 | Ends session | Signs out + redirects | Yes |
 | BFF `app/api/**` | N/A | `bffProxyFetch` — passthrough status or nested 503 `service_unavailable` | Per status |
 
-**Health probe:** `GET /api/health` (BFF → Fastify `/health`) for the unavailable page status panel. `GET /api/status` remains the liveness + extension version probe.
+**Health probe:** `GET /api/health/ready` (BFF → Fastify `/health/ready`) for the unavailable page status panel. Critical dependencies: Postgres (`SELECT 1`), object storage (SeaweedFS `GET /status` + required bucket `HeadBucket`), Redis (`PING` on shared clients), SMTP (live verify). Returns HTTP 503 when any critical dependency is unhealthy. Extension min version: `GET /api/extension/manifest`.
+
+**Boot verify:** On `onReady`, the API runs the same live checks for Postgres, storage, Redis, and SMTP before pg-boss jobs start. Development and production fail fast on missing env or probe failure; `NODE_ENV=test` skips live probes.
 
 ---
 

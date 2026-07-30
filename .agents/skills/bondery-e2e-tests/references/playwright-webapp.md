@@ -20,7 +20,7 @@ Grounded in `apps/webapp/e2e/`. Read `playwright.config.mjs` header comments for
 | `fullyParallel` | `false` | Serial auth + shared ports |
 | `workers` | `1` | Same |
 | `retries` | `1` in CI, `0` locally | CI flake tolerance |
-| `webServer` | API + webapp dev servers | Health checks on `/status` and `/login` |
+| `webServer` | API + webapp dev servers | Health checks on `/health/live` (API) and `/api/health/live` (BFF) |
 | `E2E_REUSE_SERVER` | Skip port kill + reuse running stack | Faster local iteration |
 
 ## Projects

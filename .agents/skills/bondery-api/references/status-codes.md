@@ -30,7 +30,7 @@ Mapper: `apps/api/src/lib/platform/errors/map-to-response.ts`. Throw helpers: `a
 | Code | Use | Bondery helper |
 |------|-----|----------------|
 | **500 Internal Server Error** | Unexpected failure | `internal()` — generic message to client; details logged server-side |
-| **503 Service Unavailable** | Temporary overload or unhealthy dependency | `serviceUnavailable()`, `GET /health` when unhealthy |
+| **503 Service Unavailable** | Temporary overload or unhealthy dependency | `serviceUnavailable()`, `GET /health/ready` when unhealthy |
 
 ## Catalog status codes
 

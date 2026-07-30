@@ -44,12 +44,11 @@ Plus Postgres/Better Auth secrets, API secrets, and OAuth vars from [`.env.examp
 
 ### Health checks
 
-| Service | Liveness | Notes |
-|---------|----------|--------|
-| `webapp` | `GET /api/live` | Do **not** use `/api/status` (proxies API) |
-| `webapp` readiness | `GET /api/ready` | Runtime config valid |
-| `api` | `GET /status` | Process up |
-| `api` deps | `GET /health` | Redis / Postgres / storage / integrations |
+| Service | Liveness | Readiness | Notes |
+|---------|----------|-----------|--------|
+| `webapp` container | `GET /health/live` | `GET /health/ready` | Webapp process + runtime config only |
+| `webapp` BFF → API | `GET /api/health/live` | `GET /api/health/ready` | Proxies upstream Fastify health |
+| `api` | `GET /health/live` | `GET /health/ready` | Process up / Postgres + Redis + storage + integrations |
 
 ### Isolated Deployments
 
@@ -71,7 +70,7 @@ BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com
 BONDERY_INFRA_WEBSITE_DOMAIN=usebondery.com
 ```
 
-Compose derives `BONDERY_PUBLIC_*_URL` from those domains. Health: `GET /api/live` (liveness), `GET /api/ready` (env valid).
+Compose derives `BONDERY_PUBLIC_*_URL` from those domains. Health: `GET /health/live` (liveness), `GET /health/ready` (env valid).
 
 **Cutover from Nixpacks:** stop the old Nixpacks/Railpack website app **before** deploying ops Compose (same Traefik Host). Details: [`deploy/ops/README.md`](../../deploy/ops).
 
@@ -109,7 +108,7 @@ https://api.usebondery.com/auth/callback/linkedin
 3. Deploy; wait until `redis`, `db`, and `api` `/status` OK.
 4. Confirm Traefik routes: `api.usebondery.com` → `api:26631`, `app.usebondery.com` → `webapp:26632`. Do **not** route Redis or Postgres.
 5. Stop the old standalone webapp app if it conflicts on the domain.
-6. Smoke: `curl` live/ready/status/health; login; one authenticated mutation; sync/WebSocket if used.
+6. Smoke: `curl` `/health/live`, `/health/ready`, `/api/health/ready`; login; one authenticated mutation; sync/WebSocket if used.
 
 ### Rollback
 

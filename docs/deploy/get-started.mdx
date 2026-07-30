@@ -30,8 +30,8 @@ docker compose up -d
 ```bash
 cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
-curl -sf http://localhost:26631/status
-curl -sf http://localhost:26632/api/live
+curl -sf http://localhost:26631/health/live
+curl -sf http://localhost:26632/health/live
 ```
 
 </Step>
@@ -51,8 +51,9 @@ Requires Docker Compose **v2.38+** (`pre_start` support). Check with `docker com
 ## Verify
 
 ```bash
-curl -sf https://api.example.com/health
-curl -sf https://app.example.com/api/ready
+curl -sf https://api.example.com/health/ready
+curl -sf https://app.example.com/health/ready
+curl -sf https://app.example.com/api/health/ready
 ```
 
 Manually test: OAuth login, API key auth, avatar upload, and a reminder if you use scheduled jobs.

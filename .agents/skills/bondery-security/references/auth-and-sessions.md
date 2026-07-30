@@ -100,7 +100,7 @@ Deep link scheme: `bondery://` (trusted origin on API).
 `apps/api/src/lib/extension/version-check.ts`:
 - Unauthenticated requests without Cookie, Bearer, or extension version → 401
 - Extension below `MIN_EXTENSION_VERSION` → 426 `extension_outdated`
-- Skips `/auth/*`, `/webhooks/*`, `/status`, `/health`
+- Skips `/auth/*`, `/webhooks/*`, `/health/*`, `/extension/manifest`
 
 ## Service secret (internal)
 

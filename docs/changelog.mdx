@@ -7,6 +7,18 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ## [Unreleased]
 
+### 🔄 Changed
+
+- API: Liveness and readiness probes are now `GET /health/live` and `GET /health/ready` (removed `/status` and root `/health`). Chrome extension minimum version moved to `GET /extension/manifest`.
+- Webapp: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`). API health is proxied at `GET /api/health/live` and `GET /api/health/ready`; extension manifest at `GET /api/extension/manifest`.
+- Website: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`).
+- Chrome extension: Version check reads `GET /extension/manifest` on the API host.
+- Mobile: Connectivity probe uses `GET /health/live` on the API host.
+
+### Breaking
+
+- **Health probe URLs:** Self-hosters and operators must update Docker HEALTHCHECKs, load-balancer probes, and monitoring to the new paths. API: `/health/live` and `/health/ready`. Webapp and website containers: `/health/live` and `/health/ready` on each app's origin. Webapp BFF for API dependency status: `/api/health/ready`. Extension clients must use `/extension/manifest` instead of `/status`. Old paths (`/status`, `/health`, `/api/live`, `/api/ready`, `/api/status`, `/api/health`) are removed with no redirects.
+
 ### ✨ Added
 
 - `@bondery/db` Prisma package with schema, migrations, and generated client as the shared database layer.

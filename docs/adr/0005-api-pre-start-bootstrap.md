@@ -9,7 +9,7 @@ Accepted (2026-07-29)
 Self-host `docker compose up` must bring a greenfield stack to a working state without manual host tooling (AWS CLI, repo checkout, `tsx` scripts). Today:
 
 - Prisma migrations, SQL functions, OAuth client provisioning, and platform admin promotion run only via manual steps or CI `release-migrate`.
-- SeaweedFS S3 buckets (`avatars`, `linkedin_logos`) are created by a host script requiring AWS CLI.
+- SeaweedFS S3 buckets (`avatars`, `linkedin-logos`) are created by a host script requiring AWS CLI.
 - Documentation incorrectly references a separate `migrate` Compose service that does not exist.
 
 The production API image ships compiled `apps/api/dist` and `packages/` only — no `tsx`, no `apps/api/scripts/`. Any bootstrap logic must run as compiled Node entrypoints inside the API image.
@@ -27,7 +27,7 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 
 4. **Host-run dev** (`npm run dev`) calls the same bootstrap helpers before `buildServer()` when `NODE_ENV=development`. Optional `BONDERY_DEV_*` flags (see environment docs) — never used in Compose.
 
-5. **`/health` storage probe** (phase 2) adds `HeadBucket` on required buckets — probe only, never create buckets from health checks.
+5. **`/health/ready` storage probe** (phase 2) adds `HeadBucket` on required buckets — probe only, never create buckets from health checks.
 
 ## Why JWKS stays in the main process
 

@@ -44,6 +44,7 @@ metadata:
 | HTTP status codes | [references/status-codes.md](references/status-codes.md) |
 | Doc sidebar order | [references/api-route-ordering.md](references/api-route-ordering.md) |
 | Mobile sync | [references/sync-architecture.md](references/sync-architecture.md) |
+| Health / liveness / readiness probes | [references/health-probes.md](references/health-probes.md) |
 | Rate limits | [references/rate-limits.md](references/rate-limits.md) |
 | Versioning policy | [references/versioning.md](references/versioning.md) |
 
