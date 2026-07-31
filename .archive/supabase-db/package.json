@@ -31,5 +31,5 @@
     "stop": "pnx supabasestop",
     "upload:secrets": "pnx supabasesecrets set --env-file .env.beta --project-ref <your-project-ref>"
   },
-  "version": "1.7.4"
+  "version": "1.7.5"
 }
