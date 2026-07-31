@@ -8,8 +8,7 @@ import { WEBAPP_RUNTIME_ENV } from "../platform/runtimeConfig.env";
  * `after()` flushes them after the response is sent (non-blocking).
  */
 const posthogKey = process.env[WEBAPP_RUNTIME_ENV.posthogKey];
-const posthogHost =
-  process.env[WEBAPP_RUNTIME_ENV.posthogHost] ?? "https://eu.i.posthog.com";
+const posthogHost = process.env[WEBAPP_RUNTIME_ENV.posthogHost] ?? "https://eu.i.posthog.com";
 
 const posthogClient = posthogKey
   ? new PostHog(posthogKey, {
