@@ -12,11 +12,11 @@ import { createCheck } from "../../../scripts/check-report.mjs";
 const check = createCheck("check:openapi-spec-drift");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const apiRoot = join(__dirname, "..");
-const specPath = join(apiRoot, "openapi.yaml");
+const specDir = join(__dirname, "../../../packages/openapi-spec");
+const specPath = join(specDir, "openapi.yaml");
 
 try {
-  execSync("git diff --exit-code openapi.yaml", { cwd: apiRoot, stdio: "pipe" });
+  execSync("git diff --exit-code openapi.yaml", { cwd: specDir, stdio: "pipe" });
 } catch {
   check.add("openapi.yaml is out of date. Run: npm run generate:openapi -w api");
   check.failIfNeeded();

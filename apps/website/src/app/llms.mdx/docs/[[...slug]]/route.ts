@@ -21,7 +21,7 @@ function normalizeMarkdownSlug(slug?: string[]): string[] | undefined {
 export async function GET(_req: Request, { params }: RouteContext) {
   const { slug } = await params;
   const page = source.getPage(normalizeMarkdownSlug(slug));
-  if (!page || page.type === "openapi") {
+  if (!page) {
     notFound();
   }
 
@@ -33,10 +33,7 @@ export async function GET(_req: Request, { params }: RouteContext) {
 }
 
 export function generateStaticParams() {
-  return source
-    .getPages()
-    .filter((page) => page.type !== "openapi")
-    .map((page) => ({
-      slug: page.slugs,
-    }));
+  return source.getPages().map((page) => ({
+    slug: page.slugs,
+  }));
 }

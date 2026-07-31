@@ -228,7 +228,7 @@
     "api#generate:openapi": {
       "cache": true,
       "dependsOn": [],
-      "outputs": ["openapi.yaml"]
+      "outputs": ["../../packages/openapi-spec/openapi.yaml"]
     },
     "build": {
       "dependsOn": ["^build"],
@@ -493,7 +493,7 @@
       "persistent": true
     },
     "website#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "website#generate:api-docs"],
       "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -526,6 +526,7 @@
     },
     "website#dev": {
       "cache": false,
+      "dependsOn": ["website#generate:api-docs"],
       "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -535,6 +536,11 @@
         "apps/api/.env.development.local"
       ],
       "persistent": true
+    },
+    "website#generate:api-docs": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "outputs": ["../../docs/api/api-reference/_generated/**"]
     }
   },
   "ui": "tui"

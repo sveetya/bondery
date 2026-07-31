@@ -18,7 +18,7 @@ import { createCheck } from "../../../scripts/check-report.mjs";
 const check = createCheck("check-openapi-route-order");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const specPath = join(__dirname, "..", "openapi.yaml");
+const specPath = join(__dirname, "../../../packages/openapi-spec/openapi.yaml");
 
 const HTTP_METHODS = ["get", "post", "put", "patch", "delete", "head", "options", "trace"] as const;
 

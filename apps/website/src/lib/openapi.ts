@@ -5,5 +5,5 @@ import { createOpenAPI } from "fumadocs-openapi/server";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 
 export const openapi = createOpenAPI({
-  input: [path.join(repoRoot, "apps/api/openapi.yaml")],
+  input: [path.join(repoRoot, "packages/openapi-spec/openapi.yaml")],
 });
