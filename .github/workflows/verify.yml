@@ -51,6 +51,9 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: pnpm exec turbo build --filter=api^...
 
+      - name: Build helpers for root scripts
+        run: pnpm --filter @bondery/helpers run build
+
       - name: Check env sync (examples + turbo)
         run: pnpm run env:check
 

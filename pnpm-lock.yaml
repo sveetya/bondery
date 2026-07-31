@@ -41,6 +41,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.3
         version: 2.5.6
+      '@bondery/helpers':
+        specifier: workspace:*
+        version: link:packages/helpers
       '@bondery/schemas':
         specifier: workspace:*
         version: link:packages/schemas
