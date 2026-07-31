@@ -1,0 +1,132 @@
+name: Stage - Images
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: stage-images-${{ github.sha }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      webapp: ${{ steps.filter.outputs.webapp }}
+      website: ${{ steps.filter.outputs.website }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            api:
+              - apps/api/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.api
+              - .github/actions/shared/**
+              - .github/workflows/stage-images.yml
+              - .github/workflows/shared-docker-build-push.yml
+            webapp:
+              - apps/webapp/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.webapp
+              - .github/actions/shared/**
+              - .github/workflows/stage-images.yml
+              - .github/workflows/shared-docker-build-push.yml
+            website:
+              - apps/website/**
+              - packages/openapi-spec/**
+              - docs/**
+              - packages/**
+              - package.json
+              - pnpm-lock.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.website
+              - apps/website/Dockerfile
+              - .github/actions/shared/**
+              - .github/workflows/stage-images.yml
+              - .github/workflows/shared-docker-build-push.yml
+              - deploy/ops/**
+
+  build_api:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.api == 'true'
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      dockerfile: apps/api/Dockerfile
+      dockerignore_file: .dockerignore.api
+      image_name: ghcr.io/usebondery/api
+      docker_tags: |
+        type=raw,value=beta
+        type=sha,prefix=sha-,format=short
+      oci_title: Bondery API
+      oci_description: Bondery API server (integration builds from main)
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/api-container.md
+      oci_version: beta
+      git_sha: ${{ github.sha }}
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+
+  build_webapp:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.webapp == 'true'
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      dockerfile: apps/webapp/Dockerfile
+      dockerignore_file: .dockerignore.webapp
+      image_name: ghcr.io/usebondery/webapp
+      docker_tags: |
+        type=raw,value=beta
+        type=sha,prefix=sha-,format=short
+      oci_title: Bondery Webapp
+      oci_description: Bondery webapp (integration builds from main)
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
+      oci_version: beta
+      git_sha: ${{ github.sha }}
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=beta
+
+  build_website:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.website == 'true'
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      dockerfile: apps/website/Dockerfile
+      dockerignore_file: .dockerignore.website
+      image_name: ghcr.io/usebondery/website
+      docker_tags: |
+        type=sha,prefix=sha-,format=short
+      oci_title: Bondery Website
+      oci_description: Bondery marketing website (main integration builds)
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
+      oci_version: sha
+      git_sha: ${{ github.sha }}
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}

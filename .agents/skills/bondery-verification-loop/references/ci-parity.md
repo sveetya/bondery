@@ -12,7 +12,7 @@ There is **no** root `pnpm run verify` — mirror CI by running the steps below 
 | **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
-| **3 — Staging** | Matches `main` deploy gates | `stage-webapp.yml`, `stage-api.yml` subsets |
+| **3 — Staging** | Matches `main` image builds | `stage-images.yml` (path-filtered Docker builds for api, webapp, website) |
 | **4 — Smoke / release** | Tags, release branch | `release-*.yml` (smoke-gated), `deploy-website.yml`, `smoke-bondery-stack.yml` (manual) |
 
 Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
@@ -38,16 +38,12 @@ pnpm run check:api-errors
 pnpm run test:api:sync
 ```
 
-## Staging workflows (not full verify)
+## Staging workflow (not full verify)
 
-**`stage-webapp.yml`** (on `main`, webapp paths):
+**`stage-images.yml`** (on `main`, path-filtered per service):
 
-- `pnpm --filter webapp run check:types`
-- `pnpm --filter webapp run test:theme`, `test:sync`, `test:runtime-config`
-
-**`stage-api.yml`** (on `main`, api paths):
-
-- `pnpm run test:api:sync`
+- Builds and pushes Docker images (`:beta` + `:sha-<short>` for api/webapp; `:sha-<short>` for website)
+- No duplicate host test gate — PR `verify.yml` is the sole host quality gate
 
 ## Optional local checks (not in CI)
 
@@ -69,8 +65,8 @@ Document these as `SKIPPED` in PR parity reports unless the diff touches those a
 | Gap | Impact |
 |-----|--------|
 | Biome CI 2.5.0 vs local 2.5.3 | Rare formatter drift between local and Actions |
-| `stage-api` without `test:auth` | Auth suite local-only until repaired |
-| `verify` omits `test:theme` / `test:sync` for webapp | Stage-webapp covers; verify does not |
+| `verify` omits API auth integration | `test:auth` local-only until repaired |
+| `verify` omits `test:theme` / `test:sync` for webapp | Run locally when touching webapp UI/sync |
 
 ## Checklist
 

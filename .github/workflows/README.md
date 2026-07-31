@@ -5,17 +5,16 @@ GitHub requires workflow files to live directly in `.github/workflows/` (no subf
 ## Logical structure
 
 ```text
-verify.yml                 PR + main checks (contract + path-filtered website-build)
+verify.yml                 PR checks only (contract + path-filtered website-build)
 
 stage/
-  api.yml                  -> stage-api.yml       main -> ghcr.io/usebondery/api:beta
-  webapp.yml               -> stage-webapp.yml    main -> ghcr.io/usebondery/webapp:beta
+  images.yml               -> stage-images.yml    main -> api/webapp :beta + :sha; website :sha
 
 deploy/
-  website.yml              -> deploy-website.yml  release -> ghcr.io/usebondery/website:production
+  website.yml              -> deploy-website.yml  release -> promote :sha or build -> :production
 
 release/
-  api.yml                  -> release-api.yml       api-X.Y.Z tags
+  api.yml                  -> release-api.yml       api-X.Y.Z tags (promote :sha, smoke, :production)
   webapp.yml               -> release-webapp.yml    webapp-X.Y.Z tags
   extension.yml            -> release-extension.yml ext-X.Y.Z tags
 
@@ -29,6 +28,7 @@ shared/
   website-prune-build/     -> .github/actions/shared/website-prune-build/
   dokploy-deploy-webhook/  -> .github/actions/shared/dokploy-deploy-webhook/
   docker-build-push.yml    -> shared-docker-build-push.yml
+  promote-image-tag.yml    -> shared-promote-image-tag.yml
   release-validate.yml     -> shared-release-validate.yml
   container-github-release.yml -> shared-container-github-release.yml
   smoke-bondery.yml        -> shared-smoke-bondery.yml
@@ -39,13 +39,15 @@ shared/
 
 | Prefix | Meaning | Trigger |
 |--------|---------|---------|
-| `verify` | Quality gates | PR, push to `main` (`website-build` path-filtered; `contract` always runs) |
-| `stage-*` | Integration/staging images | Push to `main` (path-filtered) |
-| `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website is Docker build-push only |
-| `release-*` | Versioned production releases | Git tags `*-X.Y.Z` |
+| `verify` | Quality gates | **PR only** (`website-build` path-filtered; `contract` always runs). Uses `concurrency` to cancel stale runs. |
+| `stage-images` | Integration images on main | Push to `main` (path-filtered matrix: api, webapp, website) |
+| `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website promotes `:sha` when staged on main |
+| `release-*` | Versioned production releases | Git tags `*-X.Y.Z`; promotes `:sha-<short>` to semver (no rebuild unless `force_rebuild`) |
 | `shared-*` | Reusable workflows (not triggered directly) | `workflow_call` only |
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
+
+**Branch protection:** `.github/rulesets/protect-main.json` sets `strict_required_status_checks_policy: true` so PRs must be up to date with `main` before merge. Apply with `pnpm run github:rulesets -- main`.
 
 **Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Host CI installs **pnpm 11.18.0** via `pnpm/action-setup` + `pnpm install --frozen-lockfile`. Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
 
@@ -68,15 +70,20 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 
 **Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
 
-Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store`): `pnpm fetch` after copying pruned manifests, then `pnpm install --offline` after copying full sources. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
+Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store`): `pnpm fetch` after copying pruned manifests, then `pnpm install` after copying full sources. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
 
 ## Docker channels
 
 | Channel | Git trigger | Docker tags |
 |---------|-------------|-------------|
-| Stage | `main` | `:beta`, `:sha-<short>` |
-| Release (api/webapp) | `api-X.Y.Z`, `webapp-X.Y.Z` | `:X.Y.Z`, `:sha-<short>`; `:production` promoted after smoke |
-| Deploy (website) | push to `release` | `:production`, `:sha-<short>` |
+| Stage (api/webapp) | `main` | `:beta`, `:sha-<short>` |
+| Stage (website) | `main` | `:sha-<short>` only |
+| Release (api/webapp) | `api-X.Y.Z`, `webapp-X.Y.Z` | Promote `:sha-<short>` → `:X.Y.Z`; `:production` after smoke |
+| Deploy (website) | push to `release` | Promote `:sha-<short>` → `:production` when image exists on main; else build |
+
+`:sha-<short>` is the **immutable artifact** built on `main`. `:beta` is a floating integration pointer for api/webapp only.
+
+Release workflows support `workflow_dispatch` input `force_rebuild: true` to rebuild from source when `:sha` is missing (hotfix path).
 
 Marketing website uses **release-branch CD** (no semver tags). Product containers stay on tagged releases + pinned image tags for self-hosters.
 

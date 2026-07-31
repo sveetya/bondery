@@ -2,9 +2,10 @@ name: Verify
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   TURBO_TELEMETRY_DISABLED: 1
@@ -124,6 +125,7 @@ jobs:
               - .dockerignore.website
               - apps/website/Dockerfile
               - .github/workflows/verify.yml
+              - .github/workflows/stage-images.yml
               - .github/actions/shared/**
 
       - uses: pnpm/action-setup@v4
