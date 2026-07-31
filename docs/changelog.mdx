@@ -27,6 +27,7 @@ All notable changes to Bondery are documented here, with the latest release firs
 - Website: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`).
 - Chrome extension: Version check reads `GET /extension/manifest` on the API host.
 - Mobile: Connectivity probe uses `GET /health/live` on the API host.
+- CI: `api-*` / `webapp-*` release tags now run compose smoke on the semver image, promote `:production` only after smoke passes, then call Dokploy (same gate pattern as website CD).
 
 ### 🐛 Fixed
 

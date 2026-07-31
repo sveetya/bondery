@@ -1,0 +1,43 @@
+name: Shared - Promote production image tag
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: GHCR image name (without tag)
+        required: true
+        type: string
+      version:
+        description: Semver tag that passed smoke (source for :production)
+        required: true
+        type: string
+    secrets:
+      BONDERY_OPS_GHCR_WRITE_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: ./.github/actions/shared/ghcr-login
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+
+      - name: Promote semver tag to production
+        run: |
+          docker buildx imagetools create \
+            -t "${{ inputs.image_name }}:production" \
+            "${{ inputs.image_name }}:${{ inputs.version }}"
