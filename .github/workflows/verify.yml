@@ -19,13 +19,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
-
-      - name: Enable Corepack
-        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -122,15 +123,16 @@ jobs:
               - .github/workflows/verify.yml
               - .github/actions/shared/**
 
+      - uses: pnpm/action-setup@v4
+        if: steps.filter.outputs.website == 'true'
+        with:
+          version: 11.18.0
+
       - uses: actions/setup-node@v7
         if: steps.filter.outputs.website == 'true'
         with:
           node-version-file: .nvmrc
           cache: pnpm
-
-      - name: Enable Corepack
-        if: steps.filter.outputs.website == 'true'
-        run: corepack enable
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         if: steps.filter.outputs.website == 'true'
