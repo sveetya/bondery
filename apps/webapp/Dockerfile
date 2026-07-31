@@ -2,7 +2,7 @@
 
 FROM node:26-alpine AS base
 RUN apk add --no-cache libc6-compat
-RUN corepack enable
+RUN npm install -g pnpm@11.18.0
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
 
@@ -43,7 +43,7 @@ ARG BONDERY_INFRA_VERSION
 ARG BONDERY_INFRA_GIT_SHA
 ARG BUILD_DATE
 
-RUN corepack enable
+RUN npm install -g pnpm@11.18.0
 
 ENV NODE_ENV=production
 ENV PORT=26632

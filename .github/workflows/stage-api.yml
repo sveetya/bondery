@@ -42,6 +42,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build API workspace deps
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
+        run: pnpm exec turbo build --filter=api^...
+
       - name: API sync unit tests
         run: pnpm run test:api:sync
 
