@@ -24,7 +24,7 @@ runs:
         cp -r docs out/json/docs
         cp -r scripts out/json/scripts
         cd out/json
-        pnpm install --frozen-lockfile --ignore-scripts --offline
+        pnpm install --frozen-lockfile --ignore-scripts
 
     - name: Build website
       shell: bash
