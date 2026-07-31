@@ -11,7 +11,7 @@
  *
  * Codegen / CI (not day-to-day DX):
  *   npm run env:examples
- *   npm run env -- --check          # regenerate + fail if git dirty
+ *   npm run env:check             # regenerate + fail if git dirty
  */
 
 import { execSync } from "node:child_process";

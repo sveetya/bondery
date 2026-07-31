@@ -65,7 +65,7 @@ npm run dev
 Pre-commit (via lint-staged) runs `env:examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
 
 ```bash
-npm run env -- --check   # regenerate + fail if git dirty
+npm run env:check   # regenerate + fail if git dirty
 ```
 
 Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.

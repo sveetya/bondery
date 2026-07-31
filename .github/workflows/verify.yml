@@ -48,7 +48,9 @@ jobs:
         run: npx turbo build --filter=api^...
 
       - name: Check env sync (examples + turbo)
-        run: npm run env -- --check
+        run: |
+          npm run build -w @bondery/helpers
+          npm run env:check
 
       - name: Docs checks
         run: npm run check:docs
