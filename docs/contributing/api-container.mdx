@@ -105,7 +105,7 @@ git push origin api-1.7.1
 3. CI publishes `ghcr.io/usebondery/api:1.7.1` and `:production`.
 4. Bump `BONDERY_INFRA_API_IMAGE_TAG` (and tested `BONDERY_INFRA_WEBAPP_IMAGE_TAG` pair) in `deploy/bondery` / Dokploy and redeploy.
 
-See [RELEASE.md](../../.agents/workflows/RELEASE.md) for the full stack pin workflow.
+See the [`bondery-release`](../../.agents/skills/bondery-release/SKILL.md) skill (`dokploy-pins` reference) for the full stack pin workflow.
 
 ## Unified Compose
 

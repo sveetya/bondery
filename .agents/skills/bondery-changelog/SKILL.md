@@ -40,7 +40,7 @@ Routine internal refactors, test-only changes, and formatting do not need produc
 | Decide whether and how to write an entry | [references/format.md](references/format.md) |
 | Choose a category or commit prefix | [references/format.md](references/format.md) |
 | Calculate a version or cut `Unreleased` | [references/versioning-and-release.md](references/versioning-and-release.md) |
-| Execute deployment, extension gates, or rollback | [Release workflow](../../workflows/RELEASE.md) |
+| Execute deployment, extension gates, or rollback | [`bondery-release`](../bondery-release/SKILL.md) |
 | Document API compatibility or deprecation | [`bondery-api` versioning](../bondery-api/references/versioning.md) |
 | Turn release notes into an announcement | [Blog post workflow](../../workflows/blog/BLOG-POST.md) |
 

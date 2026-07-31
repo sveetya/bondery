@@ -13,7 +13,7 @@ There is **no** root `pnpm run verify` — mirror CI by running the steps below 
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` image builds | `stage-images.yml` (path-filtered Docker builds for api, webapp, website) |
-| **4 — Smoke / release** | Tags, release branch | `release-*.yml` (smoke-gated), `deploy-website.yml`, `smoke-bondery-stack.yml` (manual) |
+| **4 — Smoke / release** | Tags, release branch | `release-*.yml` (smoke-gated), `deploy-website.yml`, `smoke-bondery-stack.yml` (manual). Operator sequencing: [`bondery-release`](../../bondery-release/SKILL.md). |
 
 Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 

@@ -83,7 +83,7 @@ Repo-specific triggers:
 | API schema change | `pnpm run generate:openapi` |
 | Prisma / `@bondery/db` bump | `pnpm run generate-types` |
 | Env renames | `.env.*.example` per app |
-| Extension API break | `packages/helpers/src/constants.ts` (`MIN_EXTENSION_VERSION`) |
+| Extension API break | `packages/helpers/src/globals/paths.ts` (`MIN_EXTENSION_VERSION`) |
 
 ### 3. Update packages
 

@@ -5,7 +5,7 @@ triggers:
   - monthly release (after technical deploy succeeds)
   - standalone blog posts (features, guides, announcements)
 depends_on:
-  - RELEASE.md (for monthly release posts)
+  - bondery-release skill (for monthly release posts)
 related:
   - blog/WRITING-GUIDE.md
 ---
@@ -72,11 +72,11 @@ Before merging:
 
 1. Merge the post into `main`.
 2. Promote to production: `git push origin main:release`.
-3. If website paths changed, [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds `ghcr.io/usebondery/website:production` and the ops Compose stack on Dokploy (`deploy/ops`) pulls it.
+3. If website paths changed, [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) promotes `website:sha-<short>` to `:production` when staged on `main`, or builds as fallback; the ops Compose stack on Dokploy (`deploy/ops`) pulls it.
 
 Website deploy is **not** extension-gated and does **not** use `website-X.Y.Z` tags. Wait until the Deploy · Website workflow succeeds (and Dokploy has redeployed) before announcing.
 
-For monthly product releases, the same `main → release` push is step 2 of the [release workflow](../RELEASE.md#2-web-app--other-apps); website CD runs from that push when marketing files change.
+For monthly product releases, the same `main → release` push is part of [`bondery-release` sequencing](../../skills/bondery-release/references/sequencing-and-gates.md); website CD runs from that push when marketing files change.
 
 ---
 
