@@ -13,9 +13,14 @@ RUN pnx turbo@2.10.4 prune webapp --docker
 FROM base AS builder
 ARG TURBO_TEAM
 ENV TURBO_TEAM=$TURBO_TEAM
+ENV PNPM_HOME=/pnpm
+ENV PATH="${PNPM_HOME}:${PATH}"
+ENV PNPM_STORE_DIR=/pnpm/store
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
+    pnpm fetch --store-dir "${PNPM_STORE_DIR}"
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
@@ -24,7 +29,8 @@ COPY docs ./docs
 ENV BONDERY_PUBLIC_API_URL=https://api.example.com
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
-RUN pnpm install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
+    pnpm install --frozen-lockfile --ignore-scripts --offline --store-dir "${PNPM_STORE_DIR}"
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=webapp

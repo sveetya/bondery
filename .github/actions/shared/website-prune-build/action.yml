@@ -1,6 +1,6 @@
 name: Website pruned production build
 description: >-
-  Prune the monorepo for website (turbo prune --docker), install pruned deps,
+  Prune the monorepo for website (turbo prune --docker), fetch and install pruned deps,
   and run turbo build --filter=website. Matches apps/website/Dockerfile build env.
   Caller must checkout the repo and configure Node + Turbo remote cache first.
 
@@ -11,15 +11,21 @@ runs:
       shell: bash
       run: pnx turbo@2.10.4 prune website --docker
 
-    - name: Install pruned dependencies
+    - name: Fetch pruned dependencies
       shell: bash
       run: |
         corepack enable
+        cd out/json
+        pnpm fetch
+
+    - name: Install pruned dependencies
+      shell: bash
+      run: |
         cp -r out/full/* out/json/
         cp -r docs out/json/docs
         cp -r scripts out/json/scripts
         cd out/json
-        pnpm install --frozen-lockfile --ignore-scripts
+        pnpm install --frozen-lockfile --ignore-scripts --offline
 
     - name: Build website
       shell: bash
