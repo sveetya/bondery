@@ -77,7 +77,8 @@ jobs:
       - run: echo "API image ready at version ${{ needs.validate.outputs.version }}"
 
   smoke:
-    needs: [validate, image_ready]
+    needs: [validate, image_ready, promote, build-push]
+    if: ${{ always() && needs.image_ready.result == 'success' }}
     uses: ./.github/workflows/shared-smoke-bondery.yml
     secrets: inherit
     with:
@@ -105,6 +106,7 @@ jobs:
 
   notify-dokploy:
     needs: [image_ready, smoke, promote-production]
+    if: ${{ always() && needs.smoke.result == 'success' && needs.promote-production.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

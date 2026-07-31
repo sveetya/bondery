@@ -102,7 +102,8 @@ jobs:
       - run: echo "Website image ready (sha-${{ needs.resolve.outputs.short_sha }})"
 
   smoke:
-    needs: image_ready
+    needs: [image_ready, promote, build-push]
+    if: ${{ always() && needs.image_ready.result == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -170,6 +171,7 @@ jobs:
 
   notify-dokploy:
     needs: [image_ready, smoke]
+    if: ${{ always() && needs.smoke.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
