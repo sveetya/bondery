@@ -11,6 +11,7 @@ on:
       - "docs/**"
       - "package.json"
       - "package-lock.json"
+      - ".nvmrc"
       - "turbo.json"
       - ".dockerignore.api"
       - ".github/actions/shared/**"
@@ -31,7 +32,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: latest
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies

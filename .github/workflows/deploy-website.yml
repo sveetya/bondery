@@ -14,6 +14,7 @@ on:
       - "packages/**"
       - "package.json"
       - "package-lock.json"
+      - ".nvmrc"
       - "turbo.json"
       - ".dockerignore.website"
       - ".github/actions/shared/**"
