@@ -34,7 +34,7 @@ RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=website
-RUN pnpm prune --prod
+RUN pnpm prune --prod --ignore-scripts
 
 FROM node:26-alpine AS runner
 WORKDIR /app
