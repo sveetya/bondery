@@ -1,6 +1,6 @@
 /**
  * Guards against webapp runtime imports of API-only @bondery/schemas surfaces.
- * Run via: npm run check:schemas-imports
+ * Run via: pnpm run check:schemas-imports
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

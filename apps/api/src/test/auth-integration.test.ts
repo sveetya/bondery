@@ -5,12 +5,12 @@
  * suite requires `DATABASE_URL` to point at a clean, migrated Postgres — the
  * `oauthProvider` plugin seeds its resource row at boot, and the whole
  * authorization-code + refresh flow is exercised through real Fastify
- * injection against real Prisma-backed storage. Run via `npm run test:auth
+ * injection against real Prisma-backed storage. Run via `pnpm run test:auth
  * -w api` (see package.json), never as part of the DB-less `test:api`.
  *
  * Requires the schema to already be migrated (`prisma migrate deploy`) —
  * this suite does not run migrations itself. Run locally after
- * `npm run release-migrate` (not wired in CI).
+ * `pnpm run release-migrate` (not wired in CI).
  */
 import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";

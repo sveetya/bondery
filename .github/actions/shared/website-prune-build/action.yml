@@ -9,18 +9,19 @@ runs:
   steps:
     - name: Prune monorepo for website
       shell: bash
-      run: npx turbo prune website --docker
+      run: pnx turbo@2.10.4 prune website --docker
 
     - name: Install pruned dependencies
       shell: bash
       run: |
+        corepack enable
         cp -r out/full/* out/json/
         cp -r docs out/json/docs
         cp -r scripts out/json/scripts
         mkdir -p out/json/apps/api
         cp apps/api/openapi.yaml out/json/apps/api/openapi.yaml
         cd out/json
-        npm ci --ignore-scripts
+        pnpm install --frozen-lockfile --ignore-scripts
 
     - name: Build website
       shell: bash
@@ -28,4 +29,4 @@ runs:
       env:
         BONDERY_PUBLIC_WEBAPP_URL: https://app.example.com
         BONDERY_PUBLIC_WEBSITE_URL: https://example.com
-      run: npx turbo build --filter=website
+      run: pnpm exec turbo build --filter=website

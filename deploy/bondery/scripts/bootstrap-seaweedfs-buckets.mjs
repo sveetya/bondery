@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @deprecated Use `npm run setup:seaweedfs` (compiled API CLI) instead.
+ * @deprecated Use `pnpm run setup:seaweedfs` (compiled API CLI) instead.
  */
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";

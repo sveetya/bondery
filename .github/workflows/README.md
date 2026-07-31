@@ -45,7 +45,7 @@ shared/
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
 
-**Node on runners:** Host jobs use `node-version: latest` (`setup-node@v7`). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Production Docker images intentionally pin `node:22-alpine` in Dockerfiles for reproducible releases; release `smoke` jobs validate the container runtime.
+**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Dependencies install with **pnpm 11.18.0** (`corepack enable` + `pnpm install --frozen-lockfile`). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Release `smoke` jobs validate the container runtime.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 
@@ -64,7 +64,7 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 | `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
 | Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
 
-**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`npm run test:auth -w api`) is local-only until the suite is repaired.
+**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
 
 Docker builds also use GHA layer cache (`cache-from: type=gha`).
 

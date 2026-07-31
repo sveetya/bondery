@@ -2,9 +2,9 @@
  * Supabase environment setup + stack bootstrap.
  *
  * Usage:
- *   npx tsx scripts/setup.ts --env local|beta|production
- *   npx tsx scripts/setup.ts --bootstrap greenfield
- *   npx tsx scripts/setup.ts --bootstrap import
+ *   pnpm exec tsx scripts/setup.ts --env local|beta|production
+ *   pnpm exec tsx scripts/setup.ts --bootstrap greenfield
+ *   pnpm exec tsx scripts/setup.ts --bootstrap import
  *
  * Greenfield: empty Postgres — apply migrations, seed vault, ensure buckets.
  * Import: cloud → self-host — vault reconcile only (restore dump separately).
@@ -195,7 +195,7 @@ function bootstrapGreenfield() {
   }
 
   try {
-    run(`npx supabase db push --db-url "${dbUrl}" --yes`, root);
+    run(`pnx supabasedb push --db-url "${dbUrl}" --yes`, root);
   } catch {
     console.log(
       `\n${c.yellow}Host db push failed (db may not be published). Applying migrations via docker exec...${c.reset}`,
@@ -205,7 +205,7 @@ function bootstrapGreenfield() {
       `${c.red}Could not reach Postgres on 127.0.0.1:54322.${c.reset}\n` +
         `Add to docker-compose.override.yml:\n` +
         `  services:\n    db:\n      ports:\n        - "54322:5432"\n` +
-        `Then: docker compose up -d db && npm run stack:bootstrap:greenfield -w supabase-db\n`,
+        `Then: docker compose up -d db && pnpm run stack:bootstrap:greenfield -w supabase-db\n`,
     );
     process.exit(1);
   }
@@ -256,7 +256,7 @@ const REMOTE_VARS = [...COMMON_VARS, "SUPABASE_PROJECT_REF"];
 const SNIPPET_DIR = `./supabase/snippets/Setup`;
 
 function runLocalSqlFile(relativePath: string) {
-  run(`npx supabase db query --file ${relativePath}`);
+  run(`pnx supabasedb query --file ${relativePath}`);
 }
 
 const bootstrapIdx = process.argv.indexOf("--bootstrap");
@@ -277,9 +277,9 @@ const env = envIdx !== -1 ? process.argv[envIdx + 1] : undefined;
 if (env !== "local" && env !== "beta" && env !== "production") {
   console.error(
     `${c.red}Usage:${c.reset}\n` +
-      `  npx tsx scripts/setup.ts --env local|beta|production\n` +
-      `  npx tsx scripts/setup.ts --bootstrap greenfield\n` +
-      `  npx tsx scripts/setup.ts --bootstrap import\n`,
+      `  pnpm exec tsx scripts/setup.ts --env local|beta|production\n` +
+      `  pnpm exec tsx scripts/setup.ts --bootstrap greenfield\n` +
+      `  pnpm exec tsx scripts/setup.ts --bootstrap import\n`,
   );
   process.exit(1);
 }
@@ -297,7 +297,7 @@ if (env === "local") {
   const projectRef = vars.SUPABASE_PROJECT_REF;
 
   console.log(`\n${c.blue}Uploading secrets to Supabase (${env})...${c.reset}`);
-  run(`npx supabase secrets set --env-file ${envFile} --project-ref ${projectRef}`);
+  run(`pnx supabasesecrets set --env-file ${envFile} --project-ref ${projectRef}`);
 
   console.log(`\n${c.blue}Vault secret note (${env})...${c.reset}`);
   console.log(

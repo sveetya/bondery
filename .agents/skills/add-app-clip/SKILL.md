@@ -183,7 +183,7 @@ curl https://may20.expo.app/.well-known/apple-app-site-association
 Inspect the parent app's permissions after prebuild:
 
 ```sh
-npx expo config --type introspect
+pnpm exec expo config --type introspect
 ```
 
 Look at the `infoPlist` object — mirror the permission keys in the App Clip's `Info.plist` so matching APIs can be used from the Clip.

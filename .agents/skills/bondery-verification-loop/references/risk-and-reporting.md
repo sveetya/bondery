@@ -15,8 +15,8 @@ Examples:
 |------|----------------|
 | Add validation | Unit test for invalid input passes → `npm test -w @bondery/helpers` (if helper changed) |
 | Fix API bug | Repro test passes → targeted `test:sync` or optional `test:api` when DB-backed |
-| New route | OpenAPI in sync → `npm run check:openapi` |
-| Mobile sync change | Pattern lint clean → `npm run check-sync-patterns -w mobile` |
+| New route | OpenAPI in sync → `pnpm run check:openapi` |
+| Mobile sync change | Pattern lint clean → `pnpm run check-sync-patterns -w mobile` |
 
 Architect plans should include `→ verify:` on each implementation task without running commands.
 
@@ -61,10 +61,10 @@ Run verification:
 
 | Read-only (preferred for verify) | Mutating (review diff after) |
 |----------------------------------|------------------------------|
-| `npx biome check <files>` | `npm run lint` (writes whole repo) |
-| `biome ci .` | `npm run generate:openapi` |
-| `npm run check:types` | `npm run env -- --check` (may regenerate examples) |
-| `npm run test:*` | Translation `i18n:types` / build steps that emit files |
+| `pnpm exec biome check <files>` | `pnpm run lint` (writes whole repo) |
+| `biome ci .` | `pnpm run generate:openapi` |
+| `pnpm run check:types` | `pnpm run env -- --check` (may regenerate examples) |
+| `pnpm run test:*` | Translation `i18n:types` / build steps that emit files |
 
 ## Report format
 

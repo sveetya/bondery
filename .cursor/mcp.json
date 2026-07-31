@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "chrome-devtools": {
-      "command": "npx -y chrome-devtools-mcp@latest"
+      "command": "pnx -y chrome-devtools-mcp@latest"
     },
     "expo": {
       "type": "http",
@@ -9,7 +9,7 @@
     },
     "plane": {
       "args": ["mcp-remote@latest", "https://mcp.plane.so/http/mcp"],
-      "command": "npx",
+      "command": "pnx",
       "type": "stdio"
     },
     "vercel": {

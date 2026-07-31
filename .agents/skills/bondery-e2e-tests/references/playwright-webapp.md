@@ -9,7 +9,7 @@ Grounded in `apps/webapp/e2e/`. Read `playwright.config.mjs` header comments for
   - `BONDERY_PUBLIC_API_URL=http://127.0.0.1:26631`
   - `BONDERY_PUBLIC_WEBAPP_URL=http://127.0.0.1:26632`
 - GitHub OAuth app callback: `http://127.0.0.1:26631/auth/callback/github`
-- Run `npm run provision:oauth-clients` after URL changes
+- Run `pnpm run provision:oauth-clients` after URL changes
 
 ## Config highlights
 
@@ -39,19 +39,19 @@ Grounded in `apps/webapp/e2e/`. Read `playwright.config.mjs` header comments for
 
 ```bash
 # Terminal 1 — dev stack
-npm run kill:dev && npm run dev:webapp-api
+pnpm run kill:dev && pnpm run dev:webapp-api
 
 # First time or expired session
-npm run test:e2e:auth-setup -w webapp -- --headed
+pnpm run test:e2e:auth-setup -w webapp -- --headed
 
 # Unauthenticated specs (no GitHub)
-E2E_REUSE_SERVER=1 npm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
+E2E_REUSE_SERVER=1 pnpm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
 
 # Full GitHub login regression (headed)
-E2E_REUSE_SERVER=1 npm run test:e2e:github -w webapp -- --headed
+E2E_REUSE_SERVER=1 pnpm run test:e2e:github -w webapp -- --headed
 
 # Inspector debug
-E2E_REUSE_SERVER=1 npm run test:e2e:debug -w webapp -- login.github
+E2E_REUSE_SERVER=1 pnpm run test:e2e:debug -w webapp -- login.github
 ```
 
 Set `E2E_PAUSE_GITHUB=1` to call `page.pause()` during the GitHub login spec.

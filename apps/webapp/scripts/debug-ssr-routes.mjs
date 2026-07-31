@@ -33,7 +33,7 @@ function log(hypothesisId, location, message, data = {}) {
 }
 
 if (!existsSync(join(webappRoot, ".next"))) {
-  console.error("missing .next — run npm run build -w webapp");
+  console.error("missing .next — run pnpm run build -w webapp");
   process.exit(1);
 }
 

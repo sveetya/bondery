@@ -1,6 +1,6 @@
 ---
 name: Package Upgrade Workflow
-description: Safe, incremental process for upgrading npm dependencies across the Bondery monorepo.
+description: Safe, incremental process for upgrading pnpm dependencies across the Bondery monorepo.
 triggers:
   - monthly dependency maintenance
   - security advisory requiring a bump
@@ -22,17 +22,17 @@ Upgrade dependencies in small steps. One ecosystem per PR. Every touched workspa
 |------|------|-------|
 | Bulk | Patch/minor within existing ranges | Step 1 |
 | Major | Range edit or breaking release | Step 2 |
-| Security | Advisory / `npm audit` | Step 2 (one fix per PR) |
+| Security | Advisory / `pnpm audit` | Step 2 (one fix per PR) |
 
-**Workspaces:** `apps/api`, `apps/webapp`, `apps/mobile`, `apps/website`, `apps/chrome-extension`, `apps/supabase-db`, and `packages/*`. Package manager: npm workspaces + Turborepo.
+**Workspaces:** `apps/api`, `apps/webapp`, `apps/mobile`, `apps/website`, `apps/chrome-extension`, `apps/supabase-db`, and `packages/*`. Package manager: pnpm workspaces + Turborepo.
 
 ---
 
 ## 0. Baseline
 
 ```bash
-npm outdated --workspaces
-npm outdated --workspaces --json   # for agents
+pnpm outdated -r
+pnpm outdated -r --json   # for agents
 ```
 
 Classify each entry: **patch/minor** → Step 1, **major** → Step 2. Framework minors (Next.js, Expo, Mantine, TypeScript) still go through Steps 2–5.
@@ -40,16 +40,16 @@ Classify each entry: **patch/minor** → Step 1, **major** → Step 2. Framework
 **React / react-dom** — must be one version across the monorepo. Mixed versions cause duplicate React and broken hooks.
 
 ```bash
-npm ls react react-dom --workspaces
+pnpm ls react react-dom -r
 ```
 
 Align `react` and `react-dom` to the **same exact version** in every workspace that lists them (`apps/webapp`, `apps/website`, `apps/mobile`, `apps/chrome-extension`, `packages/emails`, etc.). Mobile may use a pin (`19.2.3`) while webapp uses a caret — after any React bump, set them to match.
 
 Also check:
 
-- `npm ls <pkg>` for duplicate transitive versions (`esbuild`, `zod`, …)
+- `pnpm ls <pkg> -r` for duplicate transitive versions (`esbuild`, `zod`, …)
 - Expo packages (`~`) — never bulk-update; use Step 2 Expo batch
-- Root `allowScripts` — add entries for new native/postinstall packages
+- Root `pnpm.onlyBuiltDependencies` — add entries for new native/postinstall packages
 - `patches/` — remove obsolete patches
 
 Save the outdated list for Step 6.
@@ -59,11 +59,11 @@ Save the outdated list for Step 6.
 ## 1. Bulk patch and minor
 
 ```bash
-npm update --workspaces
-npm install                        # if lockfile looks wrong
+pnpm update -r
+pnpm install                        # if lockfile looks wrong
 ```
 
-Skip Expo SDK packages. If a package needs a `package.json` range edit, that is a major upgrade (Step 2). `npm update` only moves within declared ranges — use `npm install <pkg>@<version> -w <workspace>` when you need a specific target.
+Skip Expo SDK packages. If a package needs a `package.json` range edit, that is a major upgrade (Step 2). `pnpm update` only moves within declared ranges — use `pnpm --filter <workspace> add <pkg>@<version>` when you need a specific target.
 
 Build every workspace you touched, then commit:
 
@@ -88,18 +88,18 @@ Upgrade shared foundations first, then apps:
 | Ecosystem | Workspaces | Notes |
 |-----------|------------|-------|
 | **TypeScript** | Every workspace with `typescript` in `devDependencies` | Bump all to the same version. Run `check:types` everywhere, then build all touched workspaces. |
-| **React / react-dom** | All apps + `packages/emails` | Same exact version everywhere. Run `npm ls react` after install. |
-| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `npm run check:contracts -w packages/schemas`. |
+| **React / react-dom** | All apps + `packages/emails` | Same exact version everywhere. Run `pnpm ls react -r` after install. |
+| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `pnpm --filter @bondery/schemas run check:contracts`. |
 | **Mantine** | `apps/webapp`, `apps/website`, `packages/mantine-next` | Same version on every `@mantine/*`. See [mantine-best-practices](../../skills/mantine-best-practices/SKILL.md). |
-| **Next.js** | `apps/webapp`, `apps/website` | `npx @next/codemod@latest upgrade`. See [next-best-practices](../../skills/next-best-practices/SKILL.md). |
-| **Expo SDK** | `apps/mobile` | `npx expo install expo@<target>` then `npx expo install --fix`. See [upgrading-expo](../../skills/upgrading-expo/SKILL.md). |
+| **Next.js** | `apps/webapp`, `apps/website` | `pnx @next/codemod@latest upgrade`. See [next-best-practices](../../skills/next-best-practices/SKILL.md). |
+| **Expo SDK** | `apps/mobile` | `pnpm exec expo install expo@<target>` then `pnpm exec expo install --fix`. See [upgrading-expo](../../skills/upgrading-expo/SKILL.md). |
 | **Tamagui** | `apps/mobile` | All `@tamagui/*` at the same version. |
 | **TanStack Query** | `apps/webapp` | Query + devtools together. |
 | **TipTap** | `apps/webapp` | All `@tiptap/*` aligned. |
-| **Supabase** | `apps/api`, `apps/webapp`, `apps/supabase-db` CLI | Regenerate types: `npm run generate-types`. |
+| **Supabase** | `apps/api`, `apps/webapp`, `apps/supabase-db` CLI | Regenerate types: `pnpm run generate-types`. |
 | **Fastify** | `apps/api` | `fastify` + `@fastify/*` together. |
 
-Per ecosystem: edit ranges → `npm install` → Steps 3–6 → merge before starting the next.
+Per ecosystem: edit ranges → `pnpm install` → Steps 3–6 → merge before starting the next.
 
 ---
 
@@ -118,8 +118,8 @@ Repo checks:
 
 | Trigger | Command / file |
 |---------|----------------|
-| API schema change | `npm run generate:openapi` |
-| Supabase client bump | `npm run generate-types` (needs `npm run start -w apps/supabase-db`) |
+| API schema change | `pnpm run generate:openapi` |
+| Supabase client bump | `pnpm run generate-types` (needs `pnpm --filter apps/supabase-db run start`) |
 | Env renames | `.env.*.example` per app |
 | Extension API break | `packages/helpers/src/constants.ts` (`MIN_EXTENSION_VERSION`) |
 
@@ -127,9 +127,9 @@ Repo checks:
 
 ## 4. Apply code changes
 
-1. Run codemods (`npx @next/codemod@latest upgrade`, etc.)
-2. Fix type errors: `npm run check:types -w <workspace>`
-3. Lint: `npm run lint` (from repo root; Biome format with write)
+1. Run codemods (`pnx @next/codemod@latest upgrade`, etc.)
+2. Fix type errors: `pnpm --filter <workspace> run check:types`
+3. Lint: `pnpm run lint` (from repo root; Biome format with write)
 4. Regenerate artifacts if needed (OpenAPI, Supabase types)
 5. Update `packages/translations` (`src/locales/{en,cs,de}/**`) when UI copy changes
 
@@ -149,33 +149,33 @@ Build each workspace you changed. If a shared package changed, also build its co
 
 ```bash
 # Apps (from repo root — prefer Turbo; matches CI/Vercel)
-npx turbo build --filter=api
-npx turbo build --filter=webapp
-npx turbo build --filter=website
-npx turbo build --filter=chrome-extension
+pnpm exec turbo build --filter=api
+pnpm exec turbo build --filter=webapp
+pnpm exec turbo build --filter=website
+pnpm exec turbo build --filter=chrome-extension
 
-# Or shortcuts: npm run build:api, build:webapp, build:website
+# Or shortcuts: pnpm run build:api, build:webapp, build:website
 
 # Packages — compiled workspace libraries (required before app builds)
-npx turbo build --filter=./packages/*
-# Or per package: npm run build -w @bondery/schemas
+pnpm exec turbo build --filter=./packages/*
+# Or per package: pnpm --filter @bondery/schemas run build
 
 # Mobile — no build script; use:
-npm run check:types -w mobile
-npx expo-doctor                        # run inside apps/mobile
+pnpm --filter mobile run check:types
+pnpm exec expo-doctor                        # run inside apps/mobile
 
 # Large PR — full check before merge
-npm run build                          # turbo build (all apps)
+pnpm run build                          # turbo build (all apps)
 ```
 
 | Workspace | Build command | Requires |
 |-----------|---------------|----------|
-| `apps/api` | `npx turbo build --filter=api` | `apps/api/.env.production.local` |
-| `apps/webapp` | `npx turbo build --filter=webapp` | `.env.production.local`, runs icon generation |
-| `apps/website` | `npx turbo build --filter=website` | `.env.production.local` |
-| `apps/chrome-extension` | `npx turbo build --filter=chrome-extension` | extension env files |
+| `apps/api` | `pnpm exec turbo build --filter=api` | `apps/api/.env.production.local` |
+| `apps/webapp` | `pnpm exec turbo build --filter=webapp` | `.env.production.local`, runs icon generation |
+| `apps/website` | `pnpm exec turbo build --filter=website` | `.env.production.local` |
+| `apps/chrome-extension` | `pnpm exec turbo build --filter=chrome-extension` | extension env files |
 | `apps/mobile` | `check:types` + `expo-doctor` | — |
-| `packages/*` | `npx turbo build --filter=./packages/*` or `npm run build -w @bondery/<name>` | — |
+| `packages/*` | `pnpm exec turbo build --filter=./packages/*` or `pnpm --filter @bondery/<name> run build` | — |
 
 **Webapp note:** `check:types` also runs `check:api-fetch -w webapp` — run it even when build passes.
 
@@ -185,7 +185,7 @@ npm run build                          # turbo build (all apps)
 
 ## 6. Summarize and propose manual testing
 
-End with a summary in the PR or handoff. Commit `package-lock.json` with every `package.json` change.
+End with a summary in the PR or handoff. Commit `pnpm-lock.yaml` with every `package.json` change.
 
 ### 6a. Summary template
 
@@ -205,9 +205,8 @@ End with a summary in the PR or handoff. Commit `package-lock.json` with every `
 - Generated artifacts: openapi / supabase.types (yes/no)
 
 ### Build verification
-| Workspace | `npm run build` | Result |
-|-----------|-----------------|--------|
-| apps/webapp | pass / fail | |
+| Workspace | `pnpm run build` | Result |
+|-----------|------------------|--------|
 
 ### Deferred
 | Package | Reason |
@@ -265,4 +264,4 @@ Mark each row **tested / not tested** in the PR. UI-facing upgrades should not m
 - Leave `react` / `react-dom` on different versions across workspaces
 - Merge without building every touched workspace
 - Skip manual testing on UI-facing changes
-- Commit `package.json` without `package-lock.json`
+- Commit `package.json` without `pnpm-lock.yaml`

@@ -56,7 +56,7 @@ const generatedServerHooks = Object.keys(manifest.namespaces).map((namespace) =>
   nsArg: -1,
 }));
 
-/** Run from repo root: `npx i18next-cli status -c packages/translations/i18next.config.ts` */
+/** Run from repo root: `pnpm exec i18next-cli status -c packages/translations/i18next.config.ts` */
 export default {
   extract: {
     defaultNS: "common",

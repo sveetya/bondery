@@ -1,7 +1,7 @@
 /**
  * Fail CI when catalog codes are missing from common.errors.api in en/cs/de.
  *
- * Usage: node scripts/check-api-errors-translations.mjs (npm run check-api-errors-translations)
+ * Usage: node scripts/check-api-errors-translations.mjs (pnpm run check-api-errors-translations)
  */
 
 import { readFileSync } from "node:fs";

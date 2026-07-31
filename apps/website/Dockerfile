@@ -1,35 +1,36 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine AS base
+FROM node:26-alpine AS base
 RUN apk add --no-cache libc6-compat
+RUN corepack enable
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
 
 FROM base AS prune
 COPY . .
-RUN npx --yes turbo@2.10.4 prune website --docker
+RUN pnx turbo@2.10.4 prune website --docker
 
 FROM base AS builder
 ARG TURBO_TEAM
 ENV TURBO_TEAM=$TURBO_TEAM
 COPY --from=prune /app/out/json/ .
-COPY --from=prune /app/out/package-lock.json ./package-lock.json
+COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
 COPY apps/api/openapi.yaml ./apps/api/openapi.yaml
-ENV npm_config_ignore_scripts=true
 # Placeholder public env vars for build-time check-env / static generation only.
 # Runtime injects real BONDERY_PUBLIC_* via deploy/ops Compose.
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
-RUN npm ci
+RUN pnpm install --frozen-lockfile --ignore-scripts
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
-    npx turbo build --filter=website
-RUN npm prune --omit=dev
+    pnpm exec turbo build --filter=website
+RUN pnpm prune --prod
 
-FROM node:22-alpine AS runner
+FROM node:26-alpine AS runner
 WORKDIR /app
 
 ARG BONDERY_INFRA_GIT_SHA
@@ -58,4 +59,4 @@ EXPOSE 26630
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:26630/health/live').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["npm", "run", "start", "-w", "website"]
+CMD ["pnpm", "--filter", "website", "run", "start"]

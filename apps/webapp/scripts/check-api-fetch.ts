@@ -1,6 +1,6 @@
 /**
  * Guards against banned API fetch patterns in client code.
- * Run via: npm run check:api-fetch
+ * Run via: pnpm run check:api-fetch
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

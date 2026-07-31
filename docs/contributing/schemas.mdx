@@ -19,7 +19,7 @@ icon: Boxes
 - Do **not** import `EXAMPLE_*` or `registerOpenApiComponentSchemas` from the root `@bondery/schemas` barrel.
 - `import type { ... } from "@bondery/schemas"` is always fine — types erase at compile time.
 
-`npm run check:schemas-imports -w webapp` enforces these rules in CI.
+`pnpm run check:schemas-imports -w webapp` enforces these rules in CI.
 
 ## API OpenAPI examples
 
@@ -46,7 +46,7 @@ Do **not** add `export type X = z.infer<…>` to any file except `*.contract.ts`
 
 `import type { Contact } from "@bondery/schemas"` must resolve only through `types.ts`, not through schema modules.
 
-After adding a new public subfolder barrel, run `npm run sync-exports` from the repo root.
+After adding a new public subfolder barrel, run `pnpm run sync-exports` from the repo root.
 
 ## Why this matters
 

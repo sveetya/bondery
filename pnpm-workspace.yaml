@@ -1,0 +1,43 @@
+packages:
+  - apps/*
+  - packages/*
+
+nodeLinker: hoisted
+autoInstallPeers: true
+linkWorkspacePackages: true
+preferWorkspacePackages: true
+
+overrides:
+  "@tiptap/core": "3.29.2"
+  "@tiptap/extension-bubble-menu": "3.29.2"
+  "@tiptap/extension-color": "3.29.2"
+  "@tiptap/extension-emoji": "3.29.2"
+  "@tiptap/extension-floating-menu": "3.29.2"
+  "@tiptap/extension-highlight": "3.29.2"
+  "@tiptap/extension-link": "3.29.2"
+  "@tiptap/extension-list": "3.29.2"
+  "@tiptap/extension-mention": "3.29.2"
+  "@tiptap/extension-placeholder": "3.29.2"
+  "@tiptap/extension-task-item": "3.29.2"
+  "@tiptap/extension-task-list": "3.29.2"
+  "@tiptap/extension-text-style": "3.29.2"
+  "@tiptap/extensions": "3.29.2"
+  "@tiptap/pm": "3.29.2"
+  "@tiptap/react": "3.29.2"
+  "@tiptap/starter-kit": "3.29.2"
+  "@tiptap/suggestion": "3.29.2"
+  next: "16.3.0-canary.102"
+  postcss: "^8.5.17"
+  zod-openapi: "^6.0.0"
+
+allowBuilds:
+  "@parcel/watcher": true
+  "@prisma/engines": true
+  "@swc/core": true
+  core-js-pure: true
+  core-js: true
+  esbuild: true
+  prisma: true
+  protobufjs: true
+  sharp: true
+  spawn-sync: true

@@ -1,7 +1,7 @@
 /**
  * One-time migration: replace SCREAMING_SNAKE error code literals with snake_case catalog codes.
  *
- * Usage: npx tsx scripts/codemod-error-codes-snake.ts
+ * Usage: pnpm exec tsx scripts/codemod-error-codes-snake.ts
  */
 
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";

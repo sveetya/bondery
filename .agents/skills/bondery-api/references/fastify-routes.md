@@ -32,7 +32,7 @@ Shared read models register for OpenAPI `$ref`s via `registerOpenApiComponentSch
 
 After route changes:
 
-1. `npm run generate:openapi -w api`
+1. `pnpm run generate:openapi -w api`
 2. Confirm order in diff
 3. See `docs/contributing/api-routes.mdx`
 

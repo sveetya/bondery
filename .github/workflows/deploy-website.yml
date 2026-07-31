@@ -13,7 +13,7 @@ on:
       - "docs/**"
       - "packages/**"
       - "package.json"
-      - "package-lock.json"
+      - "pnpm-lock.yaml"
       - "turbo.json"
       - ".dockerignore.website"
       - ".github/actions/shared/**"

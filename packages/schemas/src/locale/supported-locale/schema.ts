@@ -5,7 +5,7 @@ import type { AppLocaleMetadata, SupportedLocale } from "./types.js";
 /**
  * Postgres `public` enum name for `user_settings.language`.
  * Keep migration enum labels in sync with `supported` codes below; then run
- * Run `npm run db:generate` in packages/db after schema changes.
+ * Run `pnpm run db:generate` in packages/db after schema changes.
  */
 export const SUPPORTED_LOCALE_POSTGRES_ENUM = localeCatalog.postgresEnum;
 export const APP_LOCALE_METADATA = localeCatalog.supported as readonly AppLocaleMetadata[];

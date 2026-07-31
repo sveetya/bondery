@@ -86,7 +86,7 @@ Types are the consumer-facing contract; schemas are the behavioral source of tru
 
 ## Scripts
 
-- `npm run build` — compile to `dist/` (`tsc` with NodeNext; required before Node consumers run)
-- `npm run dev` — `tsc --watch` (orchestrated via root `turbo watch dev`)
-- `npm run check:types` — typecheck without emit
-- `npm run check:contracts` — boundary checks + schema contract assertions
+- `pnpm run build` — compile to `dist/` (`tsc` with NodeNext; required before Node consumers run)
+- `pnpm run dev` — `tsc --watch` (orchestrated via root `turbo watch dev`)
+- `pnpm run check:types` — typecheck without emit
+- `pnpm run check:contracts` — boundary checks + schema contract assertions

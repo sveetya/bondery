@@ -53,7 +53,7 @@ Types are generated from `manifest.json` + English locale JSON:
 | `PrefixedKeys<NS, Prefix>` | same | Dot-joined key paths available under a prefix |
 | i18next augment | `packages/translations/src/generated/i18next-cli/i18next.d.ts` | Patched at build time to use `Catalog` (manifest keys like `"GroupsPage"`, not file paths) |
 
-**Codegen order** (`npm run build -w @bondery/translations`):
+**Codegen order** (`pnpm run build -w @bondery/translations`):
 
 1. `i18next-cli types` — lint/status tooling types (path-based `resources.d.ts`, kept for CLI only)
 2. `generate-i18n-catalog.mjs` — `Catalog`, prefix unions, **patches** `i18next.d.ts`
@@ -114,7 +114,7 @@ const t = useExtensionPopupTranslations("LoggedOut");
 t("Title");
 ```
 
-Hooks are regenerated from `manifest.json` when you run `npm run build -w @bondery/translations`. Each hook hardcodes its namespace and type-checks `keyPrefix` branches.
+Hooks are regenerated from `manifest.json` when you run `pnpm run build -w @bondery/translations`. Each hook hardcodes its namespace and type-checks `keyPrefix` branches.
 
 ## Escape hatches (dynamic keys)
 
@@ -175,7 +175,7 @@ Follow [interpolation best practices](https://www.i18next.com/principles/best-pr
 After editing locale JSON or `manifest.json`:
 
 ```bash
-npm run build -w @bondery/translations
+pnpm run build -w @bondery/translations
 ```
 
 This rebuilds `Catalog` types, prefix unions, i18next augmentations, and per-app `generated/hooks*.ts`.
@@ -184,13 +184,13 @@ This rebuilds `Catalog` types, prefix unions, i18next augmentations, and per-app
 
 | Command | What it verifies |
 |---------|------------------|
-| `npm run check:i18n` | All i18n CI gates below (umbrella) |
-| `npm run check:i18n:structure` | Locale file parity, manifest rules, Languages exonyms |
-| `npm run check:i18n:types` | Generated i18next-cli types are current |
-| `npm run check:i18n:usage` | Every key used in code (including `TypedTrans` `i18nKey`) exists in all locales; cs/de key parity vs en |
-| `npm run check:i18n:lint` | No unexpected hardcoded UI strings (webapp + mobile) |
+| `pnpm run check:i18n` | All i18n CI gates below (umbrella) |
+| `pnpm run check:i18n:structure` | Locale file parity, manifest rules, Languages exonyms |
+| `pnpm run check:i18n:types` | Generated i18next-cli types are current |
+| `pnpm run check:i18n:usage` | Every key used in code (including `TypedTrans` `i18nKey`) exists in all locales; cs/de key parity vs en |
+| `pnpm run check:i18n:lint` | No unexpected hardcoded UI strings (webapp + mobile) |
 
-API error code translations use `npm run check:api-errors:translations` (part of `check:api-errors`), not `check:i18n`.
+API error code translations use `pnpm run check:api-errors:translations` (part of `check:api-errors`), not `check:i18n`.
 
 For rich text with embedded links or markup, prefer `TypedTrans` (webapp) with a single translation key and component placeholders — see `apps/webapp/src/lib/i18n/TypedTrans.tsx`.
 

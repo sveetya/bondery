@@ -8,17 +8,17 @@ Run from this directory (`apps/supabase-db`):
 
 | Command | Description |
 |---------|-------------|
-| `npm run start` | `supabase start` |
-| `npm run stop` | `supabase stop` |
-| `npm run reset` | `supabase db reset` |
-| `npm run setup:local` | Validate `.env.local` and seed vault secrets |
-| `npm run gen-types` | Regenerate TypeScript types in `packages/schemas` |
+| `pnpm run start` | `supabase start` |
+| `pnpm run stop` | `supabase stop` |
+| `pnpm run reset` | `supabase db reset` |
+| `pnpm run setup:local` | Validate `.env.local` and seed vault secrets |
+| `pnpm run gen-types` | Regenerate TypeScript types in `packages/schemas` |
 
 ## Local development
 
 1. Copy and fill env: `.env.local.example` → `.env.local`
-2. `npm run setup:local`
-3. `npm run start`
+2. `pnpm run setup:local`
+3. `pnpm run start`
 
 API URL: `http://127.0.0.1:54321`  
 DB port: `54322` (see `supabase/config.toml`)
@@ -39,17 +39,17 @@ Snippets are not applied automatically; run them manually in the SQL editor or v
 New migration:
 
 ```bash
-npm run migration:new -- my_change_name
+pnpm run migration:new -- my_change_name
 ```
 
 Apply locally:
 
 ```bash
-npm run reset    # replay all migrations
+pnpm run reset    # replay all migrations
 ```
 
 Push to remote:
 
 ```bash
-npm run push
+pnpm run push
 ```

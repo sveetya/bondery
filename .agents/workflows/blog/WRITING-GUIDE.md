@@ -95,7 +95,7 @@ announce: {
 },
 ```
 
-To announce after publishing: `npm run announce -w website -- your-post-slug simulate`
+To announce after publishing: `pnpm run announce -w website -- your-post-slug simulate`
 
 ## 3. Register the post
 

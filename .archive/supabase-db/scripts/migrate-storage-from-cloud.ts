@@ -6,7 +6,7 @@
  *   SOURCE_SERVICE_ROLE_KEY=... \
  *   DEST_SUPABASE_URL=https://supabase.example.com \
  *   DEST_SERVICE_ROLE_KEY=... \
- *   npx tsx apps/supabase-db/scripts/migrate-storage-from-cloud.ts
+ *   pnpm exec tsx apps/supabase-db/scripts/migrate-storage-from-cloud.ts
  *
  * Buckets: avatars, linkedin_logos (override with BUCKETS=a,b)
  */

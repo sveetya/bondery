@@ -1,7 +1,7 @@
 /**
  * Validates API documentation route order in the generated OpenAPI spec.
  *
- * Usage: npx tsx scripts/check-openapi-route-order.ts
+ * Usage: pnpm exec tsx scripts/check-openapi-route-order.ts
  */
 
 import { readFileSync } from "node:fs";

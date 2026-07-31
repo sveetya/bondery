@@ -62,7 +62,7 @@ The sitemap, category filters, and listing pages pick it up automatically.
 Before merging:
 
 - [ ] Run through the [SEO checklist](WRITING-GUIDE.md#6-seo-checklist)
-- [ ] Verify the post renders correctly locally (`npm run dev -w website`)
+- [ ] Verify the post renders correctly locally (`pnpm run dev -w website`)
 - [ ] Confirm images are in `public/images/blog/<slug>/` and use `.webp` format
 - [ ] Check that `slug` in metadata matches the filename exactly
 
@@ -89,7 +89,7 @@ After the post is live on the website, announce it using the CLI.
 Always simulate before posting to real channels:
 
 ```bash
-npm run announce -w website -- <slug> simulate
+pnpm run announce -w website -- <slug> simulate
 ```
 
 This logs the Discord and Reddit payloads without sending anything.
@@ -97,17 +97,17 @@ This logs the Discord and Reddit payloads without sending anything.
 ### Post to Discord and Reddit
 
 ```bash
-npm run announce -w website -- <slug>
+pnpm run announce -w website -- <slug>
 ```
 
 ### Post to a single channel
 
 ```bash
 # Discord only
-npm run announce -w website -- <slug> discord
+pnpm run announce -w website -- <slug> discord
 
 # Reddit only
-npm run announce -w website -- <slug> reddit
+pnpm run announce -w website -- <slug> reddit
 ```
 
 ### Force announce
@@ -115,7 +115,7 @@ npm run announce -w website -- <slug> reddit
 If `announce.enabled` is `false` in metadata but you still want to announce:
 
 ```bash
-npm run announce -w website -- <slug> skip-check
+pnpm run announce -w website -- <slug> skip-check
 ```
 
 ### Required environment variables
@@ -154,5 +154,5 @@ When writing the blog post for a monthly release:
 2. Write the post following [WRITING-GUIDE.md](WRITING-GUIDE.md) — focus on *what's new for users*, not internal changes
 3. Set `announce.enabled: true` in metadata
 4. Deploy: merge to `main`, then `git push origin main:release` (website CD — see [Deploy](#3-deploy))
-5. Run `npm run announce -w website -- <slug> simulate` to verify
-6. Run `npm run announce -w website -- <slug>` to go live
+5. Run `pnpm run announce -w website -- <slug> simulate` to verify
+6. Run `pnpm run announce -w website -- <slug>` to go live

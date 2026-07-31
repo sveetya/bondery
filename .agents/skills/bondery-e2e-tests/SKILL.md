@@ -57,9 +57,9 @@ apps/webapp/e2e/
 Run commands (from repo root):
 
 ```bash
-npm run test:e2e -w webapp                              # all projects
-npm run test:e2e:auth-setup -w webapp -- --headed       # refresh .auth/user.json
-E2E_REUSE_SERVER=1 npm run test:e2e -w webapp -- --project=unauth
+pnpm run test:e2e -w webapp                              # all projects
+pnpm run test:e2e:auth-setup -w webapp -- --headed       # refresh .auth/user.json
+E2E_REUSE_SERVER=1 pnpm run test:e2e -w webapp -- --project=unauth
 ```
 
 Full workflow: [references/playwright-webapp.md](references/playwright-webapp.md).

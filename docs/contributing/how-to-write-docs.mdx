@@ -66,7 +66,7 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 - **Do not hand-write endpoint docs.** The contract is compiled from Zod schemas on Fastify routes.
 - Zod wire schemas live in `@bondery/schemas` and `@bondery/schemas/http`; routes compose them in `schema.body`, `schema.params`, and `schema.response`.
 - When you change API routes or `@bondery/schemas`, the **pre-commit hook** regenerates `apps/api/openapi.yaml` automatically (via lint-staged).
-- Run `npm run check:openapi` before release or to validate Redocly rules locally.
+- Run `pnpm run check:openapi` before release or to validate Redocly rules locally.
 - The docs site renders the OpenAPI reference from `apps/api/openapi.yaml` via Fumadocs OpenAPI.
 - Prose in `api/` should explain auth, base URL, and integration patterns — not duplicate every field.
 - See [API routes](api-routes.mdx) for the route schema checklist.
@@ -121,7 +121,7 @@ Update docs in the **same change** when behavior, architecture, or setup steps c
 
 1. The page content and location
 2. Nearby `meta.json` files
-3. In-app help links — add or update `docId` (and `docSections` for section anchors) in the page frontmatter, then run `npm run generate:doc-links`. Use `helpDoc="your.docId"` or `doc="your.docId"` in the webapp; never hardcode `HELP_DOCS_URL` paths.
+3. In-app help links — add or update `docId` (and `docSections` for section anchors) in the page frontmatter, then run `pnpm run generate:doc-links`. Use `helpDoc="your.docId"` or `doc="your.docId"` in the webapp; never hardcode `HELP_DOCS_URL` paths.
 4. Cross-links from related concept pages
 5. [Changelog](../changelog.mdx) for user-visible release notes
 
@@ -141,7 +141,7 @@ docSections:           # optional; maps section docId suffix → anchor id
 - `docId` is permanent once shipped — app code references it, not file paths.
 - `docPath` is auto-derived from the file location; override only when the public slug differs.
 - Section anchors: place `<a id="anchor-id" />` under the heading (MDX cannot use `{#anchor}` syntax).
-- Run `npm run generate:doc-links` after changing frontmatter; CI validates files and anchors.
+- Run `pnpm run generate:doc-links` after changing frontmatter; CI validates files and anchors.
 
 ## Checklist before opening a PR
 

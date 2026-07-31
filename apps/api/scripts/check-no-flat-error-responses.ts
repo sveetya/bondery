@@ -1,7 +1,7 @@
 /**
  * CI guard: ban legacy flat HTTP error response shapes in API and BFF code.
  *
- * Usage: npx tsx scripts/check-no-flat-error-responses.ts
+ * Usage: pnpm exec tsx scripts/check-no-flat-error-responses.ts
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

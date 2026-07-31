@@ -122,7 +122,7 @@ Cross-device freshness uses a **thin wake channel** — not a second sync protoc
 
 ## Guardrails
 
-Run `npm run check-sync-patterns -w mobile` locally — blocks tier-1 REST imports in feature code. Not part of CI today.
+Run `pnpm run check-sync-patterns -w mobile` locally — blocks tier-1 REST imports in feature code. Not part of CI today.
 
 ## Not mobile-synced (online / web only)
 
@@ -143,6 +143,6 @@ See `apps/mobile/src/lib/api/online-only.ts`.
 - [ ] Tier-1 data uses sync repositories + `useSyncQuery` — not REST in `features/`
 - [ ] Writes go through `submitSyncMutation` / domain layer — not direct REST for tier-1
 - [ ] New table added to `SYNC_TABLE_KEYS` only if tier-1 local-first
-- [ ] `npm run check-sync-patterns -w mobile` passes locally
+- [ ] `pnpm run check-sync-patterns -w mobile` passes locally
 - [ ] Protocol version headers handled; 426 triggers client upgrade path
 - [ ] Online-only endpoints stay in `online-only.ts` — not added to sync tables

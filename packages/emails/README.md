@@ -5,7 +5,7 @@ React Email templates for Bondery transactional mail. Sending happens in `apps/a
 ## Preview locally
 
 ```bash
-npm run dev:emails
+pnpm run dev:emails
 ```
 
 Opens the React Email dev server on port **26639**.

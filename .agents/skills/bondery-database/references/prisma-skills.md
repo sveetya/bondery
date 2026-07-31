@@ -7,7 +7,7 @@ The upstream skills installed from `prisma/prisma-next/skills` document **Prisma
 Reinstall or update upstream skills (do not hand-edit):
 
 ```bash
-npx skills add prisma/prisma-next/skills
+pnx skills add prisma/prisma-next/skills
 ```
 
 Lock file: `skills-lock.json` at the repo root.
@@ -38,8 +38,8 @@ Use this when reading Prisma Next docs for ideas; implement with classic Prisma 
 | Bondery (classic Prisma 7) | Prisma Next analogue | Bondery reference |
 |----------------------------|----------------------|-------------------|
 | `packages/db/prisma/` (multi-file) | `contract.prisma` / contract builder | [schema-conventions.md](./schema-conventions.md) |
-| `npm run db:migrate:dev` | `migration plan` + `migrate` (or dev `db update`) | [migrations-and-connections.md](./migrations-and-connections.md) |
-| `npm run release-migrate` | `migrate` + `db verify` in deploy pipeline | [migrations-and-connections.md](./migrations-and-connections.md) |
+| `pnpm run db:migrate:dev` | `migration plan` + `migrate` (or dev `db update`) | [migrations-and-connections.md](./migrations-and-connections.md) |
+| `pnpm run release-migrate` | `migrate` + `db verify` in deploy pipeline | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `prisma` from `@bondery/db` | `db` from `src/prisma/db.ts` | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `findMany` / `createMany` / `$transaction` | `db.orm` / `db.sql` / `db.transaction` | [query-patterns.md](./query-patterns.md) |
 | `packages/db/prisma/sql/functions.sql` | Extension ops + `rawSql` in `migration.ts` | [raw-sql-and-postgis.md](./raw-sql-and-postgis.md) |
@@ -65,5 +65,5 @@ Use this when reading Prisma Next docs for ideas; implement with classic Prisma 
 
 - [ ] Confirmed the task targets Bondery classic Prisma (`schema.prisma`, `@bondery/db`) vs a Prisma Next experiment
 - [ ] Bondery-specific rules (UUIDv7, `extensions` schema, `release-migrate`, tenant scoping) still applied when reading upstream guidance
-- [ ] Upstream skills not edited in-repo; reinstall via `npx skills add` when updating
+- [ ] Upstream skills not edited in-repo; reinstall via `pnx skills add` when updating
 - [ ] `skills-lock.json` committed when upstream Prisma skills change

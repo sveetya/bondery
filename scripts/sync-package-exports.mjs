@@ -3,7 +3,7 @@
  * types → src (editor IntelliSense); import/node/default → dist (Node + bundlers).
  * Scans src/ for directory barrels (index.ts/tsx) and adds explicit subpath entries.
  *
- * Run after adding new public subpaths: npm run sync-exports
+ * Run after adding new public subpaths: pnpm run sync-exports
  */
 import { readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";

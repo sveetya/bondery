@@ -1,7 +1,7 @@
 /**
  * Replace error.message in notification descriptions with getUserFacingError.
  *
- * Usage: npx tsx apps/webapp/scripts/codemod-user-facing-errors.ts
+ * Usage: pnpm exec tsx apps/webapp/scripts/codemod-user-facing-errors.ts
  */
 
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";

@@ -21,11 +21,14 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: latest
-          cache: npm
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:
@@ -40,21 +43,21 @@ jobs:
         run: biome ci .
 
       - name: Check package imports
-        run: npm run check:package-imports
+        run: pnpm run check:package-imports
 
       - name: Build API workspace deps for contract checks
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: npx turbo build --filter=api^...
+        run: pnpm exec turbo build --filter=api^...
 
       - name: Check env sync (examples + turbo)
-        run: npm run env:check
+        run: pnpm run env:check
 
       - name: Docs checks
-        run: npm run check:docs
+        run: pnpm run check:docs
 
       - name: OpenAPI checks
-        run: npm run check:openapi
+        run: pnpm run check:openapi
 
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v2
@@ -67,30 +70,30 @@ jobs:
           node deploy/bondery/scripts/check-compose.mjs
 
       - name: Webapp runtime config tests
-        run: npm run test:webapp:runtime-config
+        run: pnpm run test:webapp:runtime-config
 
       - name: Schema contracts
-        run: npm run check:contracts
+        run: pnpm run check:contracts
 
       - name: Typecheck
-        run: npm run check:types
+        run: pnpm run check:types
 
       - name: Build API bootstrap CLIs
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: |
-          npx turbo build --filter=@bondery/db --filter=api
+          pnpm exec turbo build --filter=@bondery/db --filter=api
           test -f apps/api/dist/cli/release-migrate.js
           test -f apps/api/dist/cli/ensure-storage-buckets.js
 
       - name: Translation checks
-        run: npm run check:i18n
+        run: pnpm run check:i18n
 
       - name: API error checks
-        run: npm run check:api-errors
+        run: pnpm run check:api-errors
 
       - name: API sync unit tests
-        run: npm run test:api:sync
+        run: pnpm run test:api:sync
 
   website-build:
     runs-on: ubuntu-latest
@@ -111,7 +114,7 @@ jobs:
               - docs/**
               - packages/**
               - package.json
-              - package-lock.json
+              - pnpm-lock.yaml
               - turbo.json
               - .dockerignore.website
               - apps/website/Dockerfile
@@ -121,8 +124,8 @@ jobs:
       - uses: actions/setup-node@v7
         if: steps.filter.outputs.website == 'true'
         with:
-          node-version: latest
-          cache: npm
+          node-version-file: .nvmrc
+          cache: pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         if: steps.filter.outputs.website == 'true'

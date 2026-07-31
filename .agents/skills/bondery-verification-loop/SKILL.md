@@ -19,7 +19,7 @@ metadata:
 - After implementing a feature, bug fix, or refactor
 - Before handoff, PR, or marking a Plane task done
 - When the user asks to verify, test, validate, or check work
-- When unsure which `npm run` gates apply to the current diff
+- When unsure which `pnpm run` gates apply to the current diff
 
 ## When not to use
 
@@ -44,7 +44,7 @@ metadata:
 
 1. **Scope** — `git status --short`, `git diff`, `git diff --cached` (or session edits if Git unavailable).
 2. **Classify risk** — low / standard / high (see `references/risk-and-reporting.md`).
-3. **Fast path** — `git diff --check`; `npx biome check --no-errors-on-unmatched --files-ignore-unknown=true <files>`.
+3. **Fast path** — `git diff --check`; `pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true <files>`.
 4. **Workspace gates** — `check:types` and targeted `test:*` for every touched app/package.
 5. **Boundary gates** — contracts, OpenAPI, i18n, security, migrations, mobile sync, builds — only when those boundaries changed.
 6. **Review** — re-run failures; inspect generated artifacts; produce the report format in `references/risk-and-reporting.md`.
@@ -68,7 +68,7 @@ Full index: [references/README.md](references/README.md).
 
 ## Gotchas
 
-- **Do not use** root `npm run lint` for verification — it runs `biome check --write .` and mutates files.
+- **Do not use** root `pnpm run lint` for verification — it runs `biome check --write .` and mutates files.
 - **Do not use** `git diff HEAD~1` as the sole scope — misses unstaged work and assumes a commit.
 - **`check:schemas-imports`** is referenced by webapp `check:types` but the npm script may be missing — see `references/ci-parity.md`.
 - **Generators mutate** — `generate:openapi`, translation codegen, and `env --check` can dirty the tree; review diffs after running.

@@ -1,6 +1,6 @@
 /**
  * Guards extension architecture boundaries.
- * Run via: npm run check-extension-patterns -w chrome-extension
+ * Run via: pnpm run check-extension-patterns -w chrome-extension
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

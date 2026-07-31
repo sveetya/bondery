@@ -1,6 +1,6 @@
 /**
  * Guards modal dismiss and hosting patterns in the webapp.
- * Run via: npm run check:modal-patterns
+ * Run via: pnpm run check:modal-patterns
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

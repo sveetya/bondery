@@ -1,7 +1,7 @@
 /**
  * Ban raw error.message in user-facing notification UI in webapp + mobile.
  *
- * Usage: node scripts/check-api-errors-client-display.mjs (npm run check-api-errors-client-display)
+ * Usage: node scripts/check-api-errors-client-display.mjs (pnpm run check-api-errors-client-display)
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

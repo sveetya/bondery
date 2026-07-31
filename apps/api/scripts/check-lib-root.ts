@@ -1,6 +1,6 @@
 // Fails when .ts files exist at lib/ root (subsystem folders only).
 //
-// Usage: npx tsx scripts/check-lib-root.ts
+// Usage: pnpm exec tsx scripts/check-lib-root.ts
 
 import { readdirSync } from "node:fs";
 import { dirname, join } from "node:path";

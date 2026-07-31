@@ -101,7 +101,7 @@ Stripe.js uses an evergreen model with major releases (Acacia, Basil, Clover, Da
 **Via npm:**
 
 ```bash
-npm install @stripe/stripe-js
+pnpm install @stripe/stripe-js
 ```
 
 Major npm versions correspond to specific Stripe.js versions.

@@ -6,7 +6,7 @@ The marketing website is **not** in this stack — see [`deploy/ops`](../ops/) (
 
 Local development:
 
-- Redis: **`deploy/bondery/docker-compose.dev-redis.yml`** (`npm run start:redis`, port 26636)
+- Redis: **`deploy/bondery/docker-compose.dev-redis.yml`** (`pnpm run start:redis`, port 26636)
 - Postgres: **`deploy/bondery/docker-compose.dev-db.yml`** or `packages/db` migrations — not this Compose file
 
 Docs: [docs/deploy/get-started.mdx](../../docs/deploy/get-started.mdx) · [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx) · [docs/contributing/api-container.mdx](../../docs/contributing/api-container.mdx)
@@ -23,7 +23,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-`deploy/bondery/.env.example` is **generated** from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). After changing deploy env vars in the manifest, run `npm run env -- --write-examples`.
+`deploy/bondery/.env.example` is **generated** from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). After changing deploy env vars in the manifest, run `pnpm run env -- --write-examples`.
 
 Requires Docker Compose **v2.38+** (`pre_start` on `api`). First boot applies migrations, OAuth provisioning, and SeaweedFS buckets automatically via `api` init containers — no manual steps.
 

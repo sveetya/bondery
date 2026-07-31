@@ -1,7 +1,7 @@
 /**
  * Fail CI when any catalog code lacks a docs page on the website.
  *
- * Usage: node scripts/check-api-errors-catalog.mjs (npm run check-api-errors-catalog)
+ * Usage: node scripts/check-api-errors-catalog.mjs (pnpm run check-api-errors-catalog)
  */
 
 import { existsSync } from "node:fs";

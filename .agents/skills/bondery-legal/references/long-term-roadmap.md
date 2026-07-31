@@ -15,13 +15,13 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 
 - `Privacy.tsx` renders table from manifest
 - `bondery-legal/references/subprocessor-registry.md` becomes a thin pointer or generated doc
-- `npm run sync-legal` or extend `npm run env` pattern
+- `pnpm run sync-legal` or extend `pnpm run env` pattern
 
 **Benefit:** Structural prevention of vendor table drift.
 
 ## 2. CI drift check
 
-**Model:** `npm run env -- --check`, `npm run check-docs` in `.github/workflows/verify.yml`.
+**Model:** `pnpm run env -- --check`, `pnpm run check-docs` in `.github/workflows/verify.yml`.
 
 **Target script:** Scan `package.json` / env manifest for known vendor SDK identifiers; diff against subprocessor manifest; fail or warn on undeclared vendor.
 

@@ -16,7 +16,7 @@ function run(command) {
 }
 
 console.log("Downloading Playwright Chromium...");
-run("npx playwright install chromium");
+run("pnpm exec playwright install chromium");
 
 const cacheRoot = join(homedir(), ".cache", "ms-playwright");
 const chromiumDirs = existsSync(cacheRoot)
@@ -35,6 +35,6 @@ if (chromeBinary && existsSync(chromeBinary)) {
 
 console.error(
   "\nChromium binary still missing after install. Try:\n" +
-    "  npm run test:e2e:install-deps -w webapp\n",
+    "  pnpm run test:e2e:install-deps -w webapp\n",
 );
 process.exit(1);

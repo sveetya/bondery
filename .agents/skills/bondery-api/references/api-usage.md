@@ -244,8 +244,8 @@ Middleware and RSC layout redirects when there is **no user** (`proxy.ts`, `app/
 ## Regression guards (webapp)
 
 ```bash
-npm run check:api-fetch -w webapp   # part of webapp check:types
-npm run check-api-fetch          # non-strict variant (webapp package.json)
+pnpm run check:api-fetch -w webapp   # part of webapp check:types
+pnpm run check-api-fetch          # non-strict variant (webapp package.json)
 ```
 
 - No `API_URL` import in `"use client"` files (except `lib/api/*`)

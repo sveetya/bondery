@@ -14,9 +14,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
         env:
           BONDERY_PUBLIC_API_URL: http://127.0.0.1:26631
           BONDERY_PUBLIC_WEBAPP_URL: http://127.0.0.1:26632

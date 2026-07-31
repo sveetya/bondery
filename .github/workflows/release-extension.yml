@@ -36,11 +36,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: latest
-          cache: npm
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Resolve release metadata
         id: release_meta
@@ -82,7 +85,7 @@ jobs:
       - name: Build Chrome Extension
         env:
           NODE_ENV: production
-        run: npx turbo build --filter=chrome-extension...
+        run: pnpm exec turbo build --filter=chrome-extension...
 
       - name: Validate keys, create signed CRX, and prepare public key asset
         run: |
@@ -94,7 +97,7 @@ jobs:
           printf "%b" "$PRIVATE_CHROME_PRIVATE_SIGNING_KEY" > "$PRIVATE_KEY_PATH"
           openssl pkey -in "$PRIVATE_KEY_PATH" -pubout -out "$PUBLIC_KEY_PATH"
 
-          npx crx3@2 \
+          pnx crx3@2 \
             -p "$PRIVATE_KEY_PATH" \
             -o "$CRX_PATH" \
             apps/chrome-extension/dist/chrome-mv3

@@ -52,7 +52,7 @@ Complete all of the following **before** pushing anything to the `release` branc
 3. **Update [docs/changelog.mdx](../../docs/changelog.mdx)** — add a new version section following the [changelog format](../../.github/instructions/changelog.instructions.md).
 4. **Generate the OpenAPI spec** and commit the output. This keeps API docs and client SDKs in sync.
    ```bash
-   npm run generate:openapi
+   pnpm run generate:openapi
    ```
 5. **Build all packages and apps** (`turbo build`) and verify there are no errors.
 6. **Commit** everything to `main`.
@@ -99,8 +99,8 @@ The Chrome extension must be released **before** the web app because Google requ
    This builds/pushes `ghcr.io/usebondery/{api,webapp}:X.Y.Z` and floating `:production`.
 4. **Pin the tested stack pair** in the env manifest ([`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts)) — set `deployExample.value` on `BONDERY_INFRA_API_IMAGE_TAG` and `BONDERY_INFRA_WEBAPP_IMAGE_TAG` (or uncomment the generated pins in [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) after running codegen):
    ```bash
-   npm run build -w @bondery/helpers
-   npm run env -- --write-examples
+   pnpm run build -w @bondery/helpers
+   pnpm run env -- --write-examples
    ```
    The generated example includes commented pins like:
    ```env

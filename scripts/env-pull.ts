@@ -1,7 +1,7 @@
 /**
  * Pull shared team secrets from Infisical into root `.env.local`.
  *
- *   npm run env:pull
+ *   pnpm run env:pull
  *
  * Prerequisites:
  *   - Infisical CLI installed and logged in (`infisical login`)
@@ -131,7 +131,7 @@ function exportInfisicalSecrets(config: InfisicalPullTarget): Record<string, str
   if (result.error) {
     log.error(`Failed to run Infisical CLI: ${result.error.message}`);
     if (process.platform === "win32") {
-      log.info("Reinstall: npm install -g @infisical/cli");
+      log.info("Reinstall: pnpm install -g @infisical/cli");
     }
     process.exit(1);
   }
@@ -157,7 +157,7 @@ function ensureRootEnvFile() {
     return;
   }
   if (!existsSync(ROOT_ENV_EXAMPLE)) {
-    log.error("Missing .env.local — run npm run setup:dev first");
+    log.error("Missing .env.local — run pnpm run setup:dev first");
     process.exit(1);
   }
   copyFileSync(ROOT_ENV_EXAMPLE, ROOT_ENV);
@@ -218,7 +218,7 @@ function main() {
   }
 
   log.step(2, 2, "Sync app env files (development)");
-  run("npm run env:development");
+  run("pnpm run env:development");
   log.success("env:pull complete");
 }
 

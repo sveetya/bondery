@@ -75,7 +75,7 @@ metadata:
 - [ ] Branding from `@bondery/branding` — no one-off colors/assets
 - [ ] Single primary CTA or clear transactional purpose
 - [ ] Critical layout uses inline styles (don't rely on Tailwind alone)
-- [ ] Previewed via `npm run dev:emails`; checked in mobile client
+- [ ] Previewed via `pnpm run dev:emails`; checked in mobile client
 - [ ] Accessibility: heading order, descriptive links, alt text, contrast ≥ 4.5:1
 - [ ] No secrets, tokens, or unnecessary PII in body
 

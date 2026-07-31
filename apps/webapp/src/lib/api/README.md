@@ -73,5 +73,5 @@ Follow [api-mutations.md](../../../.agents/skills/bondery-specific/references/ap
 ## Regression checks
 
 ```bash
-npm run check-api-fetch
+pnpm run check-api-fetch
 ```

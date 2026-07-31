@@ -73,7 +73,7 @@ Integrator dependency order in the `tags` array in [`apps/api/src/openapi/swagge
 - [ ] Route registered in the correct tier (not appended at file bottom by default)
 - [ ] Same-path methods follow GET → POST → PUT → PATCH → DELETE
 - [ ] New auxiliary paths added to `AUXILIARY_FIRST_SEGMENTS` when tier 5
-- [ ] `npm run check:openapi` passes (includes route-order CI check)
+- [ ] `pnpm run check:openapi` passes (includes route-order CI check)
 
 ## Checklist for new or changed routes
 
@@ -87,8 +87,8 @@ Integrator dependency order in the `tags` array in [`apps/api/src/openapi/swagge
 - [ ] **OpenAPI example** on every JSON request body schema (see below)
 - [ ] If the route returns **409**, spread `conflictResponse` or `syncConflictResponse` from `@bondery/schemas/http/responses`
 - [ ] If an error status returns a **non-ApiError JSON body**, override that status in `response` (see `GET /health/ready` 503)
-- [ ] `npm run build:api` or `npx turbo build --filter=api` from repo root after route/schema changes
-- [ ] OpenAPI spec updates automatically via the pre-commit hook when `apps/api` or `packages/schemas` change; run `npm run check:openapi` manually before release if needed
+- [ ] `pnpm run build:api` or `pnpm exec turbo build --filter=api` from repo root after route/schema changes
+- [ ] OpenAPI spec updates automatically via the pre-commit hook when `apps/api` or `packages/schemas` change; run `pnpm run check:openapi` manually before release if needed
 
 ## OpenAPI response examples
 
@@ -102,7 +102,7 @@ When adding a new `*ResponseSchema`:
 
 For inline route-only schemas (e.g. admin stats), attach `.meta({ example })` on the schema in the route file and import the fixture from `@bondery/schemas`.
 
-`npm run check:contracts` validates every registered example with `schema.parse(example)`. `npm run check:openapi-spec -w api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
+`pnpm run check:contracts` validates every registered example with `schema.parse(example)`. `pnpm run check:openapi-spec -w api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
 
 ## OpenAPI request examples
 
@@ -175,7 +175,7 @@ Runtime enforcement: [`assertApiKeyAccess`](../../apps/api/src/lib/platform/auth
 
 - **Contacts** — split across [`contactIntegrationRoutes`](../../apps/api/src/routes/contacts/index.ts) and [`contactSessionRoutes`](../../apps/api/src/routes/contacts/session-routes.ts) at the same prefix
 
-CI: `npm run check:route-security -w api` (wired into `check:types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
+CI: `pnpm run check:route-security -w api` (wired into `check:types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
 
 ## Layering
 
@@ -253,7 +253,7 @@ fastify.post("/", { schema: { ... } }, withDomainRoute(async (ctx, request, repl
 
 Helpers: [`domainContextFromRequest`](../../apps/api/src/lib/platform/domain-context.ts), [`persistSyncChanges`](../../apps/api/src/lib/sync/persist-changes.ts) (CRM sync emit).
 
-CI enforces no route writes via `npm run check-no-route-writes`.
+CI enforces no route writes via `pnpm run check-no-route-writes`.
 
 ## Read paths (queries)
 
@@ -276,11 +276,11 @@ The API runs as a long-lived Node process in Docker, not serverless. See [API co
 
 Build pipeline:
 
-1. **Image build** — `apps/api/Dockerfile` uses `turbo prune api --docker`, `npm ci`, and `turbo build --filter=api`.
+1. **Image build** — `apps/api/Dockerfile` uses `turbo prune api --docker`, `pnpm install --frozen-lockfile --ignore-scripts`, and `turbo build --filter=api`.
 2. **CI** — GitHub Actions pushes to `ghcr.io/usebondery/api` (`:beta` on `main`, semver tags on `release`).
 3. **Runtime** — `node apps/api/dist/index.js` listens on `PORT` (default `26631`).
 
-Workspace packages follow the [Turborepo compiled-package model](https://turborepo.dev/docs/guides/tools/typescript#compiled-packages): `types` → `./src/*.ts` (editor IntelliSense), `import` / `node` / `default` → `./dist/*.js` (runtime). Production `build` depends on `^build`; local dev cold-starts via `compile` (`tsc` to `dist/`) with package `tsc --watch` companions. When adding package subpaths (especially directory barrels like `src/foo/index.ts`), run `npm run sync-exports` from the repo root.
+Workspace packages follow the [Turborepo compiled-package model](https://turborepo.dev/docs/guides/tools/typescript#compiled-packages): `types` → `./src/*.ts` (editor IntelliSense), `import` / `node` / `default` → `./dist/*.js` (runtime). Production `build` depends on `^build`; local dev cold-starts via `compile` (`tsc` to `dist/`) with package `tsc --watch` companions. When adding package subpaths (especially directory barrels like `src/foo/index.ts`), run `pnpm run sync-exports` from the repo root.
 
 `openapi.yaml` is committed; generation is not part of the deploy build.
 
@@ -298,11 +298,11 @@ Workspace packages follow the [Turborepo compiled-package model](https://turbore
 
 | Command | What it checks |
 |---------|----------------|
-| `npm run check-api-schema-patterns -w api` | Route files have descriptions, responses, `FastifyZodOpenApiSchema` |
-| `npm run check:route-security -w api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
-| `npm run check:openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
-| `npm run check-route-errors -w api` | Bans legacy error patterns; requires `code` on DomainError |
-| `npm run check:contracts` | Schema boundary assertions + OpenAPI example validation (`check-contracts-openapi-examples.ts`) |
+| `pnpm run check-api-schema-patterns -w api` | Route files have descriptions, responses, `FastifyZodOpenApiSchema` |
+| `pnpm run check:route-security -w api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
+| `pnpm run check:openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
+| `pnpm run check-route-errors -w api` | Bans legacy error patterns; requires `code` on DomainError |
+| `pnpm run check:contracts` | Schema boundary assertions + OpenAPI example validation (`check-contracts-openapi-examples.ts`) |
 
 CI runs all of the above on every pull request.
 
@@ -325,7 +325,7 @@ Every API error JSON body includes a human-readable `error` string and a stable 
 - **Codes**: `SCREAMING_SNAKE` in `apps/api/src/lib/platform/errors/codes.ts` (auth) or entity-specific at call sites (`CONTACT_NOT_FOUND`, `TAGS_LIST_FAILED`). Convention: `{ENTITY}_{ACTION}_{REASON}`.
 - **Auth**: migrated to helpers with `AUTH_*` / `API_KEY_*` codes — no `Error + statusCode`.
 
-`npm run check-route-errors -w api` bans `handleDomainError`, `reply.status(5xx)` in routes, `Error + statusCode` in auth, and `DomainError` without `code`.
+`pnpm run check-route-errors -w api` bans `handleDomainError`, `reply.status(5xx)` in routes, `Error + statusCode` in auth, and `DomainError` without `code`.
 
 ## References
 

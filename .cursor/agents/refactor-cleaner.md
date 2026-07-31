@@ -15,10 +15,10 @@ You are an expert refactoring specialist focused on code cleanup and consolidati
 ## Detection Commands
 
 ```bash
-npx knip                                    # Unused files, exports, dependencies
-npx depcheck                                # Unused npm dependencies
-npx ts-prune                                # Unused TypeScript exports
-npx eslint . --report-unused-disable-directives  # Unused eslint directives
+pnx knip                                    # Unused files, exports, dependencies
+pnx depcheck                                # Unused npm dependencies
+pnx ts-prune                                # Unused TypeScript exports
+pnpm exec eslint . --report-unused-disable-directives  # Unused eslint directives
 ```
 
 In a monorepo, run from the relevant workspace root or use each package's scripts if the repo defines them.

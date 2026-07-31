@@ -3,15 +3,15 @@
  *
  * ## Prerequisites
  *
- * - Playwright browser (once per machine): `npm run test:e2e:install -w webapp`
- * - WSL/Linux system libs (once, sudo): `npm run test:e2e:install-deps -w webapp`
+ * - Playwright browser (once per machine): `pnpm run test:e2e:install -w webapp`
+ * - WSL/Linux system libs (once, sudo): `pnpm run test:e2e:install-deps -w webapp`
  * - **Headed auth setup needs a display** (WSLg on Win11, VcXsrv + DISPLAY, or run from Windows).
  *   Headless specs (`unauth`, `oauth-callback`) do not need a display.
  * - API + webapp env files with GitHub OAuth and webapp OAuth client secrets (same as daily dev).
  * - Public URLs must match Playwright's host (default `127.0.0.1`, or set `E2E_PUBLIC_HOST=localhost`
  *   when reusing `dev:webapp-api` with localhost in `.env.development.local`).
  * - GitHub OAuth app callback: `http://127.0.0.1:26631/auth/callback/github`
- *   Run `npm run provision:oauth-clients` after URL changes.
+ *   Run `pnpm run provision:oauth-clients` after URL changes.
  *
  * ## Manual GitHub auth (storageState)
  *
@@ -19,7 +19,7 @@
  * Playwright's browser and save cookies to `e2e/.auth/user.json` (gitignored):
  *
  * ```bash
- * npm run test:e2e:auth-setup -w webapp
+ * pnpm run test:e2e:auth-setup -w webapp
  * ```
  *
  * Re-run when sessions expire or after logout tests.
@@ -28,19 +28,19 @@
  *
  * ```bash
  * # Terminal 1 — dev stack
- * npm run kill:dev && npm run dev:webapp-api
+ * pnpm run kill:dev && pnpm run dev:webapp-api
  *
  * # First time or expired auth
- * npm run test:e2e:auth-setup -w webapp
+ * pnpm run test:e2e:auth-setup -w webapp
  *
  * # Debug full GitHub login (Inspector + optional pause)
- * E2E_REUSE_SERVER=1 npm run test:e2e:debug -w webapp -- login.github
+ * E2E_REUSE_SERVER=1 pnpm run test:e2e:debug -w webapp -- login.github
  *
  * # Headed GitHub login regression
- * E2E_REUSE_SERVER=1 npm run test:e2e:github -w webapp -- --headed
+ * E2E_REUSE_SERVER=1 pnpm run test:e2e:github -w webapp -- --headed
  *
  * # Unauthenticated + OAuth callback specs (no GitHub)
- * E2E_REUSE_SERVER=1 npm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
+ * E2E_REUSE_SERVER=1 pnpm run test:e2e -w webapp -- --project=unauth --project=oauth-callback
  * ```
  *
  * Set `E2E_REUSE_SERVER=1` to skip killing ports and reuse `dev:webapp-api` servers.
@@ -113,7 +113,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "npm run dev -w api",
+      command: "pnpm run dev -w api",
       cwd: MONOREPO_ROOT,
       env: e2ePublicEnv,
       reuseExistingServer,
@@ -121,7 +121,7 @@ export default defineConfig({
       url: `${E2E_API_URL}/health/live`,
     },
     {
-      command: "npm run dev -w webapp",
+      command: "pnpm run dev -w webapp",
       cwd: MONOREPO_ROOT,
       env: e2ePublicEnv,
       reuseExistingServer,

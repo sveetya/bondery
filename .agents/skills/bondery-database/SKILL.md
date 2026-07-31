@@ -75,28 +75,28 @@ Run from the monorepo root (Prisma config and schema live in `packages/db/`, not
 
 ```bash
 # Regenerate Prisma client
-npm run db:generate
+pnpm run db:generate
 
 # Validate merged multi-file schema
-npm run db:validate
+pnpm run db:validate
 
 # Create and validate a local migration
-npm run db:migrate:dev
+pnpm run db:migrate:dev
 
 # Apply idempotent SQL functions/indexes
-npm run db:functions
+pnpm run db:functions
 
 # Verify release order: migrations → functions → OAuth clients
-npm run release-migrate
+pnpm run release-migrate
 
 # Typecheck the db package
-npm run check:types -w @bondery/db
+pnpm run check:types -w @bondery/db
 
 # API typecheck after query changes
-npm run check:types -w api
+pnpm run check:types -w api
 ```
 
-Do not run bare `prisma` or `npx prisma` from the repo root — it will not find `prisma.config.ts` or `packages/db/prisma/`.
+Do not run bare `prisma` or `pnpm exec prisma` from the repo root — it will not find `prisma.config.ts` or `packages/db/prisma/`.
 
 ## Database checklist (before merge)
 

@@ -6,10 +6,10 @@ Strategies for identifying, fixing, and quarantining unstable E2E specs.
 
 ```bash
 # Repeat a spec many times locally
-npx playwright test -c apps/webapp/e2e/playwright.config.mjs login.unauth --repeat-each=10
+pnpm exec playwright test -c apps/webapp/e2e/playwright.config.mjs login.unauth --repeat-each=10
 
 # With retries to see pass-after-retry
-npx playwright test -c apps/webapp/e2e/playwright.config.mjs --retries=3
+pnpm exec playwright test -c apps/webapp/e2e/playwright.config.mjs --retries=3
 ```
 
 If a test passes inconsistently, treat it as flaky — do not merge until fixed or quarantined.
@@ -63,14 +63,14 @@ GitHub login is inherently slow and environment-dependent. Use:
 
 ### Port conflicts
 
-`global-setup.mjs` kills 26631/26632 unless `E2E_REUSE_SERVER=1`. If tests fail with "port in use", run `npm run kill:dev` or set reuse flag.
+`global-setup.mjs` kills 26631/26632 unless `E2E_REUSE_SERVER=1`. If tests fail with "port in use", run `pnpm run kill:dev` or set reuse flag.
 
 ### Stale auth state
 
 `login.authenticated.spec.ts` skips when `.auth/user.json` is missing. Re-run:
 
 ```bash
-npm run test:e2e:auth-setup -w webapp -- --headed
+pnpm run test:e2e:auth-setup -w webapp -- --headed
 ```
 
 ## Retries

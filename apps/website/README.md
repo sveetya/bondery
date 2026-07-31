@@ -5,7 +5,7 @@ The public marketing website for [bondery.app](https://bondery.app), built with 
 ## Development
 
 ```bash
-npm run dev -w website
+pnpm run dev -w website
 ```
 
 The dev server starts at `http://localhost:26630`.
@@ -14,11 +14,11 @@ The dev server starts at `http://localhost:26630`.
 
 | Script | Description |
 |---|---|
-| `npm run dev -w website` | Start local dev server |
-| `npx turbo build --filter=website` | Production build (from repo root) |
-| `npm run check:types -w website` | TypeScript type check |
-| `npm run lint` (repo root) | Biome format (write fixes) |
-| `npm run announce -w website -- --slug <slug>` | Announce a blog post |
+| `pnpm run dev -w website` | Start local dev server |
+| `pnpm exec turbo build --filter=website` | Production build (from repo root) |
+| `pnpm run check:types -w website` | TypeScript type check |
+| `pnpm run lint` (repo root) | Biome format (write fixes) |
+| `pnpm run announce -w website -- --slug <slug>` | Announce a blog post |
 
 ## Blog
 
@@ -50,7 +50,7 @@ The announce script posts a new blog entry to **Discord** and **Reddit** using t
 | `BONDERY_OPS_REDDIT_USERNAME` | Reddit account username |
 | `BONDERY_OPS_REDDIT_PASSWORD` | Reddit account password |
 
-Set product URLs in the app `.env.development.local` / production local (via `npm run env`), or as GitHub Actions secrets for CI. Announce loads env with `@next/env` `loadEnvConfig`.
+Set product URLs in the app `.env.development.local` / production local (via `pnpm run env`), or as GitHub Actions secrets for CI. Announce loads env with `@next/env` `loadEnvConfig`.
 
 ### Enabling a post for announcement
 
@@ -68,19 +68,19 @@ announce: {
 
 ```bash
 # Dry run — logs payloads without sending
-npm run announce -w website -- --slug introducing-bondery --dry-run
+pnpm run announce -w website -- --slug introducing-bondery --dry-run
 
 # Real run
-npm run announce -w website -- --slug introducing-bondery
+pnpm run announce -w website -- --slug introducing-bondery
 
 # Post to Discord only
-npm run announce -w website -- --slug introducing-bondery --discord-only
+pnpm run announce -w website -- --slug introducing-bondery --discord-only
 
 # Post to Reddit only
-npm run announce -w website -- --slug introducing-bondery --reddit-only
+pnpm run announce -w website -- --slug introducing-bondery --reddit-only
 
 # Force-announce even if announce.enabled = false
-npm run announce -w website -- --slug introducing-bondery --force
+pnpm run announce -w website -- --slug introducing-bondery --force
 ```
 
 ### GitHub Actions
