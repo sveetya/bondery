@@ -12,9 +12,6 @@ function collectProductUrls(): Set<string> {
   const urls = new Set<string>();
 
   for (const page of source.getPages()) {
-    if (page.type === "openapi") {
-      continue;
-    }
     const { url } = page;
     if (
       url === "/docs" ||
@@ -36,9 +33,6 @@ function collectSelfHostUrls(): Set<string> {
   const urls = new Set<string>();
 
   for (const page of source.getPages()) {
-    if (page.type === "openapi") {
-      continue;
-    }
     const { url } = page;
     if (matchesPrefix(url, "/docs/deploy")) {
       urls.add(url);
@@ -52,9 +46,6 @@ function collectDevelopUrls(): Set<string> {
   const urls = new Set<string>();
 
   for (const page of source.getPages()) {
-    if (page.type === "openapi") {
-      continue;
-    }
     const { url } = page;
     if (matchesPrefix(url, "/docs/contributing")) {
       urls.add(url);

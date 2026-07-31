@@ -9,7 +9,7 @@ on:
       - release
     paths:
       - "apps/website/**"
-      - "apps/api/openapi.yaml"
+      - "packages/openapi-spec/**"
       - "docs/**"
       - "packages/**"
       - "package.json"
@@ -103,6 +103,9 @@ jobs:
           done
           docker compose --env-file .env.smoke logs website || true
           exit 1
+
+      - name: Smoke test API reference docs page
+        run: curl -sf http://127.0.0.1:26630/docs/api/api-reference >/dev/null
 
       - name: Tear down
         if: always()

@@ -1,9 +1,8 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { createOpenAPI } from "fumadocs-openapi/server";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
+const require = createRequire(import.meta.url);
 
 export const openapi = createOpenAPI({
-  input: [path.join(repoRoot, "apps/api/openapi.yaml")],
+  input: [require.resolve("@bondery/openapi-spec/openapi.yaml")],
 });

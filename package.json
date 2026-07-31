@@ -95,7 +95,7 @@
     "check:i18n:structure": "node packages/translations/scripts/check-i18n-structure.mjs",
     "check:i18n:types": "npm run check:i18n:types -w @bondery/translations",
     "check:i18n:usage": "npm run check:i18n:usage -w @bondery/translations",
-    "check:openapi": "npm run check:openapi-spec -w api && npx redocly lint apps/api/openapi.yaml",
+    "check:openapi": "npm run check:openapi-spec -w api && npx redocly lint packages/openapi-spec/openapi.yaml",
     "check:package-imports": "node scripts/check-package-imports.mjs",
     "check:sync-patterns": "npm run check:sync-patterns -w mobile",
     "check:types": "turbo check:types",

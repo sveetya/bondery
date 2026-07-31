@@ -107,7 +107,7 @@ jobs:
           filters: |
             website:
               - apps/website/**
-              - apps/api/openapi.yaml
+              - packages/openapi-spec/**
               - docs/**
               - packages/**
               - package.json
