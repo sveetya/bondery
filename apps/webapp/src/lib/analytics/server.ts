@@ -1,16 +1,21 @@
 import { after } from "next/server";
 import { PostHog } from "posthog-node";
+import { WEBAPP_RUNTIME_ENV } from "../platform/runtimeConfig.env";
 
 /**
  * Singleton PostHog Node client for server-side event capture.
  * `flushAt: 1` and `flushInterval: 0` ensure events are queued immediately;
  * `after()` flushes them after the response is sent (non-blocking).
  */
-const posthogClient = process.env.BONDERY_PRIVATE_POSTHOG_KEY
-  ? new PostHog(process.env.BONDERY_PRIVATE_POSTHOG_KEY, {
+const posthogKey = process.env[WEBAPP_RUNTIME_ENV.posthogKey];
+const posthogHost =
+  process.env[WEBAPP_RUNTIME_ENV.posthogHost] ?? "https://eu.i.posthog.com";
+
+const posthogClient = posthogKey
+  ? new PostHog(posthogKey, {
       flushAt: 1,
       flushInterval: 0,
-      host: process.env.BONDERY_PRIVATE_POSTHOG_HOST ?? "https://eu.i.posthog.com",
+      host: posthogHost,
     })
   : null;
 

@@ -111,8 +111,6 @@ const redis = serviceBlock("redis", mainText);
 const db = serviceBlock("db", postgresText);
 
 const WEBAPP_ALLOWED_PRIVATE = new Set([
-  "BONDERY_PRIVATE_POSTHOG_HOST",
-  "BONDERY_PRIVATE_POSTHOG_KEY",
   "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
   "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
 ]);
