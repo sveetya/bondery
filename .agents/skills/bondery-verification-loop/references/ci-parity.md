@@ -13,7 +13,7 @@ There is **no** root `npm run verify` — mirror CI by running the steps below o
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` deploy gates | `stage-webapp.yml`, `stage-api.yml` subsets |
-| **4 — Smoke / release** | Tags, release branch | `smoke-bondery-stack.yml`, `deploy-website.yml`, `release-*.yml` |
+| **4 — Smoke / release** | Tags, release branch | `release-*.yml` (smoke-gated), `deploy-website.yml`, `smoke-bondery-stack.yml` (manual) |
 
 Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 
