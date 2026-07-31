@@ -2,7 +2,7 @@
 
 FROM node:26-alpine AS base
 RUN apk add --no-cache libc6-compat
-RUN corepack enable
+RUN npm install -g pnpm@11.18.0
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
 

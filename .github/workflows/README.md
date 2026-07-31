@@ -47,7 +47,7 @@ shared/
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
 
-**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Dependencies install with **pnpm 11.18.0** (`corepack enable` + `pnpm install --frozen-lockfile`). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Release `smoke` jobs validate the container runtime.
+**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Host CI installs **pnpm 11.18.0** via `pnpm/action-setup` + `pnpm install --frozen-lockfile`. Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 
