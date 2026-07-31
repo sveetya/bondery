@@ -2,7 +2,7 @@
  * Validates route security conventions: no auth hooks in route modules,
  * mount table covers all exported route plugins.
  *
- * Usage: npx tsx scripts/check-route-security.ts
+ * Usage: pnpm exec tsx scripts/check-route-security.ts
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

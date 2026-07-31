@@ -29,7 +29,7 @@ Don't use when the user needs per-user crash detail or device-level reporting; t
 
 ## Prerequisites
 
-- `eas-cli` installed (`npm install -g eas-cli`).
+- `eas-cli` installed (`pnpm install -g eas-cli`).
 - Logged in: `eas login`.
 - For `channel:insights`: run from an Expo project directory (the command resolves the project ID from `app.json`). `update:insights` only needs a login.
 
@@ -113,7 +113,7 @@ Fields that matter for health assessment:
 
 - `Could not find any updates with group ID: "<id>"` — group doesn't exist or you lack access.
 - `Update group "<id>" has no ios update (available platforms: android)` — `--platform ios` was used but the group wasn't published for iOS.
-- `EAS Update insights is not supported by this version of eas-cli. Please upgrade ...` — the server deprecated a field the CLI relies on. Run `npm install -g eas-cli@latest`.
+- `EAS Update insights is not supported by this version of eas-cli. Please upgrade ...` — the server deprecated a field the CLI relies on. Run `pnpm install -g eas-cli@latest`.
 
 ## `eas update:view <groupId> --insights`
 

@@ -1,6 +1,6 @@
 # Local dev Redis only — no Traefik, no dokploy-network.
 #
-#   npm run start:redis
+#   pnpm run start:redis
 #
 # Host port 26636 (DEV_PORTS.REDIS). Ephemeral — no persistence.
 

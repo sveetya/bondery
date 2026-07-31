@@ -1,7 +1,7 @@
 /**
  * Generates openapi.yaml from the running Fastify server's Zod schemas.
  *
- * Usage: npx tsx scripts/generate-openapi.ts
+ * Usage: pnpm exec tsx scripts/generate-openapi.ts
  *
  * The generated file is consumed by GitBook via .gitbook.yaml.
  */

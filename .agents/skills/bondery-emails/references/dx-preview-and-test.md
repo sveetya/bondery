@@ -4,10 +4,10 @@
 
 ```bash
 # Emails package only
-npm run dev:emails
+pnpm run dev:emails
 
 # Or via root script
-npm run dev:emails
+pnpm run dev:emails
 ```
 
 - **Port:** 26639 (`packages/schemas/src/constants/dev-ports.ts` → `EMAIL_PREVIEW`)
@@ -53,7 +53,7 @@ When changing email code:
 
 | Changed paths | Checks |
 |---------------|--------|
-| `packages/emails/**` | `npm run compile -w @bondery/emails` |
+| `packages/emails/**` | `pnpm run compile -w @bondery/emails` |
 | `apps/api/src/services/notifications/**` | API typecheck/lint per [bondery-verification-loop](../../bondery-verification-loop/SKILL.md) |
 
 ## Related docs

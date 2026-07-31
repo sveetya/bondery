@@ -1,10 +1,10 @@
 /**
  * First-time local env setup.
  *
- *   npm run setup:dev
+ *   pnpm run setup:dev
  *   # edit .env.local (optional integrations)
- *   npm run env
- *   npm run dev
+ *   pnpm run env
+ *   pnpm run dev
  */
 
 import { execSync } from "node:child_process";
@@ -20,7 +20,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
 const log = createCliLogger("setup:dev");
 
-/** Inventable first-party OAuth values — empty in `.env.local.example`, required for `npm run env`. */
+/** Inventable first-party OAuth values — empty in `.env.local.example`, required for `pnpm run env`. */
 const INVENTABLE_AUTH = [
   { bytes: 16, key: "BONDERY_PUBLIC_OAUTH_CLIENT_ID" },
   { bytes: 16, key: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID" },
@@ -89,7 +89,7 @@ function seedPostgresPassword(envPath: string) {
   const password = generatePostgresPassword();
   upsertEnvAssignments(envPath, { BONDERY_PRIVATE_POSTGRES_PASSWORD: password });
   log.warn("Generated BONDERY_PRIVATE_POSTGRES_PASSWORD in .env.local");
-  log.info("  npm run env will derive DATABASE_URL for api/db");
+  log.info("  pnpm run env will derive DATABASE_URL for api/db");
 }
 
 function main() {
@@ -98,7 +98,7 @@ function main() {
 
   // Apps import `@bondery/*/dist` — stale packages make `scripts/env.ts` crash (e.g. SYNC_TARGETS).
   log.step(1, 3, "Compile workspace packages");
-  run("npm run build:packages");
+  run("pnpm run build:packages");
 
   log.step(2, 3, "Ensure .env.local exists");
   if (!existsSync(example)) {
@@ -115,12 +115,12 @@ function main() {
   seedPostgresPassword(rootEnv);
 
   log.step(3, 3, "Sync app env files (development + production) → check");
-  run("npm run env");
+  run("pnpm run env");
 
   log.success("Dev env ready");
-  log.info("Next: npm run start:postgres && npm run start:redis && npm run start:seaweedfs");
+  log.info("Next: pnpm run start:postgres && pnpm run start:redis && pnpm run start:seaweedfs");
   log.info(
-    "Then: npm run env && npm run dev (set BONDERY_DEV_SKIP_RELEASE_MIGRATE=true if you already migrated locally)",
+    "Then: pnpm run env && pnpm run dev (set BONDERY_DEV_SKIP_RELEASE_MIGRATE=true if you already migrated locally)",
   );
 }
 

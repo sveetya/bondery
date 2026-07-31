@@ -63,7 +63,7 @@ Every Bondery skill ends with a pre-ship checklist. Multi-step reference files m
 Instruct agents to verify before merge:
 
 1. Make changes
-2. Run validator (`npm run check-*`, `skills-ref validate`, checklist self-review)
+2. Run validator (`pnpm run check-*`, `skills-ref validate`, checklist self-review)
 3. Fix and repeat until pass
 
 ## Checklist

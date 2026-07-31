@@ -145,20 +145,20 @@ PostgreSQL schema, Prisma migrations, and generated client shared by the API.
 | Database | [PostgreSQL](https://www.postgresql.org/) (PostGIS in self-host compose) |
 | ORM | [Prisma](https://www.prisma.io/) |
 | Migrations | `prisma migrate` in `packages/db/prisma/migrations/` |
-| Raw SQL | `npm run db:functions` for Postgres functions |
+| Raw SQL | `pnpm run db:functions` for Postgres functions |
 
 **Local dev:** Postgres on port **54322** via [`deploy/bondery/docker-compose.dev-db.yml`](../../deploy/bondery/docker-compose.dev-db.yml), then:
 
 ```bash
-npm run db:migrate:dev
+pnpm run db:migrate:dev
 ```
 
-After schema changes, commit the new migration files and regenerate the Prisma client (`npm run db:generate` runs on install).
+After schema changes, commit the new migration files and regenerate the Prisma client (`pnpm run db:generate` runs on install).
 
 ---
 
 <Callout type="info">
-**Fun fact:** Bondery local apps use consecutive ports in the `2663x` block — phone keypad **B-O-N-D** → **2-6-6-3** ("Dial BOND"). Local Postgres uses **54322** (direct connection, no gateway). Local API Redis uses **26636** (`npm run start:redis`). Port constants live in [`packages/schemas/src/constants/dev-ports.ts`](../../packages/schemas/src/constants/dev-ports.ts).
+**Fun fact:** Bondery local apps use consecutive ports in the `2663x` block — phone keypad **B-O-N-D** → **2-6-6-3** ("Dial BOND"). Local Postgres uses **54322** (direct connection, no gateway). Local API Redis uses **26636** (`pnpm run start:redis`). Port constants live in [`packages/schemas/src/constants/dev-ports.ts`](../../packages/schemas/src/constants/dev-ports.ts).
 </Callout>
 
 ## Shared packages
@@ -177,7 +177,7 @@ All compilable packages extend `@bondery/typescript-config` (NodeNext, `declarat
 | [`packages/branding`](https://github.com/usebondery/bondery/tree/main/packages/branding) | Logos, icon assets, React icon components (`@bondery/branding/react`) |
 | [`packages/vcard`](https://github.com/usebondery/bondery/tree/main/packages/vcard) | vCard generation for API export and share flows |
 
-**Build:** `rimraf dist && tsc` per package. **Exports:** run `npm run sync-exports` after adding public subpaths. **Go-to-definition:** `declarationMap` maps from `dist/*.d.ts` back to `src/`.
+**Build:** `rimraf dist && tsc` per package. **Exports:** run `pnpm run sync-exports` after adding public subpaths. **Go-to-definition:** `declarationMap` maps from `dist/*.d.ts` back to `src/`.
 
 ### `packages/schemas`
 
@@ -216,7 +216,7 @@ Shared pure utilities, `API_ROUTES`, global URL constants, and platform helpers 
 
 React Email templates rendered and sent by the API.
 
-**Local dev:** port `26639` · `npm run dev:emails` → [http://localhost:26639](http://localhost:26639). Runs alongside the Chrome extension dev server (`26633`) without a port conflict.
+**Local dev:** port `26639` · `pnpm run dev:emails` → [http://localhost:26639](http://localhost:26639). Runs alongside the Chrome extension dev server (`26633`) without a port conflict.
 
 ### `packages/mantine-next`
 

@@ -39,7 +39,7 @@ node .agents/skills/bondery-example/scripts/check-example.mjs
 
 ## Upstream CLI skills
 
-Skills installed via `npx skills add` may ship their own `scripts/`. Do not hand-edit upstream scripts — reinstall the skill instead. Track in `skills-lock.json`.
+Skills installed via `pnx skills add` may ship their own `scripts/`. Do not hand-edit upstream scripts — reinstall the skill instead. Track in `skills-lock.json`.
 
 ## Scripts checklist
 

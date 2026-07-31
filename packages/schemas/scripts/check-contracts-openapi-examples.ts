@@ -1,7 +1,7 @@
 /**
  * Validates OpenAPI fixture examples against their Zod schemas.
  *
- * Usage: npx tsx scripts/check-contracts-openapi-examples.ts
+ * Usage: pnpm exec tsx scripts/check-contracts-openapi-examples.ts
  */
 
 import {

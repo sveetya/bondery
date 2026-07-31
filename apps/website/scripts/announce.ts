@@ -6,7 +6,7 @@
  * TypeScript (non-MDX) registry safe to import via tsx.
  *
  * Usage:
- *   npm run announce -- <slug> [tokens...]
+ *   pnpm run announce -- <slug> [tokens...]
  *
  * Arguments:
  *   <slug>             Required. Post slug to announce (first positional).
@@ -58,7 +58,7 @@ const force = args.includes("skip-check");
 
 if (!slug) {
   console.error("Error: post slug is required as the first argument.");
-  console.error("Usage: npm run announce -- <slug> [simulate] [discord] [reddit] [skip-check]");
+  console.error("Usage: pnpm run announce -- <slug> [simulate] [discord] [reddit] [skip-check]");
   process.exit(1);
 }
 

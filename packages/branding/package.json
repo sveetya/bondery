@@ -12,7 +12,7 @@
   },
   "description": "Bondery branding assets and icons",
   "devDependencies": {
-    "@bondery/typescript-config": "*",
+    "@bondery/typescript-config": "workspace:*",
     "@types/node": "^26.1.2",
     "@types/react": "^19",
     "react": "^19.2.8",

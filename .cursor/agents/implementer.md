@@ -115,7 +115,7 @@ Once the implementation is complete:
    - Are all configurable values in config/env files?
    - Are errors handled explicitly and usefully?
    - Is there any hardcoded value, unused import, or dead code?
-   - If the database schema changed in `packages/db`, were migrations and `npm run generate-types` run?
+   - If the database schema changed in `packages/db`, were migrations and `pnpm run generate-types` run?
    - If the API was changed, was OpenAPI generation run?
    - Is the code readable by someone who didn't write it?
 

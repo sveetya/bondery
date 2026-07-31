@@ -1,7 +1,7 @@
 /**
  * Static checks for Fastify route OpenAPI schema completeness.
  *
- * Usage: npx tsx scripts/check-api-schema-patterns.ts
+ * Usage: pnpm exec tsx scripts/check-api-schema-patterns.ts
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

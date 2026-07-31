@@ -47,7 +47,7 @@ shared/
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
 
-**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Release `smoke` jobs validate the container runtime.
+**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Dependencies install with **pnpm 11.18.0** (`corepack enable` + `pnpm install --frozen-lockfile`). Third-party actions that ship their own Node runtime use Node 24 builds where available (`dorny/paths-filter@v4`, `docker/setup-compose-action@v2`). Release `smoke` jobs validate the container runtime.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 
@@ -66,9 +66,9 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 | `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
 | Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
 
-**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`npm run test:auth -w api`) is local-only until the suite is repaired.
+**Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
 
-Docker builds also use GHA layer cache (`cache-from: type=gha`).
+Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store`): `pnpm fetch` after copying pruned manifests, then `pnpm install --offline` after copying full sources. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
 
 ## Docker channels
 
@@ -82,9 +82,13 @@ Marketing website uses **release-branch CD** (no semver tags). Product container
 
 ## Local Docker builds
 
+BuildKit is required for pnpm store cache mounts (`DOCKER_BUILDKIT=1` on older Docker).
+
 ```bash
 cp .dockerignore.api .dockerignore    # or .dockerignore.webapp / .dockerignore.website
-docker build -f apps/api/Dockerfile .
+DOCKER_BUILDKIT=1 docker build -f apps/api/Dockerfile .
 # website:
-docker build -f apps/website/Dockerfile .
+DOCKER_BUILDKIT=1 docker build -f apps/website/Dockerfile .
 ```
+
+If you change lockfile layout or pnpm major version, bump the BuildKit cache id in Dockerfiles (`bondery-pnpm-store`) to avoid stale store entries.

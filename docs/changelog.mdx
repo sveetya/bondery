@@ -13,8 +13,8 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ### ✨ Added
 
-- Dev: `npm run env:pull` syncs shared team secrets from Infisical into root `.env.local` (manifest `syncable` keys).
-- Dev: `npm run env` derives `DATABASE_URL` for api/db from `BONDERY_PRIVATE_POSTGRES_PASSWORD` (single source of truth for bundled local Postgres).
+- Dev: `pnpm run env:pull` syncs shared team secrets from Infisical into root `.env.local` (manifest `syncable` keys).
+- Dev: `pnpm run env` derives `DATABASE_URL` for api/db from `BONDERY_PRIVATE_POSTGRES_PASSWORD` (single source of truth for bundled local Postgres).
 - API: Sends a welcome email when a new account is provisioned.
 - API: Transactional emails (reminder digest, share contact, trial ending, account deleted, feedback) use localized copy from `@bondery/translations`.
 
@@ -71,7 +71,7 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ### Breaking
 
-- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `npm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
+- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `pnpm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
 - **Platform admin:** `user_settings.is_admin` is dropped; grant operator access via `user.role = admin` or `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS`.
 - **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](deploy/get-started.mdx) for the new bootstrap flow.
 
@@ -80,14 +80,14 @@ All notable changes to Bondery are documented here, with the latest release firs
 ### 🤖 CI
 
 - Restore turbo `^build` dependencies on package-scoped build tasks (fixes webapp Docker image builds).
-- Sync `package-lock.json` for the `apps/redis` workspace.
+- Sync `pnpm-lock.yaml` for the `apps/redis` workspace.
 - Allow server-only PostHog vars in webapp Compose policy lint.
 
 ## [1.7.3] - 20.07.2026
 
 ### 🔄 Changed
 
-- Unified environment configuration on branded `BONDERY_*` names with a root `.env.local`, manifest-driven `npm run setup:dev` / `npm run env` sync, and Compose under `deploy/bondery`.
+- Unified environment configuration on branded `BONDERY_*` names with a root `.env.local`, manifest-driven `pnpm run setup:dev` / `pnpm run env` sync, and Compose under `deploy/bondery`.
 - Self-host and CI secrets/vars aligned to the same contract (public URLs as GitHub vars; private keys remain secrets).
 - Website public URLs are passed from Server Components into client leaves (no `next.config` `env` inlining).
 - Minimum Chrome extension version bumped to 1.7.3.

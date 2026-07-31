@@ -1,0 +1,8 @@
+{
+  "setup-worktree": [
+    "pnpm install --frozen-lockfile",
+    "node .cursor/setup-worktree.mjs",
+    "pnpm run build:packages",
+    "pnpm run env:development"
+  ]
+}

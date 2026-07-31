@@ -24,7 +24,7 @@ Consult these resources as needed:
 ### Install EAS CLI
 
 ```bash
-npm install -g eas-cli
+pnpm install -g eas-cli
 eas login
 ```
 
@@ -70,7 +70,7 @@ Deploy web apps using EAS Hosting:
 
 ```bash
 # Deploy to production
-npx expo export -p web
+pnpm exec expo export -p web
 npx eas-cli@latest deploy --prod
 
 # Deploy PR preview

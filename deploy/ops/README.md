@@ -17,7 +17,7 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 3. [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) builds the Docker image and pushes `:production` + `:sha-<short>` (no separate host gate; release smoke validates the image).
 4. Dokploy pulls `:production` (`pull_policy: always`) — configure a redeploy webhook (`BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` GitHub **variable**) or redeploy manually. In Dokploy, set the Compose app branch to **`release`** (CI always sends `refs/heads/release` in the webhook payload, including manual workflow runs).
 
-Host CI and production images pin Node 26 (`.nvmrc` / `node:26-alpine`). Release `smoke` is the Alpine/runtime fidelity check.
+Host CI and production images pin Node 26 (`.nvmrc` / `node:26-alpine`). Dependencies use pnpm 11.18.0. Release `smoke` is the Alpine/runtime fidelity check.
 
 There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by temporarily overriding the image to a known `:sha-<short>` or using Dokploy's previous deployment.
 

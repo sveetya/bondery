@@ -28,7 +28,7 @@ User → client (webapp / mobile / extension)
      → client calls API with Bearer JWT (or native session on mobile)
 ```
 
-OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/src/lib/bootstrap/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI (`npm run release-migrate`) and self-host deploys (`api` `pre_start` → `release-migrate` CLI).
+OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/src/lib/bootstrap/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI (`pnpm run release-migrate`) and self-host deploys (`api` `pre_start` → `release-migrate` CLI).
 
 ## Local bootstrap
 
@@ -75,16 +75,16 @@ BONDERY_INFRA_CHROME_EXTENSION_ID="lpcmokfekjjejnpobhbkgmjkodfhpmha"
 cd deploy/bondery
 docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
-npm run db:migrate:deploy
+pnpm run db:migrate:deploy
 ```
 
 Start local Redis (required for Better Auth secondary storage, rate limits, and sync wake):
 
 ```bash
-npm run start:redis
+pnpm run start:redis
 ```
 
-Set `BONDERY_PRIVATE_REDIS_URL=redis://127.0.0.1:26636` in root `.env.local` (default in examples), then `npm run env`.
+Set `BONDERY_PRIVATE_REDIS_URL=redis://127.0.0.1:26636` in root `.env.local` (default in examples), then `pnpm run env`.
 
 <Callout type="info">
 Use `db:migrate:deploy` to apply existing migrations locally. Reserve `db:migrate:dev` for **authoring** new schema changes — it uses a Prisma shadow database that does not have PostGIS pre-installed and will fail on the initial migration.
@@ -96,8 +96,8 @@ Use `db:migrate:deploy` to apply existing migrations locally. Reserve `db:migrat
 ### Sync env and provision OAuth clients
 
 ```bash
-npm run env
-npm run provision:oauth-clients
+pnpm run env
+pnpm run provision:oauth-clients
 ```
 
 `provision-oauth-clients` upserts `OauthClient` rows for the webapp and extension, and links them to the API resource. Re-run it whenever you change OAuth client ids, secrets, redirect URIs, or extension ID.
@@ -108,7 +108,7 @@ npm run provision:oauth-clients
 ### Verify
 
 ```bash
-npm run test:auth -w api
+pnpm run test:auth -w api
 ```
 
 Requires Postgres and Redis running with migrations and provisioning complete. Starts the API in-process and exercises the full authorization-code + PKCE flow, including Postgres fallback when session keys are absent from Redis (`bondery:auth:*`).
@@ -136,15 +136,15 @@ Canonical definitions live in [`packages/helpers/src/env/manifest.ts`](../../pac
 
 ### `oauth_resource` / `oauth_client` table does not exist
 
-Migrations have not been applied. Run `npm run db:migrate:deploy`, then re-run provisioning.
+Migrations have not been applied. Run `pnpm run db:migrate:deploy`, then re-run provisioning.
 
 ### `Environment variable not found: DATABASE_URL` during migrate
 
-Run migrations from the repo root with the `@bondery/db` workspace script (it loads `packages/db/.env.local`). If that file is missing, run `npm run env` first.
+Run migrations from the repo root with the `@bondery/db` workspace script (it loads `packages/db/.env.local`). If that file is missing, run `pnpm run env` first.
 
 ### Redirect URI mismatch (Chrome extension)
 
-Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision:oauth-clients`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
+Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `pnpm run env`, then `pnpm run provision:oauth-clients`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
 
 ### CORS blocked on `sign-in/social` with `200 (OK)` but no `Access-Control-Allow-Origin`
 
@@ -157,8 +157,8 @@ Common causes:
 | Setup | Fix |
 | --- | --- |
 | Webapp on a non-default port (e.g. `http://localhost:49171` from Cursor port-forward) | In **development**, the API now allows any `localhost` / `127.0.0.1` port automatically. Restart the API after pulling. |
-| Physical phone needs API | Install Tailscale on phone and dev machine. Temporarily set `BONDERY_PUBLIC_API_URL` to `http://100.x.x.x:26631` (your Tailscale IP), run `npm run env`, restart API. Keep webapp on localhost for laptop web dev. |
-| Expo web or LAN IP testing | Add the origin to `BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS` (comma-separated), then `npm run env` and restart the API. |
+| Physical phone needs API | Install Tailscale on phone and dev machine. Temporarily set `BONDERY_PUBLIC_API_URL` to `http://100.x.x.x:26631` (your Tailscale IP), run `pnpm run env`, restart API. Keep webapp on localhost for laptop web dev. |
+| Expo web or LAN IP testing | Add the origin to `BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS` (comma-separated), then `pnpm run env` and restart the API. |
 
 Also verify GitHub/LinkedIn OAuth app callback URLs point at the **API** host you are using (e.g. `http://localhost:26631/auth/callback/github` for daily web dev, or `http://<tailscale-ip>:26631/auth/callback/github` when testing on a physical phone), not the webapp origin.
 

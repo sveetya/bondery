@@ -1,10 +1,10 @@
 {
   "dependencies": {
-    "@bondery/branding": "*",
-    "@bondery/helpers": "*",
-    "@bondery/mantine-next": "*",
-    "@bondery/schemas": "*",
-    "@bondery/translations": "*",
+    "@bondery/branding": "workspace:*",
+    "@bondery/helpers": "workspace:*",
+    "@bondery/mantine-next": "workspace:*",
+    "@bondery/schemas": "workspace:*",
+    "@bondery/translations": "workspace:*",
     "@mantine/core": "^9.5.0",
     "@mantine/hooks": "^9.5.0",
     "@react-email/ui": "^6.9.1",
@@ -37,18 +37,18 @@
   "name": "chrome-extension",
   "private": true,
   "scripts": {
-    "build": "npx wxt build",
-    "build:firefox": "npx wxt build -b firefox",
+    "build": "pnpm exec wxt build",
+    "build:firefox": "pnpm exec wxt build -b firefox",
     "check:env": "tsx scripts/check-env.ts",
     "check:extension-patterns": "tsx scripts/check-extension-patterns.ts",
     "check:types": "node ../../scripts/tsc-native.mjs --noEmit",
-    "dev": "npx wxt",
-    "dev:firefox": "npx wxt -b firefox",
+    "dev": "pnpm exec wxt",
+    "dev:firefox": "pnpm exec wxt -b firefox",
     "generate-icons": "tsx scripts/generate-icons.ts",
-    "postinstall": "npm run build -w @bondery/schemas && npx wxt prepare",
-    "prebuild": "npm run check:env && tsx scripts/generate-icons.ts",
-    "zip": "npx wxt zip",
-    "zip:firefox": "npx wxt zip -b firefox"
+    "postinstall": "pnpm --filter @bondery/schemas run build && pnpm wxt prepare",
+    "prebuild": "pnpm run check:env && tsx scripts/generate-icons.ts",
+    "zip": "pnpm exec wxt zip",
+    "zip:firefox": "pnpm exec wxt zip -b firefox"
   },
   "type": "module",
   "version": "1.7.4"

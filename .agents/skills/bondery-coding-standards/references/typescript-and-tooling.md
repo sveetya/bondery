@@ -36,16 +36,16 @@ Do not restate formatter choices in reviews or hand-format around them. Change `
 Use a non-mutating changed-file check first:
 
 ```bash
-npx biome check --no-errors-on-unmatched --files-ignore-unknown=true <changed-files>
+pnpm exec biome check --no-errors-on-unmatched --files-ignore-unknown=true <changed-files>
 ```
 
 For full CI parity:
 
 ```bash
-npx biome ci .
+pnpm exec biome ci .
 ```
 
-Do not use root `npm run lint` for verification; it runs `biome check --write .` and mutates files. Route type checks, package consumers, tests, and boundary checks through [`bondery-verification-loop`](../../bondery-verification-loop/SKILL.md).
+Do not use root `pnpm run lint` for verification; it runs `biome check --write .` and mutates files. Route type checks, package consumers, tests, and boundary checks through [`bondery-verification-loop`](../../bondery-verification-loop/SKILL.md).
 
 ## Tooling checklist
 

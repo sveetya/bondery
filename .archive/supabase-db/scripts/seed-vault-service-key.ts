@@ -3,7 +3,7 @@
  * prints it to the console.
  *
  * Usage:
- *   npm run get:service-key
+ *   pnpm run get:service-key
  */
 
 import { execSync } from "node:child_process";
@@ -15,7 +15,7 @@ const root = resolve(__dirname, "..");
 
 let output: string;
 try {
-  output = execSync("npx supabase status", { cwd: root, encoding: "utf-8" });
+  output = execSync("pnx supabasestatus", { cwd: root, encoding: "utf-8" });
 } catch (e: unknown) {
   const execError = e as { stdout?: string };
   output = execError.stdout ?? "";

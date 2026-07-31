@@ -42,7 +42,7 @@ BONDERY_PUBLIC_OAUTH_CLIENT_ID="<from provision script or team vault>"
 BONDERY_INFRA_CHROME_EXTENSION_ID="<your-extension-id>"
 ```
 
-Run `npm run env` to sync into `apps/chrome-extension/.env.development.local`.
+Run `pnpm run env` to sync into `apps/chrome-extension/.env.development.local`.
 
 ## Step 3 — Provision OAuth client
 
@@ -50,7 +50,7 @@ With API env + migrated Postgres:
 
 ```bash
 cd apps/api
-npx tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts
+pnpm exec tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts
 ```
 
 This upserts the public PKCE client with redirect `https://<BONDERY_INFRA_CHROME_EXTENSION_ID>.chromiumapp.org/`.

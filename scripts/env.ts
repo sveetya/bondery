@@ -2,16 +2,16 @@
  * Unified local env CLI.
  *
  * Day-to-day:
- *   npm run env                 → sync development + production locals → check root
- *   npm run env:development     → sync *.development.local (+ mobile/db .env.local)
- *   npm run env:production      → sync *.production.local (local prod-mode builds)
+ *   pnpm run env                 → sync development + production locals → check root
+ *   pnpm run env:development     → sync *.development.local (+ mobile/db .env.local)
+ *   pnpm run env:production      → sync *.production.local (local prod-mode builds)
  *
  * First clone:
- *   npm run setup:dev
+ *   pnpm run setup:dev
  *
  * Codegen / CI (not day-to-day DX):
- *   npm run env:examples
- *   npm run env:check             # regenerate + fail if git dirty
+ *   pnpm run env:examples
+ *   pnpm run env:check             # regenerate + fail if git dirty
  */
 
 import { execSync } from "node:child_process";
@@ -290,7 +290,7 @@ function writeTurbo(dryRun) {
     return;
   }
   writeFileSync(turboPath, out, "utf-8");
-  execSync("npx biome check --write turbo.json", { cwd: repoRoot, stdio: "pipe" });
+  execSync("pnpm exec biome check --write turbo.json", { cwd: repoRoot, stdio: "pipe" });
   log.success("Updated turbo.json env sections from manifest");
 }
 
@@ -350,7 +350,7 @@ function syncApps(flags, mode: SyncMode) {
 function validatePostgresRootEnv(rootEnv: Record<string, string>) {
   if (rootEnv.DATABASE_URL) {
     log.error(
-      "Remove DATABASE_URL from root .env.local — npm run env derives it from BONDERY_PRIVATE_POSTGRES_PASSWORD",
+      "Remove DATABASE_URL from root .env.local — pnpm run env derives it from BONDERY_PRIVATE_POSTGRES_PASSWORD",
     );
     process.exit(1);
   }
@@ -363,7 +363,7 @@ function validatePostgresRootEnv(rootEnv: Record<string, string>) {
 
 function checkRoot(environment: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
-    log.error("Missing .env.local — run: npm run setup:dev");
+    log.error("Missing .env.local — run: pnpm run setup:dev");
     process.exit(1);
   }
 
@@ -404,7 +404,7 @@ function checkRoot(environment: SyncMode) {
     }
     const path = join(repoRoot, relPath);
     if (!existsSync(path)) {
-      log.warn(`Missing ${relPath} — run npm run env`);
+      log.warn(`Missing ${relPath} — run pnpm run env`);
     }
   }
 }

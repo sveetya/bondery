@@ -51,7 +51,7 @@ Some older native modules may not support the New Architecture. Check:
 React Native Reanimated requires `react-native-worklets` in SDK 54+:
 
 ```bash
-npx expo install react-native-worklets
+pnpm exec expo install react-native-worklets
 ```
 
 ### Layout Animations
@@ -73,7 +73,7 @@ Verify from the command line if the currently running app uses the New Architect
 
 ## Troubleshooting
 
-1. **Clear caches** — `npx expo start --clear`
-2. **Clean prebuild** — `npx expo prebuild --clean`
+1. **Clear caches** — `pnpm exec expo start --clear`
+2. **Clean prebuild** — `pnpm exec expo prebuild --clean`
 3. **Check native modules** — Ensure all dependencies support New Architecture
 4. **Review console warnings** — Legacy modules log compatibility warnings

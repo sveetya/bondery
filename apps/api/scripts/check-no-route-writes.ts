@@ -1,6 +1,6 @@
 // Fails when route modules call database write methods directly (migration guard).
 //
-// Usage: npx tsx scripts/check-no-route-writes.ts
+// Usage: pnpm exec tsx scripts/check-no-route-writes.ts
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

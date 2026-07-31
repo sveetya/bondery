@@ -14,13 +14,13 @@ Create `packages/emails/src/templates/YourEmail.tsx`:
 
 1. Add export to `packages/emails/src/index.ts`.
 2. Add subpath to `packages/emails/package.json` `exports` if using a new file pattern.
-3. Run `npm run sync-exports -w @bondery/emails` if your workflow requires it.
-4. Build: `npm run compile -w @bondery/emails`.
+3. Run `pnpm run sync-exports -w @bondery/emails` if your workflow requires it.
+4. Build: `pnpm run compile -w @bondery/emails`.
 
 ## 3. Preview locally
 
 ```bash
-npm run dev:emails
+pnpm run dev:emails
 ```
 
 Open port **26639**, verify layout in browser. See [dx-preview-and-test.md](./dx-preview-and-test.md).

@@ -3,7 +3,7 @@
 Authoritative PR gate: [`.github/workflows/verify.yml`](../../../../.github/workflows/verify.yml).  
 Workflow map: [`.github/workflows/README.md`](../../../../.github/workflows/README.md).
 
-There is **no** root `npm run verify` — mirror CI by running the steps below or pushing and watching Actions.
+There is **no** root `pnpm run verify` — mirror CI by running the steps below or pushing and watching Actions.
 
 ## Tiers
 
@@ -20,47 +20,47 @@ Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 ## `verify.yml` local mirror (ordered)
 
 ```bash
-npm ci
-npx biome ci .
-npm run check:package-imports
-npm run env -- --check
-npm run check-docs
-npm run check:openapi
+pnpm install --frozen-lockfile
+pnpm exec biome ci .
+pnpm run check:package-imports
+pnpm run env -- --check
+pnpm run check-docs
+pnpm run check:openapi
 # Docker required:
 cp deploy/bondery/.env.example deploy/bondery/.env
 docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 node deploy/bondery/scripts/check-compose.mjs
-npm run test:runtime-config -w webapp
-npm run check:contracts
-npm run check:types
-npm run check:i18n
-npm run check:api-errors
-npm run test:api:sync
+pnpm --filter webapp run test:runtime-config
+pnpm run check:contracts
+pnpm run check:types
+pnpm run check:i18n
+pnpm run check:api-errors
+pnpm run test:api:sync
 ```
 
 ## Staging workflows (not full verify)
 
 **`stage-webapp.yml`** (on `main`, webapp paths):
 
-- `npm run check:types -w webapp`
-- `npm run test:theme -w webapp`, `test:sync`, `test:runtime-config`
+- `pnpm --filter webapp run check:types`
+- `pnpm --filter webapp run test:theme`, `test:sync`, `test:runtime-config`
 
 **`stage-api.yml`** (on `main`, api paths):
 
-- `npm run test:api:sync`
+- `pnpm run test:api:sync`
 
 ## Optional local checks (not in CI)
 
 | Check | Command |
 |-------|---------|
-| Playwright E2E | `npm run test:e2e -w webapp` |
-| Mobile sync lint | `npm run check-sync-patterns -w mobile` |
-| Mobile unit sync | `npm run test:sync -w mobile` |
-| Extension patterns | `npm run check-extension-patterns -w chrome-extension` |
-| Helpers unit tests | `npm test -w @bondery/helpers` |
-| Webapp SSR smoke | `npm run smoke-ssr -w webapp` |
-| Full monorepo build | `npm run build` |
-| Expo doctor | `npx expo-doctor` in `apps/mobile` |
+| Playwright E2E | `pnpm --filter webapp run test:e2e` |
+| Mobile sync lint | `pnpm --filter mobile run check-sync-patterns` |
+| Mobile unit sync | `pnpm --filter mobile run test:sync` |
+| Extension patterns | `pnpm --filter chrome-extension run check:extension-patterns` |
+| Helpers unit tests | `pnpm --filter @bondery/helpers test` |
+| Webapp SSR smoke | `pnpm --filter webapp run smoke-ssr` |
+| Full monorepo build | `pnpm run build` |
+| Expo doctor | `pnpm exec expo-doctor` in `apps/mobile` |
 
 Document these as `SKIPPED` in PR parity reports unless the diff touches those areas — then run them and report results.
 

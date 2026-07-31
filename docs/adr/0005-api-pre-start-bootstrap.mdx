@@ -30,7 +30,7 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 
 3. **No separate `migrate` Compose service** — upgrades re-run `pre_start` when the API image or init definition changes.
 
-4. **Host-run dev** (`npm run dev`) calls the same bootstrap helpers before `buildServer()` when `NODE_ENV=development`. Optional `BONDERY_DEV_*` flags (see environment docs) — never used in Compose.
+4. **Host-run dev** (`pnpm run dev`) calls the same bootstrap helpers before `buildServer()` when `NODE_ENV=development`. Optional `BONDERY_DEV_*` flags (see environment docs) — never used in Compose.
 
 5. **`/health/ready` storage probe** (phase 2) adds `HeadBucket` on required buckets — probe only, never create buckets from health checks.
 

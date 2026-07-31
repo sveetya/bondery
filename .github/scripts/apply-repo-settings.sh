@@ -2,7 +2,7 @@
 # Apply repository settings from .github/repo-settings.json via the GitHub API.
 #
 # Usage:
-#   npm run github:repo-settings
+#   pnpm run github:repo-settings
 #
 # Requires: gh CLI, authenticated with repo admin access.
 
@@ -21,7 +21,7 @@ Environment:
   GITHUB_REPOSITORY   Owner/repo override (default: current gh repo)
 
 Example:
-  npm run github:repo-settings
+  pnpm run github:repo-settings
 EOF
 }
 

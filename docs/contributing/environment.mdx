@@ -12,7 +12,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 | `BONDERY_PUBLIC_*` | Safe for browsers / mobile / extension | Any product surface |
 | `BONDERY_PRIVATE_*` | Secrets | API (and webapp session encryption keys) |
 | `BONDERY_INFRA_*` | Domains, image tags, internal DNS, build metadata | Deploy + webapp runtime |
-| `BONDERY_DEV_*` | Local API dev boot toggles (`npm run dev` only) | API — never set in Compose/production |
+| `BONDERY_DEV_*` | Local API dev boot toggles (`pnpm run dev` only) | API — never set in Compose/production |
 | `BONDERY_OPS_*` | CI / release tooling | GitHub Actions only — not synced into app local files |
 
 **Same fact → same key name** in every app (e.g. `BONDERY_PUBLIC_API_URL` on api, webapp, extension, and mobile).
@@ -23,7 +23,7 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 
 | Context | What you set |
 |---------|----------------|
-| **Local dev** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` — `npm run env` **derives** `DATABASE_URL` into `apps/api` and `packages/db` |
+| **Local dev** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` — `pnpm run env` **derives** `DATABASE_URL` into `apps/api` and `packages/db` |
 | **Self-host compose** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` — compose **derives** `DATABASE_URL` for the `api` container |
 | **Webapp** | Nothing — the webapp calls the API over HTTP |
 
@@ -31,7 +31,7 @@ Used in `apps/api`, `packages/db` (migrations), and `packages/db/scripts/*`.
 
 ### `BONDERY_DEV_*` (API local boot)
 
-Optional flags read only when `NODE_ENV=development` during `npm run dev`. Compose `api` `pre_start` ignores them — production always runs the full bootstrap CLIs.
+Optional flags read only when `NODE_ENV=development` during `pnpm run dev`. Compose `api` `pre_start` ignores them — production always runs the full bootstrap CLIs.
 
 | Variable | When `true` |
 |----------|-------------|
@@ -41,32 +41,32 @@ Optional flags read only when `NODE_ENV=development` during `npm run dev`. Compo
 ## Local happy path
 
 ```bash
-npm install
-npm run setup:dev
+pnpm install
+pnpm run setup:dev
 # edit .env.local (OAuth clients, BONDERY_PRIVATE_POSTGRES_PASSWORD, secrets)
 cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
-npm run db:migrate:deploy
-npm run env
-npm run provision:oauth-clients
-npm run dev
+pnpm run db:migrate:deploy
+pnpm run env
+pnpm run provision:oauth-clients
+pnpm run dev
 ```
 
 | Script | Purpose |
 | --- | --- |
-| `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
-| `npm run env` | Sync root `.env.local` → development + production per-app locals → validate |
-| `npm run env:development` | Sync only `*.development.local` (+ mobile/db `.env.local`) |
-| `npm run env:production` | Sync only `*.env.production.local` (for local `npm run build`) |
-| `npm run env:pull` | Pull `syncable` manifest secrets from Infisical → `.env.local` → `env:development` |
-| `npm run env:examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
+| `pnpm run setup:dev` | First clone: create `.env.local`, then run `env` |
+| `pnpm run env` | Sync root `.env.local` → development + production per-app locals → validate |
+| `pnpm run env:development` | Sync only `*.development.local` (+ mobile/db `.env.local`) |
+| `pnpm run env:production` | Sync only `*.env.production.local` (for local `pnpm run build`) |
+| `pnpm run env:pull` | Pull `syncable` manifest secrets from Infisical → `.env.local` → `env:development` |
+| `pnpm run env:examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
 
 `env:development` and `env:production` use the **same values** from root `.env.local` (localhost URLs). Local production-mode builds are not deploys — they need your local URLs, not `usebondery.com`.
 
 Pre-commit (via lint-staged) runs `env:examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
 
 ```bash
-npm run env:check   # regenerate + fail if git dirty
+pnpm run env:check   # regenerate + fail if git dirty
 ```
 
 Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
@@ -80,7 +80,7 @@ Optional for local dev when you need shared team secrets (SMTP, GitHub OAuth, Ma
 cp .infisical.json.example .infisical.json   # set projectId, domain, defaultEnvironment
 infisical login
 
-npm run env:pull
+pnpm run env:pull
 ```
 
 [`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings (e.g. `dev`), not the display name (`development`).
@@ -105,7 +105,7 @@ Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from 
 
 ## Production / self-host
 
-Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `npm run env:examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
+Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `pnpm run env:examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
 
 ## Manifest
 

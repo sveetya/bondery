@@ -8,17 +8,17 @@ This guide walks you through setting up the full Bondery development environment
 **Environment variables:** edit root `.env.local` once, then sync — see [Environment configuration](environment.mdx).
 
 ```bash
-npm install
-npm run setup:dev
+pnpm install
+pnpm run setup:dev
 # edit .env.local (OAuth / optional integrations)
-npm run start:postgres
-npm run start:redis
-npm run start:seaweedfs   # required for avatar / logo uploads
-npm run env
-npm run dev:webapp-api    # API :26631 + webapp :26632
+pnpm run start:postgres
+pnpm run start:redis
+pnpm run start:seaweedfs   # required for avatar / logo uploads
+pnpm run env
+pnpm run dev:webapp-api    # API :26631 + webapp :26632
 ```
 
-On first API start in development, `runDevelopmentBootstrap()` runs the same pipeline as production `api.pre_start` (migrations, SQL functions, OAuth clients, platform admins, storage buckets) unless you set `BONDERY_DEV_SKIP_RELEASE_MIGRATE` or `BONDERY_DEV_SKIP_STORAGE_BUCKETS`. You do **not** need to run `db:migrate:deploy` and `provision:oauth-clients` manually before every `npm run dev`.
+On first API start in development, `runDevelopmentBootstrap()` runs the same pipeline as production `api.pre_start` (migrations, SQL functions, OAuth clients, platform admins, storage buckets) unless you set `BONDERY_DEV_SKIP_RELEASE_MIGRATE` or `BONDERY_DEV_SKIP_STORAGE_BUCKETS`. You do **not** need to run `db:migrate:deploy` and `provision:oauth-clients` manually before every `pnpm run dev`.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ On first API start in development, `runDevelopmentBootstrap()` runs the same pip
 | [npm](https://www.npmjs.com/) | ≥ 11 | Bundled with Node.js |
 | [Docker](https://www.docker.com/) | latest | Local Postgres, Redis, and SeaweedFS |
 
-For mobile development you also need Expo tooling (installed via root `npm install`) and a native toolchain: **iOS** — Xcode + Simulator or a physical device; **Android** — Android Studio + emulator or USB debugging.
+For mobile development you also need Expo tooling (installed via root `pnpm install`) and a native toolchain: **iOS** — Xcode + Simulator or a physical device; **Android** — Android Studio + emulator or USB debugging.
 
 <Steps>
 <Step>
@@ -39,8 +39,8 @@ For mobile development you also need Expo tooling (installed via root `npm insta
 git clone https://github.com/usebondery/bondery.git
 cd bondery
 nvm use    # or: fnm use — reads .nvmrc (Node 26)
-npm install
-npm run setup:dev
+pnpm install
+pnpm run setup:dev
 ```
 
 This installs dependencies for all apps and packages in the monorepo, then creates root `.env.local` from the example.
@@ -56,7 +56,7 @@ The local Postgres instance is the foundation everything else connects to. Start
 
 ### Environment variables
 
-Set `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (`npm run env` derives `DATABASE_URL` into api/db). See [`.env.local.example`](../../.env.local.example). OAuth client ids/secrets for Better Auth live under `BONDERY_PRIVATE_AUTH_*`. After editing, run `npm run env` to sync app env files.
+Set `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (`pnpm run env` derives `DATABASE_URL` into api/db). See [`.env.local.example`](../../.env.local.example). OAuth client ids/secrets for Better Auth live under `BONDERY_PRIVATE_AUTH_*`. After editing, run `pnpm run env` to sync app env files.
 
 > **No OAuth credentials yet?** The stack will still start — email-based flows may be limited, but you can develop against the API. Social login buttons need GitHub/LinkedIn app credentials.
 
@@ -65,12 +65,12 @@ Set `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (`npm run env` deri
 From the repo root (reads `BONDERY_PRIVATE_POSTGRES_PASSWORD` from `.env.local`):
 
 ```bash
-npm run start:postgres
+pnpm run start:postgres
 ```
 
-Postgres listens on **host port 54322**. `npm run env` writes `DATABASE_URL` to api/db using `BONDERY_PRIVATE_POSTGRES_PASSWORD` from root `.env.local`.
+Postgres listens on **host port 54322**. `pnpm run env` writes `DATABASE_URL` to api/db using `BONDERY_PRIVATE_POSTGRES_PASSWORD` from root `.env.local`.
 
-Stop with `npm run stop:postgres`.
+Stop with `pnpm run stop:postgres`.
 
 ### Migrations (manual / one-off)
 
@@ -78,11 +78,11 @@ The API dev server runs migrations on boot. Use these when you author schema cha
 
 | Command | Description |
 |---|---|
-| `npm run db:migrate:deploy` | Apply pending Prisma migrations |
-| `npm run db:migrate:dev` | Author new migrations interactively (requires shadow DB with PostGIS) |
-| `npm run db:studio` | Open Prisma Studio against `DATABASE_URL` |
-| `npm run db:functions` | Apply raw SQL functions (included in dev bootstrap) |
-| `npm run provision:oauth-clients` | Upsert first-party OAuth clients (included in dev bootstrap) |
+| `pnpm run db:migrate:deploy` | Apply pending Prisma migrations |
+| `pnpm run db:migrate:dev` | Author new migrations interactively (requires shadow DB with PostGIS) |
+| `pnpm run db:studio` | Open Prisma Studio against `DATABASE_URL` |
+| `pnpm run db:functions` | Apply raw SQL functions (included in dev bootstrap) |
+| `pnpm run provision:oauth-clients` | Upsert first-party OAuth clients (included in dev bootstrap) |
 
 For a full auth walkthrough, see [Authentication](./auth.mdx).
 
@@ -100,13 +100,13 @@ Mobile offline sync uses **custom pull/bootstrap** endpoints on the API (`GET /a
 Contact **avatars** and cached **LinkedIn logos** use the S3-compatible SeaweedFS gateway. Credentials live **only** in root `.env.local` (`BONDERY_PRIVATE_S3_ACCESS_KEY_ID` / `SECRET`); the `seaweedfs-s3` container renders its config from those vars at startup.
 
 ```bash
-npm run start:seaweedfs          # S3 gateway on http://127.0.0.1:8333
-npm run setup:seaweedfs      # optional — API dev boot also ensures buckets
+pnpm run start:seaweedfs          # S3 gateway on http://127.0.0.1:8333
+pnpm run setup:seaweedfs      # optional — API dev boot also ensures buckets
 ```
 
 Verify: `curl -s http://127.0.0.1:8333/status`
 
-Stop with `npm run stop:seaweedfs`.
+Stop with `pnpm run stop:seaweedfs`.
 
 Set in `.env.local` (see `.env.local.example`):
 
@@ -116,7 +116,7 @@ BONDERY_PRIVATE_S3_ENDPOINT=http://127.0.0.1:8333
 ```
 
 <Callout type="warn">
-**Avatar previews need public bucket policy.** Setup applies anonymous `GetObject` on `avatars`. If uploads succeed but images 404/403 in the browser, run `npm run setup:seaweedfs` or restart the API (dev bootstrap).
+**Avatar previews need public bucket policy.** Setup applies anonymous `GetObject` on `avatars`. If uploads succeed but images 404/403 in the browser, run `pnpm run setup:seaweedfs` or restart the API (dev bootstrap).
 </Callout>
 
 <Callout type="info">
@@ -132,7 +132,7 @@ BONDERY_PRIVATE_S3_ENDPOINT=http://127.0.0.1:8333
 
 ### Environment variables
 
-Prefer root `.env.local` + `npm run env` (see [Environment configuration](environment.mdx)). That writes `apps/api/.env.development.local`.
+Prefer root `.env.local` + `pnpm run env` (see [Environment configuration](environment.mdx)). That writes `apps/api/.env.development.local`.
 
 Required secrets include `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` (format `1:<secret>`, each secret ≥32 characters) and `BONDERY_PRIVATE_API_KEY_PEPPER` — see [API keys](#api-keys-long-lived-integration-tokens) below.
 
@@ -153,10 +153,10 @@ Redis powers **rate limiting**, **Better Auth secondary storage** (`bondery:auth
 From the repo root (Docker must be running):
 
 ```bash
-npm run start:redis
+pnpm run start:redis
 ```
 
-Stop with `npm run stop:redis`. Verify: `docker exec bondery-redis redis-cli ping` → `PONG`.
+Stop with `pnpm run stop:redis`. Verify: `docker exec bondery-redis redis-cli ping` → `PONG`.
 
 Wire the API in `apps/api/.env.development.local`:
 
@@ -180,7 +180,7 @@ Keep `BONDERY_PRIVATE_API_KEY_PEPPER` stable. If you change it after creating ke
 
 ```bash
 cd apps/api
-npm run dev
+pnpm run dev
 ```
 
 The API server starts on **port 26631** with hot reload enabled.
@@ -194,7 +194,7 @@ The API server starts on **port 26631** with hot reload enabled.
 
 ### Environment variables
 
-Filled by `npm run env` into `apps/webapp/.env.development.local` — see [Environment configuration](environment.mdx).
+Filled by `pnpm run env` into `apps/webapp/.env.development.local` — see [Environment configuration](environment.mdx).
 
 The webapp is itself a confidential OAuth client of the API's authorization server. See [Authentication](./auth.mdx) for env vars, bootstrap commands, and troubleshooting.
 
@@ -202,12 +202,12 @@ The webapp is itself a confidential OAuth client of the API's authorization serv
 
 ```bash
 cd apps/webapp
-npm run dev
+pnpm run dev
 ```
 
 The webapp starts on **port 26632**. Open [http://localhost:26632](http://localhost:26632) in your browser.
 
-Or from the repo root: `npm run dev:webapp-api` (API + webapp together).
+Or from the repo root: `pnpm run dev:webapp-api` (API + webapp together).
 
 ---
 
@@ -222,7 +222,7 @@ Uses `BONDERY_PUBLIC_WEBAPP_URL` / `BONDERY_PUBLIC_WEBSITE_URL` from env sync.
 
 ```bash
 cd apps/website
-npm run dev
+pnpm run dev
 ```
 
 The website starts on **port 26630**. Open [http://localhost:26630](http://localhost:26630) in your browser.
@@ -236,7 +236,7 @@ The website starts on **port 26630**. Open [http://localhost:26630](http://local
 
 ### Environment variables
 
-Filled by `npm run env`. See [Authentication](./auth.mdx) for `BONDERY_PUBLIC_OAUTH_CLIENT_ID`, `BONDERY_INFRA_CHROME_EXTENSION_ID`, and provisioning steps.
+Filled by `pnpm run env`. See [Authentication](./auth.mdx) for `BONDERY_PUBLIC_OAUTH_CLIENT_ID`, `BONDERY_INFRA_CHROME_EXTENSION_ID`, and provisioning steps.
 
 See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md) when you see redirect URI mismatch errors (common after `prisma migrate reset` or on a new machine).
 
@@ -244,8 +244,8 @@ See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUT
 
 ```bash
 cd apps/chrome-extension
-npx wxt prepare   # only needed once after install
-npx wxt            # or: npm run dev
+pnpm exec wxt prepare   # only needed once after install
+pnpm exec wxt            # or: pnpm run dev
 ```
 
 Open `chrome://extensions` in Chrome, enable **Developer mode**, click **Load unpacked**, and select the generated `dist/chrome-mv3-dev` folder.
@@ -261,11 +261,11 @@ Run the mobile app against your local API and Postgres stack. Requires Postgres 
 
 ### Environment variables
 
-Filled by `npm run env` into `apps/mobile/.env.local` (`BONDERY_PUBLIC_*`). Expo loads those into `app.config.ts` `extra`.
+Filled by `pnpm run env` into `apps/mobile/.env.local` (`BONDERY_PUBLIC_*`). Expo loads those into `app.config.ts` `extra`.
 
 #### Physical device on the same Wi‑Fi
 
-In root `.env.local`, replace `127.0.0.1` / `localhost` with your machine's LAN IP (e.g. `192.168.1.42`) for `BONDERY_PUBLIC_API_URL`, then `npm run env`. The phone cannot reach your laptop's loopback interface.
+In root `.env.local`, replace `127.0.0.1` / `localhost` with your machine's LAN IP (e.g. `192.168.1.42`) for `BONDERY_PUBLIC_API_URL`, then `pnpm run env`. The phone cannot reach your laptop's loopback interface.
 
 Ensure the API is reachable on the LAN and your firewall allows inbound connections on port `26631`.
 
@@ -281,14 +281,14 @@ Tailscale gives your dev machine a stable `100.x.x.x` address on your tailnet �
    BONDERY_PUBLIC_API_URL=http://100.64.0.5:26631
    ```
 
-4. Run `npm run env` and restart the API.
+4. Run `pnpm run env` and restart the API.
 5. Revert `BONDERY_PUBLIC_API_URL` to `http://localhost:26631` when you return to laptop web dev.
 
 Start Metro with LAN binding so the phone can load the JS bundle over Tailscale:
 
 ```bash
 cd apps/mobile
-npx expo start --host lan
+pnpm exec expo start --host lan
 ```
 
 Register `http://<tailscale-ip>:26631/auth/callback/github` in your GitHub OAuth app when testing social login on a physical device.
@@ -304,14 +304,14 @@ On Android emulators, `127.0.0.1` and `localhost` in env vars are **automaticall
 **Option A — API + mobile from repo root:**
 
 ```bash
-npm run dev:mobile
+pnpm run dev:mobile
 ```
 
 **Option B — mobile only** (with Postgres and API already running):
 
 ```bash
 cd apps/mobile
-npm run dev
+pnpm run dev
 ```
 
 Then press `i` for iOS Simulator, `a` for Android emulator, or scan the QR code with Expo Go / a dev client.
@@ -322,9 +322,9 @@ For SQLite sync and background tasks, use a development build instead of Expo Go
 
 ```bash
 cd apps/mobile
-npm run dev:prebuild    # regenerates android/ and ios/ — only when native deps change
-npm run android:dev     # USB device or emulator
-npm run ios             # iOS Simulator or device
+pnpm run dev:prebuild    # regenerates android/ and ios/ — only when native deps change
+pnpm run android:dev     # USB device or emulator
+pnpm run ios             # iOS Simulator or device
 ```
 
 ### Verify sync
@@ -352,19 +352,19 @@ From the repo root:
 
 ```bash
 # 1. Infrastructure
-npm run start:postgres
-npm run start:redis
-npm run start:seaweedfs
+pnpm run start:postgres
+pnpm run start:redis
+pnpm run start:seaweedfs
 
 # 2. App dev
-npm run env
-npm run dev:webapp-api
+pnpm run env
+pnpm run dev:webapp-api
 
 # Or: api + webapp + website + chrome-extension
-npm run dev:extension
+pnpm run dev:extension
 
 # Or: api + mobile
-npm run dev:mobile
+pnpm run dev:mobile
 ```
 
 These scripts are defined in the root `package.json` and orchestrated by Turborepo (`turbo watch`).
@@ -372,27 +372,27 @@ These scripts are defined in the root `package.json` and orchestrated by Turbore
 ### Production builds
 
 ```bash
-npx turbo build --filter=api
-npx turbo build --filter=webapp
-npx turbo build --filter=website
-npx turbo build --filter=chrome-extension
+pnpm exec turbo build --filter=api
+pnpm exec turbo build --filter=webapp
+pnpm exec turbo build --filter=website
+pnpm exec turbo build --filter=chrome-extension
 ```
 
-Shortcuts: `npm run build`, `npm run build:api`, `build:webapp`, `build:website`.
+Shortcuts: `pnpm run build`, `pnpm run build:api`, `build:webapp`, `build:website`.
 
 ### Local dev watch
 
 ```bash
-npm run dev                    # turbo watch dev — all apps with a dev script
-npm run dev:webapp-api         # webapp + api (usual local stack)
-npm run dev:api                # api only
-npm run dev:webapp             # webapp only
-npm run dev:mobile             # api + mobile
-npm run dev:emails             # React Email preview only (port 26639)
-npm run build:packages       # one-shot package compile
+pnpm run dev                    # turbo watch dev — all apps with a dev script
+pnpm run dev:webapp-api         # webapp + api (usual local stack)
+pnpm run dev:api                # api only
+pnpm run dev:webapp             # webapp only
+pnpm run dev:mobile             # api + mobile
+pnpm run dev:emails             # React Email preview only (port 26639)
+pnpm run build:packages       # one-shot package compile
 ```
 
-Lint the whole repo from the root: `npm run lint` (Biome).
+Lint the whole repo from the root: `pnpm run lint` (Biome).
 
 ---
 
@@ -402,12 +402,12 @@ Port registry: [architecture.mdx](architecture.mdx#apps).
 
 | App | Source | Dev port | Start command |
 |---|---|---|---|
-| Postgres | [`deploy/bondery/docker-compose.dev-db.yml`](../../deploy/bondery/docker-compose.dev-db.yml) | 54322 | `npm run start:postgres` |
-| Redis | [`deploy/bondery/docker-compose.dev-redis.yml`](../../deploy/bondery/docker-compose.dev-redis.yml) | 26636 | `npm run start:redis` |
-| SeaweedFS | [`deploy/bondery/docker-compose.seaweedfs.yml`](../../deploy/bondery/docker-compose.seaweedfs.yml) | 8333 | `npm run start:seaweedfs` |
-| `api` | [`apps/api`](../../apps/api) | 26631 | `npm run dev:api` or `npm run dev:webapp-api` |
-| `webapp` | [`apps/webapp`](../../apps/webapp) | 26632 | `npm run dev:webapp` or `npm run dev:webapp-api` |
-| `website` | [`apps/website`](../../apps/website) | 26630 | `npm run dev` |
-| `mobile` | [`apps/mobile`](../../apps/mobile) | 26634 (Expo Metro) | `npm run dev:mobile` |
-| `chrome-extension` | [`apps/chrome-extension`](../../apps/chrome-extension) | 26633 (WXT HMR) | `npx wxt` |
-| `@bondery/emails` preview | [`packages/emails`](../../packages/emails) | 26639 | `npm run preview` |
+| Postgres | [`deploy/bondery/docker-compose.dev-db.yml`](../../deploy/bondery/docker-compose.dev-db.yml) | 54322 | `pnpm run start:postgres` |
+| Redis | [`deploy/bondery/docker-compose.dev-redis.yml`](../../deploy/bondery/docker-compose.dev-redis.yml) | 26636 | `pnpm run start:redis` |
+| SeaweedFS | [`deploy/bondery/docker-compose.seaweedfs.yml`](../../deploy/bondery/docker-compose.seaweedfs.yml) | 8333 | `pnpm run start:seaweedfs` |
+| `api` | [`apps/api`](../../apps/api) | 26631 | `pnpm run dev:api` or `pnpm run dev:webapp-api` |
+| `webapp` | [`apps/webapp`](../../apps/webapp) | 26632 | `pnpm run dev:webapp` or `pnpm run dev:webapp-api` |
+| `website` | [`apps/website`](../../apps/website) | 26630 | `pnpm run dev` |
+| `mobile` | [`apps/mobile`](../../apps/mobile) | 26634 (Expo Metro) | `pnpm run dev:mobile` |
+| `chrome-extension` | [`apps/chrome-extension`](../../apps/chrome-extension) | 26633 (WXT HMR) | `pnpm exec wxt` |
+| `@bondery/emails` preview | [`packages/emails`](../../packages/emails) | 26639 | `pnpm run preview` |

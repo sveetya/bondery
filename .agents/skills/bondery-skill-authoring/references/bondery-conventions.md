@@ -65,14 +65,14 @@ Not every skill belongs in both — only skills that apply broadly.
 
 | | First-party (`bondery-*`) | Upstream CLI |
 |--|---------------------------|--------------|
-| Edit in repo | Yes | No — reinstall via `npx skills add` |
+| Edit in repo | Yes | No — reinstall via `pnx skills add` |
 | Lock file | No | Yes — `skills-lock.json` |
 | Checklist in SKILL.md | Required | Optional (upstream may not have one) |
 
 Install upstream skills:
 
 ```bash
-npx skills add <owner>/<repo> --skill <skill-name>
+pnx skills add <owner>/<repo> --skill <skill-name>
 ```
 
 Commit the updated `skills-lock.json` and `.agents/skills/<name>/` together.

@@ -26,7 +26,7 @@ export const DEV_PORTS = {
   WEBSITE: 26630,
 } as const;
 
-/** Local Redis URL when `npm run start:redis` is running. */
+/** Local Redis URL when `pnpm run start:redis` is running. */
 export const DEV_REDIS_URL = `redis://127.0.0.1:${DEV_PORTS.REDIS}` as const;
 
 export const DEV_URLS = {

@@ -1,6 +1,6 @@
 // Fails when ioredis clients are created outside the shared Redis module.
 //
-// Usage: npx tsx scripts/check-redis-singleton.ts
+// Usage: pnpm exec tsx scripts/check-redis-singleton.ts
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

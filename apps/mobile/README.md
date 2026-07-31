@@ -31,13 +31,13 @@ Mobile MVP app for Bondery built with Expo Router and React Native.
 
 ## Environment variables
 
-Prefer root `.env.local` + `npm run env` (see [Environment configuration](../../docs/contributing/environment.mdx)). Mobile reads `BONDERY_PUBLIC_*` via `app.config.ts` → `extra`.
+Prefer root `.env.local` + `pnpm run env` (see [Environment configuration](../../docs/contributing/environment.mdx)). Mobile reads `BONDERY_PUBLIC_*` via `app.config.ts` → `extra`.
 
 ## Development
 
 ```bash
-npm install
-npm run dev -w mobile
+pnpm install
+pnpm --filter mobile run dev
 ```
 
 Then run on emulator/device from Expo CLI.

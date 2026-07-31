@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@bondery/branding": "*",
-    "@bondery/helpers": "*",
-    "@bondery/mantine-next": "*",
-    "@bondery/openapi-spec": "*",
-    "@bondery/schemas": "*",
-    "@bondery/translations": "*",
+    "@bondery/branding": "workspace:*",
+    "@bondery/helpers": "workspace:*",
+    "@bondery/mantine-next": "workspace:*",
+    "@bondery/openapi-spec": "workspace:*",
+    "@bondery/schemas": "workspace:*",
+    "@bondery/translations": "workspace:*",
     "@mantine/core": "^9.5.0",
     "@mantine/hooks": "^9.5.0",
     "@mantine/notifications": "^9.5.0",
@@ -31,7 +31,7 @@
   },
   "description": "Bondery Website",
   "devDependencies": {
-    "@bondery/typescript-config": "*",
+    "@bondery/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.14",
     "@types/node": "^26",
@@ -60,8 +60,8 @@
     "dev": "next dev --port 26630",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "generate:api-docs": "tsx scripts/generate-api-docs.ts",
-    "prebuild": "cross-env NODE_ENV=production npm run check:env && npm run generate-icons && npm run generate:api-docs",
-    "predev": "node ../../scripts/kill-website-dev.mjs && cross-env NODE_ENV=development npm run check:env && npm run generate-icons && npm run generate:api-docs",
+    "prebuild": "cross-env NODE_ENV=production pnpm run check:env && pnpm run generate-icons && pnpm run generate:api-docs",
+    "predev": "node ../../scripts/kill-website-dev.mjs && cross-env NODE_ENV=development pnpm run check:env && pnpm run generate-icons && pnpm run generate:api-docs",
     "start": "next start"
   },
   "version": "1.7.4"

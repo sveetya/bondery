@@ -41,7 +41,7 @@ Translate values in place — **do not rename keys** or namespaces.
 
 Each locale has a `Languages.json` file listing human-readable names for every supported language code. Add the new locale's exonyms to **all** locale folders (`en`, `cs`, `de`, and your new one).
 
-`npm run check:i18n:structure` verifies parity against `supported-locales.json`.
+`pnpm run check:i18n:structure` verifies parity against `supported-locales.json`.
 
 </Step>
 <Step>
@@ -49,7 +49,7 @@ Each locale has a `Languages.json` file listing human-readable names for every s
 ## Regenerate hooks and types
 
 ```bash
-npm run build -w @bondery/translations
+pnpm run build -w @bondery/translations
 ```
 
 This updates generated hooks, `Catalog` types, and i18next augmentations. Commit the generated artifacts with your locale JSON.
@@ -62,7 +62,7 @@ This updates generated hooks, `Catalog` types, and i18next augmentations. Commit
 API error messages shown in product UI use the translations package. Add keys for any new error copy under the relevant namespace and run:
 
 ```bash
-npm run check:api-errors:translations
+pnpm run check:api-errors:translations
 ```
 
 </Step>
@@ -71,8 +71,8 @@ npm run check:api-errors:translations
 ## Verify locally
 
 ```bash
-npm run i18n:status
-npm run check:i18n
+pnpm run i18n:status
+pnpm run check:i18n
 ```
 
 Fix any missing keys or hardcoded strings the scanners report. Switch language in the webapp or mobile settings to spot-check UI.

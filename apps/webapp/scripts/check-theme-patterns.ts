@@ -1,6 +1,6 @@
 /**
  * Guards theme write patterns: useMantineColorScheme only in ColorSchemeSync.
- * Run via: npm run check:theme-patterns
+ * Run via: pnpm run check:theme-patterns
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

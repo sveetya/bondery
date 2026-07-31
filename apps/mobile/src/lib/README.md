@@ -60,6 +60,6 @@ flowchart TB
 ## Regression checks
 
 ```bash
-npm run check:types -w mobile
-npm run check-sync-patterns -w mobile
+pnpm run check:types -w mobile
+pnpm run check-sync-patterns -w mobile
 ```

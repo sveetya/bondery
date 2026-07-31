@@ -10,7 +10,7 @@ on:
       - "scripts/**"
       - "docs/**"
       - "package.json"
-      - "package-lock.json"
+      - "pnpm-lock.yaml"
       - ".nvmrc"
       - "turbo.json"
       - ".dockerignore.webapp"
@@ -30,22 +30,26 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Webapp typechecks and policies
-        run: npm run check:types -w webapp
+        run: pnpm --filter webapp run check:types
 
       - name: Webapp tests
         run: |
-          npm run test:theme -w webapp
-          npm run test:sync -w webapp
-          npm run test:runtime-config -w webapp
+          pnpm --filter webapp run test:theme
+          pnpm --filter webapp run test:sync
+          pnpm --filter webapp run test:runtime-config
 
   build-push:
     needs: gate

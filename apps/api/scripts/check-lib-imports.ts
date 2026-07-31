@@ -1,6 +1,6 @@
 // Fails when lib/ modules import from routes/ or services/ (layering violation).
 //
-// Usage: npx tsx scripts/check-lib-imports.ts
+// Usage: pnpm exec tsx scripts/check-lib-imports.ts
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

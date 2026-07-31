@@ -1,7 +1,7 @@
 /**
  * CI guard: enforce standardized API error patterns and catalog-only codes.
  *
- * Usage: npx tsx scripts/check-route-errors.ts
+ * Usage: pnpm exec tsx scripts/check-route-errors.ts
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";

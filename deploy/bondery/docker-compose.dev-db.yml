@@ -1,6 +1,6 @@
 # Local dev Postgres only — no Traefik, no dokploy-network.
 #
-#   npm run start:postgres
+#   pnpm run start:postgres
 #
 # Host port 54322. Stop any other Postgres on that port before starting.
 

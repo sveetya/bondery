@@ -25,8 +25,8 @@ export default async function globalSetup() {
   if (blocked.length > 0) {
     throw new Error(
       `E2E could not free port(s) ${blocked.join(", ")}. ` +
-        "Run `npm run kill:dev` from the repo root, or set E2E_REUSE_SERVER=1 " +
-        "if you already have `npm run dev:webapp-api` running.",
+        "Run `pnpm run kill:dev` from the repo root, or set E2E_REUSE_SERVER=1 " +
+        "if you already have `pnpm run dev:webapp-api` running.",
     );
   }
 }

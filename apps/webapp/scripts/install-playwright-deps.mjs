@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const webappRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-const command = 'sudo env "PATH=$PATH" npx playwright install-deps chromium';
+const command = 'sudo env "PATH=$PATH" pnpm exec playwright install-deps chromium';
 
 console.log("Installing Playwright system dependencies (sudo required)...");
 console.log(`> ${command}\n`);

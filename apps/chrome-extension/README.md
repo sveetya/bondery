@@ -7,8 +7,8 @@ A Chrome extension built with **React** and **TypeScript** to enhance the Bonder
 Run from this folder:
 
 ```bash
-npx wxt prepare
-npx wxt
+pnpm exec wxt prepare
+pnpm exec wxt
 ```
 
 Load `dist/chrome-mv3-dev` as unpacked extension in Chrome.

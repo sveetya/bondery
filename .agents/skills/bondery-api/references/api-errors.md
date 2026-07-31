@@ -54,8 +54,8 @@ Standard error responses on routes: `standardErrorResponses` in `packages/schema
 
 ## CI
 
-- `check-route-errors` — inside `npm run check:types -w api`
-- `npm run check:api-errors` — `check-api-errors-catalog`, `check-api-errors-translations`, `check-api-errors-client-display` (repo root)
+- `check-route-errors` — inside `pnpm run check:types -w api`
+- `pnpm run check:api-errors` — `check-api-errors-catalog`, `check-api-errors-translations`, `check-api-errors-client-display` (repo root)
 
 ## Client display
 

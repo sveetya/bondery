@@ -6,7 +6,7 @@ const HOME = "/app/home";
 const SETTINGS = "/app/settings";
 
 test.beforeEach(() => {
-  test.skip(!fs.existsSync(authFile), "Run npm run test:e2e:auth-setup first");
+  test.skip(!fs.existsSync(authFile), "Run pnpm run test:e2e:auth-setup first");
 });
 
 test.describe("authenticated session", () => {

@@ -17,9 +17,9 @@ Environment contract, self-host hardening, Redis, logging, and dependency securi
 Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **CLI:**
-- `npm run env` — sync root `.env.local` → per-app files
-- `npm run env:examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
-- `npm run env -- --check` — regenerate + fail if git dirty (**CI**)
+- `pnpm run env` — sync root `.env.local` → per-app files
+- `pnpm run env:examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
+- `pnpm run env -- --check` — regenerate + fail if git dirty (**CI**)
 
 **Adding a new secret:**
 1. Add to `ENV_MANIFEST` with `secret: true` (and `deployExample` if self-host operators set it)
@@ -95,19 +95,19 @@ Singleton enforcement: `check-redis-singleton.ts`.
 | Compose policy lint | Yes (`check-compose.mjs`) |
 | Dependabot | **No** |
 | CodeQL / Snyk / Trivy | **No** |
-| `npm audit` in CI | **No** |
+| `pnpm audit` in CI | **No** |
 | Container image scanning | **No** |
 
-**Guidance:** evaluate `npm audit` findings by exploitability — do not blindly `npm audit fix`. Lock files committed; CI uses `npm ci`.
+**Guidance:** evaluate `pnpm audit` findings by exploitability — do not blindly `pnpm audit fix`. Lock files committed; CI uses `pnpm install --frozen-lockfile`.
 
-**Review trigger:** add Dependabot and/or `npm audit` CI job; container scanning in release workflows.
+**Review trigger:** add Dependabot and/or `pnpm audit` CI job; container scanning in release workflows.
 
 ## CI security gates
 
 ```bash
-npm run env -- --check
-npm run check:types -w api     # route-security, no-route-writes, redis-singleton
-npm run test:auth -w api       # OAuth PKCE integration (optional; Postgres required)
+pnpm run env -- --check
+pnpm --filter api run check:types     # route-security, no-route-writes, redis-singleton
+pnpm --filter api run test:auth       # OAuth PKCE integration (optional; Postgres required)
 node deploy/bondery/scripts/check-compose.mjs
 ```
 

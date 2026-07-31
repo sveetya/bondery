@@ -20,7 +20,7 @@ CI builds and pushes the API image to GHCR.
 - External Redis: set `BONDERY_PRIVATE_REDIS_URL` to your Redis; do **not** start the compose Redis service.
 - Empty `BONDERY_PRIVATE_REDIS_URL` is **invalid in production**.
 
-Local laptop Redis: [`deploy/bondery/docker-compose.dev-redis.yml`](../../deploy/bondery/docker-compose.dev-redis.yml) (`npm run start:redis`, port 26636) — not the production `deploy/bondery` stack.
+Local laptop Redis: [`deploy/bondery/docker-compose.dev-redis.yml`](../../deploy/bondery/docker-compose.dev-redis.yml) (`pnpm run start:redis`, port 26636) — not the production `deploy/bondery` stack.
 
 ## Tagging model
 
@@ -166,4 +166,4 @@ docker build -f apps/api/Dockerfile -t api:local .
 docker run --rm -p 26631:26631 --env-file apps/api/.env.production.local api:local
 ```
 
-Boot validates required env via `assertRequiredEnvAtStartup` (same list as `npm run check:env -w api`) before Fastify listens.
+Boot validates required env via `assertRequiredEnvAtStartup` (same list as `pnpm run check:env -w api`) before Fastify listens.

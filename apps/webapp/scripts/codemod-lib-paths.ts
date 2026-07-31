@@ -1,6 +1,6 @@
 /**
  * One-off import path updates after webapp lib reorganization.
- * Usage: npx tsx scripts/codemod-lib-paths.ts
+ * Usage: pnpm exec tsx scripts/codemod-lib-paths.ts
  */
 
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";

@@ -44,7 +44,7 @@ See `packages/schemas/README.md` and `packages/helpers/README.md`.
 Shared packages follow the [Turborepo compiled-package model](https://turborepo.dev/docs/guides/tools/typescript#compiled-packages):
 
 - **TypeScript:** extend `@bondery/typescript-config` (`base.json` or `react-library.json`); `module` / `moduleResolution` = NodeNext.
-- **Exports:** `types` → `src/`, `default` → `dist/`; run `npm run sync-exports` after adding public subpaths.
+- **Exports:** `types` → `src/`, `default` → `dist/`; run `pnpm run sync-exports` after adding public subpaths.
 - **Internal imports:** `#*` hash paths with `.js` suffix (not `tsconfig` paths).
 - **Build:** `rimraf dist && tsc` (+ rewrite hash imports); **compile:** incremental `tsc` for dev cold start; **dev:** `tsc --watch` run alongside apps via Turbo `with`.
 - **Apps:** consume `dist/` via exports — no `transpilePackages`, no `packages/*/src` aliases (mobile Metro resolves workspace packages from `src/` separately).
@@ -58,7 +58,7 @@ Tier-1 domain data (contacts, groups, tags, and child tables in `SYNC_TABLE_KEYS
 - **Sync:** `PullManager` bootstraps and long-polls `GET /api/sync/pull`; materializers apply server rows into SQLite (server wins on pull).
 - **Online-only:** `lib/api/online-only.ts` (settings, geocode, photos, share, vCard, account delete).
 
-Run `npm run check-sync-patterns -w mobile` locally when touching mobile sync code. Full architecture: `bondery-api` skill → [sync-architecture.md](../bondery-api/references/sync-architecture.md).
+Run `pnpm run check-sync-patterns -w mobile` locally when touching mobile sync code. Full architecture: `bondery-api` skill → [sync-architecture.md](../bondery-api/references/sync-architecture.md).
 
 ## Code review
 

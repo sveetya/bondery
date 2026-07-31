@@ -2,9 +2,9 @@
 # Apply repository rulesets from .github/rulesets/*.json via the GitHub API.
 #
 # Usage:
-#   npm run github:rulesets              # apply all rulesets
-#   npm run github:rulesets -- main      # apply protect-main.json only
-#   npm run github:rulesets -- release   # apply protect-release.json only
+#   pnpm run github:rulesets              # apply all rulesets
+#   pnpm run github:rulesets -- main      # apply protect-main.json only
+#   pnpm run github:rulesets -- release   # apply protect-release.json only
 #
 # Requires: gh CLI, authenticated with repo admin access.
 
@@ -26,8 +26,8 @@ Environment:
   GITHUB_REPOSITORY   Owner/repo override (default: current gh repo)
 
 Examples:
-  npm run github:rulesets
-  npm run github:rulesets -- main release
+  pnpm run github:rulesets
+  pnpm run github:rulesets -- main release
 EOF
 }
 

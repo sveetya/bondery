@@ -104,6 +104,6 @@ Keep non-form UI state local:
 
 ## Guardrails
 
-- Run `npm run audit:forms` in `apps/mobile` to enforce:
+- Run `pnpm run audit:forms` in `apps/mobile` to enforce:
   - every submit/update form imports `@bondery/schemas`
   - forbidden patterns (`unknown as z.ZodType`, `zodResolver(schema as any)`, `EMAIL_REGEX`) are not used in submit forms

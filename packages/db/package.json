@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1097.0",
-    "@bondery/helpers": "*",
+    "@bondery/helpers": "workspace:*",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "@react-email/ui": "^6.9.1",
@@ -20,7 +20,7 @@
   },
   "description": "Prisma schema, generated client, and raw SQL functions for the Bondery Postgres database.",
   "devDependencies": {
-    "@bondery/typescript-config": "*",
+    "@bondery/typescript-config": "workspace:*",
     "@types/pg": "^8.15.6",
     "dotenv-cli": "^11.0.0",
     "rimraf": "^6.1.3",

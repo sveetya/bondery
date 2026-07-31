@@ -35,7 +35,7 @@ E2E cannot reach dev servers:
   ${formatProbe("Webapp BFF", `${webappUrl}/api/health/live`, webappBff)}
 
 Start the full stack (api + webapp):
-  npm run dev:webapp-api
+  pnpm run dev:webapp-api
 
 Wait until both ports respond, then retry.
 Or omit E2E_REUSE_SERVER=1 to let Playwright start servers.

@@ -12,7 +12,9 @@ const webappRoot = join(__dirname, "..");
 const nextDir = join(webappRoot, ".next");
 
 if (!existsSync(nextDir)) {
-  console.error("smoke-ssr-boot: missing .next build output — run `npm run build -w webapp` first");
+  console.error(
+    "smoke-ssr-boot: missing .next build output — run `pnpm run build -w webapp` first",
+  );
   process.exit(1);
 }
 
