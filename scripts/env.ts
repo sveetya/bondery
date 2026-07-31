@@ -32,7 +32,7 @@ import {
   TURBO_SYSTEM_PASSTHROUGH,
 } from "../packages/helpers/src/env/index.ts";
 import { writeDeployExample } from "./env-deploy-example.js";
-import { formatEnvFile, quoteEnvValue, sortEnvRows, compareAscii } from "./env-file-format.js";
+import { compareAscii, formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
 import { writeOpsExample } from "./env-ops-example.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
