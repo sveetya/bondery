@@ -55,7 +55,7 @@ The local Postgres instance is the foundation everything else connects to. Start
 
 ### Environment variables
 
-Set `DATABASE_URL` and `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (see [`.env.local.example`](../../.env.local.example)). OAuth client ids/secrets for Better Auth live under `BONDERY_PRIVATE_AUTH_*`. After editing, run `npm run env` to sync app env files.
+Set `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` (`npm run env` derives `DATABASE_URL` into api/db). See [`.env.local.example`](../../.env.local.example). OAuth client ids/secrets for Better Auth live under `BONDERY_PRIVATE_AUTH_*`. After editing, run `npm run env` to sync app env files.
 
 > **No OAuth credentials yet?** The stack will still start — email-based flows may be limited, but you can develop against the API. Social login buttons need GitHub/LinkedIn app credentials.
 
@@ -67,7 +67,7 @@ From the repo root (reads `BONDERY_PRIVATE_POSTGRES_PASSWORD` from `.env.local`)
 npm run start:postgres
 ```
 
-Postgres listens on **host port 54322** (`postgresql://postgres:<password>@127.0.0.1:54322/bondery` — password must match `BONDERY_PRIVATE_POSTGRES_PASSWORD`).
+Postgres listens on **host port 54322**. `npm run env` writes `DATABASE_URL` to api/db using `BONDERY_PRIVATE_POSTGRES_PASSWORD` from root `.env.local`.
 
 Stop with `npm run stop:postgres`.
 

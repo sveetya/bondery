@@ -13,6 +13,8 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ### ✨ Added
 
+- Dev: `npm run env:pull` syncs shared team secrets from Infisical into root `.env.local` (manifest `syncable` keys).
+- Dev: `npm run env` derives `DATABASE_URL` for api/db from `BONDERY_PRIVATE_POSTGRES_PASSWORD` (single source of truth for bundled local Postgres).
 - API: Sends a welcome email when a new account is provisioned.
 - API: Transactional emails (reminder digest, share contact, trial ending, account deleted, feedback) use localized copy from `@bondery/translations`.
 

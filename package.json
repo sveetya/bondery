@@ -121,6 +121,7 @@
     "env:development": "node --import tsx scripts/env.ts --development",
     "env:examples": "node scripts/generate-env-examples.mjs",
     "env:production": "node --import tsx scripts/env.ts --production",
+    "env:pull": "node --import tsx scripts/env-pull.ts",
     "generate:doc-links": "node scripts/generate-doc-links.mjs",
     "generate:openapi": "turbo generate:openapi --filter=api",
     "github:repo-settings": "bash .github/scripts/apply-repo-settings.sh",

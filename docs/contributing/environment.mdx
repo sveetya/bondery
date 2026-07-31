@@ -23,8 +23,8 @@ Bondery uses one naming scheme everywhere and one root file for local developmen
 
 | Context | What you set |
 |---------|----------------|
-| **Local dev** | Full URL in root `.env.local`, e.g. `postgresql://postgres:password@127.0.0.1:54322/bondery` |
-| **Self-host compose** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` — compose builds `DATABASE_URL` for the `api` container |
+| **Local dev** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` in root `.env.local` — `npm run env` **derives** `DATABASE_URL` into `apps/api` and `packages/db` |
+| **Self-host compose** | Only `BONDERY_PRIVATE_POSTGRES_PASSWORD` — compose **derives** `DATABASE_URL` for the `api` container |
 | **Webapp** | Nothing — the webapp calls the API over HTTP |
 
 Used in `apps/api`, `packages/db` (migrations), and `packages/db/scripts/*`.
@@ -43,7 +43,7 @@ Optional flags read only when `NODE_ENV=development` during `npm run dev`. Compo
 ```bash
 npm install
 npm run setup:dev
-# edit .env.local (OAuth clients, DATABASE_URL, secrets)
+# edit .env.local (OAuth clients, BONDERY_PRIVATE_POSTGRES_PASSWORD, secrets)
 cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
 npm run db:migrate:deploy
@@ -58,6 +58,7 @@ npm run dev
 | `npm run env` | Sync root `.env.local` → development + production per-app locals → validate |
 | `npm run env:development` | Sync only `*.development.local` (+ mobile/db `.env.local`) |
 | `npm run env:production` | Sync only `*.env.production.local` (for local `npm run build`) |
+| `npm run env:pull` | Pull `syncable` manifest secrets from Infisical → `.env.local` → `env:development` |
 | `npm run env:examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
 
 `env:development` and `env:production` use the **same values** from root `.env.local` (localhost URLs). Local production-mode builds are not deploys — they need your local URLs, not `usebondery.com`.
@@ -69,6 +70,20 @@ npm run env:check   # regenerate + fail if git dirty
 ```
 
 Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
+
+### Infisical (`env:pull`)
+
+Optional for local dev when you need shared team secrets (SMTP, GitHub OAuth, Mapy, S3, etc.). Manifest entries with `syncable: true` define which canonical keys are pulled. See the comment block above `ENV_MANIFEST` in [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) for sync recommendations.
+
+```bash
+# one-time
+cp .infisical.json.example .infisical.json   # set projectId, domain, defaultEnvironment
+infisical login
+
+npm run env:pull
+```
+
+[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings (e.g. `dev`), not the display name (`development`).
 
 ## Authoring vs generated files
 

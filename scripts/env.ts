@@ -163,7 +163,7 @@ function mergeEnvFile(path, newVars, dryRun) {
 function writeExamples(dryRun) {
   const packageVersion = readPackageVersion();
   const rootRows = sortEnvRows(
-    ENV_MANIFEST.map((e) => ({
+    ENV_MANIFEST.filter((e) => !e.omitFromRootExample).map((e) => ({
       description: e.description,
       group: e.group,
       key: e.canonical,
@@ -347,6 +347,20 @@ function syncApps(flags, mode: SyncMode) {
   }
 }
 
+function validatePostgresRootEnv(rootEnv: Record<string, string>) {
+  if (rootEnv.DATABASE_URL) {
+    log.error(
+      "Remove DATABASE_URL from root .env.local — npm run env derives it from BONDERY_PRIVATE_POSTGRES_PASSWORD",
+    );
+    process.exit(1);
+  }
+
+  if (!rootEnv.BONDERY_PRIVATE_POSTGRES_PASSWORD) {
+    log.error("Missing BONDERY_PRIVATE_POSTGRES_PASSWORD in .env.local");
+    process.exit(1);
+  }
+}
+
 function checkRoot(environment: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
     log.error("Missing .env.local — run: npm run setup:dev");
@@ -375,6 +389,10 @@ function checkRoot(environment: SyncMode) {
       log.error(`  ${name}`);
     }
     process.exit(1);
+  }
+
+  if (environment === "development") {
+    validatePostgresRootEnv(rootEnv);
   }
 
   log.success(`Root .env.local has all ${environment} required variables`);

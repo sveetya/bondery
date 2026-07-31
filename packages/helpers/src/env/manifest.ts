@@ -12,6 +12,8 @@
  * - BONDERY_OPS_*     — CI only (never synced into app local files)
  */
 
+import { DEV_PORTS } from "@bondery/schemas/constants/dev-ports";
+
 export type EnvEnvironment = "development" | "production";
 
 export type TargetId = "api" | "webapp" | "website" | "mobile" | "chrome-extension" | "db";
@@ -30,7 +32,7 @@ export type EnvTargetWrite = {
    */
   deriveFrom?: string;
   /** Optional value transform when deriving */
-  transform?: "webapp-auth-callback";
+  transform?: "local-postgres-database-url" | "webapp-auth-callback";
 };
 
 /** Optional multi-line comments rendered under a group header in generated `*.example` files. */
@@ -52,7 +54,7 @@ export const ENV_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
   Database: [
     "Generate a Postgres password:",
     "  openssl rand -base64 24 | tr -d '/+=' | head -c 32   # BONDERY_PRIVATE_POSTGRES_PASSWORD",
-    "Use the same password in DATABASE_URL (postgresql://postgres:<password>@...).",
+    "npm run env derives DATABASE_URL for api/db from this password.",
   ],
   Storage: [
     "Local dev: bundled SeaweedFS defaults below are fine.",
@@ -170,7 +172,34 @@ export type EnvVarDef = {
   boot?: BootExample;
   /** When false, omit from turbo cache env arrays (rare) */
   turboAffectsCache?: boolean;
+  /**
+   * When true, `npm run env:pull` may fetch this key from Infisical into root `.env.local`.
+   * Shared team secrets only — never inventable per-machine OAuth client ids (see block below).
+   */
+  syncable?: boolean;
+  /** Omit from generated root `.env.local.example` (derived at `npm run env` sync). */
+  omitFromRootExample?: boolean;
 };
+
+/**
+ * Infisical `env:pull` — keys with `syncable: true` are pulled into root `.env.local`.
+ *
+ * Already synced: SMTP, GitHub OAuth, Maps, S3/storage, SERVICE_SECRET, DO_NOT_TRACK,
+ * Stripe, Anthropic, PostHog, BONDERY_PRIVATE_POSTGRES_PASSWORD.
+ *
+ * Good candidates to add `syncable: true` when the team shares them in Infisical:
+ * - BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID / _SECRET — LinkedIn login locally
+ * - BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS — who gets admin on fresh DB bootstrap
+ *
+ * Usually keep local-only (do not sync):
+ * - BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID, BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET,
+ *   BONDERY_PRIVATE_WEBAPP_SESSION_SECRET — invented per dev machine; run setup:dev / provision:oauth-clients
+ * - BONDERY_PRIVATE_BETTER_AUTH_SECRETS — can be shared or per-env; team policy
+ * - BONDERY_PRIVATE_REDIS_URL — local Docker Redis unless using shared remote Redis
+ * - BONDERY_PUBLIC_*_URL localhost ports — machine-specific unless using ngrok shared URLs
+ * - BONDERY_DEV_* — local API boot toggles only
+ * - BONDERY_INFRA_* — deploy hostnames / image tags, not local dev
+ */
 
 /** Resolve example value for a manifest entry and generation profile. */
 export function resolveExampleValue(entry: EnvVarDef, profile: ExampleProfile): string {
@@ -280,6 +309,16 @@ function t(id: TargetId, runtimeName?: string): EnvTargetWrite {
   return runtimeName ? { id, runtimeName } : { id };
 }
 
+const LOCAL_POSTGRES_USER = "postgres";
+const LOCAL_POSTGRES_DB = "bondery";
+const LOCAL_POSTGRES_HOST = "127.0.0.1";
+export const EXAMPLE_POSTGRES_PASSWORD = "your-super-secret-and-long-postgres-password";
+
+/** Bundled local Postgres URL for `npm run env` derivation (matches `docker-compose.dev-db.yml`). */
+export function buildLocalPostgresDatabaseUrl(password: string): string {
+  return `postgresql://${LOCAL_POSTGRES_USER}:${encodeURIComponent(password)}@${LOCAL_POSTGRES_HOST}:${DEV_PORTS.POSTGRES}/${LOCAL_POSTGRES_DB}`;
+}
+
 export const ENV_MANIFEST: EnvVarDef[] = [
   // --- Public URLs ---
   {
@@ -323,11 +362,23 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "DATABASE_URL",
     description: "Postgres connection string (Prisma + API)",
-    exampleValue: "postgresql://postgres:password@127.0.0.1:54322/bondery",
+    exampleValue: buildLocalPostgresDatabaseUrl(EXAMPLE_POSTGRES_PASSWORD),
     group: "Database",
+    omitFromRootExample: true,
     requiredIn: ["development", "production"],
     secret: true,
-    targets: [t("api"), t("db")],
+    targets: [
+      {
+        deriveFrom: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
+        id: "api",
+        transform: "local-postgres-database-url",
+      },
+      {
+        deriveFrom: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
+        id: "db",
+        transform: "local-postgres-database-url",
+      },
+    ],
   },
   {
     canonical: "BONDERY_PRIVATE_POSTGRES_PASSWORD",
@@ -337,10 +388,11 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       value: "your-super-secret-and-long-postgres-password",
     },
     description: "Postgres password for bundled self-hosted database",
-    exampleValue: "your-super-secret-and-long-postgres-password",
+    exampleValue: EXAMPLE_POSTGRES_PASSWORD,
     group: "Database",
-    requiredIn: [],
+    requiredIn: ["development"],
     secret: true,
+    syncable: true,
     targets: [t("db")],
   },
 
@@ -369,6 +421,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Auth",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -380,6 +433,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Auth",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -472,6 +526,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api"), t("mobile")],
   },
   {
@@ -487,6 +542,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -497,6 +553,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -507,6 +564,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -522,6 +580,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Storage",
     requiredIn: ["development", "production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -636,6 +695,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "API secrets",
     requiredIn: ["development", "production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -666,6 +726,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Email",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -676,6 +737,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Email",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -686,6 +748,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Email",
     requiredIn: ["development", "production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -696,6 +759,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Email",
     requiredIn: ["development", "production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -706,6 +770,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Email",
     requiredIn: ["development", "production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -730,6 +795,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -744,6 +810,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -754,6 +821,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("api"), t("webapp")],
   },
   {
@@ -768,6 +836,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: false,
+    syncable: true,
     targets: [t("api"), t("webapp")],
   },
   {
@@ -778,6 +847,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -788,6 +858,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -802,6 +873,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Maps",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -812,6 +884,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Maps",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -822,6 +895,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "AI",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
 
@@ -834,6 +908,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("webapp")],
   },
   {
@@ -844,6 +919,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("webapp")],
   },
   {
@@ -854,6 +930,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("webapp")],
   },
   {
@@ -864,6 +941,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("webapp")],
   },
   {
@@ -874,6 +952,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: true,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -884,6 +963,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("api")],
   },
   {
@@ -893,6 +973,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Analytics",
     requiredIn: [],
     secret: false,
+    syncable: true,
     targets: [t("api"), t("webapp"), t("website")],
   },
 
@@ -1014,7 +1095,15 @@ export function applyTransform(transform: EnvTargetWrite["transform"], value: st
   if (transform === "webapp-auth-callback") {
     return `${base}/auth/callback`;
   }
+  if (transform === "local-postgres-database-url") {
+    return buildLocalPostgresDatabaseUrl(value);
+  }
   return value;
+}
+
+/** Manifest entries eligible for `npm run env:pull` (Infisical → root `.env.local`). */
+export function getSyncableEnvVars(): EnvVarDef[] {
+  return ENV_MANIFEST.filter((entry) => entry.syncable === true);
 }
 
 export function getRequiredVarsForTarget(

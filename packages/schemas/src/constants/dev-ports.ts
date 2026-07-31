@@ -3,6 +3,9 @@
  * Dev-only; production uses host `PORT` env and public domains.
  */
 
+/** Default bundled local Postgres password (matches `EXAMPLE_POSTGRES_PASSWORD` in env manifest). */
+export const DEV_POSTGRES_PASSWORD = "your-super-secret-and-long-postgres-password" as const;
+
 /** Bondery first-party HTTP dev servers (2663x block). */
 export const DEV_PORTS = {
   /** Reserved: internal admin / one-off dev utilities */
@@ -31,7 +34,7 @@ export const DEV_URLS = {
   emailPreview: `http://localhost:${DEV_PORTS.EMAIL_PREVIEW}`,
   extension: `http://localhost:${DEV_PORTS.EXTENSION}`,
   mobile: `http://localhost:${DEV_PORTS.MOBILE}`,
-  postgres: `postgresql://postgres:password@127.0.0.1:${DEV_PORTS.POSTGRES}/bondery`,
+  postgres: `postgresql://postgres:${encodeURIComponent(DEV_POSTGRES_PASSWORD)}@127.0.0.1:${DEV_PORTS.POSTGRES}/bondery`,
   redis: DEV_REDIS_URL,
   webapp: `http://localhost:${DEV_PORTS.WEBAPP}`,
   website: `http://localhost:${DEV_PORTS.WEBSITE}`,

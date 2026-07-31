@@ -6,10 +6,11 @@ export {
   resolveBootEnvValue,
 } from "#env/apply-boot-env.js";
 export type { EnvCheckConfig } from "#env/check-env.js";
-export { checkEnvVariables, parseEnvFile } from "#env/check-env.js";
+export { checkEnvVariables, parseEnvContent, parseEnvFile } from "#env/check-env.js";
 export {
   applyTransform,
   type BootExample,
+  buildLocalPostgresDatabaseUrl,
   DEPLOY_GROUP_GUIDES,
   DEPLOY_GROUP_ORDER,
   type DeployExample,
@@ -18,10 +19,12 @@ export {
   type EnvEnvironment,
   type EnvTargetWrite,
   type EnvVarDef,
+  EXAMPLE_POSTGRES_PASSWORD,
   type ExampleProfile,
   getAllRuntimeNames,
   getRequiredVarsForTarget,
   getRuntimeNamesForTarget,
+  getSyncableEnvVars,
   OPS_ENV_VARS,
   OPS_GROUP_GUIDES,
   OPS_GROUP_ORDER,

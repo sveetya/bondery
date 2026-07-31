@@ -9,11 +9,12 @@
 
 import { execSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createCliLogger } from "@bondery/helpers/cli";
-import { quoteEnvValue } from "./env-file-format.js";
+import { EXAMPLE_POSTGRES_PASSWORD } from "../packages/helpers/src/env/index.ts";
+import { upsertEnvAssignments } from "./env-upsert.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
@@ -25,6 +26,17 @@ const INVENTABLE_AUTH = [
   { bytes: 16, key: "BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID" },
   { bytes: 32, key: "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET" },
 ] as const;
+
+function generatePostgresPassword(): string {
+  return randomBytes(24).toString("base64").replace(/[/+=]/g, "").slice(0, 32);
+}
+
+function isPostgresPasswordPlaceholder(value: string | undefined): boolean {
+  if (!value) {
+    return true;
+  }
+  return value === EXAMPLE_POSTGRES_PASSWORD || value === "password";
+}
 
 function run(cmd: string) {
   execSync(cmd, { cwd: repoRoot, stdio: "inherit" });
@@ -40,20 +52,6 @@ function readEnvAssignment(content: string, key: string): string | undefined {
     raw = raw.slice(1, -1);
   }
   return raw;
-}
-
-function upsertEnvAssignments(path: string, updates: Record<string, string>) {
-  let content = existsSync(path) ? readFileSync(path, "utf-8") : "";
-  for (const [key, value] of Object.entries(updates)) {
-    const line = `${key}=${quoteEnvValue(value)}`;
-    const re = new RegExp(`^${key}=.*$`, "m");
-    if (re.test(content)) {
-      content = content.replace(re, line);
-    } else {
-      content = `${content.trimEnd()}\n${line}\n`;
-    }
-  }
-  writeFileSync(path, content.endsWith("\n") ? content : `${content}\n`, "utf-8");
 }
 
 /** Fill empty inventable OAuth client id/secret placeholders so env check can pass. */
@@ -80,6 +78,20 @@ function seedInventableAuthSecrets(envPath: string) {
   }
 }
 
+/** Seed bundled local Postgres password when still on the example placeholder. */
+function seedPostgresPassword(envPath: string) {
+  const content = readFileSync(envPath, "utf-8");
+  const current = readEnvAssignment(content, "BONDERY_PRIVATE_POSTGRES_PASSWORD");
+  if (!isPostgresPasswordPlaceholder(current)) {
+    return;
+  }
+
+  const password = generatePostgresPassword();
+  upsertEnvAssignments(envPath, { BONDERY_PRIVATE_POSTGRES_PASSWORD: password });
+  log.warn("Generated BONDERY_PRIVATE_POSTGRES_PASSWORD in .env.local");
+  log.info("  npm run env will derive DATABASE_URL for api/db");
+}
+
 function main() {
   const rootEnv = join(repoRoot, ".env.local");
   const example = join(repoRoot, ".env.local.example");
@@ -100,6 +112,7 @@ function main() {
     log.info(".env.local already present");
   }
   seedInventableAuthSecrets(rootEnv);
+  seedPostgresPassword(rootEnv);
 
   log.step(3, 3, "Sync app env files (development + production) → check");
   run("npm run env");
