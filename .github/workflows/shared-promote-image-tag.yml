@@ -1,0 +1,80 @@
+name: Shared - Promote image tag
+
+on:
+  workflow_call:
+    inputs:
+      image_name:
+        description: GHCR image name (without tag)
+        required: true
+        type: string
+      source_tag:
+        description: Existing tag to promote from (e.g. sha-abc1234)
+        required: true
+        type: string
+      target_tag:
+        description: New tag to point at the same digest
+        required: true
+        type: string
+    secrets:
+      BONDERY_OPS_GHCR_WRITE_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  pre_promote_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: ./.github/actions/shared/ghcr-login
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+
+      - name: Verify source image exists
+        env:
+          IMAGE_NAME: ${{ inputs.image_name }}
+          SOURCE_TAG: ${{ inputs.source_tag }}
+        run: |
+          set -euo pipefail
+          if ! docker buildx imagetools inspect "${IMAGE_NAME}:${SOURCE_TAG}" >/dev/null 2>&1; then
+            echo "::error::No image at ${IMAGE_NAME}:${SOURCE_TAG} — merge to main first (stage-images) or use force_rebuild on manual release."
+            exit 1
+          fi
+          echo "Source image ${IMAGE_NAME}:${SOURCE_TAG} exists."
+
+  promote:
+    needs: pre_promote_check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: ./.github/actions/shared/ghcr-login
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+
+      - name: Promote image tag
+        env:
+          IMAGE_NAME: ${{ inputs.image_name }}
+          SOURCE_TAG: ${{ inputs.source_tag }}
+          TARGET_TAG: ${{ inputs.target_tag }}
+        run: |
+          docker buildx imagetools create \
+            -t "${IMAGE_NAME}:${TARGET_TAG}" \
+            "${IMAGE_NAME}:${SOURCE_TAG}"

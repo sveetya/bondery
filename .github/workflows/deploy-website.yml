@@ -1,7 +1,6 @@
 name: Deploy - Website
 
-# Release-branch CD: push to release → build → floating :production (no semver tags).
-# Same promotion gate as product deploys (`git push origin main:release`).
+# Release-branch CD: push to release → promote :sha from main when available, else build → smoke → Dokploy.
 
 on:
   push:
@@ -17,9 +16,12 @@ on:
       - ".nvmrc"
       - "turbo.json"
       - ".dockerignore.website"
+      - "apps/website/Dockerfile"
       - ".github/actions/shared/**"
       - ".github/workflows/deploy-website.yml"
       - ".github/workflows/shared-docker-build-push.yml"
+      - ".github/workflows/shared-promote-image-tag.yml"
+      - ".github/workflows/stage-images.yml"
       - "deploy/ops/**"
   workflow_dispatch:
 
@@ -28,7 +30,53 @@ permissions:
   packages: write
 
 jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.sha.outputs.short }}
+      image_exists: ${{ steps.inspect.outputs.exists }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Resolve short SHA
+        id: sha
+        run: echo "short=$(echo "${GITHUB_SHA}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: ./.github/actions/shared/ghcr-login
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+
+      - name: Check for staged website image
+        id: inspect
+        env:
+          SHORT_SHA: ${{ steps.sha.outputs.short }}
+        run: |
+          if docker buildx imagetools inspect "ghcr.io/usebondery/website:sha-${SHORT_SHA}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  promote:
+    needs: resolve
+    if: needs.resolve.outputs.image_exists == 'true'
+    uses: ./.github/workflows/shared-promote-image-tag.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/website
+      source_tag: sha-${{ needs.resolve.outputs.short_sha }}
+      target_tag: production
+
   build-push:
+    needs: resolve
+    if: needs.resolve.outputs.image_exists != 'true'
     uses: ./.github/workflows/shared-docker-build-push.yml
     secrets: inherit
     with:
@@ -46,8 +94,15 @@ jobs:
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
 
+  image_ready:
+    needs: [resolve, promote, build-push]
+    if: ${{ always() && (needs.promote.result == 'success' || needs.build-push.result == 'success') }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Website image ready (sha-${{ needs.resolve.outputs.short_sha }})"
+
   smoke:
-    needs: build-push
+    needs: image_ready
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -72,7 +127,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
 
-      - name: Start website from just-built SHA tag
+      - name: Start website from SHA tag
         working-directory: deploy/ops
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
@@ -114,7 +169,7 @@ jobs:
         run: docker compose --env-file .env.smoke down -v || true
 
   notify-dokploy:
-    needs: [build-push, smoke]
+    needs: [image_ready, smoke]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
