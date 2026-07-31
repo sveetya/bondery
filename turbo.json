@@ -539,7 +539,7 @@
     },
     "website#generate:api-docs": {
       "cache": true,
-      "dependsOn": ["api#generate:openapi", "^build"],
+      "dependsOn": ["^build"],
       "outputs": ["../../docs/api/api-reference/_generated/**"]
     }
   },
