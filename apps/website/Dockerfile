@@ -5,6 +5,7 @@ RUN apk add --no-cache libc6-compat
 RUN npm install -g pnpm@11.18.0
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
+ENV CI=true
 
 FROM base AS prune
 COPY . .

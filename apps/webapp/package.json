@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@ai-sdk/react": "^4.0.44",
+    "@better-auth/oauth-provider": "^1.7.0-rc.2",
     "@bondery/branding": "workspace:*",
     "@bondery/helpers": "workspace:*",
     "@bondery/mantine-next": "workspace:*",
@@ -40,6 +41,7 @@
     "@tiptap/suggestion": "^3.29.2",
     "@types/d3": "^7.4.3",
     "ai": "^7.0.41",
+    "better-auth": "^1.7.0-rc.2",
     "d3": "^7.9.0",
     "dayjs": "^1.11.21",
     "flag-icons": "^7.5.0",
@@ -47,6 +49,7 @@
     "i18next": "^26.3.6",
     "i18next-resources-to-backend": "^1.2.2",
     "is-emoji-supported": "^0.0.5",
+    "jose": "^6.2.4",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "maplibre-gl": "^6.0.0",
