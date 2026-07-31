@@ -26,12 +26,17 @@ export function quoteEnvValue(value: string) {
   return value;
 }
 
+/** Stable ASCII sort for generated env files (must match across OS/locale). */
+export function compareAscii(a: string, b: string) {
+  return a.localeCompare(b, "en", { sensitivity: "variant" });
+}
+
 export function sortEnvRows<T extends { group: string; key: string }>(rows: T[]) {
   return rows.toSorted((a, b) => {
     if (a.group !== b.group) {
-      return a.group.localeCompare(b.group);
+      return compareAscii(a.group, b.group);
     }
-    return a.key.localeCompare(b.key);
+    return compareAscii(a.key, b.key);
   });
 }
 

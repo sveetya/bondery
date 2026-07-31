@@ -17,7 +17,6 @@ function run(command) {
   execSync(command, { cwd: root, stdio: "inherit" });
 }
 
-run("npm run build -w @bondery/helpers");
 run("node --import tsx scripts/env.ts --write-examples --write-turbo");
 
 if (stage) {

@@ -32,7 +32,7 @@ import {
   TURBO_SYSTEM_PASSTHROUGH,
 } from "../packages/helpers/src/env/index.ts";
 import { writeDeployExample } from "./env-deploy-example.js";
-import { formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
+import { formatEnvFile, quoteEnvValue, sortEnvRows, compareAscii } from "./env-file-format.js";
 import { writeOpsExample } from "./env-ops-example.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -118,9 +118,9 @@ function collectTargetVars(targetId, rootEnv, useExamples) {
 
   return [...byKey.values()].toSorted((a, b) => {
     if (a.group !== b.group) {
-      return a.group.localeCompare(b.group);
+      return compareAscii(a.group, b.group);
     }
-    return a.key.localeCompare(b.key);
+    return compareAscii(a.key, b.key);
   });
 }
 
@@ -145,7 +145,7 @@ function mergeEnvFile(path, newVars, dryRun) {
 
   if (unknown.length > 0) {
     body += "\n# --- Preserved (not in manifest) ---\n";
-    for (const [key, value] of unknown.toSorted(([a], [b]) => a.localeCompare(b))) {
+    for (const [key, value] of unknown.toSorted(([a], [b]) => compareAscii(a, b))) {
       body += `${key}=${quoteEnvValue(value)}\n`;
     }
   }
@@ -216,7 +216,7 @@ function sortObjectKeys<T>(value: T): T {
   }
   if (value !== null && typeof value === "object") {
     const sorted = Object.entries(value as Record<string, unknown>)
-      .toSorted(([a], [b]) => a.localeCompare(b))
+      .toSorted(([a], [b]) => compareAscii(a, b))
       .map(([key, nested]) => [key, sortObjectKeys(nested)]);
     return Object.fromEntries(sorted) as T;
   }
