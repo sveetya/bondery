@@ -30,7 +30,7 @@ import {
   resolveExampleValue,
   SYNC_TARGETS,
   TURBO_SYSTEM_PASSTHROUGH,
-} from "@bondery/helpers/env";
+} from "../packages/helpers/src/env/index.ts";
 import { writeDeployExample } from "./env-deploy-example.js";
 import { formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
 import { writeOpsExample } from "./env-ops-example.js";
@@ -401,6 +401,17 @@ function assertGeneratedFresh() {
     log.error("Generated env files / turbo.json are stale. Commit the updates:");
     for (const line of diff.split("\n")) {
       log.error(`  ${line}`);
+    }
+    try {
+      const patch = execSync(
+        "git diff -- .env.local.example turbo.json 'apps/**/.env*.example' 'apps/**/.env.example' deploy/bondery/.env.example deploy/ops/.env.example",
+        { cwd: repoRoot, encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 },
+      ).trim();
+      if (patch) {
+        log.error(patch.slice(0, 8000));
+      }
+    } catch {
+      // Best-effort diff for CI logs.
     }
     process.exit(1);
   }
