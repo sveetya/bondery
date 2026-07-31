@@ -9,7 +9,7 @@ Grounded in `apps/webapp/e2e/`. Read `playwright.config.mjs` header comments for
   - `BONDERY_PUBLIC_API_URL=http://127.0.0.1:26631`
   - `BONDERY_PUBLIC_WEBAPP_URL=http://127.0.0.1:26632`
 - GitHub OAuth app callback: `http://127.0.0.1:26631/auth/callback/github`
-- Run `npm run provision-oauth-clients:dev -w api` after URL changes
+- Run `npm run provision:oauth-clients` after URL changes
 
 ## Config highlights
 

@@ -10,7 +10,7 @@
  *
  * Requires the schema to already be migrated (`prisma migrate deploy`) —
  * this suite does not run migrations itself. Run locally after
- * `npm run release-migrate -w @bondery/db` (not wired in CI).
+ * `npm run release-migrate` (not wired in CI).
  */
 import assert from "node:assert/strict";
 import { createHash, randomBytes } from "node:crypto";

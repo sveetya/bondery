@@ -11,7 +11,7 @@
  * - Public URLs must match Playwright's host (default `127.0.0.1`, or set `E2E_PUBLIC_HOST=localhost`
  *   when reusing `dev:webapp-api` with localhost in `.env.development.local`).
  * - GitHub OAuth app callback: `http://127.0.0.1:26631/auth/callback/github`
- *   Run `npm run provision-oauth-clients:dev -w api` after URL changes.
+ *   Run `npm run provision:oauth-clients` after URL changes.
  *
  * ## Manual GitHub auth (storageState)
  *

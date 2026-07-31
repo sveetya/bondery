@@ -15,7 +15,7 @@ Examples:
 |------|----------------|
 | Add validation | Unit test for invalid input passes → `npm test -w @bondery/helpers` (if helper changed) |
 | Fix API bug | Repro test passes → targeted `test:sync` or optional `test:api` when DB-backed |
-| New route | OpenAPI in sync → `npm run check-openapi` |
+| New route | OpenAPI in sync → `npm run check:openapi` |
 | Mobile sync change | Pattern lint clean → `npm run check-sync-patterns -w mobile` |
 
 Architect plans should include `→ verify:` on each implementation task without running commands.
@@ -34,7 +34,7 @@ Docs-only, copy, isolated styling with no contract or shared-package impact.
 
 Isolated logic in one app or package; no auth, schema, or export surface change.
 
-**Minimum:** workspace `check-types` + targeted `test:*` for that workspace.
+**Minimum:** workspace `check:types` + targeted `test:*` for that workspace.
 
 ### High
 
@@ -62,8 +62,8 @@ Run verification:
 | Read-only (preferred for verify) | Mutating (review diff after) |
 |----------------------------------|------------------------------|
 | `npx biome check <files>` | `npm run lint` (writes whole repo) |
-| `biome ci .` | `npm run generate-openapi` |
-| `npm run check-types` | `npm run env -- --check` (may regenerate examples) |
+| `biome ci .` | `npm run generate:openapi` |
+| `npm run check:types` | `npm run env -- --check` (may regenerate examples) |
 | `npm run test:*` | Translation `i18n:types` / build steps that emit files |
 
 ## Report format

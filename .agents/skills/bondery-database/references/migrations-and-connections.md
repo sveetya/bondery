@@ -4,17 +4,17 @@ Bondery uses **classic Prisma migrate** (`prisma migrate dev` / `deploy`), not P
 
 ## Migration workflow
 
-Package scripts in `packages/db/package.json`:
+Package scripts live in `packages/db/package.json`; run them from the repo root via root aliases (`npm run db:*`, `npm run release-migrate`).
 
 | Command | Purpose |
 |---------|---------|
-| `npm run db:generate -w @bondery/db` | Generate Prisma client |
-| `npm run db:validate -w @bondery/db` | Validate merged multi-file schema |
-| `npm run db:migrate:dev -w @bondery/db` | Create/apply development migration |
-| `npm run db:migrate:deploy -w @bondery/db` | Apply committed Prisma migrations |
-| `npm run db:functions -w @bondery/db` | Apply idempotent SQL functions/indexes |
-| `npm run release-migrate -w @bondery/db` | Production/CI migration gate |
-| `npm run db:studio -w @bondery/db` | Inspect local data |
+| `npm run db:generate` | Generate Prisma client |
+| `npm run db:validate` | Validate merged multi-file schema |
+| `npm run db:migrate:dev` | Create/apply development migration |
+| `npm run db:migrate:deploy` | Apply committed Prisma migrations |
+| `npm run db:functions` | Apply idempotent SQL functions/indexes |
+| `npm run release-migrate` | Production/CI migration gate |
+| `npm run db:studio` | Inspect local data |
 
 Release order is mandatory:
 
@@ -22,7 +22,7 @@ Release order is mandatory:
 prisma migrate deploy → apply functions.sql → provision OAuth clients → provision platform admins
 ```
 
-Compose `api` `pre_start`, CI (`npm run release-migrate -w @bondery/db`), and host-run `npm run dev` (development) use this pipeline. `docker compose up` alone does not migrate unless `api` is recreated and `pre_start` runs.
+Compose `api` `pre_start`, CI (`npm run release-migrate`), and host-run `npm run dev` (development) use this pipeline. `docker compose up` alone does not migrate unless `api` is recreated and `pre_start` runs.
 
 ## Migration rules
 

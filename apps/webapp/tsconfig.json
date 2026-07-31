@@ -13,7 +13,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
     "../../packages/translations/src/generated/i18next-cli/i18next.d.ts"
   ]
 }

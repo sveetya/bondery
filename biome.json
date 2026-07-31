@@ -33,7 +33,10 @@
       "!**/*.generated.ts",
       "!**/generated",
       "!packages/schemas/src/openapi/fixtures",
-      "!**/.dockerignore*"
+      "!packages/translations/.i18next-cli-mirror",
+      "!**/.dockerignore*",
+      "!**/.cursor",
+      "!**/.source"
     ]
   },
   "formatter": {

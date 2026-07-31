@@ -58,7 +58,7 @@ Tier-1 domain data (contacts, groups, tags, and child tables in `SYNC_TABLE_KEYS
 - **Sync:** `PullManager` bootstraps and long-polls `GET /api/sync/pull`; materializers apply server rows into SQLite (server wins on pull).
 - **Online-only:** `lib/api/online-only.ts` (settings, geocode, photos, share, vCard, account delete).
 
-Run `npm run check-sync-patterns --workspace=mobile` locally when touching mobile sync code. Full architecture: `bondery-api` skill → [sync-architecture.md](../bondery-api/references/sync-architecture.md).
+Run `npm run check-sync-patterns -w mobile` locally when touching mobile sync code. Full architecture: `bondery-api` skill → [sync-architecture.md](../bondery-api/references/sync-architecture.md).
 
 ## Code review
 

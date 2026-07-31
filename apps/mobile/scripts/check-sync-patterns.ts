@@ -1,6 +1,6 @@
 /**
  * Guards against tier-1 REST fetch patterns in mobile feature code.
- * Run via: npm run check-sync-patterns --workspace=mobile
+ * Run via: npm run check-sync-patterns -w mobile
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";

@@ -2,15 +2,16 @@
  * Unified local env CLI.
  *
  * Day-to-day:
- *   npm run env
- *     → sync apps → check root
+ *   npm run env                 → sync development + production locals → check root
+ *   npm run env:development     → sync *.development.local (+ mobile/db .env.local)
+ *   npm run env:production      → sync *.production.local (local prod-mode builds)
  *
  * First clone:
  *   npm run setup:dev
  *
  * Codegen / CI (not day-to-day DX):
- *   npm run env -- --write-examples --write-turbo
- *   npm run env -- --check          # regenerate + fail if git dirty
+ *   npm run env:examples
+ *   npm run env:check             # regenerate + fail if git dirty
  */
 
 import { execSync } from "node:child_process";
@@ -29,9 +30,9 @@ import {
   resolveExampleValue,
   SYNC_TARGETS,
   TURBO_SYSTEM_PASSTHROUGH,
-} from "@bondery/helpers/env";
+} from "../packages/helpers/src/env/index.ts";
 import { writeDeployExample } from "./env-deploy-example.js";
-import { formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
+import { compareAscii, formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
 import { writeOpsExample } from "./env-ops-example.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -46,9 +47,13 @@ function readPackageVersion(): string {
   return pkg.version ?? "";
 }
 
+type SyncMode = "development" | "production";
+
 function parseArgs(argv) {
   return {
+    all: argv.includes("--all"),
     check: argv.includes("--check"),
+    development: argv.includes("--development"),
     dryRun: argv.includes("--dry-run"),
     only: (() => {
       const onlyArg = argv.find((a) => a.startsWith("--only="));
@@ -61,10 +66,21 @@ function parseArgs(argv) {
         .map((s) => s.trim())
         .filter(Boolean);
     })(),
+    production: argv.includes("--production"),
     skipCheck: argv.includes("--skip-check"),
     writeExamples: argv.includes("--write-examples"),
     writeTurbo: argv.includes("--write-turbo"),
   };
+}
+
+function resolveSyncModes(flags): SyncMode[] {
+  if (flags.all) {
+    return ["development", "production"];
+  }
+  if (flags.production) {
+    return ["production"];
+  }
+  return ["development"];
 }
 
 function collectTargetVars(targetId, rootEnv, useExamples) {
@@ -102,9 +118,9 @@ function collectTargetVars(targetId, rootEnv, useExamples) {
 
   return [...byKey.values()].toSorted((a, b) => {
     if (a.group !== b.group) {
-      return a.group.localeCompare(b.group);
+      return compareAscii(a.group, b.group);
     }
-    return a.key.localeCompare(b.key);
+    return compareAscii(a.key, b.key);
   });
 }
 
@@ -129,7 +145,7 @@ function mergeEnvFile(path, newVars, dryRun) {
 
   if (unknown.length > 0) {
     body += "\n# --- Preserved (not in manifest) ---\n";
-    for (const [key, value] of unknown.toSorted(([a], [b]) => a.localeCompare(b))) {
+    for (const [key, value] of unknown.toSorted(([a], [b]) => compareAscii(a, b))) {
       body += `${key}=${quoteEnvValue(value)}\n`;
     }
   }
@@ -147,7 +163,7 @@ function mergeEnvFile(path, newVars, dryRun) {
 function writeExamples(dryRun) {
   const packageVersion = readPackageVersion();
   const rootRows = sortEnvRows(
-    ENV_MANIFEST.map((e) => ({
+    ENV_MANIFEST.filter((e) => !e.omitFromRootExample).map((e) => ({
       description: e.description,
       group: e.group,
       key: e.canonical,
@@ -200,7 +216,7 @@ function sortObjectKeys<T>(value: T): T {
   }
   if (value !== null && typeof value === "object") {
     const sorted = Object.entries(value as Record<string, unknown>)
-      .toSorted(([a], [b]) => a.localeCompare(b))
+      .toSorted(([a], [b]) => compareAscii(a, b))
       .map(([key, nested]) => [key, sortObjectKeys(nested)]);
     return Object.fromEntries(sorted) as T;
   }
@@ -298,7 +314,7 @@ function _upsertEnvFile(path, updates) {
   writeFileSync(path, content.endsWith("\n") ? content : `${content}\n`, "utf-8");
 }
 
-function syncApps(flags) {
+function syncApps(flags, mode: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
     log.error("Missing .env.local — copy from .env.local.example:");
     log.info("  cp .env.local.example .env.local");
@@ -310,23 +326,42 @@ function syncApps(flags) {
   const summary = [];
 
   for (const target of targets) {
+    const relPath = mode === "production" ? target.productionFile : target.devFile;
+    if (!relPath) {
+      continue;
+    }
     const rows = collectTargetVars(target.id, rootEnv, false);
     const asRecord = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-    const path = join(repoRoot, target.devFile);
+    const path = join(repoRoot, relPath);
     const count = mergeEnvFile(path, asRecord, flags.dryRun);
-    summary.push({ file: target.devFile, target: target.id, vars: count });
+    summary.push({ file: relPath, mode, target: target.id, vars: count });
   }
 
   if (summary.length > 0) {
     log.table(summary);
     log.success(
-      flags.dryRun ? `Dry run: ${summary.length} targets` : `Synced ${summary.length} targets`,
+      flags.dryRun
+        ? `Dry run: ${summary.length} ${mode} targets`
+        : `Synced ${summary.length} ${mode} targets`,
     );
   }
 }
 
-function checkRoot() {
-  const environment = process.env.NODE_ENV === "production" ? "production" : "development";
+function validatePostgresRootEnv(rootEnv: Record<string, string>) {
+  if (rootEnv.DATABASE_URL) {
+    log.error(
+      "Remove DATABASE_URL from root .env.local — npm run env derives it from BONDERY_PRIVATE_POSTGRES_PASSWORD",
+    );
+    process.exit(1);
+  }
+
+  if (!rootEnv.BONDERY_PRIVATE_POSTGRES_PASSWORD) {
+    log.error("Missing BONDERY_PRIVATE_POSTGRES_PASSWORD in .env.local");
+    process.exit(1);
+  }
+}
+
+function checkRoot(environment: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
     log.error("Missing .env.local — run: npm run setup:dev");
     process.exit(1);
@@ -356,12 +391,20 @@ function checkRoot() {
     process.exit(1);
   }
 
+  if (environment === "development") {
+    validatePostgresRootEnv(rootEnv);
+  }
+
   log.success(`Root .env.local has all ${environment} required variables`);
 
   for (const target of SYNC_TARGETS) {
-    const path = join(repoRoot, target.devFile);
+    const relPath = environment === "production" ? target.productionFile : target.devFile;
+    if (!relPath) {
+      continue;
+    }
+    const path = join(repoRoot, relPath);
     if (!existsSync(path)) {
-      log.warn(`Missing ${target.devFile} — run npm run env`);
+      log.warn(`Missing ${relPath} — run npm run env`);
     }
   }
 }
@@ -376,6 +419,17 @@ function assertGeneratedFresh() {
     log.error("Generated env files / turbo.json are stale. Commit the updates:");
     for (const line of diff.split("\n")) {
       log.error(`  ${line}`);
+    }
+    try {
+      const patch = execSync(
+        "git diff -- .env.local.example turbo.json 'apps/**/.env*.example' 'apps/**/.env.example' deploy/bondery/.env.example deploy/ops/.env.example",
+        { cwd: repoRoot, encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 },
+      ).trim();
+      if (patch) {
+        log.error(patch.slice(0, 8000));
+      }
+    } catch {
+      // Best-effort diff for CI logs.
     }
     process.exit(1);
   }
@@ -402,7 +456,10 @@ function main() {
         a === "--write-examples" ||
         a === "--write-turbo" ||
         a === "--dry-run" ||
-        a === "--skip-check",
+        a === "--skip-check" ||
+        a === "--all" ||
+        a === "--development" ||
+        a === "--production",
     );
 
   if (flags.writeExamples) {
@@ -415,10 +472,15 @@ function main() {
     return;
   }
 
-  // Day-to-day path: sync → check
-  syncApps(flags);
+  const modes = resolveSyncModes(flags);
+
+  for (const mode of modes) {
+    syncApps(flags, mode);
+  }
   if (!flags.skipCheck && !flags.dryRun) {
-    checkRoot();
+    for (const mode of modes) {
+      checkRoot(mode);
+    }
   }
 }
 

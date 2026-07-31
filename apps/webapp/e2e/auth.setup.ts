@@ -18,7 +18,7 @@ setup("manual GitHub login", async ({ page }) => {
         `OAuth failed — landed on ${url}. ` +
           "Common fixes: align BONDERY_PUBLIC_*_URL with E2E_PUBLIC_HOST (localhost vs 127.0.0.1), " +
           "set GitHub callback to http://<host>:26631/auth/callback/github, " +
-          "run `npm run provision-oauth-clients:dev -w api`, restart dev servers.",
+          "run `npm run provision:oauth-clients`, restart dev servers.",
         { cause: error },
       );
     }

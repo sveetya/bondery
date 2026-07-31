@@ -22,7 +22,7 @@ useModalBlocking(modalId, isBlocking);
 
 **Open imperatively only** — `open*Modal()` + `modals.open`. Exception: `OnboardingFlowContent` in `OnboardingClient.tsx` (declarative non-dismissible `<Modal>` wizard shell).
 
-See `apps/webapp/src/lib/modals/README.md`. CI: `npm run check-modal-patterns:strict`.
+See `apps/webapp/src/lib/modals/README.md`. CI: `npm run check:modal-patterns -w webapp`.
 
 ---
 

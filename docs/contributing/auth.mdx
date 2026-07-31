@@ -28,7 +28,7 @@ User → client (webapp / mobile / extension)
      → client calls API with Bearer JWT (or native session on mobile)
 ```
 
-OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/src/lib/bootstrap/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI (`npm run release-migrate -w @bondery/db`) and self-host deploys (`api` `pre_start` → `release-migrate` CLI).
+OAuth clients are **not** registered through a UI or a logged-in session. `apps/api/src/lib/bootstrap/provision-oauth-clients.ts` upserts first-party clients in Postgres from env vars. It runs automatically after migrations in CI (`npm run release-migrate`) and self-host deploys (`api` `pre_start` → `release-migrate` CLI).
 
 ## Local bootstrap
 
@@ -75,13 +75,13 @@ BONDERY_INFRA_CHROME_EXTENSION_ID="lpcmokfekjjejnpobhbkgmjkodfhpmha"
 cd deploy/bondery
 docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
-npm run db:migrate:deploy -w @bondery/db
+npm run db:migrate:deploy
 ```
 
 Start local Redis (required for Better Auth secondary storage, rate limits, and sync wake):
 
 ```bash
-npm run start -w redis
+npm run start:redis
 ```
 
 Set `BONDERY_PRIVATE_REDIS_URL=redis://127.0.0.1:26636` in root `.env.local` (default in examples), then `npm run env`.
@@ -97,7 +97,7 @@ Use `db:migrate:deploy` to apply existing migrations locally. Reserve `db:migrat
 
 ```bash
 npm run env
-npm run provision-oauth-clients:dev -w api
+npm run provision:oauth-clients
 ```
 
 `provision-oauth-clients` upserts `OauthClient` rows for the webapp and extension, and links them to the API resource. Re-run it whenever you change OAuth client ids, secrets, redirect URIs, or extension ID.
@@ -136,7 +136,7 @@ Canonical definitions live in [`packages/helpers/src/env/manifest.ts`](../../pac
 
 ### `oauth_resource` / `oauth_client` table does not exist
 
-Migrations have not been applied. Run `npm run db:migrate:deploy -w @bondery/db`, then re-run provisioning.
+Migrations have not been applied. Run `npm run db:migrate:deploy`, then re-run provisioning.
 
 ### `Environment variable not found: DATABASE_URL` during migrate
 
@@ -144,7 +144,7 @@ Run migrations from the repo root with the `@bondery/db` workspace script (it lo
 
 ### Redirect URI mismatch (Chrome extension)
 
-Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision-oauth-clients:dev -w api`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
+Your extension ID changed or the OAuth client was wiped (e.g. after `prisma migrate reset`). Update `BONDERY_INFRA_CHROME_EXTENSION_ID`, run `npm run env`, then `npm run provision:oauth-clients`. See [Chrome Extension OAuth Setup](../../.agents/workflows/CHROME-EXTENSION-OAUTH.md).
 
 ### CORS blocked on `sign-in/social` with `200 (OK)` but no `Access-Control-Allow-Origin`
 

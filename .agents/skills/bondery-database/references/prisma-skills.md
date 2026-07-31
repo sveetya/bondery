@@ -38,8 +38,8 @@ Use this when reading Prisma Next docs for ideas; implement with classic Prisma 
 | Bondery (classic Prisma 7) | Prisma Next analogue | Bondery reference |
 |----------------------------|----------------------|-------------------|
 | `packages/db/prisma/` (multi-file) | `contract.prisma` / contract builder | [schema-conventions.md](./schema-conventions.md) |
-| `npm run db:migrate:dev -w @bondery/db` | `migration plan` + `migrate` (or dev `db update`) | [migrations-and-connections.md](./migrations-and-connections.md) |
-| `npm run release-migrate -w @bondery/db` | `migrate` + `db verify` in deploy pipeline | [migrations-and-connections.md](./migrations-and-connections.md) |
+| `npm run db:migrate:dev` | `migration plan` + `migrate` (or dev `db update`) | [migrations-and-connections.md](./migrations-and-connections.md) |
+| `npm run release-migrate` | `migrate` + `db verify` in deploy pipeline | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `prisma` from `@bondery/db` | `db` from `src/prisma/db.ts` | [migrations-and-connections.md](./migrations-and-connections.md) |
 | `findMany` / `createMany` / `$transaction` | `db.orm` / `db.sql` / `db.transaction` | [query-patterns.md](./query-patterns.md) |
 | `packages/db/prisma/sql/functions.sql` | Extension ops + `rawSql` in `migration.ts` | [raw-sql-and-postgis.md](./raw-sql-and-postgis.md) |

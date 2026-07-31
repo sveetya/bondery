@@ -1,7 +1,7 @@
 name: Turborepo remote cache
 description: >-
   Exports TURBO_TOKEN, TURBO_TEAM, and TURBO_TELEMETRY_DISABLED into GITHUB_ENV
-  for steps that run turbo (check-types, build, etc.). No-op when token is unset.
+  for steps that run turbo (check:types, build, etc.). No-op when token is unset.
 
 inputs:
   turbo_token:

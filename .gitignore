@@ -46,6 +46,7 @@ yarn-error.log*
 .env
 .env.production
 .env.local
+.infisical.json
 
 # vercel
 .vercel

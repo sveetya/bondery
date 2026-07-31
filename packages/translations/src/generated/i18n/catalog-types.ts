@@ -40,13 +40,13 @@ export type AboutPageCatalog = {
 };
 
 export type AccountDeletedEmailCatalog = {
-  subject: string;
-  preview: string;
-  heading: string;
-  greetingWithName: string;
-  greeting: string;
   body: string;
   feedback: string;
+  greeting: string;
+  greetingWithName: string;
+  heading: string;
+  preview: string;
+  subject: string;
   thanks: string;
 };
 
@@ -93,67 +93,6 @@ export type AppNavigationCatalog = {
   People: string;
   Search: string;
   Settings: string;
-};
-
-export type ChatPageCatalog = {
-  cancel: string;
-  copyMessage: string;
-  copyMessageSuccess: string;
-  deleteSession: string;
-  deleteSessionConfirm: string;
-  deleteSessionError: string;
-  deleteSessionSuccess: string;
-  description: string;
-  emptyState: string;
-  inputPlaceholder: string;
-  lessThanMinuteAgo: string;
-  newSession: string;
-  noSessions: string;
-  paywallDescription: string;
-  paywallTitle: string;
-  premiumLimitAlertDescription: string;
-  premiumLimitAlertDescriptionDate: string;
-  premiumLimitAlertTitle: string;
-  premiumQuotaBadge: string;
-  premiumQuotaTooltip: string;
-  quotaAlertDescription: string;
-  quotaAlertTitle: string;
-  quotaBadge: string;
-  quotaExceededInputTooltip: string;
-  quotaTooltip: string;
-  SuggestedPrompts: {
-    CoffeeWithBlake: string;
-    ContactsInNewYork: string;
-    CreateNewContact: string;
-    InteractionsThisWeek: string;
-    NotTalkedInAWhile: string;
-    WhoSpeaksSpanish: string;
-  };
-  send: string;
-  sessions: string;
-  thinking: string;
-  title: string;
-  untitledSession: string;
-  upgradeToPremium: string;
-};
-
-export type CheckoutCatalog = {
-  alreadySubscribedMessage: string;
-  alreadySubscribedTitle: string;
-  errorMessage: string;
-  errorTitle: string;
-  errorUnauthorized: string;
-  intervalAnnual: string;
-  intervalMonthly: string;
-  paymentBlockedAction: string;
-  paymentBlockedMessage: string;
-  paymentBlockedTitle: string;
-  successMessage: string;
-  successTitle: string;
-  upgradePendingMessage: string;
-  upgradePendingTitle: string;
-  upgradesDisabledTooltip: string;
-  upgradeToPremium: string;
 };
 
 export type CommandPaletteCatalog = {
@@ -204,52 +143,149 @@ export type CommonCatalog = {
   errors: {
     api: {
       account: string;
+      account_failed_to_delete_account: string;
+      account_failed_to_generate_avatar_url: string;
+      account_failed_to_update_account: string;
+      account_failed_to_upload_profile_photo: string;
       account_invalid: string;
+      account_photo_invalid_format: string;
       admin_required: string;
       api: string;
+      api_key_failed: string;
+      api_key_limit_exceeded: string;
+      api_key_method_forbidden: string;
+      api_key_not_found: string;
+      api_key_route_forbidden: string;
       auth_required: string;
       bad_gateway: string;
       bad_request: string;
       billing: string;
+      billing_pending_subscription_store_failed: string;
+      billing_subscription_upsert_failed: string;
+      billing_user_lookup_failed: string;
       chat: string;
+      chat_quota_exceeded: string;
+      chat_session_failed_to_create_session: string;
+      chat_session_failed_to_delete_session: string;
+      chat_session_failed_to_update_session: string;
       checkout: string;
+      checkout_not_configured: string;
       conflict: string;
       contact: string;
+      contact_contact_was_created_but_could_not_be_loa: string;
+      contact_contact_was_created_but_could_not_be_rel: string;
+      contact_contact_was_updated_but_could_not_be_loa: string;
+      contact_delete_invalid_body: string;
+      contact_delete_self_forbidden: string;
+      contact_enrich_failed: string;
       contact_failed: string;
+      contact_failed_to_assign_default_group: string;
+      contact_failed_to_create_contact: string;
+      contact_failed_to_look_up_contact: string;
+      contact_failed_to_save_socials: string;
+      contact_failed_to_upload_photo: string;
+      contact_ids_empty: string;
+      contact_ids_filter_failed: string;
+      contact_ids_invalid_body: string;
+      contact_ids_only_myself: string;
+      contact_ids_search_failed: string;
       contact_invalid: string;
+      contact_location_incomplete: string;
+      contact_location_invalid: string;
+      contact_merge_failed: string;
+      contact_merge_invalid: string;
+      contact_merge_same_contact: string;
+      contact_merge_socials_failed: string;
+      contact_not_found: string;
+      contact_share_email_render_failed: string;
+      contact_share_email_send_failed: string;
+      contact_share_failed: string;
+      contact_update_failed: string;
       email: string;
+      email_service_not_configured: string;
       extension: string;
       extension_outdated: string;
+      extension_username_required: string;
       failed: string;
+      failed_to_create_checkout_session: string;
+      failed_to_fetch_funnel_stats: string;
+      failed_to_fetch_total_users_growth: string;
+      failed_to_generate_vcard: string;
+      failed_to_load_profile_contact: string;
+      failed_to_process_webhook: string;
+      failed_to_render_or_send_feedback_email_: string;
       group: string;
+      group_add_contacts_invalid_body: string;
       group_failed: string;
+      group_member_ids_empty: string;
+      group_member_ids_filter_failed: string;
+      group_member_ids_invalid_body: string;
+      group_member_ids_search_failed: string;
+      group_not_found: string;
+      group_remove_members_invalid_body: string;
       import: string;
       import_failed: string;
+      import_instagram_failed: string;
+      import_linkedin_failed: string;
+      import_vcard_failed: string;
       important: string;
+      important_date_duplicate: string;
       interaction: string;
       interaction_failed: string;
+      interaction_failed_to_add_participants_inserterror_m: string;
+      interaction_failed_to_remove_participants_deleteerro: string;
+      interaction_interaction_was_created_but_could_not_be: string;
+      interaction_no_fields: string;
+      interaction_not_found: string;
+      interaction_participants_failed: string;
+      interaction_update_failed: string;
       internal: string;
+      internal_server_error: string;
       invalid: string;
+      invalid_api_key: string;
       jwt: string;
       merge: string;
+      merge_recommendation_id_required: string;
+      merge_recommendation_not_found: string;
       not_found: string;
       onboarding: string;
+      onboarding_failed_to_complete_onboarding: string;
+      onboarding_failed_to_dismiss_getting_started: string;
+      onboarding_failed_to_update_import_follow_up: string;
       rate: string;
+      rate_limit_exceeded: string;
       relationship: string;
+      relationship_already_exists: string;
       relationship_failed: string;
       relationship_invalid: string;
+      relationship_not_found: string;
+      relationship_self_forbidden: string;
       service: string;
+      service_auth_invalid: string;
+      service_auth_required: string;
       service_unavailable: string;
+      session_fetch_failed: string;
+      session_settings_missing: string;
       settings: string;
+      settings_failed_to_create_default_settings: string;
+      settings_failed_to_create_settings: string;
+      settings_failed_to_update_settings: string;
+      settings_fetch_failed: string;
+      settings_no_fields: string;
       sqlite: string;
+      sqlite_schema_mismatch: string;
       sync: string;
       sync_conflict: string;
       sync_failed: string;
+      sync_protocol_mismatch: string;
       tag: string;
       tag_failed: string;
+      tag_not_found: string;
       user: string;
+      user_lookup_failed: string;
       validation_error: string;
       webhook: string;
+      webhook_not_configured: string;
     };
     apiTemporarilyUnavailable: string;
     apiUnreachable: string;
@@ -578,15 +614,27 @@ export type EnrichRecommendationCardCatalog = {
 };
 
 export type ExtensionPopupCatalog = {
+  LoggedIn: {
+    OpenBondery: string;
+  };
   LoggedOut: {
     Description: string;
     SignIn: string;
     Title: string;
   };
+  PersonActions: {
+    AddInteraction: string;
+  };
+  Settings: {
+    SignOut: string;
+  };
   UpdateRequired: {
     Description: string;
     OpenExtensionsPage: string;
     Title: string;
+  };
+  Welcome: {
+    ConnectButton: string;
   };
 };
 
@@ -616,17 +664,17 @@ export type ExtensionVersionCheckCatalog = {
 };
 
 export type FeedbackEmailCatalog = {
-  subject: string;
-  preview: string;
+  generalFeedbackHeading: string;
   heading: string;
-  userEmailLabel: string;
-  userIdLabel: string;
+  notProvided: string;
+  npsReasonHeading: string;
   npsScoreLabel: string;
   npsScoreValue: string;
-  npsReasonHeading: string;
-  generalFeedbackHeading: string;
-  notProvided: string;
+  preview: string;
+  subject: string;
   submittedAt: string;
+  userEmailLabel: string;
+  userIdLabel: string;
 };
 
 export type FeedbackPageCatalog = {
@@ -894,6 +942,67 @@ export type HomePageCatalog = {
   UpcomingRemindersMonthInfo: string;
   UpcomingRemindersTitle: string;
   UpcomingRemindersTooltip: string;
+};
+
+export type ChatPageCatalog = {
+  cancel: string;
+  copyMessage: string;
+  copyMessageSuccess: string;
+  deleteSession: string;
+  deleteSessionConfirm: string;
+  deleteSessionError: string;
+  deleteSessionSuccess: string;
+  description: string;
+  emptyState: string;
+  inputPlaceholder: string;
+  lessThanMinuteAgo: string;
+  newSession: string;
+  noSessions: string;
+  paywallDescription: string;
+  paywallTitle: string;
+  premiumLimitAlertDescription: string;
+  premiumLimitAlertDescriptionDate: string;
+  premiumLimitAlertTitle: string;
+  premiumQuotaBadge: string;
+  premiumQuotaTooltip: string;
+  quotaAlertDescription: string;
+  quotaAlertTitle: string;
+  quotaBadge: string;
+  quotaExceededInputTooltip: string;
+  quotaTooltip: string;
+  SuggestedPrompts: {
+    CoffeeWithBlake: string;
+    ContactsInNewYork: string;
+    CreateNewContact: string;
+    InteractionsThisWeek: string;
+    NotTalkedInAWhile: string;
+    WhoSpeaksSpanish: string;
+  };
+  send: string;
+  sessions: string;
+  thinking: string;
+  title: string;
+  untitledSession: string;
+  upgradeToPremium: string;
+};
+
+export type CheckoutCatalog = {
+  alreadySubscribedMessage: string;
+  alreadySubscribedTitle: string;
+  errorMessage: string;
+  errorTitle: string;
+  errorUnauthorized: string;
+  intervalAnnual: string;
+  intervalMonthly: string;
+  paymentBlockedAction: string;
+  paymentBlockedMessage: string;
+  paymentBlockedTitle: string;
+  successMessage: string;
+  successTitle: string;
+  upgradePendingMessage: string;
+  upgradePendingTitle: string;
+  upgradesDisabledTooltip: string;
+  upgradeToPremium: string;
 };
 
 export type InteractionsPageCatalog = {
@@ -1777,14 +1886,6 @@ export type PersonTabsCatalog = {
 };
 
 export type ReminderDigestEmailCatalog = {
-  subject: string;
-  preview: string;
-  heading: string;
-  introOne: string;
-  introMany: string;
-  reminderLine: string;
-  dayOne: string;
-  dayMany: string;
   dateTypes: {
     anniversary: string;
     birthday: string;
@@ -1792,6 +1893,14 @@ export type ReminderDigestEmailCatalog = {
     nameday: string;
     other: string;
   };
+  dayMany: string;
+  dayOne: string;
+  heading: string;
+  introMany: string;
+  introOne: string;
+  preview: string;
+  reminderLine: string;
+  subject: string;
 };
 
 export type SettingsPageCatalog = {
@@ -2196,26 +2305,26 @@ export type SettingsPageCatalog = {
 };
 
 export type ShareContactEmailBodyCatalog = {
-  subject: string;
-  preview: string;
-  heading: string;
   defaultMessage: string;
-  noHeadline: string;
+  heading: string;
+  importantDateLine: string;
   labels: {
-    phone: string;
-    email: string;
-    location: string;
     address: string;
-    linkedin: string;
-    instagram: string;
+    email: string;
     facebook: string;
+    importantDates: string;
+    instagram: string;
+    linkedin: string;
+    location: string;
+    notes: string;
+    phone: string;
+    signal: string;
     website: string;
     whatsapp: string;
-    signal: string;
-    notes: string;
-    importantDates: string;
   };
-  importantDateLine: string;
+  noHeadline: string;
+  preview: string;
+  subject: string;
 };
 
 export type ShareContactModalCatalog = {
@@ -2443,15 +2552,15 @@ export type TagsSettingsCatalog = {
 };
 
 export type TrialEndingEmailCatalog = {
-  subject: string;
-  preview: string;
-  heading: string;
-  greetingWithName: string;
-  greeting: string;
   body: string;
-  manageBilling: string;
-  whyReceiving: string;
   endDateFallback: string;
+  greeting: string;
+  greetingWithName: string;
+  heading: string;
+  manageBilling: string;
+  preview: string;
+  subject: string;
+  whyReceiving: string;
 };
 
 export type UnavailablePageCatalog = {
@@ -2508,13 +2617,13 @@ export type ValidationCatalog = {
 };
 
 export type WelcomeEmailCatalog = {
-  subject: string;
-  preview: string;
-  heading: string;
-  greetingWithName: string;
-  greeting: string;
   body: string;
   getStarted: string;
+  greeting: string;
+  greetingWithName: string;
+  heading: string;
+  preview: string;
+  subject: string;
   whyReceiving: string;
 };
 

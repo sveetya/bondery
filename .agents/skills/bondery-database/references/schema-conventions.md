@@ -30,7 +30,7 @@ packages/db/prisma/
 - Keep `migrations/` at the same level as `schema.prisma`
 - Group models by domain; relations work across files without imports
 - Put new models in the file that matches their domain; add a new file only when a domain is large enough to warrant one
-- After splitting or moving models, run `npm run db:generate -w @bondery/db` and confirm the client includes all models
+- After splitting or moving models, run `npm run db:generate` and confirm the client includes all models
 
 ## Naming conventions
 

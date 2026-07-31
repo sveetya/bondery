@@ -18,7 +18,7 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **CLI:**
 - `npm run env` — sync root `.env.local` → per-app files
-- `npm run generate-env-examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
+- `npm run env:examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
 - `npm run env -- --check` — regenerate + fail if git dirty (**CI**)
 
 **Adding a new secret:**
@@ -91,7 +91,7 @@ Singleton enforcement: `check-redis-singleton.ts`.
 | Biome lint in CI | Yes (`.github/workflows/verify.yml`) |
 | Husky + lint-staged | Yes |
 | Route security scripts | Yes (`check-route-security`, `check-no-route-writes`) |
-| OpenAPI lint | Yes (`check-openapi`) |
+| OpenAPI lint | Yes (`check:openapi`) |
 | Compose policy lint | Yes (`check-compose.mjs`) |
 | Dependabot | **No** |
 | CodeQL / Snyk / Trivy | **No** |
@@ -106,7 +106,7 @@ Singleton enforcement: `check-redis-singleton.ts`.
 
 ```bash
 npm run env -- --check
-npm run check-types -w api     # route-security, no-route-writes, redis-singleton
+npm run check:types -w api     # route-security, no-route-writes, redis-singleton
 npm run test:auth -w api       # OAuth PKCE integration (optional; Postgres required)
 node deploy/bondery/scripts/check-compose.mjs
 ```

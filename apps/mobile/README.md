@@ -37,7 +37,7 @@ Prefer root `.env.local` + `npm run env` (see [Environment configuration](../../
 
 ```bash
 npm install
-npm run dev --workspace=mobile
+npm run dev -w mobile
 ```
 
 Then run on emulator/device from Expo CLI.

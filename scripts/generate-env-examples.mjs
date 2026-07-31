@@ -2,8 +2,8 @@
 /**
  * Regenerate committed env examples + turbo.json from packages/helpers/src/env/manifest.ts.
  *
- *   npm run generate-env-examples           # write files only
- *   npm run generate-env-examples -- --stage  # also `git add` outputs (pre-commit)
+ *   npm run env:examples           # write files only
+ *   npm run env:examples -- --stage  # also `git add` outputs (pre-commit)
  */
 
 import { execSync } from "node:child_process";
@@ -17,7 +17,6 @@ function run(command) {
   execSync(command, { cwd: root, stdio: "inherit" });
 }
 
-run("npm run build -w @bondery/helpers");
 run("node --import tsx scripts/env.ts --write-examples --write-turbo");
 
 if (stage) {

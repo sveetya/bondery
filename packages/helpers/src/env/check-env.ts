@@ -28,36 +28,41 @@ const colors = {
  * Parses an .env file and returns key-value pairs.
  * Strips surrounding single/double quotes from values.
  */
+/** Parse dotenv assignment lines (no comments). */
+export function parseEnvContent(content: string): Record<string, string> {
+  const env: Record<string, string> = {};
+
+  for (const line of content.split("\n")) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith("#")) {
+      continue;
+    }
+    const eqIndex = trimmedLine.indexOf("=");
+    if (eqIndex <= 0) {
+      continue;
+    }
+    const key = trimmedLine.slice(0, eqIndex).trim();
+    let value = trimmedLine.slice(eqIndex + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (key) {
+      env[key] = value;
+    }
+  }
+
+  return env;
+}
+
 export function parseEnvFile(filePath: string): Record<string, string> {
   if (!existsSync(filePath)) {
     return {};
   }
 
-  const content = readFileSync(filePath, "utf-8");
-  const env: Record<string, string> = {};
-
-  content.split("\n").forEach((line) => {
-    const trimmedLine = line.trim();
-    if (trimmedLine && !trimmedLine.startsWith("#")) {
-      const eqIndex = trimmedLine.indexOf("=");
-      if (eqIndex <= 0) {
-        return;
-      }
-      const key = trimmedLine.slice(0, eqIndex).trim();
-      let value = trimmedLine.slice(eqIndex + 1).trim();
-      if (
-        (value.startsWith('"') && value.endsWith('"')) ||
-        (value.startsWith("'") && value.endsWith("'"))
-      ) {
-        value = value.slice(1, -1);
-      }
-      if (key) {
-        env[key] = value;
-      }
-    }
-  });
-
-  return env;
+  return parseEnvContent(readFileSync(filePath, "utf-8"));
 }
 
 /**

@@ -38,7 +38,7 @@ jobs:
         run: npm ci
 
       - name: Webapp typechecks and policies
-        run: npm run check-types -w webapp
+        run: npm run check:types -w webapp
 
       - name: Webapp tests
         run: |

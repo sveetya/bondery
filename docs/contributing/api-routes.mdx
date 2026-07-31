@@ -73,7 +73,7 @@ Integrator dependency order in the `tags` array in [`apps/api/src/openapi/swagge
 - [ ] Route registered in the correct tier (not appended at file bottom by default)
 - [ ] Same-path methods follow GET → POST → PUT → PATCH → DELETE
 - [ ] New auxiliary paths added to `AUXILIARY_FIRST_SEGMENTS` when tier 5
-- [ ] `npm run check-openapi` passes (includes route-order CI check)
+- [ ] `npm run check:openapi` passes (includes route-order CI check)
 
 ## Checklist for new or changed routes
 
@@ -88,7 +88,7 @@ Integrator dependency order in the `tags` array in [`apps/api/src/openapi/swagge
 - [ ] If the route returns **409**, spread `conflictResponse` or `syncConflictResponse` from `@bondery/schemas/http/responses`
 - [ ] If an error status returns a **non-ApiError JSON body**, override that status in `response` (see `GET /health/ready` 503)
 - [ ] `npm run build:api` or `npx turbo build --filter=api` from repo root after route/schema changes
-- [ ] OpenAPI spec updates automatically via the pre-commit hook when `apps/api` or `packages/schemas` change; run `npm run check-openapi` manually before release if needed
+- [ ] OpenAPI spec updates automatically via the pre-commit hook when `apps/api` or `packages/schemas` change; run `npm run check:openapi` manually before release if needed
 
 ## OpenAPI response examples
 
@@ -102,7 +102,7 @@ When adding a new `*ResponseSchema`:
 
 For inline route-only schemas (e.g. admin stats), attach `.meta({ example })` on the schema in the route file and import the fixture from `@bondery/schemas`.
 
-`npm run check-contracts -w @bondery/schemas` validates every registered example with `schema.parse(example)`. `npm run check-openapi-spec -w api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
+`npm run check:contracts` validates every registered example with `schema.parse(example)`. `npm run check:openapi-spec -w api` fails if any `2xx` or `4xx`/`5xx` `application/json` response lacks an `example` or has an empty schema, and if any `POST`/`PUT`/`PATCH` JSON request body lacks an `example`.
 
 ## OpenAPI request examples
 
@@ -133,7 +133,7 @@ Error examples live in [`packages/schemas/src/openapi/fixtures/errors.ts`](../..
 | `conflictResponse` | Route returns 409 with `{ error }` only (API keys, checkout, relationships, important dates) |
 | `syncConflictResponse` | Route returns 409 with `{ error, contact }` (contact PATCH sync conflict) |
 
-`generate-openapi` patches duplicate empty error schemas (`schema: {}`) to `$ref: ApiError` — a fastify-zod-openapi limitation when reusing the same Zod component across routes.
+`generate:openapi` patches duplicate empty error schemas (`schema: {}`) to `$ref: ApiError` — a fastify-zod-openapi limitation when reusing the same Zod component across routes.
 
 ## Server bootstrap
 
@@ -175,7 +175,7 @@ Runtime enforcement: [`assertApiKeyAccess`](../../apps/api/src/lib/platform/auth
 
 - **Contacts** — split across [`contactIntegrationRoutes`](../../apps/api/src/routes/contacts/index.ts) and [`contactSessionRoutes`](../../apps/api/src/routes/contacts/session-routes.ts) at the same prefix
 
-CI: `npm run check-route-security -w api` (wired into `check-types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
+CI: `npm run check:route-security -w api` (wired into `check:types`). Boot-time audit: `route-security-audit.test.ts` in `test:api`.
 
 ## Layering
 
@@ -299,10 +299,10 @@ Workspace packages follow the [Turborepo compiled-package model](https://turbore
 | Command | What it checks |
 |---------|----------------|
 | `npm run check-api-schema-patterns -w api` | Route files have descriptions, responses, `FastifyZodOpenApiSchema` |
-| `npm run check-route-security -w api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
-| `npm run check-openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
+| `npm run check:route-security -w api` | No auth hooks in routes; mount table covers all plugins; non-plugin files listed in `route-non-plugin-files.json` |
+| `npm run check:openapi` | Regenerates spec, fails on drift, requires JSON examples on 2xx and 4xx/5xx, bans empty error schemas and "Default Response" on public paths |
 | `npm run check-route-errors -w api` | Bans legacy error patterns; requires `code` on DomainError |
-| `npm run check-contracts -w @bondery/schemas` | Schema boundary assertions + OpenAPI example validation (`check-contracts-openapi-examples.ts`) |
+| `npm run check:contracts` | Schema boundary assertions + OpenAPI example validation (`check-contracts-openapi-examples.ts`) |
 
 CI runs all of the above on every pull request.
 

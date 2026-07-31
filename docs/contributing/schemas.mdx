@@ -19,7 +19,7 @@ icon: Boxes
 - Do **not** import `EXAMPLE_*` or `registerOpenApiComponentSchemas` from the root `@bondery/schemas` barrel.
 - `import type { ... } from "@bondery/schemas"` is always fine — types erase at compile time.
 
-`npm run check-schemas-imports:strict` in the webapp enforces these rules in CI.
+`npm run check:schemas-imports -w webapp` enforces these rules in CI.
 
 ## API OpenAPI examples
 
