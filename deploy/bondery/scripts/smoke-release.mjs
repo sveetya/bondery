@@ -18,9 +18,9 @@ const BONDERY_DIR = resolve(__dirname, "..");
 
 const SMOKE_DOMAINS = {
   BONDERY_INFRA_API_DOMAIN: "api.example-smoke.test",
+  BONDERY_INFRA_STORAGE_DOMAIN: "storage.example-smoke.test",
   BONDERY_INFRA_WEBAPP_DOMAIN: "app.example-smoke.test",
   BONDERY_INFRA_WEBSITE_DOMAIN: "www.example-smoke.test",
-  BONDERY_INFRA_STORAGE_DOMAIN: "storage.example-smoke.test",
 };
 
 const DEFAULT_IMAGES = {
@@ -142,8 +142,9 @@ function smokeWebapp() {
   run("docker compose --env-file .env.smoke up -d redis webapp");
 
   waitFor(
-    () => curlOk("http://127.0.0.1:26632/health/live") && curlOk("http://127.0.0.1:26632/health/ready"),
-    { label: "webapp", attempts: 30, intervalSec: 2 },
+    () =>
+      curlOk("http://127.0.0.1:26632/health/live") && curlOk("http://127.0.0.1:26632/health/ready"),
+    { attempts: 30, intervalSec: 2, label: "webapp" },
   );
 
   const body = spawnSync("curl -sf http://127.0.0.1:26632/runtime-config.json", {
@@ -169,8 +170,9 @@ function smokeApi() {
   run("docker compose --env-file .env.smoke up -d api");
 
   waitFor(
-    () => curlOk("http://127.0.0.1:26631/health/live") && curlOk("http://127.0.0.1:26631/health/ready"),
-    { label: "api", attempts: 45, intervalSec: 3 },
+    () =>
+      curlOk("http://127.0.0.1:26631/health/live") && curlOk("http://127.0.0.1:26631/health/ready"),
+    { attempts: 45, intervalSec: 3, label: "api" },
   );
 }
 
