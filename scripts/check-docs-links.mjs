@@ -67,7 +67,7 @@ function hasAnchor(content, hash) {
 function main() {
   const errors = [];
 
-  execSync("node scripts/generate:doc-links.mjs", { cwd: REPO_ROOT, stdio: "inherit" });
+  execSync("node scripts/generate-doc-links.mjs", { cwd: REPO_ROOT, stdio: "inherit" });
 
   const registry = loadRegistry();
   const knownIds = new Set(registry.keys());
