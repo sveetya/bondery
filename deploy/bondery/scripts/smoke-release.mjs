@@ -186,7 +186,7 @@ try {
   prepareEnvSmoke();
   writeOverride(service, imageName, tag);
 
-  run("docker compose -f docker-compose.yml config >/dev/null");
+  run("docker compose --env-file .env.smoke -f docker-compose.yml config >/dev/null");
   run("node scripts/check-compose.mjs");
 
   if (service === "webapp") {
