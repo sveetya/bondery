@@ -121,7 +121,7 @@ Repo checks:
 | API schema change | `pnpm run generate:openapi` |
 | Supabase client bump | `pnpm run generate-types` (needs `pnpm --filter apps/supabase-db run start`) |
 | Env renames | `.env.*.example` per app |
-| Extension API break | `packages/helpers/src/constants.ts` (`MIN_EXTENSION_VERSION`) |
+| Extension API break | `packages/helpers/src/globals/paths.ts` (`MIN_EXTENSION_VERSION`) |
 
 ---
 

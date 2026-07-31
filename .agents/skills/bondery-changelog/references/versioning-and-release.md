@@ -29,7 +29,7 @@ Do not create a dated version section for every merge. A dated section represent
 3. Move the accumulated entries under `## [X.Y.Z] - DD.MM.YYYY`.
 4. Leave a fresh `## [Unreleased]` section at the top.
 5. Add `Breaking` notes with migration links when applicable.
-6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps in the [Release workflow](../../../workflows/RELEASE.md).
+6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
 7. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
 
 Dependency-only work follows the [Package upgrade workflow](../../../workflows/chores/UPGRADE-PACKAGES.md) and normally uses the `📦 Dependencies` category with a `deps:` commit prefix.
