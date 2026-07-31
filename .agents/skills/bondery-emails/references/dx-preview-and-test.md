@@ -4,7 +4,7 @@
 
 ```bash
 # Emails package only
-npm run preview --workspace=@bondery/emails
+npm run dev:emails
 
 # Or via root script
 npm run dev:emails
@@ -53,7 +53,7 @@ When changing email code:
 
 | Changed paths | Checks |
 |---------------|--------|
-| `packages/emails/**` | `npm run compile --workspace=@bondery/emails` |
+| `packages/emails/**` | `npm run compile -w @bondery/emails` |
 | `apps/api/src/services/notifications/**` | API typecheck/lint per [bondery-verification-loop](../../bondery-verification-loop/SKILL.md) |
 
 ## Related docs

@@ -1,1 +1,7 @@
-../../src/locales/de/platform/mobile/Navigation.json
+{
+  "Add": "Hinzufügen",
+  "CloseAddMenu": "Hinzufügen-Menü schließen",
+  "Contacts": "Kontakte",
+  "CreatePerson": "Person erstellen",
+  "Settings": "Einstellungen"
+}

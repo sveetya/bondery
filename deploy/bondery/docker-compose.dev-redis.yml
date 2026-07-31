@@ -1,0 +1,19 @@
+# Local dev Redis only — no Traefik, no dokploy-network.
+#
+#   npm run start:redis
+#
+# Host port 26636 (DEV_PORTS.REDIS). Ephemeral — no persistence.
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: bondery-redis
+    restart: unless-stopped
+    command: redis-server --save "" --appendonly no
+    ports:
+      - "26636:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3

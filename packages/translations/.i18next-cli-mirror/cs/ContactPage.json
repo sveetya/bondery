@@ -1,1 +1,5 @@
-../../src/locales/cs/features/pages/ContactPage.json
+{
+  "Description": "Máte-li jakékoli dotazy, neváhejte nás kontaktovat.",
+  "EmailText": "Kontaktujte nás na team@usebondery.com",
+  "Title": "Kontaktujte nás"
+}

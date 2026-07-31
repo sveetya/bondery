@@ -62,7 +62,7 @@ For client error display and i18n, see the `bondery-ux` skill (`references/commo
 - [ ] Paginated list uses nested `pagination` with server-computed `hasMore` (offset only)
 - [ ] Create returns `201` + full resource object; mutations per `references/api-mutations.md`
 - [ ] New error code → catalog + `/docs/api/errors/{code}` + `en`/`cs`/`de` translations
-- [ ] `npm run generate-openapi -w api` — confirm doc order in diff
-- [ ] `npm run check-openapi` passes (includes route-order CI check)
-- [ ] `check-route-errors`, `npm run check-api-errors` pass at repo root
+- [ ] `npm run generate:openapi -w api` — confirm doc order in diff
+- [ ] `npm run check:openapi` passes (includes route-order CI check)
+- [ ] `check-route-errors`, `npm run check:api-errors` pass at repo root
 - [ ] Auth, tenant scoping, webhooks, or uploads touched → `bondery-security` checklist satisfied

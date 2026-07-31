@@ -71,29 +71,29 @@ Full index: [references/README.md](references/README.md).
 
 Run only what applies:
 
-Run from the monorepo root with `-w @bondery/db` (Prisma config and schema live in `packages/db/`, not the repo root):
+Run from the monorepo root (Prisma config and schema live in `packages/db/`, not the repo root):
 
 ```bash
 # Regenerate Prisma client
-npm run db:generate -w @bondery/db
+npm run db:generate
 
 # Validate merged multi-file schema
-npm run db:validate -w @bondery/db
+npm run db:validate
 
 # Create and validate a local migration
-npm run db:migrate:dev -w @bondery/db
+npm run db:migrate:dev
 
 # Apply idempotent SQL functions/indexes
-npm run db:functions -w @bondery/db
+npm run db:functions
 
 # Verify release order: migrations → functions → OAuth clients
-npm run release-migrate -w @bondery/db
+npm run release-migrate
 
 # Typecheck the db package
-npm run check-types -w @bondery/db
+npm run check:types -w @bondery/db
 
 # API typecheck after query changes
-npm run check-types -w api
+npm run check:types -w api
 ```
 
 Do not run bare `prisma` or `npx prisma` from the repo root — it will not find `prisma.config.ts` or `packages/db/prisma/`.

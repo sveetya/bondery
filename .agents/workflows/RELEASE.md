@@ -52,7 +52,7 @@ Complete all of the following **before** pushing anything to the `release` branc
 3. **Update [docs/changelog.mdx](../../docs/changelog.mdx)** — add a new version section following the [changelog format](../../.github/instructions/changelog.instructions.md).
 4. **Generate the OpenAPI spec** and commit the output. This keeps API docs and client SDKs in sync.
    ```bash
-   npm run generate-openapi
+   npm run generate:openapi
    ```
 5. **Build all packages and apps** (`turbo build`) and verify there are no errors.
 6. **Commit** everything to `main`.

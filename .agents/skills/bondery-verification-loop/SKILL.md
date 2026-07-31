@@ -45,7 +45,7 @@ metadata:
 1. **Scope** — `git status --short`, `git diff`, `git diff --cached` (or session edits if Git unavailable).
 2. **Classify risk** — low / standard / high (see `references/risk-and-reporting.md`).
 3. **Fast path** — `git diff --check`; `npx biome check --no-errors-on-unmatched --files-ignore-unknown=true <files>`.
-4. **Workspace gates** — `check-types` and targeted `test:*` for every touched app/package.
+4. **Workspace gates** — `check:types` and targeted `test:*` for every touched app/package.
 5. **Boundary gates** — contracts, OpenAPI, i18n, security, migrations, mobile sync, builds — only when those boundaries changed.
 6. **Review** — re-run failures; inspect generated artifacts; produce the report format in `references/risk-and-reporting.md`.
 
@@ -70,8 +70,8 @@ Full index: [references/README.md](references/README.md).
 
 - **Do not use** root `npm run lint` for verification — it runs `biome check --write .` and mutates files.
 - **Do not use** `git diff HEAD~1` as the sole scope — misses unstaged work and assumes a commit.
-- **`check-schemas-imports:strict`** is referenced by webapp `check-types` but the npm script may be missing — see `references/ci-parity.md`.
-- **Generators mutate** — `generate-openapi`, translation codegen, and `env --check` can dirty the tree; review diffs after running.
+- **`check:schemas-imports`** is referenced by webapp `check:types` but the npm script may be missing — see `references/ci-parity.md`.
+- **Generators mutate** — `generate:openapi`, translation codegen, and `env --check` can dirty the tree; review diffs after running.
 - **CI ≠ complete** — Playwright E2E, mobile sync lint, extension pattern checks, and `@bondery/helpers` unit tests are not in `verify.yml`.
 
 ## Verification loop checklist (before handoff)
@@ -79,7 +79,7 @@ Full index: [references/README.md](references/README.md).
 - [ ] Success criteria written; each item has a verify command or manual check
 - [ ] Changed files mapped to workspaces and risk tier recorded
 - [ ] Non-mutating Biome passed on changed files (or full `biome ci .` for PR parity)
-- [ ] `check-types` passed for every touched workspace (and consumers when shared packages changed)
+- [ ] `check:types` passed for every touched workspace (and consumers when shared packages changed)
 - [ ] Boundary gates run for change type (OpenAPI, i18n, contracts, security, migrations, sync, build)
 - [ ] Failed commands fixed and re-run until green
 - [ ] Skipped checks documented with reason (missing DB, Docker, secrets, scope)

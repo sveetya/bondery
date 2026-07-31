@@ -1,6 +1,6 @@
 /**
  * Guards against banned API fetch patterns in client code.
- * Run via: npm run check-api-fetch
+ * Run via: npm run check:api-fetch
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -12,7 +12,6 @@ const check = createCheck("check-api-fetch");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
-const STRICT = process.env.CHECK_API_FETCH_STRICT === "1";
 
 type Violation = { file: string; rule: string; detail: string };
 
@@ -106,7 +105,7 @@ function checkFile(absPath: string): Violation[] {
     });
   }
 
-  if (STRICT && /\bfetch\s*\(\s*[`'"]\s*\$\{\s*API_ROUTES/.test(content)) {
+  if (/\bfetch\s*\(\s*[`'"]\s*\$\{\s*API_ROUTES/.test(content)) {
     violations.push({
       detail: "Use clientApiFetch/clientApiJson instead of raw fetch(API_ROUTES...)",
       file: rel,
@@ -114,7 +113,7 @@ function checkFile(absPath: string): Violation[] {
     });
   }
 
-  if (STRICT && /\bfetch\s*\(\s*API_ROUTES\./.test(content)) {
+  if (/\bfetch\s*\(\s*API_ROUTES\./.test(content)) {
     violations.push({
       detail: "Use clientApiFetch/clientApiJson instead of raw fetch(API_ROUTES...)",
       file: rel,

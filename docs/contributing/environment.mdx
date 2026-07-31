@@ -46,19 +46,23 @@ npm run setup:dev
 # edit .env.local (OAuth clients, DATABASE_URL, secrets)
 cd deploy/bondery && docker compose -f docker-compose.dev-db.yml up -d
 cd ../..
-npm run db:migrate:deploy -w @bondery/db
+npm run db:migrate:deploy
 npm run env
-npm run provision-oauth-clients:dev -w api
+npm run provision:oauth-clients
 npm run dev
 ```
 
 | Script | Purpose |
 | --- | --- |
 | `npm run setup:dev` | First clone: create `.env.local`, then run `env` |
-| `npm run env` | Sync root `.env.local` → per-app env files → validate |
-| `npm run generate-env-examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
+| `npm run env` | Sync root `.env.local` → development + production per-app locals → validate |
+| `npm run env:development` | Sync only `*.development.local` (+ mobile/db `.env.local`) |
+| `npm run env:production` | Sync only `*.env.production.local` (for local `npm run build`) |
+| `npm run env:examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
 
-Pre-commit (via lint-staged) runs `generate-env-examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
+`env:development` and `env:production` use the **same values** from root `.env.local` (localhost URLs). Local production-mode builds are not deploys — they need your local URLs, not `usebondery.com`.
+
+Pre-commit (via lint-staged) runs `env:examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
 
 ```bash
 npm run env -- --check   # regenerate + fail if git dirty
@@ -86,7 +90,7 @@ Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from 
 
 ## Production / self-host
 
-Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `npm run env -- --write-examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
+Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `npm run env:examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
 
 ## Manifest
 

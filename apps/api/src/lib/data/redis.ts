@@ -91,7 +91,7 @@ export function requireRedisCommands(redisUrl?: string): Redis {
   const client = getRedisCommands(redisUrl);
   if (!client) {
     throw new Error(
-      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start:redis",
     );
   }
   return client;
@@ -114,7 +114,7 @@ export function requireRedisSubscriber(redisUrl?: string): Redis {
   const client = getRedisSubscriber(redisUrl);
   if (!client) {
     throw new Error(
-      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start:redis",
     );
   }
   return client;
@@ -216,7 +216,7 @@ export async function initRedis(
   if (!trimmed) {
     assertRuntimeDependencyConfigured(
       false,
-      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start -w redis",
+      "BONDERY_PRIVATE_REDIS_URL must be set. Start local Redis with: npm run start:redis",
     );
     log?.info("Redis not configured — skipping verify in test");
     return { clients: null, readiness: setUnconfiguredReadiness() };

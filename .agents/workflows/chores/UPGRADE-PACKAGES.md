@@ -87,9 +87,9 @@ Upgrade shared foundations first, then apps:
 
 | Ecosystem | Workspaces | Notes |
 |-----------|------------|-------|
-| **TypeScript** | Every workspace with `typescript` in `devDependencies` | Bump all to the same version. Run `check-types` everywhere, then build all touched workspaces. |
+| **TypeScript** | Every workspace with `typescript` in `devDependencies` | Bump all to the same version. Run `check:types` everywhere, then build all touched workspaces. |
 | **React / react-dom** | All apps + `packages/emails` | Same exact version everywhere. Run `npm ls react` after install. |
-| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `npm run check-contracts -w packages/schemas`. |
+| **Zod** | `packages/schemas`, `apps/api`, `apps/webapp` | Run `npm run check:contracts -w packages/schemas`. |
 | **Mantine** | `apps/webapp`, `apps/website`, `packages/mantine-next` | Same version on every `@mantine/*`. See [mantine-best-practices](../../skills/mantine-best-practices/SKILL.md). |
 | **Next.js** | `apps/webapp`, `apps/website` | `npx @next/codemod@latest upgrade`. See [next-best-practices](../../skills/next-best-practices/SKILL.md). |
 | **Expo SDK** | `apps/mobile` | `npx expo install expo@<target>` then `npx expo install --fix`. See [upgrading-expo](../../skills/upgrading-expo/SKILL.md). |
@@ -118,7 +118,7 @@ Repo checks:
 
 | Trigger | Command / file |
 |---------|----------------|
-| API schema change | `npm run generate-openapi` |
+| API schema change | `npm run generate:openapi` |
 | Supabase client bump | `npm run generate-types` (needs `npm run start -w apps/supabase-db`) |
 | Env renames | `.env.*.example` per app |
 | Extension API break | `packages/helpers/src/constants.ts` (`MIN_EXTENSION_VERSION`) |
@@ -128,7 +128,7 @@ Repo checks:
 ## 4. Apply code changes
 
 1. Run codemods (`npx @next/codemod@latest upgrade`, etc.)
-2. Fix type errors: `npm run check-types -w <workspace>`
+2. Fix type errors: `npm run check:types -w <workspace>`
 3. Lint: `npm run lint` (from repo root; Biome format with write)
 4. Regenerate artifacts if needed (OpenAPI, Supabase types)
 5. Update `packages/translations` (`src/locales/{en,cs,de}/**`) when UI copy changes
@@ -161,7 +161,7 @@ npx turbo build --filter=./packages/*
 # Or per package: npm run build -w @bondery/schemas
 
 # Mobile — no build script; use:
-npm run check-types -w mobile
+npm run check:types -w mobile
 npx expo-doctor                        # run inside apps/mobile
 
 # Large PR — full check before merge
@@ -174,10 +174,10 @@ npm run build                          # turbo build (all apps)
 | `apps/webapp` | `npx turbo build --filter=webapp` | `.env.production.local`, runs icon generation |
 | `apps/website` | `npx turbo build --filter=website` | `.env.production.local` |
 | `apps/chrome-extension` | `npx turbo build --filter=chrome-extension` | extension env files |
-| `apps/mobile` | `check-types` + `expo-doctor` | — |
+| `apps/mobile` | `check:types` + `expo-doctor` | — |
 | `packages/*` | `npx turbo build --filter=./packages/*` or `npm run build -w @bondery/<name>` | — |
 
-**Webapp note:** `check-types` also runs `check-api-fetch:strict` — run it even when build passes.
+**Webapp note:** `check:types` also runs `check:api-fetch -w webapp` — run it even when build passes.
 
 **On failure:** read the error, build dependencies first (turbo graph), fix the break — do not pin old versions without documenting why.
 

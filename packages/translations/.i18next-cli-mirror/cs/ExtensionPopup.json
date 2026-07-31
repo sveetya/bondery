@@ -1,1 +1,24 @@
-../../src/locales/cs/platform/extension/ExtensionPopup.json
+{
+  "LoggedIn": {
+    "OpenBondery": "Otevřít Bondery"
+  },
+  "LoggedOut": {
+    "Description": "Připojte účet a ukládejte kontakty ze sociálních sítí.",
+    "SignIn": "Přihlásit se",
+    "Title": "Přihlaste se do Bondery"
+  },
+  "PersonActions": {
+    "AddInteraction": "Přidat interakci s touto osobou"
+  },
+  "Settings": {
+    "SignOut": "Odhlásit se"
+  },
+  "UpdateRequired": {
+    "Description": "Vaše rozšíření Bondery je zastaralé a nemusí fungovat správně. Aktualizujte ho, abyste mohli pokračovat.",
+    "OpenExtensionsPage": "Otevřít stránku rozšíření",
+    "Title": "Je vyžadována aktualizace"
+  },
+  "Welcome": {
+    "ConnectButton": "Připojit účet Bondery"
+  }
+}

@@ -227,7 +227,7 @@
       ],
       "persistent": true
     },
-    "api#generate-openapi": {
+    "api#generate:openapi": {
       "cache": true,
       "dependsOn": [],
       "outputs": ["openapi.yaml"]
@@ -263,7 +263,7 @@
         "HOMEPATH"
       ]
     },
-    "check-types": {
+    "check:types": {
       "dependsOn": ["transit"],
       "outputs": [".cache/tsconfig.tsbuildinfo"]
     },

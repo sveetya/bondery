@@ -2,14 +2,15 @@
  * Unified local env CLI.
  *
  * Day-to-day:
- *   npm run env
- *     → sync apps → check root
+ *   npm run env                 → sync development + production locals → check root
+ *   npm run env:development     → sync *.development.local (+ mobile/db .env.local)
+ *   npm run env:production      → sync *.production.local (local prod-mode builds)
  *
  * First clone:
  *   npm run setup:dev
  *
  * Codegen / CI (not day-to-day DX):
- *   npm run env -- --write-examples --write-turbo
+ *   npm run env:examples
  *   npm run env -- --check          # regenerate + fail if git dirty
  */
 
@@ -46,9 +47,13 @@ function readPackageVersion(): string {
   return pkg.version ?? "";
 }
 
+type SyncMode = "development" | "production";
+
 function parseArgs(argv) {
   return {
+    all: argv.includes("--all"),
     check: argv.includes("--check"),
+    development: argv.includes("--development"),
     dryRun: argv.includes("--dry-run"),
     only: (() => {
       const onlyArg = argv.find((a) => a.startsWith("--only="));
@@ -61,10 +66,21 @@ function parseArgs(argv) {
         .map((s) => s.trim())
         .filter(Boolean);
     })(),
+    production: argv.includes("--production"),
     skipCheck: argv.includes("--skip-check"),
     writeExamples: argv.includes("--write-examples"),
     writeTurbo: argv.includes("--write-turbo"),
   };
+}
+
+function resolveSyncModes(flags): SyncMode[] {
+  if (flags.all) {
+    return ["development", "production"];
+  }
+  if (flags.production) {
+    return ["production"];
+  }
+  return ["development"];
 }
 
 function collectTargetVars(targetId, rootEnv, useExamples) {
@@ -298,7 +314,7 @@ function _upsertEnvFile(path, updates) {
   writeFileSync(path, content.endsWith("\n") ? content : `${content}\n`, "utf-8");
 }
 
-function syncApps(flags) {
+function syncApps(flags, mode: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
     log.error("Missing .env.local — copy from .env.local.example:");
     log.info("  cp .env.local.example .env.local");
@@ -310,23 +326,28 @@ function syncApps(flags) {
   const summary = [];
 
   for (const target of targets) {
+    const relPath = mode === "production" ? target.productionFile : target.devFile;
+    if (!relPath) {
+      continue;
+    }
     const rows = collectTargetVars(target.id, rootEnv, false);
     const asRecord = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-    const path = join(repoRoot, target.devFile);
+    const path = join(repoRoot, relPath);
     const count = mergeEnvFile(path, asRecord, flags.dryRun);
-    summary.push({ file: target.devFile, target: target.id, vars: count });
+    summary.push({ file: relPath, mode, target: target.id, vars: count });
   }
 
   if (summary.length > 0) {
     log.table(summary);
     log.success(
-      flags.dryRun ? `Dry run: ${summary.length} targets` : `Synced ${summary.length} targets`,
+      flags.dryRun
+        ? `Dry run: ${summary.length} ${mode} targets`
+        : `Synced ${summary.length} ${mode} targets`,
     );
   }
 }
 
-function checkRoot() {
-  const environment = process.env.NODE_ENV === "production" ? "production" : "development";
+function checkRoot(environment: SyncMode) {
   if (!existsSync(ROOT_ENV)) {
     log.error("Missing .env.local — run: npm run setup:dev");
     process.exit(1);
@@ -359,9 +380,13 @@ function checkRoot() {
   log.success(`Root .env.local has all ${environment} required variables`);
 
   for (const target of SYNC_TARGETS) {
-    const path = join(repoRoot, target.devFile);
+    const relPath = environment === "production" ? target.productionFile : target.devFile;
+    if (!relPath) {
+      continue;
+    }
+    const path = join(repoRoot, relPath);
     if (!existsSync(path)) {
-      log.warn(`Missing ${target.devFile} — run npm run env`);
+      log.warn(`Missing ${relPath} — run npm run env`);
     }
   }
 }
@@ -402,7 +427,10 @@ function main() {
         a === "--write-examples" ||
         a === "--write-turbo" ||
         a === "--dry-run" ||
-        a === "--skip-check",
+        a === "--skip-check" ||
+        a === "--all" ||
+        a === "--development" ||
+        a === "--production",
     );
 
   if (flags.writeExamples) {
@@ -415,10 +443,15 @@ function main() {
     return;
   }
 
-  // Day-to-day path: sync → check
-  syncApps(flags);
+  const modes = resolveSyncModes(flags);
+
+  for (const mode of modes) {
+    syncApps(flags, mode);
+  }
   if (!flags.skipCheck && !flags.dryRun) {
-    checkRoot();
+    for (const mode of modes) {
+      checkRoot(mode);
+    }
   }
 }
 

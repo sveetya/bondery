@@ -13,7 +13,7 @@ export const DEV_PORTS = {
   MOBILE: 26634,
   /** Local dev Postgres (`deploy/bondery/docker-compose.dev-db.yml`) */
   POSTGRES: 54322,
-  /** Local API Redis (`apps/redis`) */
+  /** Local API Redis (`deploy/bondery/docker-compose.dev-redis.yml`) */
   REDIS: 26636,
   /** Reserved: Storybook / component docs */
   STORYBOOK: 26635,
@@ -23,7 +23,7 @@ export const DEV_PORTS = {
   WEBSITE: 26630,
 } as const;
 
-/** Local Redis URL when `npm run start -w redis` is running. */
+/** Local Redis URL when `npm run start:redis` is running. */
 export const DEV_REDIS_URL = `redis://127.0.0.1:${DEV_PORTS.REDIS}` as const;
 
 export const DEV_URLS = {

@@ -10,7 +10,7 @@ There is **no** root `npm run verify` — mirror CI by running the steps below o
 | Tier | When | Typical commands |
 |------|------|------------------|
 | **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
-| **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check-types`, targeted `test:*` |
+| **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` deploy gates | `stage-webapp.yml`, `stage-api.yml` subsets |
 | **4 — Smoke / release** | Tags, release branch | `smoke-bondery-stack.yml`, `deploy-website.yml`, `release-*.yml` |
@@ -22,32 +22,32 @@ Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 ```bash
 npm ci
 npx biome ci .
-npm run check-package-imports
+npm run check:package-imports
 npm run env -- --check
 npm run check-docs
-npm run check-openapi
+npm run check:openapi
 # Docker required:
 cp deploy/bondery/.env.example deploy/bondery/.env
 docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 node deploy/bondery/scripts/check-compose.mjs
 npm run test:runtime-config -w webapp
-npm run check-contracts
-npm run check-types
-npm run check-i18n
-npm run check-api-errors
-npm run test:sync -w api
+npm run check:contracts
+npm run check:types
+npm run check:i18n
+npm run check:api-errors
+npm run test:api:sync
 ```
 
 ## Staging workflows (not full verify)
 
 **`stage-webapp.yml`** (on `main`, webapp paths):
 
-- `npm run check-types -w webapp`
+- `npm run check:types -w webapp`
 - `npm run test:theme -w webapp`, `test:sync`, `test:runtime-config`
 
 **`stage-api.yml`** (on `main`, api paths):
 
-- `npm run test:sync -w api`
+- `npm run test:api:sync`
 
 ## Optional local checks (not in CI)
 

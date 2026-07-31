@@ -1,6 +1,6 @@
-// Verifies committed OpenAPI spec is fresh (run generate-openapi first) and meets doc quality rules.
+// Verifies committed OpenAPI spec is fresh (run generate:openapi first) and meets doc quality rules.
 //
-// Usage: npm run check-openapi-spec -w api
+// Usage: npm run check:openapi-spec -w api
 
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import { createCheck } from "../../../scripts/check-report.mjs";
 
-const check = createCheck("check-openapi-spec-drift");
+const check = createCheck("check:openapi-spec-drift");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const apiRoot = join(__dirname, "..");
@@ -18,7 +18,7 @@ const specPath = join(apiRoot, "openapi.yaml");
 try {
   execSync("git diff --exit-code openapi.yaml", { cwd: apiRoot, stdio: "pipe" });
 } catch {
-  check.add("openapi.yaml is out of date. Run: npm run generate-openapi -w api");
+  check.add("openapi.yaml is out of date. Run: npm run generate:openapi -w api");
   check.failIfNeeded();
 }
 

@@ -466,7 +466,7 @@
   "private": true,
   "scripts": {
     "build": "rimraf dist tsconfig.tsbuildinfo && tsc && node ../../scripts/rewrite-package-hash-imports-in-dist.mjs mantine-next",
-    "check-types": "tsc --noEmit",
+    "check:types": "tsc --noEmit",
     "compile": "tsc",
     "dev": "tsc --watch --preserveWatchOutput"
   },

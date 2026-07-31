@@ -30,7 +30,7 @@ Each client owns its config, env vars, and npm scripts (`test:e2e -w <workspace>
 
 1. **One config per app** — do not share a monolithic Playwright config across webapp and website; baseURL, ports, and webServer differ.
 2. **Shared helpers in packages** — if multiple clients need the same test data factories, put them in `packages/` (e.g. test fixtures), not copied across e2e folders.
-3. **API contract tests stay in api** — browser E2E should not replace `check-openapi` or route-level tests.
+3. **API contract tests stay in api** — browser E2E should not replace `check:openapi` or route-level tests.
 4. **Mobile native E2E is separate** — Expo/React Native needs Detox or Maestro; do not force Playwright for native navigation.
 
 ## Website (planned)

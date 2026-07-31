@@ -1,1 +1,5 @@
-../../src/locales/en/features/sections/Languages.json
+{
+  "cs": "Czech",
+  "de": "German",
+  "en": "English"
+}

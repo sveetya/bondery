@@ -1,1 +1,6 @@
-../../src/locales/cs/features/sections/ContactPreferenceSection.json
+{
+  "LanguageLabel": "Preferovaný jazyk",
+  "LanguagePlaceholder": "Vyberte jazyk...",
+  "TimezoneLabel": "Časové pásmo",
+  "TimezonePlaceholder": "Vyberte časové pásmo..."
+}

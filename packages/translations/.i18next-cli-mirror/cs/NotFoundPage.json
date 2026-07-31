@@ -1,1 +1,4 @@
-../../src/locales/cs/features/pages/NotFoundPage.json
+{
+  "Description": "Stránka, kterou hledáte, neexistuje.",
+  "Title": "Stránka nenalezena"
+}

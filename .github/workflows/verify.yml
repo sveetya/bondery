@@ -40,7 +40,7 @@ jobs:
         run: biome ci .
 
       - name: Check package imports
-        run: npm run check-package-imports
+        run: npm run check:package-imports
 
       - name: Build API workspace deps for contract checks
         env:
@@ -51,10 +51,10 @@ jobs:
         run: npm run env -- --check
 
       - name: Docs checks
-        run: npm run check-docs
+        run: npm run check:docs
 
       - name: OpenAPI checks
-        run: npm run check-openapi
+        run: npm run check:openapi
 
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v2
@@ -67,13 +67,13 @@ jobs:
           node deploy/bondery/scripts/check-compose.mjs
 
       - name: Webapp runtime config tests
-        run: npm run test:runtime-config -w webapp
+        run: npm run test:webapp:runtime-config
 
       - name: Schema contracts
-        run: npm run check-contracts
+        run: npm run check:contracts
 
       - name: Typecheck
-        run: npm run check-types
+        run: npm run check:types
 
       - name: Build API bootstrap CLIs
         env:
@@ -84,13 +84,13 @@ jobs:
           test -f apps/api/dist/cli/ensure-storage-buckets.js
 
       - name: Translation checks
-        run: npm run check-i18n
+        run: npm run check:i18n
 
       - name: API error checks
-        run: npm run check-api-errors
+        run: npm run check:api-errors
 
       - name: API sync unit tests
-        run: npm run test:sync -w api
+        run: npm run test:api:sync
 
   website-build:
     runs-on: ubuntu-latest

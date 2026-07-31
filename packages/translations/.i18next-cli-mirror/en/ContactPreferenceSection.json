@@ -1,1 +1,6 @@
-../../src/locales/en/features/sections/ContactPreferenceSection.json
+{
+  "LanguageLabel": "Preferred Language",
+  "LanguagePlaceholder": "Select language...",
+  "TimezoneLabel": "Timezone",
+  "TimezonePlaceholder": "Select timezone..."
+}

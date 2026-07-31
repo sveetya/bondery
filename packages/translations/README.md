@@ -97,20 +97,20 @@ Nested locale files stay canonical; [`i18next.config.ts`](./i18next.config.ts) p
 From the repo root:
 
 ```bash
-npm run check-i18n-lint       # hardcoded strings (webapp + mobile; website excluded until localized)
+npm run check:i18n:lint       # hardcoded strings (webapp + mobile; website excluded until localized)
 npm run i18n:status           # local i18next-cli completeness (not authoritative for namespace hooks)
 npm run i18n:types            # regenerate src/generated/i18next-cli/*.d.ts
-npm run check-i18n-structure  # Bondery manifest / Languages exonym / forbidden-pattern rules
+npm run check:i18n:structure  # Bondery manifest / Languages exonym / forbidden-pattern rules
 ```
 
-CI runs `npm run check-i18n` (structure, types, usage, lint). API error translations are validated by `npm run check-api-errors`. Use `npm run i18n:status` locally only — it runs i18next-cli against the flat mirror and is not authoritative for namespace-scoped hooks.
+CI runs `npm run check:i18n` (structure, types, usage, lint). API error translations are validated by `npm run check:api-errors`. Use `npm run i18n:status` locally only — it runs i18next-cli against the flat mirror and is not authoritative for namespace-scoped hooks.
 
 Suppress intentional literals with `i18next-instrument-ignore` or `i18next-instrument-ignore-next-line` in source.
 
 ## Build
 
 ```bash
-npm run build --workspace=@bondery/translations
+npm run build -w @bondery/translations
 ```
 
 Generates `src/generated/resources.ts`, compiles TypeScript, copies `src/locales` to `dist/locales`, and validates `manifest.json`.

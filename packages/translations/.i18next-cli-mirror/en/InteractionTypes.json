@@ -1,1 +1,14 @@
-../../src/locales/en/features/sections/InteractionTypes.json
+{
+  "Call": "Call",
+  "Coffee": "Coffee",
+  "CompetitionHackathon": "Competition/Hackathon",
+  "Custom": "Custom",
+  "Email": "Email",
+  "Meal": "Meal",
+  "Meeting": "Meeting",
+  "NetworkingEvent": "Networking event",
+  "Note": "Note",
+  "Other": "Other",
+  "PartySocial": "Party/Social",
+  "TextMessaging": "Text/Messaging"
+}

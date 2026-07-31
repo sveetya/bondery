@@ -1,1 +1,15 @@
-../../src/locales/cs/platform/web/PageHeader.json
+{
+  "Concepts": {
+    "FixAndMerge": "opravě a slučování",
+    "GroupDetail": "této skupině",
+    "Groups": "skupinách",
+    "Home": "domovské stránce",
+    "KeepInTouch": "udržování kontaktu",
+    "Map": "mapě",
+    "People": "lidech",
+    "PersonDetails": "detailu osoby",
+    "Timeline": "událostech"
+  },
+  "HelpLabel": "Zjistit více",
+  "LearnMoreAbout": "Zjistit více o: {concept}"
+}

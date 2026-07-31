@@ -1,1 +1,7 @@
-../../src/locales/en/platform/mobile/Auth.json
+{
+  "CompletingLogin": "Completing login...",
+  "LoginCancelled": "Login was cancelled.",
+  "MissingAuthUrl": "Authentication URL is missing.",
+  "MissingCode": "Missing OAuth authorization code.",
+  "MissingConfig": "Missing mobile auth config. Check EXPO_PUBLIC_* variables."
+}

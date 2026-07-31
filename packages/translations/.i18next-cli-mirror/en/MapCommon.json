@@ -1,1 +1,6 @@
-../../src/locales/en/features/sections/MapCommon.json
+{
+  "Location": "Location",
+  "ZoomControls": "Map zoom",
+  "ZoomIn": "Zoom in",
+  "ZoomOut": "Zoom out"
+}

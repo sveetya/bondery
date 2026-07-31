@@ -1,1 +1,7 @@
-../../src/locales/de/features/sections/PersonTabs.json
+{
+  "About": "Über",
+  "Groups": "Gruppen",
+  "Interactions": "Interaktionen",
+  "LinkedIn": "LinkedIn",
+  "Organize": "Organisieren"
+}

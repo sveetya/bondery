@@ -145,20 +145,20 @@ PostgreSQL schema, Prisma migrations, and generated client shared by the API.
 | Database | [PostgreSQL](https://www.postgresql.org/) (PostGIS in self-host compose) |
 | ORM | [Prisma](https://www.prisma.io/) |
 | Migrations | `prisma migrate` in `packages/db/prisma/migrations/` |
-| Raw SQL | `npm run db:functions -w @bondery/db` for Postgres functions |
+| Raw SQL | `npm run db:functions` for Postgres functions |
 
 **Local dev:** Postgres on port **54322** via [`deploy/bondery/docker-compose.dev-db.yml`](../../deploy/bondery/docker-compose.dev-db.yml), then:
 
 ```bash
-npm run db:migrate:dev -w @bondery/db
+npm run db:migrate:dev
 ```
 
-After schema changes, commit the new migration files and regenerate the Prisma client (`npm run db:generate -w @bondery/db` runs on install).
+After schema changes, commit the new migration files and regenerate the Prisma client (`npm run db:generate` runs on install).
 
 ---
 
 <Callout type="info">
-**Fun fact:** Bondery local apps use consecutive ports in the `2663x` block — phone keypad **B-O-N-D** → **2-6-6-3** ("Dial BOND"). Local Postgres uses **54322** (direct connection, no gateway). Optional local API Redis uses **26636** (`npm run start -w redis`). Port constants live in [`packages/schemas/src/constants/dev-ports.ts`](../../packages/schemas/src/constants/dev-ports.ts).
+**Fun fact:** Bondery local apps use consecutive ports in the `2663x` block — phone keypad **B-O-N-D** → **2-6-6-3** ("Dial BOND"). Local Postgres uses **54322** (direct connection, no gateway). Local API Redis uses **26636** (`npm run start:redis`). Port constants live in [`packages/schemas/src/constants/dev-ports.ts`](../../packages/schemas/src/constants/dev-ports.ts).
 </Callout>
 
 ## Shared packages
@@ -187,7 +187,7 @@ Supported UI locales are declared in [`packages/schemas/locale/supported-locales
 
 ### `packages/translations`
 
-User-facing copy for webapp, website, mobile, and the Chrome extension. Built on **[i18next](https://www.i18next.com/)** with **[react-i18next](https://react.i18next.com/)** (web) / **expo-localization** + i18next (mobile). Namespace layout and preload groups live in `manifest.json`; CI runs **[i18next-cli](https://github.com/i18next/i18next-cli)** for types and lint, and custom scanners (`check-i18n-*`) for structure, used keys, and locale parity.
+User-facing copy for webapp, website, mobile, and the Chrome extension. Built on **[i18next](https://www.i18next.com/)** with **[react-i18next](https://react.i18next.com/)** (web) / **expo-localization** + i18next (mobile). Namespace layout and preload groups live in `manifest.json`; CI runs **[i18next-cli](https://github.com/i18next/i18next-cli)** for types and lint, and custom scanners (`check:i18n:*`) for structure, used keys, and locale parity.
 
 **Supported locales** (source of truth: `supported-locales.json` above — add every new key under `src/locales/{locale}/` for each):
 
@@ -216,7 +216,7 @@ Shared pure utilities, `API_ROUTES`, global URL constants, and platform helpers 
 
 React Email templates rendered and sent by the API.
 
-**Local dev:** port `26639` · `npm run preview --workspace=@bondery/emails` → [http://localhost:26639](http://localhost:26639). Runs alongside the Chrome extension dev server (`26633`) without a port conflict.
+**Local dev:** port `26639` · `npm run dev:emails` → [http://localhost:26639](http://localhost:26639). Runs alongside the Chrome extension dev server (`26633`) without a port conflict.
 
 ### `packages/mantine-next`
 

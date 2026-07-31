@@ -1,6 +1,6 @@
 /**
  * Guards modal dismiss and hosting patterns in the webapp.
- * Run via: npm run check-modal-patterns
+ * Run via: npm run check:modal-patterns
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -12,7 +12,6 @@ const check = createCheck("check-modal-patterns");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
-const STRICT = process.env.CHECK_MODAL_PATTERNS_STRICT === "1";
 
 type Violation = { file: string; rule: string; detail: string };
 
@@ -68,10 +67,6 @@ function hasModalBlockingHelper(content: string): boolean {
 }
 
 function checkFile(absPath: string): Violation[] {
-  if (!STRICT) {
-    return [];
-  }
-
   const rel = normalizeRel(relative(WEBAPP_SRC, absPath));
   const content = readFileSync(absPath, "utf8");
   const violations: Violation[] = [];

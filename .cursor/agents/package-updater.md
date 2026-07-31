@@ -80,7 +80,7 @@ Repo-specific triggers:
 
 | Trigger | Command / file |
 |---------|----------------|
-| API schema change | `npm run generate-openapi` |
+| API schema change | `npm run generate:openapi` |
 | Prisma / `@bondery/db` bump | `npm run generate-types` |
 | Env renames | `.env.*.example` per app |
 | Extension API break | `packages/helpers/src/constants.ts` (`MIN_EXTENSION_VERSION`) |
@@ -107,7 +107,7 @@ Per ecosystem: edit ranges → `npm install` → refactor → verify → hand of
 ### 4. Refactor code
 
 1. Run codemods before hand-editing
-2. Fix type errors: `npm run check-types -w <workspace>`
+2. Fix type errors: `npm run check:types -w <workspace>`
 3. Lint: `npm run lint` (from repo root)
 4. Regenerate artifacts if needed (OpenAPI, Prisma client)
 5. Update `packages/translations` when UI copy changes
@@ -124,7 +124,7 @@ Build every touched workspace. Type-check and lint alone are not enough.
 
 ```bash
 npx turbo build --filter=<workspace>
-npm run check-types -w mobile
+npm run check:types -w mobile
 npx expo-doctor                        # inside apps/mobile
 ```
 
@@ -155,7 +155,7 @@ End every upgrade with the summary templates in [`.agents/workflows/chores/UPGRA
 - [ ] Migration guides consulted for every major bump
 - [ ] Packages updated per workflow (one ecosystem per PR for majors)
 - [ ] Code refactored per official guides and codemods
-- [ ] Every touched workspace builds (or check-types + expo-doctor for mobile)
+- [ ] Every touched workspace builds (or check:types + expo-doctor for mobile)
 - [ ] Summary template (6a) filled in
 - [ ] Manual / UX testing table (6b) filled when UI-facing
 - [ ] CTO brief (6c) filled with new capabilities and migrated code summary

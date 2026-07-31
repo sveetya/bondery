@@ -1,1 +1,7 @@
-../../src/locales/cs/features/sections/PersonTabs.json
+{
+  "About": "O kontaktu",
+  "Groups": "Skupiny",
+  "Interactions": "Interakce",
+  "LinkedIn": "LinkedIn",
+  "Organize": "Organizace"
+}

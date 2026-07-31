@@ -1,1 +1,5 @@
-../../src/locales/de/features/pages/ContactPage.json
+{
+  "Description": "Bei Fragen kannst du uns gerne kontaktieren.",
+  "EmailText": "team@usebondery.com",
+  "Title": "Kontakt"
+}

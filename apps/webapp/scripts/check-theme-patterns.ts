@@ -1,6 +1,6 @@
 /**
  * Guards theme write patterns: useMantineColorScheme only in ColorSchemeSync.
- * Run via: npm run check-theme-patterns
+ * Run via: npm run check:theme-patterns
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -12,7 +12,6 @@ const report = createCheck("check-theme-patterns");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
-const STRICT = process.env.CHECK_THEME_PATTERNS_STRICT === "1";
 
 const ALLOWED_USE_MANTINE_COLOR_SCHEME_FILES = new Set(["components/shell/ColorSchemeSync.tsx"]);
 
@@ -67,11 +66,7 @@ const violations = collectViolations();
 
 for (const violation of violations) {
   const message = `[${violation.rule}] ${violation.file}: ${violation.detail}`;
-  if (STRICT) {
-    report.add(message);
-  } else {
-    console.warn(`  ${message}`);
-  }
+  report.add(message);
 }
 
 report.ok();

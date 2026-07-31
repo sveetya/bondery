@@ -1,1 +1,15 @@
-../../src/locales/en/platform/web/PageHeader.json
+{
+  "Concepts": {
+    "FixAndMerge": "fix and merge",
+    "GroupDetail": "this group",
+    "Groups": "Groups",
+    "Home": "Home",
+    "KeepInTouch": "Keep in touch",
+    "Map": "the map",
+    "People": "People",
+    "PersonDetails": "person details",
+    "Timeline": "Interactions"
+  },
+  "HelpLabel": "Learn more",
+  "LearnMoreAbout": "Learn more about {concept}"
+}

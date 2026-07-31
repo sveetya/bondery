@@ -1,6 +1,6 @@
 /**
  * Guards against webapp runtime imports of API-only @bondery/schemas surfaces.
- * Run via: npm run check-schemas-imports
+ * Run via: npm run check:schemas-imports
  */
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
@@ -12,7 +12,6 @@ const check = createCheck("check-schemas-imports");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WEBAPP_SRC = join(__dirname, "..", "src");
-const STRICT = process.env.CHECK_SCHEMAS_IMPORTS_STRICT === "1";
 
 type Violation = { file: string; rule: string; detail: string };
 
@@ -55,10 +54,6 @@ function checkFile(absPath: string): Violation[] {
   const rel = relative(WEBAPP_SRC, absPath);
   const content = readFileSync(absPath, "utf8");
   const violations: Violation[] = [];
-
-  if (!STRICT) {
-    return violations;
-  }
 
   for (const { pattern, rule, detail } of FORBIDDEN_RUNTIME_IMPORTS) {
     if (pattern.test(content)) {

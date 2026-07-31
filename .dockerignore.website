@@ -19,7 +19,6 @@ apps/mobile
 apps/webapp
 apps/chrome-extension
 apps/supabase-db
-apps/redis
 
 # Dev / test / docs
 .git
