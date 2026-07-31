@@ -69,7 +69,18 @@ Schema migrations run automatically via `api` `pre_start` on deploy — no separ
 
 ### CI redeploy webhook (Bondery production)
 
-After `api-*.*.*` / `webapp-*.*.*` release tags push `:production` images, GitHub Actions calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (repository **variable**) with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
+After `api-*.*.*` / `webapp-*.*.*` release tags: GitHub Actions builds the semver image, runs compose smoke against that tag, promotes `:production` only on success, then calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (repository **variable**) with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
+
+### Release smoke (local)
+
+Reproduce the CI release smoke against a pulled GHCR tag:
+
+```bash
+docker network create dokploy-network || true
+# docker login ghcr.io  # when pulling private images
+node deploy/bondery/scripts/smoke-release.mjs --service webapp --tag 1.7.5
+node deploy/bondery/scripts/smoke-release.mjs --service api --tag 1.7.5
+```
 
 ### Image tags (api / webapp)
 

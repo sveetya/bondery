@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import GithubSlugger from "github-slugger";
@@ -95,6 +96,8 @@ function getHeadingsFromRaw(content: string): string[] {
 }
 
 async function checkLinks() {
+  execSync("npm run generate:api-docs", { cwd: process.cwd(), stdio: "inherit" });
+
   const files = await glob("**/*.mdx", {
     absolute: true,
     cwd: DOCS_DIR,

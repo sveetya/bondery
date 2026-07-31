@@ -14,7 +14,6 @@
 
 # Apps not needed for website image
 apps/api
-!apps/api/openapi.yaml
 apps/mobile
 apps/webapp
 apps/chrome-extension

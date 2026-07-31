@@ -1,34 +1,39 @@
-name: Smoke · Bondery stack
-
-# Manual full-stack smoke drill. Release smoke is chained inside release-api.yml / release-webapp.yml.
+name: Shared - Bondery release smoke
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       service:
-        description: Service profile to smoke
-        required: true
-        type: choice
-        options:
-          - webapp
-          - api
-      image_tag:
-        description: Semver image tag to pull from GHCR (e.g. 1.7.5)
+        description: Service to smoke (webapp or api)
         required: true
         type: string
+      image_name:
+        description: GHCR image name (without tag)
+        required: true
+        type: string
+      image_tag:
+        description: Semver image tag to pull and test
+        required: true
+        type: string
+      checkout_ref:
+        description: Git ref for compose/scripts at release commit
+        required: true
+        type: string
+    secrets:
+      BONDERY_OPS_GHCR_WRITE_TOKEN:
+        required: true
 
-env:
-  TURBO_TELEMETRY_DISABLED: 1
+permissions:
+  contents: read
+  packages: read
 
 jobs:
-  compose-smoke:
+  smoke:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ inputs.checkout_ref }}
           persist-credentials: false
 
       - name: Set up Docker Compose
@@ -49,4 +54,5 @@ jobs:
         run: |
           node deploy/bondery/scripts/smoke-release.mjs \
             --service "${{ inputs.service }}" \
-            --tag "${{ inputs.image_tag }}"
+            --tag "${{ inputs.image_tag }}" \
+            --image "${{ inputs.image_name }}"

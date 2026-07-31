@@ -20,7 +20,7 @@ release/
   extension.yml            -> release-extension.yml ext-X.Y.Z tags
 
 smoke/
-  bondery-stack.yml        -> smoke-bondery-stack.yml  tag-triggered compose smoke
+  bondery-stack.yml        -> smoke-bondery-stack.yml  manual workflow_dispatch drill
 
 shared/
   prepare-dockerignore/    -> .github/actions/shared/prepare-dockerignore/
@@ -31,6 +31,8 @@ shared/
   docker-build-push.yml    -> shared-docker-build-push.yml
   release-validate.yml     -> shared-release-validate.yml
   container-github-release.yml -> shared-container-github-release.yml
+  smoke-bondery.yml        -> shared-smoke-bondery.yml
+  promote-production.yml   -> shared-promote-production.yml
 ```
 
 ## Naming rules
@@ -52,7 +54,7 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 | Variable | Workflow | Dokploy app |
 |----------|----------|-------------|
 | `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` | `deploy-website.yml` (after smoke) | `deploy/ops` marketing website |
-| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release-api.yml`, `release-webapp.yml` | `deploy/bondery` product stack |
+| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release-api.yml`, `release-webapp.yml` (after smoke + `:production` promote) | `deploy/bondery` product stack |
 
 Payload always uses `refs/heads/release` so manual runs and tag releases match the Dokploy branch filter.
 
@@ -73,7 +75,7 @@ Docker builds also use GHA layer cache (`cache-from: type=gha`).
 | Channel | Git trigger | Docker tags |
 |---------|-------------|-------------|
 | Stage | `main` | `:beta`, `:sha-<short>` |
-| Release (api/webapp) | `api-X.Y.Z`, `webapp-X.Y.Z` | `:X.Y.Z`, `:production` |
+| Release (api/webapp) | `api-X.Y.Z`, `webapp-X.Y.Z` | `:X.Y.Z`, `:sha-<short>`; `:production` promoted after smoke |
 | Deploy (website) | push to `release` | `:production`, `:sha-<short>` |
 
 Marketing website uses **release-branch CD** (no semver tags). Product containers stay on tagged releases + pinned image tags for self-hosters.

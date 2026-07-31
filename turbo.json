@@ -39,8 +39,6 @@
     "BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS",
     "BONDERY_PRIVATE_POSTGRES_PASSWORD",
     "BONDERY_PRIVATE_POSTHOG_API_SECRET",
-    "BONDERY_PRIVATE_POSTHOG_HOST",
-    "BONDERY_PRIVATE_POSTHOG_KEY",
     "BONDERY_PRIVATE_POSTHOG_PROJECT_ID",
     "BONDERY_PRIVATE_REDIS_URL",
     "BONDERY_PRIVATE_S3_ACCESS_KEY_ID",
@@ -230,7 +228,7 @@
     "api#generate:openapi": {
       "cache": true,
       "dependsOn": [],
-      "outputs": ["openapi.yaml"]
+      "outputs": ["../../packages/openapi-spec/openapi.yaml"]
     },
     "build": {
       "dependsOn": ["^build"],
@@ -427,8 +425,6 @@
       "env": [
         "BONDERY_INFRA_GIT_SHA",
         "BONDERY_INFRA_VERSION",
-        "BONDERY_PRIVATE_POSTHOG_HOST",
-        "BONDERY_PRIVATE_POSTHOG_KEY",
         "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
         "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
         "BONDERY_PUBLIC_API_URL",
@@ -475,8 +471,6 @@
       "env": [
         "BONDERY_INFRA_GIT_SHA",
         "BONDERY_INFRA_VERSION",
-        "BONDERY_PRIVATE_POSTHOG_HOST",
-        "BONDERY_PRIVATE_POSTHOG_KEY",
         "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
         "BONDERY_PRIVATE_WEBAPP_SESSION_SECRET",
         "BONDERY_PUBLIC_API_URL",
@@ -499,7 +493,7 @@
       "persistent": true
     },
     "website#build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "website#generate:api-docs"],
       "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -532,6 +526,7 @@
     },
     "website#dev": {
       "cache": false,
+      "dependsOn": ["website#generate:api-docs"],
       "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
       "inputs": [
         "$TURBO_DEFAULT$",
@@ -541,6 +536,11 @@
         "apps/api/.env.development.local"
       ],
       "persistent": true
+    },
+    "website#generate:api-docs": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "outputs": ["../../docs/api/api-reference/_generated/**"]
     }
   },
   "ui": "tui"

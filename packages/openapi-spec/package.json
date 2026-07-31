@@ -1,0 +1,14 @@
+{
+  "description": "Committed OpenAPI contract generated from Fastify route schemas",
+  "exports": {
+    ".": "./openapi.yaml",
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "files": [
+    "openapi.yaml"
+  ],
+  "name": "@bondery/openapi-spec",
+  "private": true,
+  "type": "module",
+  "version": "1.7.4"
+}

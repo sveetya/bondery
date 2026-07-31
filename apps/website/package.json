@@ -3,6 +3,7 @@
     "@bondery/branding": "*",
     "@bondery/helpers": "*",
     "@bondery/mantine-next": "*",
+    "@bondery/openapi-spec": "*",
     "@bondery/schemas": "*",
     "@bondery/translations": "*",
     "@mantine/core": "^9.5.0",
@@ -58,8 +59,9 @@
     "check:types": "node ../../scripts/tsc-native.mjs --noEmit",
     "dev": "next dev --port 26630",
     "generate-icons": "tsx scripts/generate-icons.ts",
-    "prebuild": "cross-env NODE_ENV=production pnpm run check:env && pnpm run generate-icons",
-    "predev": "node ../../scripts/kill-website-dev.mjs && cross-env NODE_ENV=development pnpm run check:env && pnpm run generate-icons",
+    "generate:api-docs": "tsx scripts/generate-api-docs.ts",
+    "prebuild": "cross-env NODE_ENV=production pnpm run check:env && pnpm run generate-icons && pnpm run generate:api-docs",
+    "predev": "node ../../scripts/kill-website-dev.mjs && cross-env NODE_ENV=development pnpm run check:env && pnpm run generate-icons && pnpm run generate:api-docs",
     "start": "next start"
   },
   "version": "1.7.4"

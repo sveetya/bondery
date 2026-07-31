@@ -18,11 +18,6 @@ function canonicalDocsUrl(page: (typeof source)["$inferPage"]): string {
 export async function getLLMText(page: (typeof source)["$inferPage"]) {
   const pageUrl = canonicalDocsUrl(page);
   const sourceUrl = `${GITHUB_BLOB_BASE}/${docsFilePath(page)}`;
-
-  if (page.type === "openapi") {
-    return `# ${page.data.title}\n\nURL: ${pageUrl}\n\nSee the OpenAPI reference at ${pageUrl}`;
-  }
-
   const processed = await page.data.getText("processed");
 
   return `# ${page.data.title}

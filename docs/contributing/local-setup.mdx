@@ -24,7 +24,7 @@ On first API start in development, `runDevelopmentBootstrap()` runs the same pip
 
 | Tool | Version | Notes |
 |---|---|---|
-| [Node.js](https://nodejs.org/) | ≥ 20 | LTS recommended |
+| [Node.js](https://nodejs.org/) | 26 | Pin with `.nvmrc` (`nvm use` / `fnm use`) |
 | [npm](https://www.npmjs.com/) | ≥ 11 | Bundled with Node.js |
 | [Docker](https://www.docker.com/) | latest | Local Postgres, Redis, and SeaweedFS |
 
@@ -38,6 +38,7 @@ For mobile development you also need Expo tooling (installed via root `pnpm inst
 ```bash
 git clone https://github.com/usebondery/bondery.git
 cd bondery
+nvm use    # or: fnm use — reads .nvmrc (Node 26)
 pnpm install
 pnpm run setup:dev
 ```

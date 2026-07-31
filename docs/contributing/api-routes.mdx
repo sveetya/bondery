@@ -3,7 +3,7 @@ title: "API routes"
 icon: Route
 ---
 
-Every Fastify route in `apps/api/src/routes/` is part of the published API contract. Docs are **compiled** from Zod schemas — never hand-written per endpoint. OpenAPI (`apps/api/openapi.yaml`) is committed; lint-staged regenerates it on API/schema changes. CI enforces freshness. Don't rely on deploy to regenerate.
+Every Fastify route in `apps/api/src/routes/` is part of the published API contract. Docs are **compiled** from Zod schemas — never hand-written per endpoint. OpenAPI (`packages/openapi-spec/openapi.yaml`) is committed; lint-staged regenerates it on API/schema changes. CI enforces freshness. Don't rely on deploy to regenerate.
 
 See [schemas.md](./schemas.mdx) for which `@bondery/schemas` subpaths each app may import.
 
@@ -282,7 +282,7 @@ Build pipeline:
 
 Workspace packages follow the [Turborepo compiled-package model](https://turborepo.dev/docs/guides/tools/typescript#compiled-packages): `types` → `./src/*.ts` (editor IntelliSense), `import` / `node` / `default` → `./dist/*.js` (runtime). Production `build` depends on `^build`; local dev cold-starts via `compile` (`tsc` to `dist/`) with package `tsc --watch` companions. When adding package subpaths (especially directory barrels like `src/foo/index.ts`), run `pnpm run sync-exports` from the repo root.
 
-`openapi.yaml` is committed; generation is not part of the deploy build.
+`packages/openapi-spec/openapi.yaml` is committed; generation is not part of the deploy build. Website builds run `generate:api-docs` to emit MDX under `docs/api/api-reference/_generated/` from that spec.
 
 ## Shared primitives
 

@@ -19,7 +19,6 @@ COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
-COPY apps/api/openapi.yaml ./apps/api/openapi.yaml
 # Placeholder public env vars for build-time check-env / static generation only.
 # Runtime injects real BONDERY_PUBLIC_* via deploy/ops Compose.
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com

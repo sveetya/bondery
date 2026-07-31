@@ -64,7 +64,7 @@ Central backend for all product data and privileged operations.
 | Domain layer | `src/domains/*` — shared by REST routes and sync push |
 | Sync | Changelog pull/bootstrap (`GET /api/sync/pull`, `GET /api/sync/bootstrap`), mutation push (`POST /api/sync/push`) |
 | Email | [Nodemailer](https://nodemailer.com/) + [React Email](https://react.email/) templates |
-| API contract | Zod schemas in `@bondery/schemas` → generated `apps/api/openapi.yaml` → Fumadocs OpenAPI |
+| API contract | Zod schemas in `@bondery/schemas` → generated `packages/openapi-spec/openapi.yaml` → build-time Fumadocs OpenAPI MDX |
 
 **API documentation pipeline**
 
@@ -73,8 +73,8 @@ Central backend for all product data and privileged operations.
     <File name="apps/api/src/routes/*" />
   </Folder>
   <File name="fastify-zod-openapi + @fastify/swagger" />
-  <File name="apps/api/openapi.yaml (committed artifact)" />
-  <File name="Fumadocs OpenAPI block in docs" />
+  <File name="packages/openapi-spec/openapi.yaml (committed artifact)" />
+  <File name="docs/api/api-reference/_generated/ (build-time MDX)" />
 </Files>
 
 CI enforces: every public route has `description` + `response`; `openapi.yaml` is up to date; Redocly lint passes. See [API routes](api-routes.mdx).

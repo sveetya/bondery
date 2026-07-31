@@ -1,4 +1,4 @@
 {
-  "pages": ["index", "..."],
+  "pages": ["index", "./_generated"],
   "title": "API reference"
 }

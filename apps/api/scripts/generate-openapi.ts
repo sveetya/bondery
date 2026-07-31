@@ -29,7 +29,7 @@ async function main() {
   patchOpenApiRequestExamples(spec);
   const yamlContent = stringify(spec, { lineWidth: 120 });
 
-  const outputPath = resolve(__dirname, "..", "openapi.yaml");
+  const outputPath = resolve(__dirname, "../../../packages/openapi-spec/openapi.yaml");
   writeFileSync(outputPath, yamlContent, "utf-8");
 
   console.log(`OpenAPI spec written to ${outputPath}`);
