@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@bondery/schemas": "*",
+    "@bondery/schemas": "workspace:*",
     "@react-email/ui": "^6.9.1",
     "@types/node": "^26.1.2",
     "@vitejs/plugin-react": "^6.0.4",
@@ -13,7 +13,7 @@
   },
   "description": "Bondery internationalization translations",
   "devDependencies": {
-    "@bondery/typescript-config": "*",
+    "@bondery/typescript-config": "workspace:*",
     "i18next-cli": "^1.67.3",
     "rimraf": "^6.1.3",
     "typescript": "^7.0.2"

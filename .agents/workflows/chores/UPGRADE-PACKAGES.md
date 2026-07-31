@@ -49,7 +49,7 @@ Also check:
 
 - `pnpm ls <pkg> -r` for duplicate transitive versions (`esbuild`, `zod`, …)
 - Expo packages (`~`) — never bulk-update; use Step 2 Expo batch
-- Root `pnpm.onlyBuiltDependencies` — add entries for new native/postinstall packages
+- `allowBuilds` in `pnpm-workspace.yaml` — add entries for new native/postinstall packages (pnpm 11 replaces npm’s `onlyBuiltDependencies`; run `pnpm approve-builds` locally after adding a dep that needs a build script)
 - `patches/` — remove obsolete patches
 
 Save the outdated list for Step 6.

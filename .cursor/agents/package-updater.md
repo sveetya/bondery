@@ -57,7 +57,7 @@ Save the baseline list for the handoff summary.
 Also check:
 
 - `pnpm ls <pkg> -r` for duplicate transitive versions (`esbuild`, `zod`, …)
-- Root `pnpm.onlyBuiltDependencies` for new native/postinstall packages
+- `allowBuilds` in `pnpm-workspace.yaml` — add entries for new native/postinstall packages (pnpm 11 replaces npm’s `onlyBuiltDependencies`)
 - `patches/` for obsolete patches
 
 ### 2. Migration guides

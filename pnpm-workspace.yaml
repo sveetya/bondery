@@ -6,6 +6,9 @@ nodeLinker: hoisted
 autoInstallPeers: true
 linkWorkspacePackages: true
 preferWorkspacePackages: true
+saveWorkspaceProtocol: rolling
+minimumReleaseAge: 1440
+enableGlobalVirtualStore: true
 
 overrides:
   "@tiptap/core": "3.29.2"

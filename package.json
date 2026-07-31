@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.3",
-    "@bondery/schemas": "*",
+    "@bondery/schemas": "workspace:*",
     "@redocly/cli": "^2.38.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",

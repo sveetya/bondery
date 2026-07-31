@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "@bondery/branding": "*",
-    "@bondery/helpers": "*",
-    "@bondery/mantine-next": "*",
-    "@bondery/openapi-spec": "*",
-    "@bondery/schemas": "*",
-    "@bondery/translations": "*",
+    "@bondery/branding": "workspace:*",
+    "@bondery/helpers": "workspace:*",
+    "@bondery/mantine-next": "workspace:*",
+    "@bondery/openapi-spec": "workspace:*",
+    "@bondery/schemas": "workspace:*",
+    "@bondery/translations": "workspace:*",
     "@mantine/core": "^9.5.0",
     "@mantine/hooks": "^9.5.0",
     "@mantine/notifications": "^9.5.0",
@@ -31,7 +31,7 @@
   },
   "description": "Bondery Website",
   "devDependencies": {
-    "@bondery/typescript-config": "*",
+    "@bondery/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/mdx": "^2.0.14",
     "@types/node": "^26",
