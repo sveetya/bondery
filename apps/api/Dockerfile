@@ -35,7 +35,11 @@ RUN --mount=type=secret,id=turbo_token \
 # pre_start hooks use `node apps/api/dist/cli/...`), so workspace packages must stay
 # linked under node_modules/@bondery/*. Prune strips those hoisted links; webapp
 # avoids this because Next bundles app code into .next.
-RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))"
+RUN for pkg in db emails helpers schemas translations vcard; do \
+      mkdir -p node_modules/@bondery && \
+      ln -sfn "../../packages/$pkg" "node_modules/@bondery/$pkg"; \
+    done \
+  && node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))"
 
 FROM node:26-alpine AS runner
 WORKDIR /app
