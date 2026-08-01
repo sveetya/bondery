@@ -1,6 +1,6 @@
 export {
+  type BuildMetadata,
   buildLivenessStatus,
   buildReadinessStatus,
   readBuildMetadata,
-  type BuildMetadata,
 } from "./build-metadata.js";

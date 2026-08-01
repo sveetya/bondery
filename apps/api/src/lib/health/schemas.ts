@@ -32,4 +32,3 @@ export const healthReportSchema = z
     timestamp: createdAtSchema,
   })
   .meta({ example: EXAMPLE_HEALTH_OK_RESPONSE });
-

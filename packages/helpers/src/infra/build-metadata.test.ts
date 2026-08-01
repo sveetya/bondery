@@ -1,11 +1,7 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 
-import {
-  buildLivenessStatus,
-  buildReadinessStatus,
-  readBuildMetadata,
-} from "./build-metadata.js";
+import { buildLivenessStatus, buildReadinessStatus, readBuildMetadata } from "./build-metadata.js";
 
 const originalVersion = process.env.BONDERY_INFRA_VERSION;
 const originalGitSha = process.env.BONDERY_INFRA_GIT_SHA;
