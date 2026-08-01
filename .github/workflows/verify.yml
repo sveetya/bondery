@@ -71,10 +71,7 @@ jobs:
       - name: Build API workspace deps for contract checks
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: pnpm exec turbo build --filter=api^...
-
-      - name: Sync injected workspace packages after turbo build
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm -r --filter "api^..." run build
 
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
@@ -126,10 +123,7 @@ jobs:
       - name: Build API workspace deps for typecheck
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: pnpm exec turbo build --filter=api^...
-
-      - name: Sync injected workspace packages after turbo build
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm -r --filter "api^..." run build
 
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
@@ -166,10 +160,7 @@ jobs:
       - name: Build API workspace deps for tests
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: pnpm exec turbo build --filter=api^...
-
-      - name: Sync injected workspace packages after turbo build
-        run: pnpm install --frozen-lockfile --prefer-offline
+        run: pnpm -r --filter "api^..." run build
 
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
