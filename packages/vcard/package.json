@@ -71,6 +71,9 @@
       "types": "./src/serialize.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "imports": {
     "#*": [
       "./dist/*",
@@ -92,9 +95,6 @@
     "compile": "tsc",
     "dev": "tsc --watch --preserveWatchOutput"
   },
-  "files": [
-    "dist"
-  ],
   "type": "module",
   "types": "./src/index.ts",
   "version": "1.8.0"

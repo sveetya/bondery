@@ -556,6 +556,9 @@
       "types": "./src/version/version-utils.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "imports": {
     "#*": [
       "./dist/*",
@@ -578,9 +581,6 @@
     "dev": "tsc --watch --preserveWatchOutput",
     "test": "tsx --test src/**/*.test.ts"
   },
-  "files": [
-    "dist"
-  ],
   "type": "module",
   "types": "./src/index.ts",
   "version": "1.8.0"
