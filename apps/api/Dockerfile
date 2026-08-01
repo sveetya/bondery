@@ -32,8 +32,13 @@ RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=api
 RUN pnpm prune --prod --ignore-scripts \
-  && pnpm install --prod --frozen-lockfile --ignore-scripts --filter api...
-RUN test -f node_modules/@bondery/db/package.json
+  && pnpm install --prod --frozen-lockfile --ignore-scripts --filter api... \
+  && for pkg in db emails helpers schemas translations vcard; do \
+       mkdir -p node_modules/@bondery \
+       && rm -rf "node_modules/@bondery/$pkg" \
+       && ln -s "../../packages/$pkg" "node_modules/@bondery/$pkg"; \
+     done \
+  && test -f node_modules/@bondery/db/package.json
 
 FROM node:26-alpine AS runner
 WORKDIR /app
