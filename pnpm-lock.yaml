@@ -861,6 +861,9 @@ importers:
       next-i18next:
         specifier: ^16.0.8
         version: 16.0.8(@types/react@19.2.17)(i18next@26.3.6(typescript@7.0.2))(next@16.3.0-canary.102(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-i18next@17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2))(react@19.2.8)
+      next-plausible:
+        specifier: ^4.0.0
+        version: 4.0.0(next@16.3.0-canary.102(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -9161,6 +9164,13 @@ packages:
       next: 16.3.0-canary.102
       react: '>= 18.0.0'
       react-i18next: '>= 14.0.0'
+
+  next-plausible@4.0.0:
+    resolution: {integrity: sha512-tC48VscREZ4fEvas9T4oj5qJwnpPlms0Wih1Unbgi/ozG08yN1w0IAPGp+/cHB8n6qzEAL5J0MlAS0FOr132jA==}
+    peerDependencies:
+      next: 16.3.0-canary.102
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   next-themes@0.4.6:
     resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
@@ -20370,6 +20380,12 @@ snapshots:
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
     transitivePeerDependencies:
       - '@types/react'
+
+  next-plausible@4.0.0(next@16.3.0-canary.102(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
+    dependencies:
+      next: 16.3.0-canary.102(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   next-themes@0.4.6(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:

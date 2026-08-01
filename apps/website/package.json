@@ -22,6 +22,7 @@
     "motion": "^12.43.0",
     "next": "16.3.0-canary.102",
     "next-i18next": "^16.0.8",
+    "next-plausible": "^4.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-i18next": "^17.0.11",

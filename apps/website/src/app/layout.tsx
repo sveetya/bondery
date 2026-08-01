@@ -3,6 +3,7 @@ import "./globals.css";
 import { METADATA_TITLE_DIVIDER, WEBAPP_NAME } from "@bondery/helpers";
 import { ColorSchemeScript } from "@mantine/core";
 import { Lexend } from "next/font/google";
+import PlausibleProvider from "next-plausible";
 import { WEBSITE_URL } from "@/lib/config";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo/copy";
 import { JsonLd } from "@/lib/seo/json-ld";
@@ -52,6 +53,10 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
+const plausibleDomain = process.env.BONDERY_PUBLIC_PLAUSIBLE_DOMAIN;
+const plausibleHost = process.env.BONDERY_PUBLIC_PLAUSIBLE_HOST;
+const analyticsEnabled = Boolean(plausibleDomain && plausibleHost);
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -72,7 +77,19 @@ export default async function RootLayout({
           id="schema-software-application"
           nonce={nonce}
         />
-        {children}
+        {plausibleHost && plausibleDomain ? (
+          <PlausibleProvider
+            enabled={analyticsEnabled}
+            init={{
+              captureOnLocalhost: process.env.NODE_ENV === "development",
+            }}
+            src={`${plausibleHost.replace(/\/$/, "")}/js/script.js`}
+          >
+            {children}
+          </PlausibleProvider>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );

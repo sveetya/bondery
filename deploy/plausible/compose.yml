@@ -1,0 +1,83 @@
+# Self-hosted Plausible Community Edition (v3.2.1) for Bondery marketing analytics.
+# Bondery production only — separate from deploy/ops (website) and deploy/bondery (product).
+#
+# Prerequisite (Traefik / Dokploy): docker network create dokploy-network
+# Production: copy compose.override.yml.example → compose.override.yml
+#
+# Upstream: https://github.com/plausible/community-edition (tag v3.2.1)
+
+services:
+  plausible_db:
+    environment:
+      POSTGRES_PASSWORD: ${PLAUSIBLE_POSTGRES_PASSWORD:-postgres}
+    healthcheck:
+      start_period: 1m
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+    image: postgres:16-alpine
+    networks:
+      - internal
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  plausible_events_db:
+    environment:
+      CLICKHOUSE_SKIP_USER_SETUP: 1
+    healthcheck:
+      start_period: 1m
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 -O - http://127.0.0.1:8123/ping || exit 1",
+        ]
+    image: clickhouse/clickhouse-server:24.12-alpine
+    networks:
+      - internal
+    restart: always
+    ulimits:
+      nofile:
+        hard: 262144
+        soft: 262144
+    volumes:
+      - event-data:/var/lib/clickhouse
+      - event-logs:/var/log/clickhouse-server
+      - ./clickhouse/logs.xml:/etc/clickhouse-server/config.d/logs.xml:ro
+      - ./clickhouse/ipv4-only.xml:/etc/clickhouse-server/config.d/ipv4-only.xml:ro
+      - ./clickhouse/low-resources.xml:/etc/clickhouse-server/config.d/low-resources.xml:ro
+      - ./clickhouse/default-profile-low-resources-overrides.xml:/etc/clickhouse-server/users.d/default-profile-low-resources-overrides.xml:ro
+
+  plausible:
+    command: sh -c "/entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+    depends_on:
+      plausible_db:
+        condition: service_healthy
+      plausible_events_db:
+        condition: service_healthy
+    environment:
+      BASE_URL: ${BASE_URL:?BASE_URL must be set}
+      CLICKHOUSE_DATABASE_URL: ${CLICKHOUSE_DATABASE_URL:-http://plausible_events_db:8123/plausible_events_db}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:${PLAUSIBLE_POSTGRES_PASSWORD:-postgres}@plausible_db:5432/plausible}
+      DISABLE_REGISTRATION: ${DISABLE_REGISTRATION:-invite_only}
+      HTTP_PORT: ${HTTP_PORT:-80}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?SECRET_KEY_BASE must be set}
+      TMPDIR: /var/lib/plausible/tmp
+      TOTP_VAULT_KEY: ${TOTP_VAULT_KEY:?TOTP_VAULT_KEY must be set}
+    image: ghcr.io/plausible/community-edition:v3.2.1
+    networks:
+      - internal
+    restart: always
+    ulimits:
+      nofile:
+        hard: 65535
+        soft: 65535
+    volumes:
+      - plausible-data:/var/lib/plausible
+
+networks:
+  internal:
+
+volumes:
+  db-data:
+  event-data:
+  event-logs:
+  plausible-data:

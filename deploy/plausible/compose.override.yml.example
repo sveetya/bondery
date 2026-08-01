@@ -1,0 +1,23 @@
+# Traefik / Dokploy routing for Plausible CE.
+# Copy to compose.override.yml in this directory:
+#
+#   cp compose.override.yml.example compose.override.yml
+#
+# Requires: docker network create dokploy-network
+
+services:
+  plausible:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bondery-plausible.rule=Host(`${BONDERY_INFRA_PLAUSIBLE_DOMAIN:?BONDERY_INFRA_PLAUSIBLE_DOMAIN must be set}`)
+      - traefik.http.routers.bondery-plausible.entrypoints=websecure
+      - traefik.http.routers.bondery-plausible.tls.certResolver=letsencrypt
+      - traefik.http.routers.bondery-plausible.service=bondery-plausible
+      - traefik.http.services.bondery-plausible.loadbalancer.server.port=80
+    networks:
+      - dokploy-network
+      - internal
+
+networks:
+  dokploy-network:
+    external: true

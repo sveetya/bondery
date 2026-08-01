@@ -120,7 +120,12 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
 };
 
 /** Operator-facing sections in `deploy/ops/.env.example` (order matters). */
-export const OPS_GROUP_ORDER = ["Image tags", "Public hostnames", "Build metadata"] as const;
+export const OPS_GROUP_ORDER = [
+  "Image tags",
+  "Public hostnames",
+  "Optional website analytics",
+  "Build metadata",
+] as const;
 
 /** Multi-line comments under ops group headers in `deploy/ops/.env.example`. */
 export const OPS_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
@@ -640,6 +645,20 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [],
   },
   {
+    canonical: "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
+    description: "Public Plausible CE hostname for Traefik Host() rules (no scheme).",
+    exampleValue: "plausible.usebondery.com",
+    group: "Infra",
+    opsExample: {
+      group: "Optional website analytics",
+      include: true,
+      value: "plausible.usebondery.com",
+    },
+    requiredIn: [],
+    secret: false,
+    targets: [],
+  },
+  {
     canonical: "BONDERY_INFRA_API_IMAGE_TAG",
     deployExample: {
       commented: true,
@@ -939,6 +958,33 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     secret: false,
     syncable: true,
     targets: [t("webapp")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_PLAUSIBLE_DOMAIN",
+    description:
+      "Plausible site domain (marketing hostname registered in self-hosted Plausible CE)",
+    exampleValue: "",
+    group: "Analytics",
+    opsExample: { group: "Optional website analytics", include: true, value: "usebondery.com" },
+    requiredIn: [],
+    secret: false,
+    syncable: true,
+    targets: [t("website")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_PLAUSIBLE_HOST",
+    description: "Self-hosted Plausible CE base URL (script and event requests)",
+    exampleValue: "",
+    group: "Analytics",
+    opsExample: {
+      group: "Optional website analytics",
+      include: true,
+      value: "https://plausible.usebondery.com",
+    },
+    requiredIn: [],
+    secret: false,
+    syncable: true,
+    targets: [t("website")],
   },
   {
     canonical: "BONDERY_PRIVATE_POSTHOG_API_SECRET",
