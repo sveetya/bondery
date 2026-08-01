@@ -49,6 +49,11 @@ on:
         required: false
         type: boolean
         default: true
+      cache_scope:
+        description: BuildKit GHA cache scope (must be unique when jobs run in parallel)
+        required: false
+        type: string
+        default: buildkit
     secrets:
       BONDERY_OPS_GHCR_WRITE_TOKEN:
         required: true
@@ -134,6 +139,8 @@ jobs:
       - name: Build and push
         if: inputs.push
         uses: docker/build-push-action@v7
+        env:
+          BUILDKIT_PROGRESS: plain
         with:
           context: .
           file: ${{ inputs.dockerfile }}
@@ -146,14 +153,16 @@ jobs:
             TURBO_TEAM=${{ vars.BONDERY_OPS_TURBO_TEAM }}
           secrets: |
             turbo_token=${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ inputs.cache_scope }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.cache_scope }}
           provenance: false
           sbom: false
 
       - name: Build (verify only)
         if: ${{ !inputs.push }}
         uses: docker/build-push-action@v7
+        env:
+          BUILDKIT_PROGRESS: plain
         with:
           context: .
           file: ${{ inputs.dockerfile }}
@@ -165,7 +174,7 @@ jobs:
             TURBO_TEAM=${{ vars.BONDERY_OPS_TURBO_TEAM }}
           secrets: |
             turbo_token=${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ inputs.cache_scope }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.cache_scope }}
           provenance: false
           sbom: false
