@@ -68,6 +68,11 @@ jobs:
           turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
           turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
 
+      - name: Build API workspace deps for contract checks
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
+        run: pnpm exec turbo build --filter=api^...
+
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
 
@@ -115,6 +120,14 @@ jobs:
           turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
           turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
 
+      - name: Build API workspace deps for typecheck
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
+        run: pnpm exec turbo build --filter=api^...
+
+      - name: Build helpers for root scripts
+        run: pnpm --filter @bondery/helpers run build
+
       - name: Typecheck
         run: pnpm run check:types
 
@@ -138,6 +151,19 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - uses: ./.github/actions/shared/turbo-remote-cache
+        with:
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+
+      - name: Build API workspace deps for tests
+        env:
+          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
+        run: pnpm exec turbo build --filter=api^...
+
+      - name: Build helpers for root scripts
+        run: pnpm --filter @bondery/helpers run build
 
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v2

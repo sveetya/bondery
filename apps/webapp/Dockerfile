@@ -35,18 +35,9 @@ RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=webapp
-# #region agent log
-RUN echo "===DEBUG webapp prune start $(date -u +%Y-%m-%dT%H:%M:%SZ)==="
-# #endregion
 RUN pnpm prune --prod --ignore-scripts
-# #region agent log
-RUN echo "===DEBUG webapp prune end $(date -u +%Y-%m-%dT%H:%M:%SZ)==="
-# #endregion
 
 FROM node:26-alpine AS runner
-# #region agent log
-RUN echo "===DEBUG webapp runner stage start $(date -u +%Y-%m-%dT%H:%M:%SZ)==="
-# #endregion
 WORKDIR /app
 
 ARG BONDERY_INFRA_VERSION
