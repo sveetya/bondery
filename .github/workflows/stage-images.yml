@@ -104,6 +104,7 @@ jobs:
       oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/api-container.md
       oci_version: beta
       git_sha: ${{ github.sha }}
+      cache_scope: api
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
         BONDERY_INFRA_VERSION=beta
@@ -125,6 +126,7 @@ jobs:
       oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
       oci_version: beta
       git_sha: ${{ github.sha }}
+      cache_scope: webapp
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
         BONDERY_INFRA_VERSION=beta
@@ -145,6 +147,7 @@ jobs:
       oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
       oci_version: sha
       git_sha: ${{ github.sha }}
+      cache_scope: website
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
         BONDERY_INFRA_VERSION=${{ needs.resolve_website_version.outputs.version }}

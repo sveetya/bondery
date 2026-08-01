@@ -11,7 +11,38 @@ env:
   TURBO_TELEMETRY_DISABLED: 1
 
 jobs:
-  contract:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: biomejs/setup-biome@v2
+        with:
+          version: 2.5.6
+
+      - name: Biome
+        run: biome ci .
+
+      - name: Check package imports
+        run: pnpm run check:package-imports
+
+  contracts:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -37,21 +68,6 @@ jobs:
           turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
           turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
 
-      - uses: biomejs/setup-biome@v2
-        with:
-          version: 2.5.6
-
-      - name: Biome
-        run: biome ci .
-
-      - name: Check package imports
-        run: pnpm run check:package-imports
-
-      - name: Build API workspace deps for contract checks
-        env:
-          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: pnpm exec turbo build --filter=api^...
-
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
 
@@ -63,6 +79,65 @@ jobs:
 
       - name: OpenAPI checks
         run: pnpm run check:openapi
+
+      - name: Schema contracts
+        run: pnpm run check:contracts
+
+      - name: Translation checks
+        run: pnpm run check:i18n
+
+      - name: API error checks
+        run: pnpm run check:api-errors
+
+  types:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: ./.github/actions/shared/turbo-remote-cache
+        with:
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+
+      - name: Typecheck
+        run: pnpm run check:types
+
+  api-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v2
@@ -77,30 +152,10 @@ jobs:
       - name: Webapp runtime config tests
         run: pnpm run test:webapp:runtime-config
 
-      - name: Schema contracts
-        run: pnpm run check:contracts
-
-      - name: Typecheck
-        run: pnpm run check:types
-
-      - name: Build API bootstrap CLIs
-        env:
-          DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
-        run: |
-          pnpm exec turbo build --filter=@bondery/db --filter=api
-          test -f apps/api/dist/cli/release-migrate.js
-          test -f apps/api/dist/cli/ensure-storage-buckets.js
-
-      - name: Translation checks
-        run: pnpm run check:i18n
-
-      - name: API error checks
-        run: pnpm run check:api-errors
-
       - name: API sync unit tests
         run: pnpm run test:api:sync
 
-  website-build:
+  website-docker-build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -120,39 +175,39 @@ jobs:
               - packages/**
               - package.json
               - pnpm-lock.yaml
+              - pnpm-workspace.yaml
               - .nvmrc
               - turbo.json
               - .dockerignore.website
               - apps/website/Dockerfile
+              - .github/actions/shared/**
               - .github/workflows/verify.yml
               - .github/workflows/stage-images.yml
-              - .github/actions/shared/**
+              - .github/workflows/shared-docker-build-push.yml
+              - deploy/ops/**
 
-      - uses: pnpm/action-setup@v4
+      - name: Skip website docker build
+        if: steps.filter.outputs.website != 'true'
+        run: echo "No website docker paths changed — skipping build"
+
+      - uses: ./.github/actions/shared/docker-verify-build
         if: steps.filter.outputs.website == 'true'
         with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        if: steps.filter.outputs.website == 'true'
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - uses: ./.github/actions/shared/turbo-remote-cache
-        if: steps.filter.outputs.website == 'true'
-        with:
+          dockerfile: apps/website/Dockerfile
+          dockerignore_file: .dockerignore.website
+          image_name: ghcr.io/usebondery/website
+          git_sha: ${{ github.sha }}
+          build_args: |
+            BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+            BONDERY_INFRA_VERSION=verify
           turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
           turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+          cache_scope: website
 
-      - uses: ./.github/actions/shared/website-prune-build
-        if: steps.filter.outputs.website == 'true'
-
-  detect_docker_changes:
+  api-docker-build:
     runs-on: ubuntu-latest
-    outputs:
-      api: ${{ steps.filter.outputs.api }}
-      webapp: ${{ steps.filter.outputs.webapp }}
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
         with:
@@ -177,6 +232,38 @@ jobs:
               - .github/workflows/verify.yml
               - .github/workflows/stage-images.yml
               - .github/workflows/shared-docker-build-push.yml
+
+      - name: Skip api docker build
+        if: steps.filter.outputs.api != 'true'
+        run: echo "No api docker paths changed — skipping build"
+
+      - uses: ./.github/actions/shared/docker-verify-build
+        if: steps.filter.outputs.api == 'true'
+        with:
+          dockerfile: apps/api/Dockerfile
+          dockerignore_file: .dockerignore.api
+          image_name: ghcr.io/usebondery/api
+          git_sha: ${{ github.sha }}
+          build_args: |
+            BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+            BONDERY_INFRA_VERSION=verify
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+          cache_scope: api
+
+  webapp-docker-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
             webapp:
               - apps/webapp/**
               - packages/**
@@ -193,42 +280,20 @@ jobs:
               - .github/workflows/stage-images.yml
               - .github/workflows/shared-docker-build-push.yml
 
-  api-docker-build:
-    needs: detect_docker_changes
-    if: needs.detect_docker_changes.outputs.api == 'true'
-    uses: ./.github/workflows/shared-docker-build-push.yml
-    secrets: inherit
-    with:
-      dockerfile: apps/api/Dockerfile
-      dockerignore_file: .dockerignore.api
-      image_name: ghcr.io/usebondery/api
-      docker_tags: type=raw,value=verify
-      oci_title: Bondery API
-      oci_description: PR verify build (not pushed)
-      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/api-container.md
-      oci_version: verify
-      git_sha: ${{ github.sha }}
-      push: false
-      build_args: |
-        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
-        BONDERY_INFRA_VERSION=verify
+      - name: Skip webapp docker build
+        if: steps.filter.outputs.webapp != 'true'
+        run: echo "No webapp docker paths changed — skipping build"
 
-  webapp-docker-build:
-    needs: detect_docker_changes
-    if: needs.detect_docker_changes.outputs.webapp == 'true'
-    uses: ./.github/workflows/shared-docker-build-push.yml
-    secrets: inherit
-    with:
-      dockerfile: apps/webapp/Dockerfile
-      dockerignore_file: .dockerignore.webapp
-      image_name: ghcr.io/usebondery/webapp
-      docker_tags: type=raw,value=verify
-      oci_title: Bondery Webapp
-      oci_description: PR verify build (not pushed)
-      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
-      oci_version: verify
-      git_sha: ${{ github.sha }}
-      push: false
-      build_args: |
-        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
-        BONDERY_INFRA_VERSION=verify
+      - uses: ./.github/actions/shared/docker-verify-build
+        if: steps.filter.outputs.webapp == 'true'
+        with:
+          dockerfile: apps/webapp/Dockerfile
+          dockerignore_file: .dockerignore.webapp
+          image_name: ghcr.io/usebondery/webapp
+          git_sha: ${{ github.sha }}
+          build_args: |
+            BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+            BONDERY_INFRA_VERSION=verify
+          turbo_token: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          turbo_team: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+          cache_scope: webapp
