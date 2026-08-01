@@ -31,20 +31,19 @@ ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=api
-RUN pnpm prune --prod --ignore-scripts \
-  && pnpm install --prod --frozen-lockfile --ignore-scripts --filter api... \
-  && for pkg in db emails helpers schemas translations vcard; do \
-       mkdir -p node_modules/@bondery \
-       && rm -rf "node_modules/@bondery/$pkg" \
-       && ln -s "../../packages/$pkg" "node_modules/@bondery/$pkg"; \
-     done \
-  && test -f node_modules/@bondery/db/package.json
+# Do not run `pnpm prune --prod` here. The API starts via plain `node` (and compose
+# pre_start hooks use `node apps/api/dist/cli/...`), so workspace packages must stay
+# linked under node_modules/@bondery/*. Prune strips those hoisted links; webapp
+# avoids this because Next bundles app code into .next.
+RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))"
 
 FROM node:26-alpine AS runner
 WORKDIR /app
 
 ARG BONDERY_INFRA_VERSION
 ARG BONDERY_INFRA_GIT_SHA
+
+RUN npm install -g pnpm@11.18.0
 
 ENV NODE_ENV=production
 ENV API_HOST=0.0.0.0
@@ -56,6 +55,7 @@ RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 --ingroup nodejs nodejs
 
 COPY --from=builder --chown=nodejs:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=nodejs:nodejs /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nodejs:nodejs /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder --chown=nodejs:nodejs /app/apps/api/dist ./apps/api/dist
@@ -69,4 +69,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 
 # Required env is validated at process start (assertRequiredEnvAtStartup in index.ts)
 # before Fastify listens — fails with named missing vars (same list as scripts/check-env.ts).
-CMD ["node", "apps/api/dist/index.js"]
+CMD ["pnpm", "--filter", "api", "run", "start"]
