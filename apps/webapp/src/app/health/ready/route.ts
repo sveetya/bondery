@@ -8,9 +8,8 @@ export async function GET() {
     return Response.json(buildReadinessStatus(true), {
       headers: { "Cache-Control": "no-store" },
     });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Invalid runtime config";
-    return Response.json(buildReadinessStatus(false, message), {
+  } catch {
+    return Response.json(buildReadinessStatus(false, "Invalid runtime config"), {
       headers: { "Cache-Control": "no-store" },
       status: 503,
     });
