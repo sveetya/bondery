@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { applySqlFunctions } from "./apply-sql-functions.js";
@@ -9,9 +10,8 @@ export type ReleaseMigrateHooks = {
 };
 
 function resolvePrismaBinary(): string {
-  const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-  const repoRoot = resolve(packageRoot, "../..");
-  return resolve(repoRoot, "node_modules/.bin/prisma");
+  const require = createRequire(import.meta.url);
+  return require.resolve("prisma/build/index.js");
 }
 
 export async function runReleaseMigrate(hooks: ReleaseMigrateHooks): Promise<void> {

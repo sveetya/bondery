@@ -37,6 +37,7 @@ RUN pnpm deploy --filter=api --prod /deploy/api
 WORKDIR /deploy/api
 RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))" \
   && test -f node_modules/@bondery/db/prisma/migrations/migration_lock.toml \
+  && node -e "import { createRequire } from 'node:module'; createRequire(import.meta.url).resolve('prisma/build/index.js'); console.log('prisma resolvable')" \
   && node --check dist/cli/release-migrate.js \
   && node --check dist/cli/ensure-storage-buckets.js
 
