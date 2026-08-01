@@ -28,15 +28,14 @@ COPY docs ./docs
 RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --ignore-scripts --store-dir "${PNPM_STORE_DIR}"
 ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
-RUN --mount=type=secret,id=turbo_token \
-    export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
-    pnpm exec turbo build --filter=api
+RUN pnpm -r --filter "api^..." run build && pnpm --filter api run build
 # Materialize a portable production tree (workspace deps resolved into node_modules).
 # See https://pnpm.io/docker — injectWorkspacePackages must be true in pnpm-workspace.yaml.
 RUN pnpm deploy --filter=api --prod /deploy/api
 WORKDIR /deploy/api
 RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))" \
   && test -f node_modules/@bondery/db/prisma/migrations/migration_lock.toml \
+  && node -e "import { createRequire } from 'node:module'; createRequire(import.meta.url).resolve('prisma/build/index.js'); console.log('prisma resolvable')" \
   && node --check dist/cli/release-migrate.js \
   && node --check dist/cli/ensure-storage-buckets.js
 
