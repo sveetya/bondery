@@ -21,11 +21,7 @@ export function collectOpsExampleRows(packageVersion: string) {
     if (entry.canonical === "BONDERY_INFRA_VERSION" && !ops.value) {
       value = packageVersion;
     }
-    if (
-      entry.canonical === "BONDERY_INFRA_WEBSITE_IMAGE_TAG" &&
-      ops.commented &&
-      !ops.value
-    ) {
+    if (entry.canonical === "BONDERY_INFRA_WEBSITE_IMAGE_TAG" && ops.commented && !ops.value) {
       value = packageVersion;
     }
     rows.push({

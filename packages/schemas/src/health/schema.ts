@@ -1,6 +1,6 @@
+import { z } from "zod";
 import { createdAtSchema } from "#entities/_shared/schema.js";
 import { EXAMPLE_LIVENESS_STATUS_RESPONSE } from "#openapi/fixtures/schema-examples.js";
-import { z } from "zod";
 
 const buildMetadataFields = {
   gitSha: z.string().optional(),
