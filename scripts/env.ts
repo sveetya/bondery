@@ -34,6 +34,7 @@ import {
 import { writeDeployExample } from "./env-deploy-example.js";
 import { compareAscii, formatEnvFile, quoteEnvValue, sortEnvRows } from "./env-file-format.js";
 import { writeOpsExample } from "./env-ops-example.js";
+import { writePlausibleExample } from "./env-plausible-example.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "..");
@@ -178,6 +179,7 @@ function writeExamples(dryRun) {
 
   writeDeployExample(repoRoot, dryRun, packageVersion, log);
   writeOpsExample(repoRoot, dryRun, packageVersion, log);
+  writePlausibleExample(repoRoot, dryRun, log);
 
   for (const target of SYNC_TARGETS) {
     const rows = sortEnvRows(collectTargetVars(target.id, {}, true));

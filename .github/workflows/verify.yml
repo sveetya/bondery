@@ -67,7 +67,7 @@ jobs:
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v2
         with:
-          version: v2.40.2
+          version: v5.3.1
 
       - name: Validate Bondery deploy compose
         run: |
@@ -147,3 +147,88 @@ jobs:
 
       - uses: ./.github/actions/shared/website-prune-build
         if: steps.filter.outputs.website == 'true'
+
+  detect_docker_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      webapp: ${{ steps.filter.outputs.webapp }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            api:
+              - apps/api/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - pnpm-workspace.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.api
+              - .github/actions/shared/**
+              - .github/workflows/verify.yml
+              - .github/workflows/stage-images.yml
+              - .github/workflows/shared-docker-build-push.yml
+            webapp:
+              - apps/webapp/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - pnpm-workspace.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.webapp
+              - .github/actions/shared/**
+              - .github/workflows/verify.yml
+              - .github/workflows/stage-images.yml
+              - .github/workflows/shared-docker-build-push.yml
+
+  api-docker-build:
+    needs: detect_docker_changes
+    if: needs.detect_docker_changes.outputs.api == 'true'
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      dockerfile: apps/api/Dockerfile
+      dockerignore_file: .dockerignore.api
+      image_name: ghcr.io/usebondery/api
+      docker_tags: type=raw,value=verify
+      oci_title: Bondery API
+      oci_description: PR verify build (not pushed)
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/api-container.md
+      oci_version: verify
+      git_sha: ${{ github.sha }}
+      push: false
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=verify
+
+  webapp-docker-build:
+    needs: detect_docker_changes
+    if: needs.detect_docker_changes.outputs.webapp == 'true'
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      dockerfile: apps/webapp/Dockerfile
+      dockerignore_file: .dockerignore.webapp
+      image_name: ghcr.io/usebondery/webapp
+      docker_tags: type=raw,value=verify
+      oci_title: Bondery Webapp
+      oci_description: PR verify build (not pushed)
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
+      oci_version: verify
+      git_sha: ${{ github.sha }}
+      push: false
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=verify

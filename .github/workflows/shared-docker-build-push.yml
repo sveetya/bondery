@@ -44,6 +44,11 @@ on:
         required: false
         type: string
         default: ""
+      push:
+        description: Push built image to GHCR (false for PR verify builds)
+        required: false
+        type: boolean
+        default: true
     secrets:
       BONDERY_OPS_GHCR_WRITE_TOKEN:
         required: true
@@ -88,12 +93,14 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Log in to GHCR
+        if: inputs.push
         uses: ./.github/actions/shared/ghcr-login
         with:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
 
       - name: Docker metadata
+        if: inputs.push
         id: meta
         uses: docker/metadata-action@v6
         with:
@@ -125,6 +132,7 @@ jobs:
             org.opencontainers.image.created=${{ steps.build_time.outputs.created }}
 
       - name: Build and push
+        if: inputs.push
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -132,6 +140,25 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            ${{ inputs.build_args }}
+            BUILD_DATE=${{ steps.build_time.outputs.created }}
+            TURBO_TEAM=${{ vars.BONDERY_OPS_TURBO_TEAM }}
+          secrets: |
+            turbo_token=${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+          sbom: false
+
+      - name: Build (verify only)
+        if: ${{ !inputs.push }}
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ${{ inputs.dockerfile }}
+          push: false
+          tags: ${{ format('{0}:verify', inputs.image_name) }}
           build-args: |
             ${{ inputs.build_args }}
             BUILD_DATE=${{ steps.build_time.outputs.created }}

@@ -62,6 +62,39 @@ Tag only services that changed in this release.
 | Dokploy pin change + redeploy | Human |
 | `force_rebuild: true` on release workflow dispatch | Human |
 
+## Release smoke failure decision tree
+
+Use this when release smoke fails — fix the right layer, not the symptom.
+
+```text
+pre_start exits non-zero (e.g. ERR_MODULE_NOT_FOUND)
+  → Image packaging / Dockerfile (workspace packages not resolvable at runtime)
+  → Fix Dockerfile; re-tag or force_rebuild; do NOT override pre_start in smoke scripts
+
+promote fails "no sha-* image"
+  → stage-images did not build that commit (path filter skip or failed build)
+  → Move tag to a built SHA, or push a commit that triggers stage-images, or force_rebuild
+
+health check fails after pre_start succeeds
+  → Runtime env / DB / SeaweedFS / secrets — not the image build path
+
+PR green but release smoke fails on image
+  → Before Phase 1 guardrails: api/webapp images were not built on PR
+  → After guardrails: check whether path filters skipped the docker build job
+```
+
+### Tag commit requirements
+
+1. Tag must be on `release` branch (enforced by release workflows).
+2. `ghcr.io/usebondery/api:sha-<7char>` (or webapp) must exist — `stage-images` built that SHA on `main`.
+3. Deploy-only or Dockerfile-fix commit after tag → move tag to a built SHA, or use `force_rebuild: true`.
+
+### Smoke contract
+
+- Smoke checks out the **tag ref** for compose/scripts.
+- Smoke runs the **full** compose `pre_start` hooks — no overrides.
+- Image fixes ship via Dockerfile + re-tag or `force_rebuild`, not smoke script hacks on `main`.
+
 ## Sequencing checklist
 
 - [ ] Prerequisites on `main` complete

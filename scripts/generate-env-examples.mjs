@@ -45,6 +45,7 @@ if (stage) {
     "packages/db/.env.local.example",
     "deploy/bondery/.env.example",
     "deploy/ops/.env.example",
+    "deploy/plausible/.env.example",
     ...collectAppEnvExamples(join(root, "apps")),
   ];
 

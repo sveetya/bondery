@@ -26,47 +26,28 @@ Expect **~2 GB RAM** for Postgres + ClickHouse + Plausible on a small VPS.
 |---------|-------|
 | Provider | **Docker Compose** |
 | Compose path | `deploy/plausible/compose.yml` |
-| Override | `deploy/plausible/compose.override.yml` (from `.example`) |
-| Domain | `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
+| Domain | `BONDERY_INFRA_PLAUSIBLE_DOMAIN` (Traefik labels in compose) |
+| Environment | See [`deploy/plausible/.env.example`](.env.example) |
 
-```bash
-cd deploy/plausible
-cp .env.example .env
-cp compose.override.yml.example compose.override.yml
+Set these in Dokploy **Environment** (compose maps them to Plausible CE container env):
 
-# Generate secrets (see .env.example comments)
-# Set BASE_URL=https://<BONDERY_INFRA_PLAUSIBLE_DOMAIN>
+| Variable | Example / generate |
+|----------|-------------------|
+| `BONDERY_INFRA_PLAUSIBLE_DOMAIN` | `plausible.usebondery.com` |
+| `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE` | `openssl rand -base64 48` |
+| `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY` | `openssl rand -base64 32` |
+| `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD` | `openssl rand -base64 24 \| tr -d '/+=' \| head -c 32` |
+| `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` | `invite_only` (optional) |
 
-docker compose up -d
-```
+Compose derives `BASE_URL` as `https://<BONDERY_INFRA_PLAUSIBLE_DOMAIN>`.
 
-1. Visit `BASE_URL` and create the first admin user.
-2. In Plausible, add a site: **`usebondery.com`** (must match `BONDERY_PUBLIC_PLAUSIBLE_DOMAIN` on the website).
-3. Set `DISABLE_REGISTRATION=invite_only` (default) after onboarding.
+1. Visit `https://<BONDERY_INFRA_PLAUSIBLE_DOMAIN>` and create the first admin user.
+2. In Plausible, add a site: **`usebondery.com`** (must match the marketing hostname).
+3. Keep `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION=invite_only` after onboarding.
 
 ## Website integration
 
-The marketing site (`deploy/ops`) loads the tracker when both are set:
-
-| Variable | Example |
-|----------|---------|
-| `BONDERY_PUBLIC_PLAUSIBLE_DOMAIN` | `usebondery.com` |
-| `BONDERY_PUBLIC_PLAUSIBLE_HOST` | `https://plausible.usebondery.com` |
-
-`deploy/ops/docker-compose.yml` derives these from `BONDERY_INFRA_WEBSITE_DOMAIN` and `BONDERY_INFRA_PLAUSIBLE_DOMAIN`.
-
-## Local smoke (no Traefik)
-
-Expose Plausible on a host port by adding to `compose.override.yml`:
-
-```yaml
-services:
-  plausible:
-    ports:
-      - "8000:80"
-```
-
-Set `BASE_URL=http://localhost:8000` in `.env`.
+On the **ops** Dokploy app (`deploy/ops`), set `BONDERY_INFRA_PLAUSIBLE_DOMAIN`. Compose derives `BONDERY_PUBLIC_PLAUSIBLE_DOMAIN` and `BONDERY_PUBLIC_PLAUSIBLE_HOST` for the website container.
 
 ## Upgrades
 
@@ -75,5 +56,5 @@ Pin the image tag in `compose.yml` and follow [Plausible CE upgrade notes](https
 ## Security
 
 - Do not expose Postgres or ClickHouse ports publicly.
-- Keep `DISABLE_REGISTRATION=invite_only` in production after the first admin exists.
+- Keep `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION=invite_only` in production after the first admin exists.
 - Plausible admin is separate from Bondery product auth.

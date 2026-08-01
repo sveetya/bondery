@@ -36,6 +36,7 @@ jobs:
               - docs/**
               - package.json
               - pnpm-lock.yaml
+              - pnpm-workspace.yaml
               - .nvmrc
               - turbo.json
               - .dockerignore.api
@@ -49,6 +50,7 @@ jobs:
               - docs/**
               - package.json
               - pnpm-lock.yaml
+              - pnpm-workspace.yaml
               - .nvmrc
               - turbo.json
               - .dockerignore.webapp
@@ -62,6 +64,7 @@ jobs:
               - packages/**
               - package.json
               - pnpm-lock.yaml
+              - pnpm-workspace.yaml
               - .nvmrc
               - turbo.json
               - .dockerignore.website
