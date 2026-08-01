@@ -73,6 +73,9 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: pnpm exec turbo build --filter=api^...
 
+      - name: Sync injected workspace packages after turbo build
+        run: pnpm install --frozen-lockfile --prefer-offline
+
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
 
@@ -125,6 +128,9 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: pnpm exec turbo build --filter=api^...
 
+      - name: Sync injected workspace packages after turbo build
+        run: pnpm install --frozen-lockfile --prefer-offline
+
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
 
@@ -161,6 +167,9 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: pnpm exec turbo build --filter=api^...
+
+      - name: Sync injected workspace packages after turbo build
+        run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build helpers for root scripts
         run: pnpm --filter @bondery/helpers run build
