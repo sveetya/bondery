@@ -41,6 +41,14 @@ jobs:
         with:
           version: v2.40.2
 
+      - name: Ensure Compose plugin supports pre_start (2.38+)
+        run: |
+          mkdir -p ~/.docker/cli-plugins
+          curl -fsSL "https://github.com/docker/compose/releases/download/v2.40.2/docker-compose-linux-$(uname -m)" \
+            -o ~/.docker/cli-plugins/docker-compose
+          chmod +x ~/.docker/cli-plugins/docker-compose
+          docker compose version
+
       - name: Ensure dokploy-network exists
         run: docker network create dokploy-network || true
 
