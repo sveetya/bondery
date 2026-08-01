@@ -71,6 +71,19 @@ jobs:
               - .github/workflows/shared-docker-build-push.yml
               - deploy/ops/**
 
+  resolve_website_version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.pkg.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Read website package version
+        id: pkg
+        run: echo "version=$(node -p "require('./apps/website/package.json').version")" >> "$GITHUB_OUTPUT"
+
   build_api:
     needs: detect_changes
     if: needs.detect_changes.outputs.api == 'true'
@@ -90,6 +103,7 @@ jobs:
       git_sha: ${{ github.sha }}
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=beta
 
   build_webapp:
     needs: detect_changes
@@ -113,7 +127,7 @@ jobs:
         BONDERY_INFRA_VERSION=beta
 
   build_website:
-    needs: detect_changes
+    needs: [detect_changes, resolve_website_version]
     if: needs.detect_changes.outputs.website == 'true'
     uses: ./.github/workflows/shared-docker-build-push.yml
     secrets: inherit
@@ -130,3 +144,4 @@ jobs:
       git_sha: ${{ github.sha }}
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=${{ needs.resolve_website_version.outputs.version }}

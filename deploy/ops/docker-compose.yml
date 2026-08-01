@@ -4,8 +4,8 @@
 # Prerequisite (Traefik / Dokploy): docker network create dokploy-network
 # Host-port smoke (no Traefik): copy docker-compose.override.yml.example → docker-compose.override.yml
 #
-# Image is always the floating :production channel (release-branch CD). Rollback via
-# :sha-<short> override or Dokploy previous deployment — no semver image pins.
+# Image tag defaults to floating :production (release-branch CD). Pin via
+# BONDERY_INFRA_WEBSITE_IMAGE_TAG for reproducible deploys / rollback.
 
 services:
   website:
@@ -13,6 +13,7 @@ services:
       BONDERY_PUBLIC_WEBAPP_URL: https://${BONDERY_INFRA_WEBAPP_DOMAIN:?BONDERY_INFRA_WEBAPP_DOMAIN must be set}
       BONDERY_PUBLIC_WEBSITE_URL: https://${BONDERY_INFRA_WEBSITE_DOMAIN:?BONDERY_INFRA_WEBSITE_DOMAIN must be set}
       BONDERY_INFRA_GIT_SHA: ${BONDERY_INFRA_GIT_SHA:-}
+      BONDERY_INFRA_VERSION: ${BONDERY_INFRA_VERSION:-}
     healthcheck:
       interval: 30s
       retries: 3
@@ -25,7 +26,7 @@ services:
           "fetch('http://127.0.0.1:26630/health/live').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       timeout: 5s
-    image: ghcr.io/usebondery/website:production
+    image: ghcr.io/usebondery/website:${BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production}
     pull_policy: always
     labels:
       - traefik.enable=true

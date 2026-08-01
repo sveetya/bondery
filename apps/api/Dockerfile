@@ -36,9 +36,14 @@ RUN pnpm prune --prod --ignore-scripts
 FROM node:26-alpine AS runner
 WORKDIR /app
 
+ARG BONDERY_INFRA_VERSION
+ARG BONDERY_INFRA_GIT_SHA
+
 ENV NODE_ENV=production
 ENV API_HOST=0.0.0.0
 ENV PORT=26631
+ENV BONDERY_INFRA_VERSION=$BONDERY_INFRA_VERSION
+ENV BONDERY_INFRA_GIT_SHA=$BONDERY_INFRA_GIT_SHA
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 --ingroup nodejs nodejs

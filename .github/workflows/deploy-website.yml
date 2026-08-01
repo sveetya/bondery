@@ -35,6 +35,7 @@ jobs:
     outputs:
       short_sha: ${{ steps.sha.outputs.short }}
       image_exists: ${{ steps.inspect.outputs.exists }}
+      version: ${{ steps.pkg.outputs.version }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -43,6 +44,10 @@ jobs:
       - name: Resolve short SHA
         id: sha
         run: echo "short=$(echo "${GITHUB_SHA}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Read website package version
+        id: pkg
+        run: echo "version=$(node -p "require('./apps/website/package.json').version")" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -93,6 +98,7 @@ jobs:
       git_sha: ${{ github.sha }}
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=${{ needs.resolve.outputs.version }}
 
   image_ready:
     needs: [resolve, promote, build-push]

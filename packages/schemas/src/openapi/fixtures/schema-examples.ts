@@ -501,8 +501,10 @@ export const EXAMPLE_GITHUB_STARS_RESPONSE = {
 };
 
 export const EXAMPLE_LIVENESS_STATUS_RESPONSE = {
+  gitSha: "a1b2c3d",
   status: "ok" as const,
   timestamp: EXAMPLE_ISO_TIMESTAMP,
+  version: "1.8.0",
 };
 
 export const EXAMPLE_EXTENSION_MANIFEST_RESPONSE = {

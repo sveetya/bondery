@@ -120,11 +120,14 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
 };
 
 /** Operator-facing sections in `deploy/ops/.env.example` (order matters). */
-export const OPS_GROUP_ORDER = ["Public hostnames", "Build metadata"] as const;
+export const OPS_GROUP_ORDER = ["Image tags", "Public hostnames", "Build metadata"] as const;
 
 /** Multi-line comments under ops group headers in `deploy/ops/.env.example`. */
 export const OPS_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
   "Build metadata": ["Optional build metadata surfaced in the container"],
+  "Image tags": [
+    "Omit to pull the floating production channel. Pin to semver for reproducible deploys / rollback.",
+  ],
   "Public hostnames": [
     "Public hostnames (no scheme). Compose derives https://… URLs and Traefik Host().",
   ],
@@ -667,6 +670,21 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     turboAffectsCache: false,
   },
   {
+    canonical: "BONDERY_INFRA_WEBSITE_IMAGE_TAG",
+    description: "Website container image tag (omit for floating production channel).",
+    exampleValue: "",
+    group: "Infra",
+    opsExample: {
+      commented: true,
+      group: "Image tags",
+      include: true,
+    },
+    requiredIn: [],
+    secret: false,
+    targets: [],
+    turboAffectsCache: false,
+  },
+  {
     canonical: "BONDERY_INFRA_STORAGE_DOMAIN",
     deployExample: {
       group: "Storage",
@@ -959,23 +977,24 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_VERSION",
     deployExample: { group: "Build metadata", include: true },
-    description: "App version surfaced in webapp runtime config",
-    exampleValue: "",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [t("webapp")],
-  },
-  {
-    canonical: "BONDERY_INFRA_GIT_SHA",
-    deployExample: { group: "Build metadata", include: true, value: "" },
-    description: "Git SHA surfaced in webapp runtime config",
+    description: "App version surfaced in runtime config and health probes",
     exampleValue: "",
     group: "Infra",
     opsExample: { group: "Build metadata", include: true, value: "" },
     requiredIn: [],
     secret: false,
-    targets: [t("webapp")],
+    targets: [t("api"), t("webapp"), t("website")],
+  },
+  {
+    canonical: "BONDERY_INFRA_GIT_SHA",
+    deployExample: { group: "Build metadata", include: true, value: "" },
+    description: "Git SHA surfaced in runtime config and health probes",
+    exampleValue: "",
+    group: "Infra",
+    opsExample: { group: "Build metadata", include: true, value: "" },
+    requiredIn: [],
+    secret: false,
+    targets: [t("api"), t("webapp"), t("website")],
   },
   {
     canonical: "BONDERY_INFRA_CHROME_EXTENSION_ID",

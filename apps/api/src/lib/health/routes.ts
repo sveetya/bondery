@@ -1,3 +1,4 @@
+import { buildLivenessStatus } from "@bondery/helpers/infra/build-metadata";
 import { EXAMPLE_HEALTH_UNHEALTHY_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import type { FastifyZodOpenApiSchema } from "fastify-zod-openapi";
 import type { AppFastifyInstance } from "../platform/fastify-types.js";
@@ -31,12 +32,7 @@ export function registerHealthRoutes(fastify: AppFastifyInstance): void {
         tags: ["Health"],
       } satisfies FastifyZodOpenApiSchema,
     },
-    async () => {
-      return {
-        status: "ok" as const,
-        timestamp: new Date().toISOString(),
-      };
-    },
+    async () => buildLivenessStatus(),
   );
 
   fastify.get(

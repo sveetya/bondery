@@ -9,7 +9,7 @@ import {
 } from "@bondery/helpers/env";
 import { formatEnvFile, OPS_GENERATED_HEADER } from "./env-file-format.js";
 
-export function collectOpsExampleRows() {
+export function collectOpsExampleRows(packageVersion: string) {
   const rows = [];
   for (const entry of ENV_MANIFEST) {
     const ops = entry.opsExample;
@@ -17,7 +17,17 @@ export function collectOpsExampleRows() {
       continue;
     }
     const group = ops.group ?? entry.group;
-    const value = resolveExampleValue(entry, "ops");
+    let value = resolveExampleValue(entry, "ops");
+    if (entry.canonical === "BONDERY_INFRA_VERSION" && !ops.value) {
+      value = packageVersion;
+    }
+    if (
+      entry.canonical === "BONDERY_INFRA_WEBSITE_IMAGE_TAG" &&
+      ops.commented &&
+      !ops.value
+    ) {
+      value = packageVersion;
+    }
     rows.push({
       commented: ops.commented ?? false,
       description: entry.description,
@@ -32,9 +42,10 @@ export function collectOpsExampleRows() {
 export function writeOpsExample(
   repoRoot: string,
   dryRun: boolean,
+  packageVersion: string,
   log: ReturnType<typeof createCliLogger>,
 ) {
-  const rows = collectOpsExampleRows();
+  const rows = collectOpsExampleRows(packageVersion);
   const opsPath = join(repoRoot, "deploy/ops/.env.example");
   const body = formatEnvFile(rows, {
     groupGuides: OPS_GROUP_GUIDES,

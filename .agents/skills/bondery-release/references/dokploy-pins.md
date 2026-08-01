@@ -9,9 +9,11 @@ Edit [`packages/helpers/src/env/manifest.ts`](../../../../packages/helpers/src/e
 - `BONDERY_INFRA_API_IMAGE_TAG`
 - `BONDERY_INFRA_WEBAPP_IMAGE_TAG`
 
-If only one service changed in the release, bump only that pin; leave the other at the last tested compatible version.
+For the marketing website ops stack, set `opsExample.value` on:
 
-**Do not** pin a website image tag — marketing uses floating `:production` on the ops stack.
+- `BONDERY_INFRA_WEBSITE_IMAGE_TAG`
+
+If only one service changed in the release, bump only that pin; leave the other at the last tested compatible version.
 
 ## Regenerate deploy examples
 
@@ -25,6 +27,12 @@ pnpm run env -- --write-examples
 ```env
 # BONDERY_INFRA_API_IMAGE_TAG=X.Y.Z
 # BONDERY_INFRA_WEBAPP_IMAGE_TAG=X.Y.Z
+```
+
+[`deploy/ops/.env.example`](../../../../deploy/ops/.env.example) will include:
+
+```env
+# BONDERY_INFRA_WEBSITE_IMAGE_TAG=X.Y.Z
 ```
 
 Uncomment or set values to match manifest. Commit manifest + regenerated example on `main`, then promote to `release` if pins changed after the release push.
@@ -47,16 +55,16 @@ docker compose up -d --no-deps webapp
 docker compose up -d --no-deps api
 ```
 
-Website is a separate Dokploy app (`deploy/ops`).
+Website is a separate Dokploy app (`deploy/ops`). Omit `BONDERY_INFRA_WEBSITE_IMAGE_TAG` for floating `:production`, or pin for rollback.
 
 ## Record rollback pair
 
-Before changing pins, note the previous `(BONDERY_INFRA_API_IMAGE_TAG, BONDERY_INFRA_WEBAPP_IMAGE_TAG)` pair in the PR or release notes. See [rollback-hotfix.md](rollback-hotfix.md).
+Before changing pins, note the previous `(BONDERY_INFRA_API_IMAGE_TAG, BONDERY_INFRA_WEBAPP_IMAGE_TAG)` pair in the PR or release notes. For website, note the previous `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (or `:production`). See [rollback-hotfix.md](rollback-hotfix.md).
 
 ## Pins checklist
 
 - [ ] Pins match the semver tags that passed CI smoke
 - [ ] `pnpm run env -- --write-examples` run after manifest edit
-- [ ] `deploy/bondery/.env.example` committed
+- [ ] `deploy/bondery/.env.example` and `deploy/ops/.env.example` committed
 - [ ] Dokploy product env updated
 - [ ] Only changed service(s) redeployed when possible
