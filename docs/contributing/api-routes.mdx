@@ -3,7 +3,7 @@ title: "API routes"
 icon: Route
 ---
 
-Every Fastify route in `apps/api/src/routes/` is part of the published API contract. Docs are **compiled** from Zod schemas — never hand-written per endpoint. OpenAPI (`packages/openapi-spec/openapi.yaml`) is committed; lint-staged regenerates it on API/schema changes. CI enforces freshness. Don't rely on deploy to regenerate.
+Every Fastify route in `apps/api/src/routes/` is part of the published API contract. Docs are **compiled** from Zod schemas — never hand-written per endpoint. OpenAPI (`packages/openapi-spec/openapi.yaml`) is committed; the pre-commit hook regenerates it on API/schema changes. CI enforces freshness. Don't rely on deploy to regenerate.
 
 See [schemas.md](./schemas.mdx) for which `@bondery/schemas` subpaths each app may import.
 

@@ -30,6 +30,7 @@ packages/translations/.i18next-cli-mirror/
 # misc
 .DS_Store
 *.pem
+lefthook-local.yml
 
 # wxt
 /.wxt
