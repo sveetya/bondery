@@ -31,7 +31,9 @@ ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=api
-RUN pnpm prune --prod --ignore-scripts
+RUN pnpm prune --prod --ignore-scripts \
+  && pnpm install --prod --frozen-lockfile --ignore-scripts --filter api...
+RUN test -f node_modules/@bondery/db/package.json
 
 FROM node:26-alpine AS runner
 WORKDIR /app

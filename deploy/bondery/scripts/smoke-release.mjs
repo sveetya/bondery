@@ -127,12 +127,10 @@ function writeOverride(service, imageName, tag) {
   const image = `${imageName}:${tag}`;
   let override = "services:\n";
 
-  // Compose merges sequence fields; !reset clears base pre_start hooks (migrations/buckets).
   if (service === "webapp") {
-    override += `  api:\n    pre_start: !reset []\n`;
     override += `  webapp:\n    image: ${image}\n    ports:\n      - "26632:26632"\n`;
   } else {
-    override += `  api:\n    pre_start: !reset []\n    image: ${image}\n    ports:\n      - "26631:26631"\n`;
+    override += `  api:\n    image: ${image}\n    ports:\n      - "26631:26631"\n`;
     override += `  db:\n    ports:\n      - "54322:5432"\n`;
     override += `  seaweedfs-s3:\n    ports:\n      - "8333:8333"\n`;
   }
