@@ -9,7 +9,7 @@ export type ReleaseMigrateHooks = {
   provisionPlatformAdmins: () => Promise<void>;
 };
 
-function resolvePrismaBinary(): string {
+function resolvePrismaCliEntry(): string {
   const require = createRequire(import.meta.url);
   return require.resolve("prisma/build/index.js");
 }
@@ -21,9 +21,9 @@ export async function runReleaseMigrate(hooks: ReleaseMigrateHooks): Promise<voi
   }
 
   const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-  const prismaBinary = resolvePrismaBinary();
+  const prismaCliEntry = resolvePrismaCliEntry();
 
-  execFileSync(prismaBinary, ["migrate", "deploy"], {
+  execFileSync(process.execPath, [prismaCliEntry, "migrate", "deploy"], {
     cwd: packageRoot,
     env: process.env,
     stdio: "inherit",
