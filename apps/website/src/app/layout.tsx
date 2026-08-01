@@ -83,6 +83,7 @@ export default async function RootLayout({
             init={{
               captureOnLocalhost: process.env.NODE_ENV === "development",
             }}
+            scriptProps={{ "data-domain": plausibleDomain }}
             src={`${plausibleHost.replace(/\/$/, "")}/js/script.js`}
           >
             {children}
