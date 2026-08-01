@@ -120,6 +120,7 @@ function prepareEnvSmoke() {
   }
 
   writeFileSync(resolve(BONDERY_DIR, ".env.smoke"), `${out.join("\n")}\n`);
+  copyFileSync(resolve(BONDERY_DIR, ".env.smoke"), resolve(BONDERY_DIR, ".env"));
 }
 
 function writeOverride(service, imageName, tag) {
