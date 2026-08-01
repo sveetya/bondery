@@ -4,7 +4,7 @@
  * - website must enable Traefik with BONDERY_INFRA_WEBSITE_DOMAIN
  * - public URLs must be derived from domain vars
  * - must not reference PRIVATE_* / BONDERY_PRIVATE_* or use env_file
- * - image must be floating :production (no tag env var)
+ * - image must use BONDERY_INFRA_WEBSITE_IMAGE_TAG with production default
  */
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -58,13 +58,14 @@ if (website) {
       "website must derive BONDERY_PUBLIC_WEBSITE_URL from https:// + BONDERY_INFRA_WEBSITE_DOMAIN",
     );
   }
-  if (!/image:\s*ghcr\.io\/usebondery\/website:production\b/.test(website)) {
+  if (
+    !/image:\s*ghcr\.io\/usebondery\/website:\$\{BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production\}/.test(
+      website,
+    )
+  ) {
     errors.push(
-      'website image must be hardcoded to "ghcr.io/usebondery/website:production" (no tag env var)',
+      `website image must use ghcr.io/usebondery/website:\${BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production}`,
     );
-  }
-  if (/BONDERY_INFRA_WEBSITE_IMAGE_TAG/.test(website)) {
-    errors.push("website must not use BONDERY_INFRA_WEBSITE_IMAGE_TAG (floating :production only)");
   }
   if (!/dokploy-network/.test(website)) {
     errors.push("website must join dokploy-network");

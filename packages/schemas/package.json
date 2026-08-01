@@ -616,6 +616,18 @@
       "node": "./dist/geocode/types.js",
       "types": "./src/geocode/types.ts"
     },
+    "./health": {
+      "default": "./dist/health/index.js",
+      "import": "./dist/health/index.js",
+      "node": "./dist/health/index.js",
+      "types": "./src/health/index.ts"
+    },
+    "./health/schema": {
+      "default": "./dist/health/schema.js",
+      "import": "./dist/health/schema.js",
+      "node": "./dist/health/schema.js",
+      "types": "./src/health/schema.ts"
+    },
     "./http": {
       "default": "./dist/http/index.js",
       "import": "./dist/http/index.js",
@@ -703,6 +715,12 @@
       "node": "./dist/openapi/document-opts.js",
       "types": "./src/openapi/document-opts.ts"
     },
+    "./openapi/example-fixtures": {
+      "default": "./dist/openapi/example-fixtures.js",
+      "import": "./dist/openapi/example-fixtures.js",
+      "node": "./dist/openapi/example-fixtures.js",
+      "types": "./src/openapi/example-fixtures.ts"
+    },
     "./openapi/fixtures": {
       "default": "./dist/openapi/fixtures/index.js",
       "import": "./dist/openapi/fixtures/index.js",
@@ -763,6 +781,12 @@
       "node": "./dist/openapi/route-order.js",
       "types": "./src/openapi/route-order.ts"
     },
+    "./openapi/schema-example-registry": {
+      "default": "./dist/openapi/schema-example-registry.js",
+      "import": "./dist/openapi/schema-example-registry.js",
+      "node": "./dist/openapi/schema-example-registry.js",
+      "types": "./src/openapi/schema-example-registry.ts"
+    },
     "./primitives": {
       "default": "./dist/primitives/index.js",
       "import": "./dist/primitives/index.js",
@@ -822,6 +846,18 @@
       "import": "./dist/runtime-config.js",
       "node": "./dist/runtime-config.js",
       "types": "./src/runtime-config.ts"
+    },
+    "./runtime-config.contract": {
+      "default": "./dist/runtime-config.contract.js",
+      "import": "./dist/runtime-config.contract.js",
+      "node": "./dist/runtime-config.contract.js",
+      "types": "./src/runtime-config.contract.ts"
+    },
+    "./runtime-config.types": {
+      "default": "./dist/runtime-config.types.js",
+      "import": "./dist/runtime-config.types.js",
+      "node": "./dist/runtime-config.types.js",
+      "types": "./src/runtime-config.types.ts"
     },
     "./sync": {
       "default": "./dist/sync/index.js",

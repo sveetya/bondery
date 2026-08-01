@@ -7,6 +7,15 @@ All notable changes to Bondery are documented here, with the latest release firs
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Infra: `BONDERY_INFRA_WEBSITE_IMAGE_TAG` for ops-stack website image pins (defaults to floating `:production`).
+- Health: Liveness and readiness probes on api, webapp, and website now share `{ status, timestamp, version?, gitSha? }` payloads; readiness failures return `status: "unhealthy"` with `error`.
+
+### 🔄 Changed
+
+- Ops: Website Compose image uses `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (omit for `:production`); build metadata env vars apply to api and website containers.
+
 ## [1.8.0] - 01.08.2026
 
 ### 📝 Documentation

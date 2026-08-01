@@ -225,6 +225,12 @@
       "node": "./dist/env/index.js",
       "types": "./src/env/index.ts"
     },
+    "./env/apply-boot-env": {
+      "default": "./dist/env/apply-boot-env.js",
+      "import": "./dist/env/apply-boot-env.js",
+      "node": "./dist/env/apply-boot-env.js",
+      "types": "./src/env/apply-boot-env.ts"
+    },
     "./env/check-env": {
       "default": "./dist/env/check-env.js",
       "import": "./dist/env/check-env.js",
@@ -308,6 +314,24 @@
       "import": "./dist/ids/generate-id.test.js",
       "node": "./dist/ids/generate-id.test.js",
       "types": "./src/ids/generate-id.test.ts"
+    },
+    "./infra": {
+      "default": "./dist/infra/index.js",
+      "import": "./dist/infra/index.js",
+      "node": "./dist/infra/index.js",
+      "types": "./src/infra/index.ts"
+    },
+    "./infra/build-metadata": {
+      "default": "./dist/infra/build-metadata.js",
+      "import": "./dist/infra/build-metadata.js",
+      "node": "./dist/infra/build-metadata.js",
+      "types": "./src/infra/build-metadata.ts"
+    },
+    "./infra/build-metadata.test": {
+      "default": "./dist/infra/build-metadata.test.js",
+      "import": "./dist/infra/build-metadata.test.js",
+      "node": "./dist/infra/build-metadata.test.js",
+      "types": "./src/infra/build-metadata.test.ts"
     },
     "./instagram/parseInstagramUsername": {
       "default": "./dist/instagram/parseInstagramUsername.js",

@@ -1,18 +1,18 @@
 import "server-only";
 
 import { readBuildMetadata } from "@bondery/helpers/infra/build-metadata";
-import { validateWebappRuntimeConfigAtStartup } from "@/lib/platform/runtimeConfig.server";
+import { validateWebsiteRuntimeEnv } from "@/lib/platform/readyEnv";
 
 /** Node-only startup validation (uses process.exit — never import from Edge). */
-export function validateWebappStartup(): void {
+export function validateWebsiteStartup(): void {
   try {
-    validateWebappRuntimeConfigAtStartup();
+    validateWebsiteRuntimeEnv();
     const { gitSha, version } = readBuildMetadata();
     // biome-ignore lint/suspicious/noConsole: fail-fast boot diagnostics before logger exists
-    console.info("[webapp] Runtime config valid", { gitSha, version });
+    console.info("[website] Runtime env valid", { gitSha, version });
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: fail-fast boot diagnostics before logger exists
-    console.error("[webapp] Runtime config validation failed:", error);
+    console.error("[website] Runtime env validation failed:", error);
     process.exit(1);
   }
 }

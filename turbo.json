@@ -13,6 +13,7 @@
     "BONDERY_INFRA_WEBAPP_DOMAIN",
     "BONDERY_INFRA_WEBAPP_IMAGE_TAG",
     "BONDERY_INFRA_WEBSITE_DOMAIN",
+    "BONDERY_INFRA_WEBSITE_IMAGE_TAG",
     "BONDERY_OPS_CHROME_EXTENSION_ID",
     "BONDERY_OPS_CHROME_PUBLISHER_ID",
     "BONDERY_OPS_DISCORD_WEBHOOK_URL",
@@ -101,7 +102,9 @@
       "dependsOn": ["^build"],
       "env": [
         "BONDERY_INFRA_CHROME_EXTENSION_ID",
+        "BONDERY_INFRA_GIT_SHA",
         "BONDERY_INFRA_STORAGE_DOMAIN",
+        "BONDERY_INFRA_VERSION",
         "BONDERY_PRIVATE_ANTHROPIC_API_KEY",
         "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
         "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
@@ -175,7 +178,9 @@
       "cache": false,
       "env": [
         "BONDERY_INFRA_CHROME_EXTENSION_ID",
+        "BONDERY_INFRA_GIT_SHA",
         "BONDERY_INFRA_STORAGE_DOMAIN",
+        "BONDERY_INFRA_VERSION",
         "BONDERY_PRIVATE_ANTHROPIC_API_KEY",
         "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID",
         "BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET",
@@ -494,7 +499,13 @@
     },
     "website#build": {
       "dependsOn": ["^build", "website#generate:api-docs"],
-      "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
+      "env": [
+        "BONDERY_INFRA_GIT_SHA",
+        "BONDERY_INFRA_VERSION",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DO_NOT_TRACK"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.production.local",
@@ -527,7 +538,13 @@
     "website#dev": {
       "cache": false,
       "dependsOn": ["website#generate:api-docs"],
-      "env": ["BONDERY_PUBLIC_WEBAPP_URL", "BONDERY_PUBLIC_WEBSITE_URL", "DO_NOT_TRACK"],
+      "env": [
+        "BONDERY_INFRA_GIT_SHA",
+        "BONDERY_INFRA_VERSION",
+        "BONDERY_PUBLIC_WEBAPP_URL",
+        "BONDERY_PUBLIC_WEBSITE_URL",
+        "DO_NOT_TRACK"
+      ],
       "inputs": [
         "$TURBO_DEFAULT$",
         "apps/chrome-extension/.env.development.local",

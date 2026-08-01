@@ -25,14 +25,32 @@ On the webapp, `/api/*` always means "relates to the Bondery API." Container sel
 | **Readiness** | Postgres, Redis, storage, SMTP, integrations | Runtime env valid (`BONDERY_PUBLIC_*` not placeholders) |
 
 - API readiness returns **503** when `status: unhealthy`; **200** for `ok` or `degraded`.
+- Webapp and website readiness return **503** when `status: unhealthy`; **200** when `status: ok`.
 - Liveness must **never** return 503 for dependency failures — that causes restart storms.
-- Do not put product metadata (extension versions, git SHA) on liveness routes.
+
+## Shared probe payloads
+
+Liveness and readiness on **webapp** and **website** use `@bondery/helpers/infra/build-metadata`:
+
+| Field | Liveness | Readiness (ok) | Readiness (unhealthy) |
+|-------|----------|----------------|------------------------|
+| `status` | `"ok"` | `"ok"` | `"unhealthy"` |
+| `timestamp` | ISO 8601 | ISO 8601 | ISO 8601 |
+| `version` | optional | optional | optional |
+| `gitSha` | optional | optional | optional |
+| `error` | — | — | required string |
+
+API liveness uses the same builder (`buildLivenessStatus`). Optional `version` / `gitSha` come from `BONDERY_INFRA_VERSION` and `BONDERY_INFRA_GIT_SHA` baked at image build time.
+
+Schemas: `@bondery/schemas/health` (`livenessStatusSchema`, `readinessStatusSchema`).
+
+Do not put product metadata (extension versions) on liveness routes — use `GET /extension/manifest`.
 
 ## API implementation
 
 Routes: [`apps/api/src/lib/health/routes.ts`](../../../apps/api/src/lib/health/routes.ts)
 
-- `GET /health/live` — `rateLimit: false`
+- `GET /health/live` — `rateLimit: false`; `buildLivenessStatus()`
 - `GET /health/ready` — `HEALTH_TIER` (5 req/min), 60s in-memory cache
 
 Extension manifest: [`apps/api/src/routes/extension/manifest-route.ts`](../../../apps/api/src/routes/extension/manifest-route.ts)
@@ -51,8 +69,17 @@ Container probes (no BFF, no upstream calls):
 
 | Route file | Checks |
 |------------|--------|
-| `app/health/live/route.ts` | Process up |
-| `app/health/ready/route.ts` | `validateWebappRuntimeConfigAtStartup()` |
+| `app/health/live/route.ts` | `buildLivenessStatus()` |
+| `app/health/ready/route.ts` | `validateWebappRuntimeConfigAtStartup()` → `buildReadinessStatus()` |
+
+## Website
+
+| Route file | Checks |
+|------------|--------|
+| `app/health/live/route.ts` | `buildLivenessStatus()` |
+| `app/health/ready/route.ts` | `validateWebsiteRuntimeEnv()` → `buildReadinessStatus()` |
+
+Boot validation: `src/instrumentation.ts` → `validateWebsiteStartup.node.ts`.
 
 ## Consumers
 
@@ -60,6 +87,7 @@ Container probes (no BFF, no upstream calls):
 |--------|----------|
 | Docker / K8s (api) | `GET /health/live` on api host |
 | Docker / K8s (webapp) | `GET /health/live` on webapp host |
+| Docker / K8s (website) | `GET /health/live` on website host |
 | Unavailable page | `clientApiFetch("/api/health/ready")` |
 | Chrome extension version check | `${apiUrl}/extension/manifest` |
 | Mobile connectivity probe | `${API_URL}/health/live` |

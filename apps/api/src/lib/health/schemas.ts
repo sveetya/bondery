@@ -1,9 +1,9 @@
 import { createdAtSchema } from "@bondery/schemas/entities/_shared";
-import {
-  EXAMPLE_HEALTH_OK_RESPONSE,
-  EXAMPLE_LIVENESS_STATUS_RESPONSE,
-} from "@bondery/schemas/openapi/fixtures/responses";
+import { livenessStatusSchema } from "@bondery/schemas/health";
+import { EXAMPLE_HEALTH_OK_RESPONSE } from "@bondery/schemas/openapi/fixtures/responses";
 import { z } from "zod";
+
+export { livenessStatusSchema };
 
 export const serviceProbeResultSchema = z.object({
   configured: z.boolean().optional(),
@@ -32,10 +32,3 @@ export const healthReportSchema = z
     timestamp: createdAtSchema,
   })
   .meta({ example: EXAMPLE_HEALTH_OK_RESPONSE });
-
-export const livenessStatusSchema = z
-  .object({
-    status: z.literal("ok"),
-    timestamp: createdAtSchema,
-  })
-  .meta({ example: EXAMPLE_LIVENESS_STATUS_RESPONSE });

@@ -67,7 +67,7 @@ jobs:
       git_sha: ${{ github.sha }}
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
-        VERSION=${{ needs.validate.outputs.version }}
+        BONDERY_INFRA_VERSION=${{ needs.validate.outputs.version }}
 
   image_ready:
     needs: [validate, promote, build-push]

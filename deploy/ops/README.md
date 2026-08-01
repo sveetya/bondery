@@ -8,7 +8,7 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 
 | Service | Image | Port | Notes |
 |---------|-------|------|--------|
-| `website` | `ghcr.io/usebondery/website:production` | 26630 | Floating CD channel; liveness `/health/live`, readiness `/health/ready` |
+| `website` | `ghcr.io/usebondery/website:${BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production}` | 26630 | Floating `:production` by default; liveness `/health/live`, readiness `/health/ready` |
 
 ## Continuous deploy
 
@@ -19,7 +19,7 @@ Docs: [docs/contributing/dokploy.mdx](../../docs/contributing/dokploy.mdx)
 
 Host CI and production images pin Node 26 (`.nvmrc` / `node:26-alpine`). Dependencies use pnpm 11.18.0. Release `smoke` is the Alpine/runtime fidelity check.
 
-There are **no** `website-X.Y.Z` tags and **no** image-tag env var. Rollback by temporarily overriding the image to a known `:sha-<short>` or using Dokploy's previous deployment.
+There are **no** `website-X.Y.Z` release tags. Pin `BONDERY_INFRA_WEBSITE_IMAGE_TAG` to a semver or `:sha-<short>` for rollback; omit for floating `:production`.
 
 ## Quick start (Dokploy)
 

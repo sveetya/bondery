@@ -6,6 +6,7 @@ import "fastify";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkEnvVariables } from "@bondery/helpers/env";
+import { readBuildMetadata } from "@bondery/helpers/infra/build-metadata";
 import { buildApp } from "./build-app.js";
 import { buildServer } from "./build-server.js";
 import { runDevelopmentBootstrap } from "./lib/bootstrap/dev-startup.js";
@@ -58,7 +59,8 @@ async function start() {
 
   try {
     await server.listen({ host, port });
-    server.log.info(`Bondery API running at http://${host}:${port}`);
+    const { gitSha, version } = readBuildMetadata();
+    server.log.info({ gitSha, version }, `Bondery API running at http://${host}:${port}`);
   } catch (err) {
     server.log.error(err);
     process.exit(1);

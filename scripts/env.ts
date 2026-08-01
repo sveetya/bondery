@@ -177,7 +177,7 @@ function writeExamples(dryRun) {
   log.info(`${dryRun ? "Would write" : "Wrote"} ${rootPath}`);
 
   writeDeployExample(repoRoot, dryRun, packageVersion, log);
-  writeOpsExample(repoRoot, dryRun, log);
+  writeOpsExample(repoRoot, dryRun, packageVersion, log);
 
   for (const target of SYNC_TARGETS) {
     const rows = sortEnvRows(collectTargetVars(target.id, {}, true));
