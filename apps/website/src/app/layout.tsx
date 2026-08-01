@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ComponentProps } from "react";
 import "./globals.css";
 import { METADATA_TITLE_DIVIDER, WEBAPP_NAME } from "@bondery/helpers";
 import { ColorSchemeScript } from "@mantine/core";
@@ -83,7 +84,11 @@ export default async function RootLayout({
             init={{
               captureOnLocalhost: process.env.NODE_ENV === "development",
             }}
-            scriptProps={{ "data-domain": plausibleDomain }}
+            scriptProps={
+              { "data-domain": plausibleDomain } as NonNullable<
+                ComponentProps<typeof PlausibleProvider>["scriptProps"]
+              >
+            }
             src={`${plausibleHost.replace(/\/$/, "")}/js/script.js`}
           >
             {children}
