@@ -10,14 +10,7 @@ const biomeBin = require.resolve("@biomejs/biome/bin/biome");
 
 const result = spawnSync(
   process.execPath,
-  [
-    biomeBin,
-    "check",
-    "--write",
-    "--no-errors-on-unmatched",
-    "--files-ignore-unknown=true",
-    ".",
-  ],
+  [biomeBin, "check", "--write", "--no-errors-on-unmatched", "--files-ignore-unknown=true", "."],
   { cwd: root, stdio: "inherit" },
 );
 

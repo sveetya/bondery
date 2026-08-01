@@ -8,14 +8,14 @@
 
 import { execSync } from "node:child_process";
 import { readdirSync, statSync } from "node:fs";
-import { dirname, join, relative, resolve as pathResolve } from "node:path";
+import { dirname, join, resolve as pathResolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = pathResolve(dirname(fileURLToPath(import.meta.url)), "..");
 const stage = process.argv.includes("--stage");
 
 function run(command) {
-  execSync(command, { cwd: root, stdio: "inherit", shell: true });
+  execSync(command, { cwd: root, shell: true, stdio: "inherit" });
 }
 
 function isEnvExampleFile(name) {
