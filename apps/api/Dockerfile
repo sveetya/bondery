@@ -39,7 +39,9 @@ RUN for pkg in db emails helpers schemas translations vcard; do \
       mkdir -p node_modules/@bondery && \
       ln -sfn "../../packages/$pkg" "node_modules/@bondery/$pkg"; \
     done \
-  && node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))"
+  && node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvable'))" \
+  && node --check apps/api/dist/cli/release-migrate.js \
+  && node --check apps/api/dist/cli/ensure-storage-buckets.js
 
 FROM node:26-alpine AS runner
 WORKDIR /app

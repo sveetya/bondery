@@ -9,7 +9,7 @@ There is **no** root `pnpm run verify` — mirror CI by running the steps below 
 
 | Tier | When | Typical commands |
 |------|------|------------------|
-| **0 — Pre-commit** | Automatic on commit | Lefthook: Biome write on any staged change; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
+| **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` image builds | `stage-images.yml` (path-filtered Docker builds for api, webapp, website) |
@@ -23,20 +23,31 @@ Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 pnpm install --frozen-lockfile
 pnpm exec biome ci .
 pnpm run check:package-imports
-pnpm run env -- --check
-pnpm run check-docs
+pnpm run check:env
+pnpm run check:docs
 pnpm run check:openapi
 # Docker required:
 cp deploy/bondery/.env.example deploy/bondery/.env
-docker compose -f deploy/bondery/docker-compose.yml config >/dev/null
 node deploy/bondery/scripts/check-compose.mjs
-pnpm --filter webapp run test:runtime-config
+pnpm run test:webapp:runtime-config
 pnpm run check:contracts
+DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery pnpm exec turbo build --filter=api
 pnpm run check:types
 pnpm run check:i18n
 pnpm run check:api-errors
 pnpm run test:api:sync
+# When api/webapp/docker paths change — mirror path-filtered PR docker jobs:
+docker build -f apps/api/Dockerfile . --secret id=turbo_token,env=TURBO_TOKEN
+docker build -f apps/webapp/Dockerfile . --secret id=turbo_token,env=TURBO_TOKEN
 ```
+
+Path-filtered PR jobs (parallel siblings of `contract`, not chained):
+
+| Job | Trigger paths | Proves |
+|-----|---------------|--------|
+| `api-docker-build` | `apps/api/**`, `packages/**`, Docker/workspace roots | Production API image builds; `@bondery/db` resolves in image |
+| `webapp-docker-build` | `apps/webapp/**`, `packages/**`, Docker/workspace roots | Production webapp image builds |
+| `website-build` | `apps/website/**`, … | Website prune+build on runner (not `docker build`) |
 
 ## Staging workflow (not full verify)
 
@@ -67,6 +78,7 @@ Document these as `SKIPPED` in PR parity reports unless the diff touches those a
 | Biome CI 2.5.0 vs local 2.5.3 | Rare formatter drift between local and Actions |
 | `verify` omits API auth integration | `test:auth` local-only until repaired |
 | `verify` omits `test:theme` / `test:sync` for webapp | Run locally when touching webapp UI/sync |
+| Website PR has no `docker build` | Only api/webapp get image builds on PR; website uses runner prune+build |
 
 ## Checklist
 

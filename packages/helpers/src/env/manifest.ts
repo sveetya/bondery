@@ -127,6 +127,13 @@ export const OPS_GROUP_ORDER = [
   "Build metadata",
 ] as const;
 
+/** Operator-facing sections in `deploy/plausible/.env.example` (order matters). */
+export const PLAUSIBLE_GROUP_ORDER = [
+  "Public hostname",
+  "Plausible secrets",
+  "Plausible options",
+] as const;
+
 /** Multi-line comments under ops group headers in `deploy/ops/.env.example`. */
 export const OPS_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
   "Build metadata": ["Optional build metadata surfaced in the container"],
@@ -135,6 +142,23 @@ export const OPS_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
   ],
   "Public hostnames": [
     "Public hostnames (no scheme). Compose derives https://… URLs and Traefik Host().",
+  ],
+};
+
+/** Multi-line comments under plausible group headers in `deploy/plausible/.env.example`. */
+export const PLAUSIBLE_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = {
+  "Plausible options": [
+    "Compose maps these to Plausible CE container env (BASE_URL, DISABLE_REGISTRATION).",
+  ],
+  "Plausible secrets": [
+    "Generate:",
+    "  openssl rand -base64 48   # BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE",
+    "  openssl rand -base64 32   # BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY",
+    "  openssl rand -base64 24 | tr -d '/+=' | head -c 32   # BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD",
+    "Compose builds DATABASE_URL from the Postgres password — do not set DATABASE_URL in Dokploy.",
+  ],
+  "Public hostname": [
+    "Traefik Host() rule (no scheme). Compose derives BASE_URL as https://<domain>.",
   ],
 };
 
@@ -152,6 +176,9 @@ export type DeployExample = {
 /** Same shape as `DeployExample` — ops marketing stack (`deploy/ops/.env.example`). */
 export type OpsExample = DeployExample;
 
+/** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
+export type PlausibleExample = DeployExample;
+
 /** Boot profile for starting a target without a `.env` file (OpenAPI gen, integration tests). */
 export type BootExample = {
   /** Include in boot env even when not `requiredIn` for the environment (rare) */
@@ -160,7 +187,7 @@ export type BootExample = {
   value?: string;
 };
 
-export type ExampleProfile = "development" | "production" | "deploy" | "ops";
+export type ExampleProfile = "development" | "production" | "deploy" | "ops" | "plausible";
 
 export type EnvVarDef = {
   canonical: string;
@@ -176,6 +203,8 @@ export type EnvVarDef = {
   deployExample?: DeployExample;
   /** Ops marketing Compose operator example (`deploy/ops/.env.example`) */
   opsExample?: OpsExample;
+  /** Plausible CE Compose operator example (`deploy/plausible/.env.example`) */
+  plausibleExample?: PlausibleExample;
   /** Boot without `.env` (OpenAPI generation, API integration tests) */
   boot?: BootExample;
   /** When false, omit from turbo cache env arrays (rare) */
@@ -217,6 +246,9 @@ export function resolveExampleValue(entry: EnvVarDef, profile: ExampleProfile): 
   if (profile === "ops") {
     return entry.opsExample?.value ?? entry.exampleValue;
   }
+  if (profile === "plausible") {
+    return entry.plausibleExample?.value ?? entry.exampleValue;
+  }
 
   let value = entry.exampleValue;
   if (profile === "production") {
@@ -252,6 +284,19 @@ export function sortOpsExampleRows<T extends { group: string; key: string }>(row
   return [...rows].sort((a, b) => {
     const rankA = groupRank.get(a.group as (typeof OPS_GROUP_ORDER)[number]) ?? 999;
     const rankB = groupRank.get(b.group as (typeof OPS_GROUP_ORDER)[number]) ?? 999;
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return a.key.localeCompare(b.key);
+  });
+}
+
+/** Sort plausible example rows by PLAUSIBLE_GROUP_ORDER then key. */
+export function sortPlausibleExampleRows<T extends { group: string; key: string }>(rows: T[]): T[] {
+  const groupRank = new Map(PLAUSIBLE_GROUP_ORDER.map((group, index) => [group, index]));
+  return [...rows].sort((a, b) => {
+    const rankA = groupRank.get(a.group as (typeof PLAUSIBLE_GROUP_ORDER)[number]) ?? 999;
+    const rankB = groupRank.get(b.group as (typeof PLAUSIBLE_GROUP_ORDER)[number]) ?? 999;
     if (rankA !== rankB) {
       return rankA - rankB;
     }
@@ -654,8 +699,57 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "plausible.usebondery.com",
     },
+    plausibleExample: {
+      group: "Public hostname",
+      include: true,
+      value: "plausible.usebondery.com",
+    },
     requiredIn: [],
     secret: false,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION",
+    description: "Plausible CE sign-up policy (maps to DISABLE_REGISTRATION in the container).",
+    exampleValue: "invite_only",
+    group: "Infra",
+    plausibleExample: {
+      group: "Plausible options",
+      include: true,
+      value: "invite_only",
+    },
+    requiredIn: [],
+    secret: false,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD",
+    description: "Postgres password for the Plausible CE metadata database.",
+    exampleValue: "",
+    group: "Database",
+    plausibleExample: { group: "Plausible secrets", include: true, value: "" },
+    requiredIn: [],
+    secret: true,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE",
+    description: "Plausible CE SECRET_KEY_BASE (session signing).",
+    exampleValue: "",
+    group: "Analytics",
+    plausibleExample: { group: "Plausible secrets", include: true, value: "" },
+    requiredIn: [],
+    secret: true,
+    targets: [],
+  },
+  {
+    canonical: "BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY",
+    description: "Plausible CE TOTP_VAULT_KEY (2FA encryption).",
+    exampleValue: "",
+    group: "Analytics",
+    plausibleExample: { group: "Plausible secrets", include: true, value: "" },
+    requiredIn: [],
+    secret: true,
     targets: [],
   },
   {
@@ -965,7 +1059,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       "Plausible site domain (marketing hostname registered in self-hosted Plausible CE)",
     exampleValue: "",
     group: "Analytics",
-    opsExample: { group: "Optional website analytics", include: true, value: "usebondery.com" },
     requiredIn: [],
     secret: false,
     syncable: true,
@@ -976,11 +1069,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     description: "Self-hosted Plausible CE base URL (script and event requests)",
     exampleValue: "",
     group: "Analytics",
-    opsExample: {
-      group: "Optional website analytics",
-      include: true,
-      value: "https://plausible.usebondery.com",
-    },
     requiredIn: [],
     secret: false,
     syncable: true,
