@@ -1,0 +1,16 @@
+pre-commit:
+  parallel: false
+  commands:
+    env-examples:
+      glob:
+        - "packages/helpers/src/env/manifest.ts"
+        - "scripts/env.ts"
+      run: pnpm run env:examples -- --stage
+    openapi:
+      glob:
+        - "apps/api/src/**/*.ts"
+        - "packages/schemas/src/**/*.ts"
+      run: pnpm --filter api run generate:openapi
+    biome:
+      glob: "*"
+      run: node scripts/run-pre-commit-biome.mjs

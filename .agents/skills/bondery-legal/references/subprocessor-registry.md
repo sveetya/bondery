@@ -40,6 +40,7 @@ Update this file in the **same PR** that adds or removes a vendor integration.
 | Instagram import | User ZIP upload | Usernames, follow dates | `routes/import/instagram/` |
 | LinkedIn CSV import | User file upload | Names, emails, companies | `routes/import/linkedin/` |
 | vCard import/export | User file / download | Contact PII | `routes/import/vcard/`, `lib/contacts/vcard.ts` |
+| Marketing site analytics | Self-hosted Plausible CE on `plausible.usebondery.com` | Aggregate pageviews, referrers, UTMs (no cookies, no PII) | `apps/website/src/app/layout.tsx`, `deploy/plausible/` |
 
 No third-party enrichment API — extension scraping only.
 

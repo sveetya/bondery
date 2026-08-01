@@ -7,20 +7,56 @@
  */
 
 import { execSync } from "node:child_process";
-import { dirname, resolve } from "node:path";
+import { readdirSync, statSync } from "node:fs";
+import { dirname, join, resolve as pathResolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const root = pathResolve(dirname(fileURLToPath(import.meta.url)), "..");
 const stage = process.argv.includes("--stage");
 
 function run(command) {
-  execSync(command, { cwd: root, stdio: "inherit" });
+  execSync(command, { cwd: root, shell: true, stdio: "inherit" });
+}
+
+function isEnvExampleFile(name) {
+  return name === ".env.example" || (name.startsWith(".env") && name.endsWith(".example"));
+}
+
+function collectAppEnvExamples(dir, files = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const absolutePath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      collectAppEnvExamples(absolutePath, files);
+      continue;
+    }
+    if (isEnvExampleFile(entry.name)) {
+      files.push(relative(root, absolutePath).replaceAll("\\", "/"));
+    }
+  }
+  return files;
 }
 
 run("node --import tsx scripts/env.ts --write-examples --write-turbo");
 
 if (stage) {
-  run(
-    `git add .env.local.example turbo.json packages/db/.env.local.example deploy/bondery/.env.example deploy/ops/.env.example && find apps -type f \\( -name '.env*.example' -o -name '.env.example' \\) -print0 | xargs -0 git add`,
-  );
+  const pathsToStage = [
+    ".env.local.example",
+    "turbo.json",
+    "packages/db/.env.local.example",
+    "deploy/bondery/.env.example",
+    "deploy/ops/.env.example",
+    ...collectAppEnvExamples(join(root, "apps")),
+  ];
+
+  const existingPaths = pathsToStage.filter((path) => {
+    try {
+      return statSync(join(root, path)).isFile();
+    } catch {
+      return false;
+    }
+  });
+
+  if (existingPaths.length > 0) {
+    run(`git add ${existingPaths.map((path) => JSON.stringify(path)).join(" ")}`);
+  }
 }

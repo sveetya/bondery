@@ -1,16 +1,29 @@
 import { type NextRequest, NextResponse, type ProxyConfig } from "next/server";
 
+function getPlausibleCspOrigin(): string {
+  const host = process.env.BONDERY_PUBLIC_PLAUSIBLE_HOST?.trim();
+  if (host) {
+    try {
+      return new URL(host).origin;
+    } catch {
+      // Fall through to production default.
+    }
+  }
+  return "https://plausible.usebondery.com";
+}
+
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
+  const plausibleOrigin = getPlausibleCspOrigin();
 
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""};
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${plausibleOrigin}${isDev ? " 'unsafe-eval'" : ""};
     style-src 'self' ${isDev ? "'unsafe-inline'" : `'nonce-${nonce}'`};
     img-src 'self' blob: data: https://icons.duckduckgo.com;
     font-src 'self';
-    connect-src 'self' https://api.github.com;
+    connect-src 'self' https://api.github.com ${plausibleOrigin};
     object-src 'none';
     base-uri 'self';
     form-action 'self';

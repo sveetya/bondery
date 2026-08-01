@@ -45,6 +45,7 @@ Maps checkable factual claims in published legal documents to implementation sta
 |-------|--------|--------|----------|
 | Essential cookies: auth session, language prefs | §6 | `implemented` | Webapp cookies (`lib/cookies/`, `oauthClient.server.ts`) |
 | Analytics cookies; disable in account settings | §6 | **unimplemented** | PostHog initializes when key present; **no settings toggle** |
+| Marketing site uses self-hosted cookieless analytics | §6 | `implemented` | `apps/website/src/app/layout.tsx`, `deploy/plausible/`, `BONDERY_PUBLIC_PLAUSIBLE_*` |
 | No advertising/tracking/marketing cookies | §6 | `implemented` | No ad SDKs |
 | `DO_NOT_TRACK` disables telemetry | — | **unimplemented** | Declared in `packages/helpers/src/env/manifest.ts` but **not referenced in app TS** |
 | Cookie consent banner | — | **unimplemented** | No consent UI on website |

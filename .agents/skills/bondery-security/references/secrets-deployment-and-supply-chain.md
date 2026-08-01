@@ -89,7 +89,7 @@ Singleton enforcement: `check-redis-singleton.ts`.
 | Mechanism | Present? |
 |-----------|------------|
 | Biome lint in CI | Yes (`.github/workflows/verify.yml`) |
-| Husky + lint-staged | Yes |
+| Lefthook | Yes |
 | Route security scripts | Yes (`check-route-security`, `check-no-route-writes`) |
 | OpenAPI lint | Yes (`check:openapi`) |
 | Compose policy lint | Yes (`check-compose.mjs`) |

@@ -19,7 +19,7 @@ const subprocessors = [
     location: "EU",
     name: "Hetzner",
     notes:
-      "Self-managed infrastructure on Hetzner cloud servers, including in-memory caching for rate limiting and real-time sync.",
+      "Self-managed infrastructure on Hetzner cloud servers, including in-memory caching for rate limiting and real-time sync, and self-hosted website analytics (Plausible CE).",
     privacy: "https://www.hetzner.com/legal/privacy-policy",
     useCase: "Website, webapp, and API hosting",
   },
@@ -340,15 +340,16 @@ export function Privacy() {
         Analytics
       </Title>
       <Text mb="md">
-        We may use analytics tools for product analytics. These tools may set cookies to:
+        <strong>Marketing website (usebondery.com):</strong> We run self-hosted, cookieless
+        analytics on our own EU infrastructure (plausible.usebondery.com). This collects aggregate
+        traffic data such as page views, referrers, and campaign parameters. It does not use cookies
+        or browser local storage and does not identify individual visitors.
       </Text>
-      <List listStyleType="disc" mb="lg" withPadding>
-        <List.Item>Distinguish unique users</List.Item>
-        <List.Item>Track session information</List.Item>
-        <List.Item>Remember opt-out preferences</List.Item>
-      </List>
-      <Text mb="lg">
-        You can disable analytics tracking in your account settings where available.
+      <Text mb="md">
+        <strong>Product webapp (app.usebondery.com):</strong> We use PostHog for product analytics.
+        PostHog may set cookies to distinguish users, track sessions, and remember opt-out
+        preferences where available. You can disable analytics tracking in your account settings
+        where that option is provided.
       </Text>
 
       <Title mb="sm" mt="lg" order={3}>
