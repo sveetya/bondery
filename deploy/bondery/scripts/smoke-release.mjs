@@ -131,7 +131,6 @@ function writeOverride(service, imageName, tag) {
     override += `  webapp:\n    image: ${image}\n    ports:\n      - "26632:26632"\n`;
   } else {
     override += `  api:\n    image: ${image}\n    ports:\n      - "26631:26631"\n`;
-    override += `    pre_start: []\n`;
     override += `  db:\n    ports:\n      - "54322:5432"\n`;
     override += `  seaweedfs-s3:\n    ports:\n      - "8333:8333"\n`;
   }
