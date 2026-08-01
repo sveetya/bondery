@@ -9,6 +9,9 @@ preferWorkspacePackages: true
 saveWorkspaceProtocol: rolling
 minimumReleaseAge: 1440
 enableGlobalVirtualStore: true
+injectWorkspacePackages: true
+syncInjectedDepsAfterScripts:
+  - build
 
 overrides:
   "@tiptap/core": "3.29.2"

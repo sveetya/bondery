@@ -40,6 +40,10 @@
       "types": "./src/release-migrate.ts"
     }
   },
+  "files": [
+    "dist",
+    "prisma"
+  ],
   "main": "./dist/index.js",
   "name": "@bondery/db",
   "private": true,

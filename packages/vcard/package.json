@@ -71,6 +71,9 @@
       "types": "./src/serialize.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "imports": {
     "#*": [
       "./dist/*",

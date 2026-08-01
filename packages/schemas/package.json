@@ -998,6 +998,9 @@
       "types": "./src/sync/ws/types.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "imports": {
     "#*": [
       "./dist/*",
