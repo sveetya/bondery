@@ -28,9 +28,7 @@ COPY docs ./docs
 RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --ignore-scripts --store-dir "${PNPM_STORE_DIR}"
 ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
-RUN --mount=type=secret,id=turbo_token \
-    export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
-    pnpm exec turbo build --filter=api
+RUN pnpm -r --filter "api^..." run build && pnpm --filter api run build
 # Materialize a portable production tree (workspace deps resolved into node_modules).
 # See https://pnpm.io/docker — injectWorkspacePackages must be true in pnpm-workspace.yaml.
 RUN pnpm deploy --filter=api --prod /deploy/api
