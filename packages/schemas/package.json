@@ -1026,6 +1026,9 @@
     "dev": "tsc --watch --preserveWatchOutput",
     "prepare": "pnpm run build"
   },
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "types": "./src/index.ts",
   "version": "1.8.0"

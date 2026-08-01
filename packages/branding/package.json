@@ -129,6 +129,7 @@
     }
   },
   "files": [
+    "dist",
     "src",
     "scripts",
     "src/assets"

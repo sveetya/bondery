@@ -41,6 +41,10 @@
     }
   },
   "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "prisma"
+  ],
   "name": "@bondery/db",
   "private": true,
   "scripts": {
