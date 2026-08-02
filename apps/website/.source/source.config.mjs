@@ -7,7 +7,6 @@ import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 import lastModified from "fumadocs-mdx/plugins/last-modified";
 import remarkGfm from "remark-gfm";
 import { z } from "zod";
-
 var repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 function isGitLastModifiedAvailable() {
   try {
@@ -23,7 +22,7 @@ var docs = defineDocs({
   docs: {
     files: ["**/*.mdx"],
     postprocess: {
-      includeProcessedMarkdown: true,
+      includeProcessedMarkdown: true
     },
     schema: pageSchema.extend({
       description: z.string().optional(),
@@ -31,23 +30,25 @@ var docs = defineDocs({
       docPath: z.string().optional(),
       docSections: z.record(z.string(), z.string()).optional(),
       hidden: z.boolean().optional(),
-      icon: z.string().optional(),
-    }),
+      icon: z.string().optional()
+    })
   },
   meta: {
-    schema: metaSchema,
-  },
+    schema: metaSchema
+  }
 });
 var source_config_default = defineConfig({
   mdxOptions: {
     providerImportSource: "@/components/mdx",
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm]
   },
   plugins: [
     lastModified({
-      versionControl: isGitLastModifiedAvailable() ? "git" : async () => void 0,
-    }),
-  ],
+      versionControl: isGitLastModifiedAvailable() ? "git" : async () => void 0
+    })
+  ]
 });
-
-export { docs, source_config_default as default };
+export {
+  source_config_default as default,
+  docs
+};

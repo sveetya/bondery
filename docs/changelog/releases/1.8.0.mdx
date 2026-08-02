@@ -1,0 +1,74 @@
+---
+title: "Changelog 1.8.0"
+hidden: true
+---
+
+## [1.8.0] - 01.08.2026
+
+### 📝 Documentation
+
+- Docs: MDX is now the sole source for the docs site; legacy GitBook `.md` duplicates were removed, ADRs and internal plans were converted to hidden MDX, and doc-link tooling scans `.mdx` only.
+
+### ✨ Added
+
+- Dev: `pnpm run env:pull` syncs shared team secrets from Infisical into root `.env.local` (manifest `syncable` keys).
+- Dev: `pnpm run env` derives `DATABASE_URL` for api/db from `BONDERY_PRIVATE_POSTGRES_PASSWORD` (single source of truth for bundled local Postgres).
+- API: Sends a welcome email when a new account is provisioned.
+- API: Transactional emails (reminder digest, share contact, trial ending, account deleted, feedback) use localized copy from `@bondery/translations`.
+
+### 🔄 Changed
+
+- API: Liveness and readiness probes are now `GET /health/live` and `GET /health/ready` (removed `/status` and root `/health`). Chrome extension minimum version moved to `GET /extension/manifest`.
+- API: Boots with a single Postgres connection pool and verified Redis, SMTP, and object-storage dependencies before accepting traffic; rate limiting attaches after Redis is ready.
+- API: Reminder digest advances each user's next send time only after that user's email sends successfully.
+- Webapp: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`). API health is proxied at `GET /api/health/live` and `GET /api/health/ready`; extension manifest at `GET /api/extension/manifest`.
+- Website: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`).
+- Chrome extension: Version check reads `GET /extension/manifest` on the API host.
+- Mobile: Connectivity probe uses `GET /health/live` on the API host.
+- CI: `api-*` / `webapp-*` release tags now run compose smoke on the semver image, promote `:production` only after smoke passes, then call Dokploy (same gate pattern as website CD).
+
+### 🐛 Fixed
+
+- API: Reminder digest no longer logs all due users as dispatched or advances everyone's schedule when one SMTP send fails.
+
+### 🔄 Changed
+
+- Dev/self-host: PostHog browser and server capture share `BONDERY_PUBLIC_POSTHOG_HOST` and `BONDERY_PUBLIC_POSTHOG_KEY` (removed duplicate private ingest vars).
+
+### Breaking
+
+- **PostHog ingest env vars:** Remove `BONDERY_PRIVATE_POSTHOG_HOST` and `BONDERY_PRIVATE_POSTHOG_KEY` from webapp and Compose env. Set `BONDERY_PUBLIC_POSTHOG_HOST` and `BONDERY_PUBLIC_POSTHOG_KEY` instead (same PostHog project API key for browser and server capture). API admin query vars (`BONDERY_PRIVATE_POSTHOG_API_SECRET`, `BONDERY_PRIVATE_POSTHOG_PROJECT_ID`) are unchanged.
+
+- **Health probe URLs:** Self-hosters and operators must update Docker HEALTHCHECKs, load-balancer probes, and monitoring to the new paths. API: `/health/live` and `/health/ready`. Webapp and website containers: `/health/live` and `/health/ready` on each app's origin. Webapp BFF for API dependency status: `/api/health/ready`. Extension clients must use `/extension/manifest` instead of `/status`. Old paths (`/status`, `/health`, `/api/live`, `/api/ready`, `/api/status`, `/api/health`) are removed with no redirects.
+
+### ✨ Added
+
+- `@bondery/db` Prisma package with schema, migrations, and generated client as the shared database layer.
+- API: Better Auth with OAuth providers, first-party OAuth clients for webapp/mobile/extension, and file storage routes.
+- API: Better Auth `@better-auth/api-key` plugin with hashed keys and route allowlists; platform operator role on `user.role`.
+- API: Redis-backed Better Auth `secondaryStorage` for session hot-path caching.
+- Webapp: Playwright e2e scaffolding for auth and core app flows.
+- Website: self-hosted product docs with Fumadocs search and LLM export routes.
+
+### 🔄 Changed
+
+- Billing migrated from Polar.sh to Stripe Billing (embedded Checkout, webhooks, DB mirror). Polar env vars and SDK removed.
+- Platform operator access now uses Better Auth `user.role = admin` (and break-glass env IDs) instead of `user_settings.is_admin`.
+- API request auth verifies Better Auth sessions and OAuth resource JWTs instead of Supabase Auth tokens.
+- API keys authenticate via `auth.api.verifyApiKey` without minting Supabase JWTs.
+- Webapp and mobile login, session refresh, and API transport use Better Auth only; Supabase JS clients removed from those apps.
+- Self-host Compose stack uses bundled Postgres (Prisma migrations) instead of the Supabase sidecar.
+- Webapp app routes reorganized into `(shell)` and `(chromeless)` route groups.
+
+### 📝 Documentation
+
+- Migrated product docs from GitBook to self-hosted Fumadocs on `usebondery.com/docs` (website app). Disable GitBook Git Sync after deploy.
+- Updated docs for Prisma + Better Auth stack (removed legacy Supabase references). Reorganized sidebar: Apps section, core concepts above self-hosting, getting help above changelog.
+- API tab: Introduction landing page, Guides section (bulk import), Error codes as a top-level sidebar item. Self-hosting split into Requirements / Get started / Configuration / Update; Dokploy and API container moved to Contributing (production only).
+- Develop tab: flattened sidebar (Architecture, Development, Guides, Production deployment). Rewrote i18n reference; added guide for new locales. Renamed Clients → Apps; error pages no longer use Mantine.
+
+### Breaking
+
+- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `pnpm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](../../contributing/environment.mdx).
+- **Platform admin:** `user_settings.is_admin` is dropped; grant operator access via `user.role = admin` or `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS`.
+- **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](../../deploy/get-started.mdx) for the new bootstrap flow.

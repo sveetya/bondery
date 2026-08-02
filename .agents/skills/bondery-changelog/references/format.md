@@ -13,7 +13,9 @@ Omit routine implementation details, formatting, test maintenance, and internal 
 
 ## Document structure
 
-Keep this order:
+In-flight work lives in [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx). Each shipped release is a hidden partial under `docs/changelog/releases/X.Y.Z.mdx`, imported newest-first by [`docs/changelog.mdx`](../../../../docs/changelog.mdx).
+
+Keep this order within each partial:
 
 ```markdown
 ## [Unreleased]
@@ -21,13 +23,9 @@ Keep this order:
 ### ✨ Added
 
 - Webapp: Describe the outcome in user language.
-
-## [1.8.0] - 12.08.2026
-
-### 🐛 Fixed
-
-- Mobile: Describe what no longer fails.
 ```
+
+Shipped releases use the same category layout under `## [1.8.0] - 12.08.2026` in `docs/changelog/releases/1.8.0.mdx`.
 
 - `Unreleased` remains first even when empty.
 - Dated versions are newest first.

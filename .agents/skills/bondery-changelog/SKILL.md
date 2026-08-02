@@ -2,7 +2,7 @@
 name: bondery-changelog
 description: >
   Bondery product changelog format, change categories, commit prefixes, calendar
-  versioning, and release-note workflow. Use when editing docs/changelog.mdx,
+  versioning, and release-note workflow. Use when editing docs/changelog/unreleased.mdx,
   documenting a user-visible or operationally notable change, preparing a release,
   choosing a conventional commit prefix, recording dependency updates, or drafting
   release communications.
@@ -23,7 +23,7 @@ metadata:
 
 ## Non-negotiables
 
-1. **One product changelog** — [`docs/changelog.mdx`](../../../docs/changelog.mdx) is the only source of truth and the page published by Fumadocs.
+1. **One product changelog** — [`docs/changelog.mdx`](../../../docs/changelog.mdx) composes version partials under `docs/changelog/` and is the page published by Fumadocs. Edit [`docs/changelog/unreleased.mdx`](../../../docs/changelog/unreleased.mdx) for in-flight work.
 2. **Write for users and operators** — explain the outcome and affected area, not implementation trivia or commit history.
 3. **Curate manually** — commit prefixes help classify changes, but no script generates the product changelog.
 4. **Keep `Unreleased` at the top** — collect notable work there until a release is cut.
@@ -48,7 +48,7 @@ Full local-reference index: [references/README.md](references/README.md).
 
 ## Changelog checklist (before handoff)
 
-- [ ] Only `docs/changelog.mdx` was edited
+- [ ] Only `docs/changelog/unreleased.mdx` was edited (or a release cut touched `docs/changelog/releases/X.Y.Z.mdx` and `docs/changelog.mdx` imports)
 - [ ] The entry describes a notable user, operator, contributor, security, or release outcome
 - [ ] The entry is under `Unreleased` or the correct newest-first dated version
 - [ ] Category and commit prefix match the change
