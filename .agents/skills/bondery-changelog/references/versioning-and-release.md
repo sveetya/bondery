@@ -18,7 +18,7 @@ This resembles SemVer syntactically but is not classic semantic versioning. Comp
 
 ## While work is in flight
 
-Add notable entries to `## [Unreleased]` in [`docs/changelog.mdx`](../../../../docs/changelog.mdx). Keep entries grouped by category and update them as the released outcome becomes clearer.
+Add notable entries to `## [Unreleased]` in [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx). Keep entries grouped by category and update them as the released outcome becomes clearer.
 
 Do not create a dated version section for every merge. A dated section represents a release.
 
@@ -26,8 +26,8 @@ Do not create a dated version section for every merge. A dated section represent
 
 1. Calculate `X.Y.Z` from the release year/month and existing releases in that month.
 2. Review all changes since the previous release; add missing notable entries and remove internal noise.
-3. Move the accumulated entries under `## [X.Y.Z] - DD.MM.YYYY`.
-4. Leave a fresh `## [Unreleased]` section at the top.
+3. Create [`docs/changelog/releases/X.Y.Z.mdx`](../../../../docs/changelog/releases/) with `## [X.Y.Z] - DD.MM.YYYY` and the accumulated entries; add an import in [`docs/changelog.mdx`](../../../../docs/changelog.mdx) directly below `<Unreleased />`.
+4. Reset [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx) to an empty `## [Unreleased]` section with category headings as needed.
 5. Add `Breaking` notes with migration links when applicable.
 6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
 7. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
@@ -38,8 +38,8 @@ Dependency-only work follows the [Package upgrade workflow](../../../workflows/c
 
 - [ ] Version derives from release year, month, and patch sequence
 - [ ] All notable changes since the previous release were reviewed
-- [ ] Entries moved from `Unreleased` into the new dated section
-- [ ] A clean `Unreleased` section remains first
+- [ ] Entries moved from `unreleased.mdx` into `releases/X.Y.Z.mdx`; import added to `changelog.mdx`
+- [ ] A clean `Unreleased` section remains in `unreleased.mdx`
 - [ ] Breaking and self-hosting actions are explicit
 - [ ] Full technical release workflow completed separately
 - [ ] Monthly announcement content was drafted from curated outcomes

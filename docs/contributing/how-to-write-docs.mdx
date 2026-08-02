@@ -55,6 +55,12 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 - Link to source files or env examples when steps are non-obvious
 - Keep commands copy-pasteable and tested
 
+### Changelog partials (`docs/changelog/`)
+
+- **In-flight entries** — edit [`docs/changelog/unreleased.mdx`](../../changelog/unreleased.mdx) (`title` + `hidden: true`; not in `meta.json`).
+- **Shipped releases** — one file per version under `docs/changelog/releases/X.Y.Z.mdx` (`title: "Changelog X.Y.Z"`, `hidden: true`), imported newest-first by [`docs/changelog.mdx`](../../changelog.mdx).
+- Do not add release partials to `meta.json`; the public page stays a single sidebar entry.
+
 ### Architecture decision records (`docs/adr/`)
 
 - **Do not link to ADRs** from user-facing or operator docs (`deploy/`, `getting-started`, `bondery/`, `concepts/`, etc.). ADRs are internal, hidden records (`hidden: true`); readers should not need them.
