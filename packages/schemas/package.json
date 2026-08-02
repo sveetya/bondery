@@ -999,7 +999,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "locale/supported-locales.json"
   ],
   "imports": {
     "#*": [
