@@ -42,6 +42,8 @@ export type EmailReadiness = {
 const EMAIL_POOL_MAX_CONNECTIONS = 3;
 const EMAIL_POOL_MAX_MESSAGES = 100;
 const EMAIL_VERIFY_TIMEOUT_MS = 5_000;
+/** Reuse boot-time SMTP verify for readiness probes (matches /health/ready cache TTL). */
+const EMAIL_READINESS_REUSE_MS = 60_000;
 
 const UNCONFIGURED_READINESS: EmailReadiness = {
   configured: false,
@@ -301,6 +303,15 @@ export async function initEmailTransport(log?: FastifyBaseLogger): Promise<Email
   return readiness;
 }
 
+function isEmailReadinessFresh(readiness: EmailReadiness): boolean {
+  if (!readiness.ok) {
+    return false;
+  }
+
+  const ageMs = Date.now() - Date.parse(readiness.verifiedAt);
+  return ageMs >= 0 && ageMs < EMAIL_READINESS_REUSE_MS;
+}
+
 /** Re-verify the shared pool (used by /health/ready when cache is cold). */
 export async function verifyEmailTransport(): Promise<EmailReadiness> {
   if (!isEmailConfigured()) {
@@ -317,6 +328,10 @@ export async function verifyEmailTransport(): Promise<EmailReadiness> {
       ok: true,
       verifiedAt: new Date().toISOString(),
     };
+    return emailReadiness;
+  }
+
+  if (transporter && emailReadiness && isEmailReadinessFresh(emailReadiness)) {
     return emailReadiness;
   }
 

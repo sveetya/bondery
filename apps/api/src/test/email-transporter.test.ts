@@ -181,6 +181,24 @@ describe("email transport readiness", () => {
     assert.equal(readiness.error, "auth_failed");
   });
 
+  it("verifyEmailTransport reuses recent boot verification for readiness probes", async () => {
+    process.env.NODE_ENV = "development";
+    setConfiguredEmailEnv();
+    resetEmailTransporterForTests();
+
+    let verifyCalls = 0;
+    const current = getEmailTransporter();
+    current.verify = async () => {
+      verifyCalls += 1;
+    };
+
+    await initEmailTransport();
+    const readiness = await verifyEmailTransport();
+
+    assert.equal(readiness.ok, true);
+    assert.equal(verifyCalls, 1);
+  });
+
   it("initEmailTransport throws when verify fails outside test", async () => {
     process.env.NODE_ENV = "development";
     setConfiguredEmailEnv();

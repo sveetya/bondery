@@ -173,6 +173,13 @@ function curlOk(url) {
   return result.status === 0;
 }
 
+function logReadyHealthFailure(url) {
+  const result = spawnSync(`curl -s "${url}"`, { encoding: "utf8", shell: true });
+  if (result.stdout?.trim()) {
+    console.error(`Readiness probe body from ${url}:\n${result.stdout}`);
+  }
+}
+
 function waitFor(predicate, { attempts = 40, intervalSec = 3, label = "service" }) {
   for (let i = 1; i <= attempts; i++) {
     if (predicate()) {
@@ -181,6 +188,12 @@ function waitFor(predicate, { attempts = 40, intervalSec = 3, label = "service" 
     }
     if (i === attempts) {
       console.error(`${label} did not become healthy after ${attempts} attempts`);
+      if (label === "api") {
+        logReadyHealthFailure("http://127.0.0.1:26631/health/ready");
+      }
+      if (label === "webapp") {
+        logReadyHealthFailure("http://127.0.0.1:26632/health/ready");
+      }
       run("docker compose --env-file .env.smoke ps");
       run("docker compose --env-file .env.smoke logs --tail=80");
       process.exit(1);
