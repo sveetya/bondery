@@ -79,7 +79,7 @@ jobs:
 
   smoke:
     needs: [validate, image_ready]
-    if: ${{ needs.image_ready.result == 'success' }}
+    if: ${{ always() && needs.validate.result == 'success' && needs.image_ready.result == 'success' }}
     uses: ./.github/workflows/shared-smoke-bondery.yml
     secrets: inherit
     with:
