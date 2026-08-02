@@ -22,6 +22,12 @@ services:
     depends_on:
       seaweedfs-master:
         condition: service_healthy
+    healthcheck:
+      interval: 5s
+      retries: 10
+      start_period: 10s
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/status"]
+      timeout: 5s
     image: chrislusf/seaweedfs:4.40
     networks:
       - internal
@@ -33,6 +39,8 @@ services:
     command: "filer -master=seaweedfs-master:9333 -ip=seaweedfs-filer"
     depends_on:
       seaweedfs-master:
+        condition: service_healthy
+      seaweedfs-volume:
         condition: service_healthy
     healthcheck:
       interval: 10s
