@@ -24,6 +24,7 @@ smoke/
 shared/
   prepare-dockerignore/    -> .github/actions/shared/prepare-dockerignore/
   ghcr-login/              -> .github/actions/shared/ghcr-login/
+  infisical-staging-secrets/ -> .github/actions/shared/infisical-staging-secrets/
   turbo-remote-cache/      -> .github/actions/shared/turbo-remote-cache/
   website-prune-build/     -> .github/actions/shared/website-prune-build/
   dokploy-deploy-webhook/  -> .github/actions/shared/dokploy-deploy-webhook/
@@ -99,3 +100,33 @@ DOCKER_BUILDKIT=1 docker build -f apps/website/Dockerfile .
 ```
 
 If you change lockfile layout or pnpm major version, bump the BuildKit cache id in Dockerfiles (`bondery-pnpm-store`) to avoid stale store entries.
+
+## Release smoke and Infisical
+
+Release smoke (`shared-smoke-bondery.yml`, `smoke-bondery-stack.yml`) boots the API with `NODE_ENV=production`, which **live-verifies SMTP** at startup. Fake `smtp.example.com` placeholders from `deploy/bondery/.env.example` fail that check.
+
+Before `smoke-release.mjs`, workflows run `./.github/actions/shared/infisical-staging-secrets`, which uses [Infisical/secrets-action](https://github.com/Infisical/secrets-action) with **OIDC** to fetch the **staging** environment from project `bondery-secrets` (EU: `https://eu.infisical.com`). The smoke script overlays these five keys into `.env.smoke`:
+
+- `BONDERY_PRIVATE_EMAIL_ADDRESS`
+- `BONDERY_PRIVATE_EMAIL_HOST`
+- `BONDERY_PRIVATE_EMAIL_PASS`
+- `BONDERY_PRIVATE_EMAIL_PORT`
+- `BONDERY_PRIVATE_EMAIL_USER`
+
+**Ops checklist (Infisical UI):**
+
+1. Machine identity `f8b9e69d-bc32-4066-ad99-8ad6ecff2d21` uses **OIDC** (not Universal Auth).
+2. Bound subject includes this repo's release/smoke workflows (e.g. `repo:usebondery/bondery:ref:refs/heads/release` or workflow-scoped subjects).
+3. Audience: `https://github.com/usebondery`.
+4. Identity has **read** on the **staging** environment.
+
+Jobs need `permissions.id-token: write`. No GitHub secrets are required for Infisical OIDC.
+
+**Local smoke with real SMTP:**
+
+```bash
+infisical run --projectId=7395aabc-4cab-4cfe-aef2-a66899da5430 --env=staging --domain=https://eu.infisical.com -- \
+  node deploy/bondery/scripts/smoke-release.mjs --service api --tag 1.8.0
+```
+
+Use `defaultEnvironment: dev` in `.infisical.json` for `pnpm env:pull`; release smoke uses the **staging** slug.
