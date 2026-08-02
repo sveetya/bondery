@@ -26,6 +26,7 @@ jobs:
     permissions:
       contents: read
       packages: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -44,6 +45,9 @@ jobs:
         with:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+
+      - name: Fetch Infisical staging secrets
+        uses: ./.github/actions/shared/infisical-staging-secrets
 
       - name: Run release smoke
         run: |
