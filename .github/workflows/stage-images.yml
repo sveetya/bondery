@@ -31,6 +31,7 @@ jobs:
           filters: |
             api:
               - apps/api/**
+              - deploy/bondery/**
               - packages/**
               - scripts/**
               - docs/**
@@ -45,6 +46,7 @@ jobs:
               - .github/workflows/shared-docker-build-push.yml
             webapp:
               - apps/webapp/**
+              - deploy/bondery/**
               - packages/**
               - scripts/**
               - docs/**

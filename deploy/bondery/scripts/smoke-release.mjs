@@ -176,12 +176,49 @@ function prepareEnvSmoke() {
   copyFileSync(resolve(BONDERY_DIR, ".env.smoke"), resolve(BONDERY_DIR, ".env"));
 }
 
+/** Pin compose image tags in smoke env (webapp smoke must not pull api:production). */
+function applySmokeImageTags(service, tag) {
+  const envPath = resolve(BONDERY_DIR, ".env.smoke");
+  const lines = readFileSync(envPath, "utf8").split("\n");
+  const imageTags =
+    service === "webapp"
+      ? {
+          BONDERY_INFRA_API_IMAGE_TAG: tag,
+          BONDERY_INFRA_WEBAPP_IMAGE_TAG: tag,
+        }
+      : { BONDERY_INFRA_API_IMAGE_TAG: tag };
+
+  const seen = new Set();
+  const out = lines.map((line) => {
+    if (!line || line.trimStart().startsWith("#") || !line.includes("=")) {
+      return line;
+    }
+    const key = line.split("=")[0]?.trim();
+    if (key && key in imageTags) {
+      seen.add(key);
+      return `${key}=${imageTags[key]}`;
+    }
+    return line;
+  });
+
+  for (const [key, value] of Object.entries(imageTags)) {
+    if (!seen.has(key)) {
+      out.push(`${key}=${value}`);
+    }
+  }
+
+  writeFileSync(envPath, `${out.join("\n")}\n`);
+  copyFileSync(envPath, resolve(BONDERY_DIR, ".env"));
+}
+
 function writeOverride(service, imageName, tag) {
   const image = `${imageName}:${tag}`;
   let override = "services:\n";
 
   if (service === "webapp") {
     override += `  webapp:\n    image: ${image}\n    ports:\n      - "26632:26632"\n`;
+    override += `  db:\n    ports:\n      - "54322:5432"\n`;
+    override += `  seaweedfs-s3:\n    ports:\n      - "8333:8333"\n`;
   } else {
     override += `  api:\n    image: ${image}\n    ports:\n      - "26631:26631"\n`;
     override += `  db:\n    ports:\n      - "54322:5432"\n`;
@@ -192,8 +229,8 @@ function writeOverride(service, imageName, tag) {
 }
 
 function smokeWebapp() {
-  runCompose("pull webapp");
-  runCompose("up -d redis webapp");
+  runCompose("pull api webapp");
+  runCompose("up -d webapp");
 
   waitFor(
     () =>
@@ -238,6 +275,7 @@ const { service, tag, imageName } = parseArgs();
 
 try {
   prepareEnvSmoke();
+  applySmokeImageTags(service, tag);
   writeOverride(service, imageName, tag);
 
   run("node scripts/check-compose.mjs");
