@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   joinApiUrl,
   normalizeApiBaseUrl,
+  resolvePublicApiBaseUrl,
   resolveServerApiBaseUrl,
 } from "../api/resolveServerApiUrl.js";
 import {
@@ -68,6 +69,16 @@ describe("resolveServerApiBaseUrl", () => {
   it("falls back to BONDERY_PUBLIC_API_URL when internal is unset", () => {
     const base = resolveServerApiBaseUrl({
       [WEBAPP_RUNTIME_ENV.apiUrl]: "https://api.example.com/api",
+    });
+    assert.equal(base, "https://api.example.com");
+  });
+});
+
+describe("resolvePublicApiBaseUrl", () => {
+  it("always uses BONDERY_PUBLIC_API_URL even when internal URL is set", () => {
+    const base = resolvePublicApiBaseUrl({
+      [WEBAPP_INTERNAL_API_URL_ENV]: "http://api:26631",
+      [WEBAPP_RUNTIME_ENV.apiUrl]: "https://api.example.com",
     });
     assert.equal(base, "https://api.example.com");
   });
