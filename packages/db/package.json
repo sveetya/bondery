@@ -42,7 +42,8 @@
   },
   "files": [
     "dist",
-    "prisma"
+    "prisma",
+    "prisma.config.ts"
   ],
   "main": "./dist/index.js",
   "name": "@bondery/db",
