@@ -23,6 +23,11 @@ const SMOKE_DOMAINS = {
   BONDERY_INFRA_WEBSITE_DOMAIN: "www.example-smoke.test",
 };
 
+/** Inventable OAuth values left empty in deploy/.env.example — required for api pre_start. */
+const SMOKE_INVENTABLE_AUTH = {
+  BONDERY_PUBLIC_OAUTH_CLIENT_ID: "fedcba0987654321fedcba0987654321",
+};
+
 const DEFAULT_IMAGES = {
   api: "ghcr.io/usebondery/api",
   webapp: "ghcr.io/usebondery/webapp",
@@ -75,6 +80,43 @@ function run(command, options = {}) {
   }
 }
 
+function parseEnvValue(raw) {
+  let value = raw.trim();
+  if (
+    (value.startsWith('"') && value.endsWith('"')) ||
+    (value.startsWith("'") && value.endsWith("'"))
+  ) {
+    value = value.slice(1, -1);
+  }
+  return value;
+}
+
+function dumpComposeDiagnostics() {
+  console.error("docker compose failed — collecting diagnostics");
+  spawnSync("docker compose --env-file .env.smoke ps -a", {
+    cwd: BONDERY_DIR,
+    shell: true,
+    stdio: "inherit",
+  });
+  spawnSync("docker compose --env-file .env.smoke logs --tail=120", {
+    cwd: BONDERY_DIR,
+    shell: true,
+    stdio: "inherit",
+  });
+}
+
+function runCompose(command) {
+  const result = spawnSync(`docker compose --env-file .env.smoke ${command}`, {
+    cwd: BONDERY_DIR,
+    shell: true,
+    stdio: "inherit",
+  });
+  if (result.status !== 0) {
+    dumpComposeDiagnostics();
+    process.exit(result.status ?? 1);
+  }
+}
+
 function curlOk(url) {
   const result = spawnSync(`curl -sf "${url}"`, { shell: true, stdio: "pipe" });
   return result.status === 0;
@@ -106,14 +148,25 @@ function prepareEnvSmoke() {
       return line;
     }
     const key = line.split("=")[0]?.trim();
+    const rawValue = line.slice(line.indexOf("=") + 1);
     if (key && key in SMOKE_DOMAINS) {
       seen.add(key);
       return `${key}=${SMOKE_DOMAINS[key]}`;
+    }
+    if (key && key in SMOKE_INVENTABLE_AUTH && !parseEnvValue(rawValue)) {
+      seen.add(key);
+      return `${key}=${SMOKE_INVENTABLE_AUTH[key]}`;
     }
     return line;
   });
 
   for (const [key, value] of Object.entries(SMOKE_DOMAINS)) {
+    if (!seen.has(key)) {
+      out.push(`${key}=${value}`);
+    }
+  }
+
+  for (const [key, value] of Object.entries(SMOKE_INVENTABLE_AUTH)) {
     if (!seen.has(key)) {
       out.push(`${key}=${value}`);
     }
@@ -139,8 +192,8 @@ function writeOverride(service, imageName, tag) {
 }
 
 function smokeWebapp() {
-  run("docker compose --env-file .env.smoke pull webapp");
-  run("docker compose --env-file .env.smoke up -d redis webapp");
+  runCompose("pull webapp");
+  runCompose("up -d redis webapp");
 
   waitFor(
     () =>
@@ -167,8 +220,8 @@ function smokeWebapp() {
 }
 
 function smokeApi() {
-  run("docker compose --env-file .env.smoke pull api");
-  run("docker compose --env-file .env.smoke up -d api");
+  runCompose("pull api");
+  runCompose("up -d api");
 
   waitFor(
     () =>
