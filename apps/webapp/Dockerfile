@@ -44,8 +44,6 @@ ARG BONDERY_INFRA_VERSION
 ARG BONDERY_INFRA_GIT_SHA
 ARG BUILD_DATE
 
-RUN npm install -g pnpm@11.18.0
-
 ENV NODE_ENV=production
 ENV PORT=26632
 ENV BONDERY_INFRA_VERSION=$BONDERY_INFRA_VERSION
@@ -64,9 +62,10 @@ COPY --from=builder --chown=nodejs:nodejs /app/apps/webapp/next.config.ts ./apps
 COPY --from=builder --chown=nodejs:nodejs /app/packages ./packages
 
 USER nodejs
+WORKDIR /app/apps/webapp
 EXPOSE 26632
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:26632/health/live').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["pnpm", "--filter", "webapp", "run", "start"]
+CMD ["node", "../../node_modules/next/dist/bin/next", "start"]

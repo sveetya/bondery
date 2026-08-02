@@ -78,8 +78,8 @@ jobs:
       - run: echo "API image ready at version ${{ needs.validate.outputs.version }}"
 
   smoke:
-    needs: [validate, image_ready, promote, build-push]
-    if: ${{ always() && needs.image_ready.result == 'success' }}
+    needs: [validate, image_ready]
+    if: ${{ needs.image_ready.result == 'success' }}
     uses: ./.github/workflows/shared-smoke-bondery.yml
     secrets: inherit
     with:
@@ -90,6 +90,7 @@ jobs:
 
   promote-production:
     needs: [validate, smoke]
+    if: ${{ always() && needs.smoke.result == 'success' }}
     uses: ./.github/workflows/shared-promote-production.yml
     secrets: inherit
     with:
@@ -98,6 +99,7 @@ jobs:
 
   github-release:
     needs: [validate, smoke]
+    if: ${{ always() && needs.smoke.result == 'success' }}
     uses: ./.github/workflows/shared-container-github-release.yml
     with:
       tag: ${{ needs.validate.outputs.tag }}
