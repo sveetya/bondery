@@ -96,7 +96,7 @@ jobs:
       version: ${{ needs.validate.outputs.version }}
 
   github-release:
-    needs: [validate, image_ready]
+    needs: [validate, smoke]
     uses: ./.github/workflows/shared-container-github-release.yml
     with:
       tag: ${{ needs.validate.outputs.tag }}
