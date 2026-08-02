@@ -103,6 +103,15 @@ function dumpComposeDiagnostics() {
     shell: true,
     stdio: "inherit",
   });
+  console.error("Re-running release-migrate (api pre_start[0]) to capture output…");
+  spawnSync(
+    "docker compose --env-file .env.smoke run --rm api node apps/api/dist/cli/release-migrate.js",
+    {
+      cwd: BONDERY_DIR,
+      shell: true,
+      stdio: "inherit",
+    },
+  );
 }
 
 function runCompose(command) {
