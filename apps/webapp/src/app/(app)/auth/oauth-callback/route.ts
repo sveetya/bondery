@@ -14,6 +14,10 @@ import {
   webappSessionCookieOptions,
 } from "@/lib/auth/oauthClient.server";
 import { shouldBypassOnboardingForReturnPath } from "@/lib/auth/returnIntent";
+import {
+  buildWebappRuntimeConfigFromEnv,
+  getWebappPublicOrigin,
+} from "@/lib/platform/runtimeConfig.server";
 
 function parseLocalePrefs(
   raw: string | undefined,
@@ -88,7 +92,7 @@ async function applyLocalePrefsViaApi(
  */
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
-  const webappOrigin = requestUrl.origin;
+  const webappOrigin = getWebappPublicOrigin(buildWebappRuntimeConfigFromEnv());
   const loginUrl = `${webappOrigin}${WEBAPP_ROUTES.LOGIN}?error=oauth`;
 
   const code = requestUrl.searchParams.get("code");

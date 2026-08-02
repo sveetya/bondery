@@ -3,7 +3,11 @@ import "server-only";
 import { createHash, randomBytes } from "node:crypto";
 import { BETTER_AUTH_BASE_PATH, betterAuthPath } from "@bondery/helpers/globals/paths";
 import { createRemoteJWKSet, EncryptJWT, jwtDecrypt, jwtVerify } from "jose";
-import { joinApiUrl, resolveServerApiBaseUrl } from "@/lib/api/resolveServerApiUrl";
+import {
+  joinApiUrl,
+  resolvePublicApiBaseUrl,
+  resolveServerApiBaseUrl,
+} from "@/lib/api/resolveServerApiUrl";
 
 /**
  * The webapp's own OAuth-BFF client against the API's `oauth-provider` Authorization
@@ -41,7 +45,7 @@ export type OAuthFlowPayload = {
 const OAUTH_SCOPE = "openid profile email offline_access api:access";
 
 function apiResourceIdentifier(): string {
-  return resolveServerApiBaseUrl().replace(/\/+$/, "");
+  return resolvePublicApiBaseUrl().replace(/\/+$/, "");
 }
 
 function oauthIssuerIdentifier(): string {
@@ -95,7 +99,7 @@ export function buildAuthorizeUrl(params: {
   redirectUri: string;
   state: string;
 }): string {
-  const url = new URL(joinApiUrl(resolveServerApiBaseUrl(), betterAuthPath("/oauth2/authorize")));
+  const url = new URL(joinApiUrl(resolvePublicApiBaseUrl(), betterAuthPath("/oauth2/authorize")));
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", webappOAuthClientId());
   url.searchParams.set("redirect_uri", params.redirectUri);

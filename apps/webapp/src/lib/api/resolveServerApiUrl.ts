@@ -29,6 +29,22 @@ export function resolveServerApiBaseUrl(
   return normalizeApiBaseUrl(publicUrl);
 }
 
+/**
+ * Resolve the public API base URL (BONDERY_PUBLIC_API_URL).
+ * Use for browser redirects, OAuth resource/issuer identifiers, and any value
+ * that must match what the API advertises externally — never the Compose internal URL.
+ */
+export function resolvePublicApiBaseUrl(
+  env: Record<string, string | undefined> = process.env,
+): string {
+  const publicUrl = env[WEBAPP_RUNTIME_ENV.apiUrl]?.trim();
+  if (!publicUrl) {
+    throw new Error(`Missing required environment variable: ${WEBAPP_RUNTIME_ENV.apiUrl}`);
+  }
+
+  return normalizeApiBaseUrl(publicUrl);
+}
+
 /** Join a path onto an API base URL (handles absolute URLs and /api prefix rules). */
 export function joinApiUrl(apiBaseUrl: string, path: string): string {
   if (path.startsWith("http://") || path.startsWith("https://")) {
