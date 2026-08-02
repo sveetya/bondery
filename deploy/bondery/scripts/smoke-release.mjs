@@ -253,6 +253,16 @@ function prepareEnvSmoke() {
   copyFileSync(resolve(BONDERY_DIR, ".env.smoke"), resolve(BONDERY_DIR, ".env"));
 }
 
+/** Paired API semver from deploy/.env.example — webapp-only releases keep the current API pin. */
+function readPairedApiImageTag() {
+  const example = readFileSync(resolve(BONDERY_DIR, ".env.example"), "utf8");
+  const versionMatch = example.match(/^BONDERY_INFRA_VERSION=(\d+\.\d+\.\d+)/m);
+  if (versionMatch) {
+    return versionMatch[1];
+  }
+  throw new Error("Could not resolve paired API image tag from deploy/bondery/.env.example");
+}
+
 /** Pin compose image tags in smoke env (webapp smoke must not pull api:production). */
 function applySmokeImageTags(service, tag) {
   const envPath = resolve(BONDERY_DIR, ".env.smoke");
@@ -260,7 +270,7 @@ function applySmokeImageTags(service, tag) {
   const imageTags =
     service === "webapp"
       ? {
-          BONDERY_INFRA_API_IMAGE_TAG: tag,
+          BONDERY_INFRA_API_IMAGE_TAG: readPairedApiImageTag(),
           BONDERY_INFRA_WEBAPP_IMAGE_TAG: tag,
         }
       : { BONDERY_INFRA_API_IMAGE_TAG: tag };
