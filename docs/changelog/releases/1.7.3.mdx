@@ -14,9 +14,9 @@ hidden: true
 
 ### 📝 Documentation
 
-- New [environment configuration](contributing/environment.mdx) guide; local setup and Dokploy docs updated for the env migration.
+- New [environment configuration](../../contributing/environment.mdx) guide; local setup and Dokploy docs updated for the env migration.
 
 ### Breaking
 
-- **Local / deploy env rename:** Apps and Compose no longer use product `NEXT_PUBLIC_*` / legacy deploy paths under `deploy/api`. Migrate to `BONDERY_*` via [environment.md](contributing/environment.mdx) and `deploy/bondery/.env.example`.
+- **Local / deploy env rename:** Apps and Compose no longer use product `NEXT_PUBLIC_*` / legacy deploy paths under `deploy/api`. Migrate to `BONDERY_*` via [environment.md](../../contributing/environment.mdx) and `deploy/bondery/.env.example`.
 - **Local dev ports (Dial BOND):** Bondery apps use the `2663x` port block (`26630` website, `26631` API, `26632` webapp, `26633` extension, `26634` mobile Metro, `26639` email preview). Local Postgres uses **54322**.
