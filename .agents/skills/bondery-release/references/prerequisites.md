@@ -34,7 +34,7 @@ Skip if the release does not change extension–API compatibility.
 
 ## 3. Product changelog
 
-Move `Unreleased` entries into a dated `## [X.Y.Z] - DD.MM.YYYY` section in [`docs/changelog.mdx`](../../../../docs/changelog.mdx). Follow [`bondery-changelog` format](../../bondery-changelog/references/format.md).
+Cut the changelog per [`bondery-changelog` versioning](../../bondery-changelog/references/versioning-and-release.md): create `docs/changelog/releases/X.Y.Z.mdx`, add its import to `docs/changelog.mdx`, and reset `docs/changelog/unreleased.mdx`. Follow [`bondery-changelog` format](../../bondery-changelog/references/format.md).
 
 ## 4. OpenAPI spec
 
@@ -71,7 +71,7 @@ Confirm `stage-images` succeeded on the release commit for each service you will
 
 - [ ] All `package.json` versions match target `X.Y.Z`
 - [ ] `MIN_EXTENSION_VERSION` updated if extension/API compatibility changed
-- [ ] `docs/changelog.mdx` has dated section; fresh `Unreleased` at top
+- [ ] `docs/changelog/releases/X.Y.Z.mdx` created; import added to `docs/changelog.mdx`; fresh `Unreleased` in `unreleased.mdx`
 - [ ] OpenAPI generated and committed
 - [ ] `pnpm run build` (or verification loop) passes
 - [ ] Changes merged on `main`

@@ -5,252 +5,38 @@ icon: History
 
 All notable changes to Bondery are documented here, with the latest release first and in-progress work grouped under **Unreleased**.
 
-## [Unreleased]
+import Unreleased from "./changelog/unreleased.mdx";
 
-### ✨ Added
+<Unreleased />
 
-- Infra: `BONDERY_INFRA_WEBSITE_IMAGE_TAG` for ops-stack website image pins (defaults to floating `:production`).
-- Health: Liveness and readiness probes on api, webapp, and website now share `{ status, timestamp, version?, gitSha? }` payloads; readiness failures return `status: "unhealthy"` with `error`.
+import Release180 from "./changelog/releases/1.8.0.mdx";
 
-### 🔄 Changed
+<Release180 />
 
-- Ops: Website Compose image uses `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (omit for `:production`); build metadata env vars apply to api and website containers.
+import Release174 from "./changelog/releases/1.7.4.mdx";
 
-## [1.8.0] - 01.08.2026
+<Release174 />
 
-### 📝 Documentation
+import Release173 from "./changelog/releases/1.7.3.mdx";
 
-- Docs: MDX is now the sole source for the docs site; legacy GitBook `.md` duplicates were removed, ADRs and internal plans were converted to hidden MDX, and doc-link tooling scans `.mdx` only.
+<Release173 />
 
-### ✨ Added
+import Release170 from "./changelog/releases/1.7.0.mdx";
 
-- Dev: `pnpm run env:pull` syncs shared team secrets from Infisical into root `.env.local` (manifest `syncable` keys).
-- Dev: `pnpm run env` derives `DATABASE_URL` for api/db from `BONDERY_PRIVATE_POSTGRES_PASSWORD` (single source of truth for bundled local Postgres).
-- API: Sends a welcome email when a new account is provisioned.
-- API: Transactional emails (reminder digest, share contact, trial ending, account deleted, feedback) use localized copy from `@bondery/translations`.
+<Release170 />
 
-### 🔄 Changed
+import Release142 from "./changelog/releases/1.4.2.mdx";
 
-- API: Liveness and readiness probes are now `GET /health/live` and `GET /health/ready` (removed `/status` and root `/health`). Chrome extension minimum version moved to `GET /extension/manifest`.
-- API: Boots with a single Postgres connection pool and verified Redis, SMTP, and object-storage dependencies before accepting traffic; rate limiting attaches after Redis is ready.
-- API: Reminder digest advances each user's next send time only after that user's email sends successfully.
-- Webapp: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`). API health is proxied at `GET /api/health/live` and `GET /api/health/ready`; extension manifest at `GET /api/extension/manifest`.
-- Website: Container probes are `GET /health/live` and `GET /health/ready` (removed `/api/live` and `/api/ready`).
-- Chrome extension: Version check reads `GET /extension/manifest` on the API host.
-- Mobile: Connectivity probe uses `GET /health/live` on the API host.
-- CI: `api-*` / `webapp-*` release tags now run compose smoke on the semver image, promote `:production` only after smoke passes, then call Dokploy (same gate pattern as website CD).
+<Release142 />
 
-### 🐛 Fixed
+import Release141 from "./changelog/releases/1.4.1.mdx";
 
-- API: Reminder digest no longer logs all due users as dispatched or advances everyone's schedule when one SMTP send fails.
+<Release141 />
 
-### 🔄 Changed
+import Release140 from "./changelog/releases/1.4.0.mdx";
 
-- Dev/self-host: PostHog browser and server capture share `BONDERY_PUBLIC_POSTHOG_HOST` and `BONDERY_PUBLIC_POSTHOG_KEY` (removed duplicate private ingest vars).
+<Release140 />
 
-### Breaking
+import Release001 from "./changelog/releases/0.0.1.mdx";
 
-- **PostHog ingest env vars:** Remove `BONDERY_PRIVATE_POSTHOG_HOST` and `BONDERY_PRIVATE_POSTHOG_KEY` from webapp and Compose env. Set `BONDERY_PUBLIC_POSTHOG_HOST` and `BONDERY_PUBLIC_POSTHOG_KEY` instead (same PostHog project API key for browser and server capture). API admin query vars (`BONDERY_PRIVATE_POSTHOG_API_SECRET`, `BONDERY_PRIVATE_POSTHOG_PROJECT_ID`) are unchanged.
-
-- **Health probe URLs:** Self-hosters and operators must update Docker HEALTHCHECKs, load-balancer probes, and monitoring to the new paths. API: `/health/live` and `/health/ready`. Webapp and website containers: `/health/live` and `/health/ready` on each app's origin. Webapp BFF for API dependency status: `/api/health/ready`. Extension clients must use `/extension/manifest` instead of `/status`. Old paths (`/status`, `/health`, `/api/live`, `/api/ready`, `/api/status`, `/api/health`) are removed with no redirects.
-
-### ✨ Added
-
-- `@bondery/db` Prisma package with schema, migrations, and generated client as the shared database layer.
-- API: Better Auth with OAuth providers, first-party OAuth clients for webapp/mobile/extension, and file storage routes.
-- API: Better Auth `@better-auth/api-key` plugin with hashed keys and route allowlists; platform operator role on `user.role`.
-- API: Redis-backed Better Auth `secondaryStorage` for session hot-path caching.
-- Webapp: Playwright e2e scaffolding for auth and core app flows.
-- Website: self-hosted product docs with Fumadocs search and LLM export routes.
-
-### 🔄 Changed
-
-- Billing migrated from Polar.sh to Stripe Billing (embedded Checkout, webhooks, DB mirror). Polar env vars and SDK removed.
-- Platform operator access now uses Better Auth `user.role = admin` (and break-glass env IDs) instead of `user_settings.is_admin`.
-- API request auth verifies Better Auth sessions and OAuth resource JWTs instead of Supabase Auth tokens.
-- API keys authenticate via `auth.api.verifyApiKey` without minting Supabase JWTs.
-- Webapp and mobile login, session refresh, and API transport use Better Auth only; Supabase JS clients removed from those apps.
-- Self-host Compose stack uses bundled Postgres (Prisma migrations) instead of the Supabase sidecar.
-- Webapp app routes reorganized into `(shell)` and `(chromeless)` route groups.
-
-### 📝 Documentation
-
-- Migrated product docs from GitBook to self-hosted Fumadocs on `usebondery.com/docs` (website app). Disable GitBook Git Sync after deploy.
-- Updated docs for Prisma + Better Auth stack (removed legacy Supabase references). Reorganized sidebar: Apps section, core concepts above self-hosting, getting help above changelog.
-- API tab: Introduction landing page, Guides section (bulk import), Error codes as a top-level sidebar item. Self-hosting split into Requirements / Get started / Configuration / Update; Dokploy and API container moved to Contributing (production only).
-- Develop tab: flattened sidebar (Architecture, Development, Guides, Production deployment). Rewrote i18n reference; added guide for new locales. Renamed Clients → Apps; error pages no longer use Mantine.
-
-### Breaking
-
-- **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `pnpm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](contributing/environment.mdx).
-- **Platform admin:** `user_settings.is_admin` is dropped; grant operator access via `user.role = admin` or `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS`.
-- **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](deploy/get-started.mdx) for the new bootstrap flow.
-
-## [1.7.4] - 20.07.2026
-
-### 🤖 CI
-
-- Restore turbo `^build` dependencies on package-scoped build tasks (fixes webapp Docker image builds).
-- Sync `pnpm-lock.yaml` for the `apps/redis` workspace.
-- Allow server-only PostHog vars in webapp Compose policy lint.
-
-## [1.7.3] - 20.07.2026
-
-### 🔄 Changed
-
-- Unified environment configuration on branded `BONDERY_*` names with a root `.env.local`, manifest-driven `pnpm run setup:dev` / `pnpm run env` sync, and Compose under `deploy/bondery`.
-- Self-host and CI secrets/vars aligned to the same contract (public URLs as GitHub vars; private keys remain secrets).
-- Website public URLs are passed from Server Components into client leaves (no `next.config` `env` inlining).
-- Minimum Chrome extension version bumped to 1.7.3.
-
-### 📝 Documentation
-
-- New [environment configuration](contributing/environment.mdx) guide; local setup and Dokploy docs updated for the env migration.
-
-### Breaking
-
-- **Local / deploy env rename:** Apps and Compose no longer use product `NEXT_PUBLIC_*` / legacy deploy paths under `deploy/api`. Migrate to `BONDERY_*` via [environment.md](contributing/environment.mdx) and `deploy/bondery/.env.example`.
-- **Local dev ports (Dial BOND):** Bondery apps use the `2663x` port block (`26630` website, `26631` API, `26632` webapp, `26633` extension, `26634` mobile Metro, `26639` email preview). Local Postgres uses **54322**.
-
-## [1.7.0] - 07.07.2026
-
-### ✨ Added
-
-- AI Assistant chat workspace with session history, premium monthly quota enforcement, and billing-aligned resets.
-- Real-time sync wake: WebSocket notifications push remote changes to web and mobile clients without polling-only refresh.
-- Getting Started progress rail on the home page with import follow-up onboarding step.
-- Social field editor on person pages: inline popover inputs for handles and phones with reroute nudges when a value belongs on another field.
-- `HelpButton` component in `@bondery/mantine-next` for consistent in-app documentation affordances.
-- Stable doc link registry (`docId` frontmatter → `docHref()`) with CI validation for in-app help URLs.
-- Chrome extension: Voyager-primary LinkedIn scrape pipeline (SDUI identity, unified `scrapeProfile` orchestrator) replacing legacy DOM-heavy paths.
-- Chrome extension: background enrich orchestration with session-persisted pending jobs and tab wake messages.
-- Webapp: enrich recommendation card uses live LinkedIn sync state; help link to enrichment docs.
-- Map: fix for `get_map_pins_in_bbox` last-interaction timestamp type mismatch.
-
-### 🐛 Fixed
-
-- Enrich recommendation card stayed visible after successful enrichment until hard reload (SSR `syncedAt` vs live query mismatch).
-- Enrichment ICU toast plural strings (`{#contacts}` artifact fixed artifact) for single-contact completion.
-- LinkedIn enrichment location: Voyager GraphQL geo is now the sole source (no unreliable topcard DOM fallback).
-- Chrome extension: enrich flow reliability (pending job registration, `RUN_PENDING_ENRICH`, 90s webapp timeout).
-- Fix & Merge page and other areas using frozen SSR props for recommendation visibility.
-
-### 🔄 Changed
-
-- Monorepo package exports and build pipeline refactored for ESM `dist` outputs and Vercel deployment.
-- OpenAPI generation and schema examples reorganized for maintainability.
-- In-app help links migrated from hardcoded `HELP_DOCS_URL` / `WEBSITE_URL/docs` paths to typed `docId` references.
-- Chrome extension LinkedIn work/education extraction slimmed to SDUI + Voyager with legacy paths removed.
-- Mobile sync: shared ID utilities, pull-wake listener, and background sync improvements.
-
-### 📝 Documentation
-
-- Chrome Extension docs: expanded enrichment section (what it means, benefits, user flow, where to find it).
-- Doc authoring guide: `docId` / `docSections` frontmatter workflow for in-app help links.
-
-### 🤖 CI
-
-- `check-docs-links` validates doc registry, local markdown files, anchors, and bans hardcoded doc URL patterns.
-
-### 📦 Dependencies
-
-- Bumped minimum Chrome extension version to 1.7.0.
-
-## [1.4.2] - 04.04.2026
-
-### ✨ Added
-
-- Webapp: command palette (Ctrl+K / ⌘+K) for quick keyboard-driven navigation, contact search, and common actions.
-- Webapp: collapsible navigation sidebar with Ctrl+B / ⌘+B toggle.
-- Webapp: people search spotlight for fast contact lookup (F).
-- Webapp: global hotkey system (`HOTKEYS` config) for consistent keyboard shortcut management.
-
-### 🐛 Fixed
-
-- LinkedIn import: parenthetical maiden/married names (e.g. `Andělová (Hudská)`) are now unwrapped — both parts are preserved and correctly split into first/middle/last name fields.
-- LinkedIn import: emojis (e.g. `👋🏼`) are now stripped before name splitting so they no longer appear as a spurious last name token.
-- LinkedIn import: academic titles with trailing periods (e.g. `MSc.`, `PhD.`, `MBA.`) are now correctly stripped from names.
-- LinkedIn import: ALL-CAPS name tokens (e.g. `ALEXANDRO`) are now normalised to title case after parsing.
-- LinkedIn import: contacts that already exist in Bondery are now correctly detected as duplicates when their LinkedIn handle contains percent-encoded characters (e.g. `albert-jel%C3%ADnek-69649944`); handles are decoded before comparison.
-- Chrome extension: eliminated redundant Voyager API calls during enrichment by extracting DOM-based profile fields (name, photo, headline, location) inline instead of calling `getLinkedInSnapshot()`, reducing rate-limit risk.
-
-### 🔄 Changed
-
-- Chrome extension: location extraction during enrichment now tries multiple DOM selectors in order of specificity for robustness across LinkedIn's varying page layouts.
-
-### 📝 Documentation
-
-- Added Chrome Extension OAuth Setup workflow covering the redirect URI mismatch error and resolution steps.
-- Fixed incomplete OAuth client create command in local development setup guide (added required `token_endpoint_auth_method='none'`).
-
-### 📦 Dependencies
-
-- Bumped minimum Chrome extension version to 1.4.2.
-
-## [1.4.1] - 04.04.2026
-
-### ✨ Added
-
-- Map: address pins view with segmented control to switch between people and address pins, including filterable `AddressPinsTable` with address type badges.
-- PWA: install Bondery as a desktop app directly from Settings — shows contextual install instructions for Chromium-based browsers.
-- New GIS database functions: `get_map_pins_in_bbox` and `get_map_address_pins_in_bbox` RPCs for viewport-bounded map queries, with a partial GIS index for performance.
-
-### 🐛 Fixed
-
-- Chrome extension: fixed LinkedIn profile URN extraction failing on profiles where nested JSON objects appeared between `publicIdentifier` and `entityUrn` fields; replaced fragile regex with a sliding-window HTML search and DOM member-ID fallback.
-- Chrome extension: fixed language-agnostic profile photo extraction using button iteration instead of localised aria-label matching.
-- Fix & Merge page: prevented server component crash when the merge recommendations API is unreachable.
-- Fixed `get_linkedin_enrich_eligible` RPC referencing the old `people_social_media` table name after the rename to `people_socials`.
-
-### 🔄 Changed
-
-- Map page now fetches pins lazily within the current viewport bounds instead of loading all contacts upfront.
-
-### 📦 Dependencies
-
-- Bumped minimum Chrome extension version to 1.4.1.
-
-## [1.4.0] - 01.04.2026
-
-### ✨ Added
-
-- Instagram ZIP importer with follower/following/close-friends parsing and brand detection in Settings → Data management.
-- vCard importer with geocoding, timezone enrichment, address validation, embedded photo upload, and important dates support.
-- Keep-in-touch feature for managing follow-up reminders by frequency (weekly, biweekly, monthly, quarterly, biannually, yearly) with overdue highlighting.
-- "Myself" contact: non-deletable self-contact created automatically on signup with UI protection and MyselfRecommendationCard.
-- Blog and announcement pipeline for the website with Discord webhook and Reddit OAuth2 integration.
-- Extension version gating: API returns HTTP 426 when the Chrome extension is below the minimum supported version.
-- Create new contacts directly via modal from multiple places in the app.
-
-### 🐛 Fixed
-
-- Resolved type conflict in next.config.ts for import modals including gisPoint.
-- Improved error messages for myself contact deletion protection.
-
-### 🔄 Changed
-
-- Updated contact model and vCard handling for richer data support.
-- Streamlined contributing section in README for clarity.
-- Restructured reminder API route to `/api/internal/reminder-digest`.
-
-### 📝 Documentation
-
-- Added release workflow and blog post workflow documentation.
-- Added writing guide for blog content creation.
-
-### 📦 Dependencies
-
-- Bumped minimum Chrome extension version to 1.4.0.
-
-## [0.0.1] - 15.02.2026
-
-### ✨ Added
-
-- LinkedIn ZIP/folder importer in Settings → Data management with multi-step modal flow (instructions, upload, preview, selectable import).
-- New API endpoints for LinkedIn importer parsing and commit under `/api/contacts/import/linkedin`.
-- CSV parsing pipeline that extracts LinkedIn username, contact email, title, and connection date from `Connections.csv`.
-
-### 🔄 Changed
-
-- Moved integration card UI into shared component and added `isLinkable` behavior for chain-chip rendering.
-- Extended social media schema with `people_social_media.connected_at` for source connection timestamp tracking.
+<Release001 />
