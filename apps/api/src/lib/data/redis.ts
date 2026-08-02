@@ -150,7 +150,26 @@ async function pingClient(client: Redis): Promise<{ ok: true } | { ok: false; er
   return { ok: true };
 }
 
-async function runRedisVerify(redisUrl: string): Promise<RedisReadiness> {
+async function verifySubscriberForReadiness(
+  client: Redis,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  await connectIfNeeded(client);
+  if (client.status === "ready") {
+    return { ok: true };
+  }
+
+  return { error: client.status || "not_ready", ok: false };
+}
+
+type RedisVerifyOptions = {
+  /** Pub/sub subscribers cannot answer PING after SUBSCRIBE; readiness uses connection status. */
+  subscriberCheck?: "ping" | "status";
+};
+
+async function runRedisVerify(
+  redisUrl: string,
+  options: RedisVerifyOptions = {},
+): Promise<RedisReadiness> {
   const started = Date.now();
   const verifiedAt = new Date().toISOString();
 
@@ -170,7 +189,10 @@ async function runRedisVerify(redisUrl: string): Promise<RedisReadiness> {
       return redisReadiness;
     }
 
-    const subscriberPing = await pingClient(subscriber);
+    const subscriberPing =
+      options.subscriberCheck === "status"
+        ? await verifySubscriberForReadiness(subscriber)
+        : await pingClient(subscriber);
     if (!subscriberPing.ok) {
       redisReadiness = {
         configured: true,
@@ -276,7 +298,7 @@ export async function verifyRedis(redisUrl: string): Promise<RedisReadiness> {
     return redisReadiness;
   }
 
-  return runRedisVerify(trimmed);
+  return runRedisVerify(trimmed, { subscriberCheck: "status" });
 }
 
 async function quitClient(client: Redis | null): Promise<void> {
