@@ -308,9 +308,11 @@ $$;
 -- Reminder scheduling (used by pg-boss dispatch in apps/api)
 -- ---------------------------------------------------------------------------
 
+drop function if exists compute_next_reminder_at_utc(text, time without time zone, timestamp with time zone);
+
 create or replace function compute_next_reminder_at_utc(
   input_timezone text,
-  input_send_hour time without time zone,
+  input_send_hour text,
   base_ts timestamp with time zone default now()
 )
 returns timestamp with time zone
@@ -319,7 +321,11 @@ stable
 as $$
 declare
   effective_timezone text;
-  effective_send_hour time without time zone := coalesce(input_send_hour, '08:00:00'::time);
+  -- user_settings.reminder_send_hour is TEXT; triggers and $executeRaw pass text literals.
+  effective_send_hour time without time zone := coalesce(
+    nullif(trim(input_send_hour), '')::time,
+    '08:00:00'::time
+  );
   local_now timestamp without time zone;
   candidate_local timestamp without time zone;
   next_candidate timestamp with time zone;
