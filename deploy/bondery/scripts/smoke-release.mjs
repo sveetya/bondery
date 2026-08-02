@@ -28,6 +28,15 @@ const SMOKE_INVENTABLE_AUTH = {
   BONDERY_PUBLIC_OAUTH_CLIENT_ID: "fedcba0987654321fedcba0987654321",
 };
 
+/** Real SMTP from Infisical staging — overlay in CI; local smoke may use .env.example placeholders. */
+const SMOKE_REMOTE_EMAIL_KEYS = [
+  "BONDERY_PRIVATE_EMAIL_ADDRESS",
+  "BONDERY_PRIVATE_EMAIL_HOST",
+  "BONDERY_PRIVATE_EMAIL_PASS",
+  "BONDERY_PRIVATE_EMAIL_PORT",
+  "BONDERY_PRIVATE_EMAIL_USER",
+];
+
 const DEFAULT_IMAGES = {
   api: "ghcr.io/usebondery/api",
   webapp: "ghcr.io/usebondery/webapp",
@@ -91,6 +100,39 @@ function parseEnvValue(raw) {
   return value;
 }
 
+function formatEnvLine(key, value) {
+  if (/[\s#="'\\]/.test(value)) {
+    return `${key}="${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  }
+  return `${key}=${value}`;
+}
+
+function readRemoteEmailEnv() {
+  return Object.fromEntries(
+    SMOKE_REMOTE_EMAIL_KEYS.filter((key) => process.env[key]?.trim()).map((key) => [
+      key,
+      process.env[key].trim(),
+    ]),
+  );
+}
+
+function assertSmokeEmailEnvInCi() {
+  if (process.env.CI !== "true") {
+    return;
+  }
+
+  const missing = SMOKE_REMOTE_EMAIL_KEYS.filter((key) => !process.env[key]?.trim());
+  if (missing.length === 0) {
+    return;
+  }
+
+  console.error(
+    `Release smoke in CI requires Infisical staging email vars: ${missing.join(", ")}\n` +
+      "Run ./.github/actions/shared/infisical-staging-secrets before smoke-release.mjs.",
+  );
+  process.exit(1);
+}
+
 function dumpComposeDiagnostics() {
   console.error("docker compose failed — collecting diagnostics");
   spawnSync("docker compose --env-file .env.smoke ps -a", {
@@ -148,6 +190,9 @@ function waitFor(predicate, { attempts = 40, intervalSec = 3, label = "service" 
 }
 
 function prepareEnvSmoke() {
+  assertSmokeEmailEnvInCi();
+  const remoteEmail = readRemoteEmailEnv();
+
   copyFileSync(resolve(BONDERY_DIR, ".env.example"), resolve(BONDERY_DIR, ".env.smoke"));
 
   const lines = readFileSync(resolve(BONDERY_DIR, ".env.smoke"), "utf8").split("\n");
@@ -161,6 +206,10 @@ function prepareEnvSmoke() {
     if (key && key in SMOKE_DOMAINS) {
       seen.add(key);
       return `${key}=${SMOKE_DOMAINS[key]}`;
+    }
+    if (key && key in remoteEmail) {
+      seen.add(key);
+      return formatEnvLine(key, remoteEmail[key]);
     }
     if (key && key in SMOKE_INVENTABLE_AUTH && !parseEnvValue(rawValue)) {
       seen.add(key);
@@ -178,6 +227,12 @@ function prepareEnvSmoke() {
   for (const [key, value] of Object.entries(SMOKE_INVENTABLE_AUTH)) {
     if (!seen.has(key)) {
       out.push(`${key}=${value}`);
+    }
+  }
+
+  for (const key of SMOKE_REMOTE_EMAIL_KEYS) {
+    if (key in remoteEmail && !seen.has(key)) {
+      out.push(formatEnvLine(key, remoteEmail[key]));
     }
   }
 

@@ -1,0 +1,14 @@
+name: Infisical staging secrets
+description: Fetch Infisical staging secrets via OIDC for release smoke.
+
+runs:
+  using: composite
+  steps:
+    - name: Fetch staging secrets from Infisical
+      uses: Infisical/secrets-action@v1.0.9
+      with:
+        method: oidc
+        identity-id: f8b9e69d-bc32-4066-ad99-8ad6ecff2d21
+        project-slug: bondery-secrets
+        env-slug: staging
+        domain: https://eu.infisical.com
