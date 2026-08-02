@@ -38,6 +38,8 @@ RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvabl
   && test -f node_modules/@bondery/db/prisma/migrations/migration_lock.toml \
   && test -f node_modules/@bondery/schemas/locale/supported-locales.json \
   && test -f node_modules/@bondery/schemas/dist/locale/supported-locales.json \
+  && test -f node_modules/@bondery/translations/manifest.json \
+  && node -e "import('@bondery/translations/manifest').then(() => console.log('@bondery/translations/manifest resolvable'))" \
   && node -e "import { createRequire } from 'node:module'; import { execFileSync } from 'node:child_process'; const entry=createRequire(import.meta.url).resolve('prisma/build/index.js'); execFileSync(process.execPath, [entry, 'version'], {stdio:'inherit'}); console.log('prisma runnable')" \
   && sh -c 'cd node_modules/@bondery/db && DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery node -e "import { createRequire } from '\''node:module'\''; import { execFileSync } from '\''node:child_process'\''; const entry=createRequire(import.meta.url).resolve('\''prisma/build/index.js'\''); execFileSync(process.execPath, [entry, '\''validate'\''], {stdio:'\''inherit'\''}); console.log('\''prisma validate from @bondery/db cwd'\'')"' \
   && node --check dist/cli/release-migrate.js \

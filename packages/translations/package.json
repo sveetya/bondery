@@ -114,8 +114,8 @@
     }
   },
   "files": [
-    "src",
-    "dist"
+    "dist",
+    "manifest.json"
   ],
   "imports": {
     "#*": [
