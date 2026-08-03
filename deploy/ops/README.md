@@ -61,7 +61,7 @@ node deploy/ops/scripts/check-compose.mjs
 
 ## Infisical → Dokploy env sync
 
-Domain hostnames (`BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, optional `BONDERY_INFRA_PLAUSIBLE_DOMAIN`) can be synced from Infisical **production** to Dokploy via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml). Dokploy API creds and optional redeploy webhook are also stored in Infisical (not GitHub secrets).
+Domain hostnames (`BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN`) can be synced from Infisical **production** to Dokploy via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml). Dokploy API creds and optional redeploy webhook are also stored in Infisical (not GitHub secrets).
 
 **Not synced** (keep in Dokploy UI): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_INFRA_WEBSITE_IMAGE_TAG`.
 

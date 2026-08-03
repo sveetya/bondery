@@ -123,7 +123,7 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
 export const OPS_GROUP_ORDER = [
   "Image tags",
   "Public hostnames",
-  "Optional website analytics",
+  "Website analytics",
   "Build metadata",
 ] as const;
 
@@ -705,7 +705,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     exampleValue: "plausible.usebondery.com",
     group: "Infra",
     opsExample: {
-      group: "Optional website analytics",
+      group: "Website analytics",
       include: true,
       value: "plausible.usebondery.com",
     },
@@ -715,7 +715,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "plausible.usebondery.com",
     },
-    requiredIn: [],
+    requiredIn: ["production"],
     secret: false,
     targets: [],
   },
