@@ -38,28 +38,34 @@ describe("sync-infisical-to-dokploy", () => {
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK"), false);
   });
 
-  it("fails when required production domain keys are missing", () => {
-    const env = { ...baseEnv };
-    delete env.BONDERY_INFRA_WEBAPP_DOMAIN;
+  for (const missingKey of [
+    "BONDERY_INFRA_WEBAPP_DOMAIN",
+    "BONDERY_INFRA_WEBSITE_DOMAIN",
+    "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
+  ]) {
+    it(`fails when required production key ${missingKey} is missing`, () => {
+      const env = { ...baseEnv };
+      delete env[missingKey];
 
-    let exited = false;
-    const originalExit = process.exit;
-    process.exit = (code) => {
-      exited = true;
-      assert.equal(code, 1);
-      throw new Error("exit");
-    };
+      let exited = false;
+      const originalExit = process.exit;
+      process.exit = (code) => {
+        exited = true;
+        assert.equal(code, 1);
+        throw new Error("exit");
+      };
 
-    try {
-      buildOpsUploadPayload(env);
-      assert.fail("expected process.exit(1)");
-    } catch {
-      // expected from mocked process.exit
-    }
+      try {
+        buildOpsUploadPayload(env);
+        assert.fail("expected process.exit(1)");
+      } catch {
+        // expected from mocked process.exit
+      }
 
-    process.exit = originalExit;
-    assert.equal(exited, true);
-  });
+      process.exit = originalExit;
+      assert.equal(exited, true);
+    });
+  }
 
   it("readDokployConfig fails when API key is missing", () => {
     const env = { ...baseEnv };
