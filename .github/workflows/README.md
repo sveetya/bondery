@@ -74,7 +74,7 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 
 **Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
 
-Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store-v2`): `pnpm fetch` after copying pruned manifests, then `pnpm install` after copying full sources. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
+Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store-v2`): `pnpm fetch` after copying pruned manifests, then `pnpm install` after copying full sources. Image builds copy the full root `pnpm-lock.yaml` from the prune stage (not `out/pnpm-lock.yaml`) so `devEngines.runtime` package entries stay intact. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
 
 ## Docker channels
 
