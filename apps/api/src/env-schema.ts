@@ -19,9 +19,6 @@ export const envSchema = {
     BONDERY_PRIVATE_EMAIL_ADDRESS: {
       type: "string",
     },
-    BONDERY_PRIVATE_EMAIL_REPLY_TO: {
-      type: "string",
-    },
     BONDERY_PRIVATE_EMAIL_HOST: {
       type: "string",
     },
@@ -30,6 +27,9 @@ export const envSchema = {
     },
     BONDERY_PRIVATE_EMAIL_PORT: {
       type: "number",
+    },
+    BONDERY_PRIVATE_EMAIL_REPLY_TO: {
+      type: "string",
     },
     BONDERY_PRIVATE_EMAIL_USER: {
       type: "string",
