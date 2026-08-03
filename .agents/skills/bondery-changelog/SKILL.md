@@ -41,6 +41,7 @@ Routine internal refactors, test-only changes, and formatting do not need produc
 | Choose a category or commit prefix | [references/format.md](references/format.md) |
 | Calculate a version or cut `Unreleased` | [references/versioning-and-release.md](references/versioning-and-release.md) |
 | Execute deployment, extension gates, or rollback | [`bondery-release`](../bondery-release/SKILL.md) |
+| Update public roadmap cards at release | [`bondery-roadmap`](../bondery-roadmap/SKILL.md) → [release-day.md](../bondery-roadmap/references/release-day.md) |
 | Document API compatibility or deprecation | [`bondery-api` versioning](../bondery-api/references/versioning.md) |
 | Turn release notes into an announcement | [Blog post workflow](../../workflows/blog/BLOG-POST.md) |
 
@@ -56,3 +57,4 @@ Full local-reference index: [references/README.md](references/README.md).
 - [ ] Breaking behavior includes an explicit migration or upgrade note
 - [ ] Version follows Bondery's year-offset/month/patch scheme
 - [ ] Release and blog workflows were followed when cutting a release
+- [ ] ROADMAP cards for this release moved to Released per [`bondery-roadmap`](../bondery-roadmap/SKILL.md) (after deploy smoke)
