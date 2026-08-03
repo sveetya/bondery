@@ -668,6 +668,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       value: "app.usebondery.com",
     },
     description: "Public webapp hostname for Traefik Host() rules (no scheme).",
+    dokploySync: { targets: ["website"] },
     exampleValue: "app.usebondery.com",
     group: "Infra",
     opsExample: {
@@ -675,7 +676,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "app.usebondery.com",
     },
-    dokploySync: { targets: ["website"] },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -689,6 +689,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     },
     description:
       "Public marketing website hostname (no scheme). Compose derives BONDERY_PUBLIC_WEBSITE_URL for api/webapp.",
+    dokploySync: { targets: ["website"] },
     exampleValue: "usebondery.com",
     group: "Infra",
     opsExample: {
@@ -696,7 +697,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "usebondery.com",
     },
-    dokploySync: { targets: ["website"] },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -704,6 +704,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
     description: "Public Plausible CE hostname for Traefik Host() rules (no scheme).",
+    dokploySync: { targets: ["website", "plausible"] },
     exampleValue: "plausible.usebondery.com",
     group: "Infra",
     opsExample: {
@@ -711,7 +712,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "plausible.usebondery.com",
     },
-    dokploySync: { targets: ["website", "plausible"] },
     plausibleExample: {
       group: "Public hostname",
       include: true,
@@ -724,9 +724,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION",
     description: "Plausible CE sign-up policy (maps to DISABLE_REGISTRATION in the container).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "invite_only",
     group: "Infra",
-    dokploySync: { targets: ["plausible"] },
     plausibleExample: {
       group: "Plausible options",
       include: true,
@@ -739,9 +739,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD",
     description: "Postgres password for the Plausible CE metadata database.",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Database",
-    dokploySync: { targets: ["plausible"] },
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
     requiredIn: ["production"],
     secret: true,
@@ -750,9 +750,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE",
     description: "Plausible CE SECRET_KEY_BASE (session signing).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Analytics",
-    dokploySync: { targets: ["plausible"] },
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
     requiredIn: ["production"],
     secret: true,
@@ -761,9 +761,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY",
     description: "Plausible CE TOTP_VAULT_KEY (2FA encryption).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Analytics",
-    dokploySync: { targets: ["plausible"] },
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
     requiredIn: ["production"],
     secret: true,
@@ -1256,7 +1256,10 @@ export const DOKPLOY_SYNC_TARGETS = {
   },
 } as const satisfies Record<
   DokploySyncTarget,
-  { composeIdKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number]; webhookKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number] }
+  {
+    composeIdKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
+    webhookKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
+  }
 >;
 
 /** Ops secrets — GitHub Actions only; never written by `pnpm run env` */

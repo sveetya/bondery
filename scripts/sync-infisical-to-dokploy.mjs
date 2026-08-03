@@ -23,10 +23,7 @@ export function quoteEnvValue(value) {
   return value;
 }
 
-const SHARED_DOKPLOY_CONFIG_KEYS = [
-  "BONDERY_OPS_DOKPLOY_HOST",
-  "BONDERY_OPS_DOKPLOY_API_KEY",
-];
+const SHARED_DOKPLOY_CONFIG_KEYS = ["BONDERY_OPS_DOKPLOY_HOST", "BONDERY_OPS_DOKPLOY_API_KEY"];
 
 /** @typedef {{ host: string; apiKey: string; composeId: string; deployWebhook: string; target: string; webhookKey: string }} DokployConfig */
 
@@ -60,7 +57,9 @@ export function readDokployConfig(env, target) {
   }
 
   if (missing.length > 0) {
-    console.error(`sync-infisical-to-dokploy: missing required Infisical keys for target "${target}":`);
+    console.error(
+      `sync-infisical-to-dokploy: missing required Infisical keys for target "${target}":`,
+    );
     for (const key of missing) {
       console.error(`  - ${key}`);
     }
@@ -94,7 +93,9 @@ export function buildUploadPayload(env, target) {
   );
 
   if (missingRequired.length > 0) {
-    console.error(`sync-infisical-to-dokploy: missing required production values for target "${target}":`);
+    console.error(
+      `sync-infisical-to-dokploy: missing required production values for target "${target}":`,
+    );
     for (const key of missingRequired) {
       console.error(`  - ${key}`);
     }
@@ -252,7 +253,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (args.target === "ops") {
-    console.error('sync-infisical-to-dokploy: --target ops was renamed to --target website');
+    console.error("sync-infisical-to-dokploy: --target ops was renamed to --target website");
     process.exit(1);
   }
 
