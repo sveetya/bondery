@@ -30,7 +30,7 @@ COPY docs ./docs
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
 RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm install --frozen-lockfile --ignore-scripts --store-dir "${PNPM_STORE_DIR}"
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=website

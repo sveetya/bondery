@@ -26,7 +26,7 @@ COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
 RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm install --frozen-lockfile --ignore-scripts --store-dir "${PNPM_STORE_DIR}"
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
 RUN pnpm -r --filter "api^..." run build && pnpm --filter api run build
 # Materialize a portable production tree (workspace deps resolved into node_modules).
