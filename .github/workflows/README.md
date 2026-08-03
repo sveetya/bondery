@@ -106,6 +106,8 @@ If you change lockfile layout or pnpm major version, bump the BuildKit cache id 
 
 ## Release smoke and Infisical
 
+**Infisical environment slugs** (`bondery-secrets`, EU): `development` (local `pnpm run env:pull`), `staging` (release smoke), `production` (Dokploy ops sync). Slugs match the Infisical display names.
+
 Release smoke (`shared-smoke-bondery.yml`, `smoke-bondery-stack.yml`) boots the API with `NODE_ENV=production`, which **live-verifies SMTP** at startup. Fake `smtp.example.com` placeholders from `deploy/bondery/.env.example` fail that check.
 
 Before `smoke-release.mjs`, workflows run `./.github/actions/shared/infisical-staging-secrets`, which uses [Infisical/secrets-action](https://github.com/Infisical/secrets-action) with **OIDC** to fetch the **staging** environment from project `bondery-secrets` (EU: `https://eu.infisical.com`). The smoke script overlays these five keys into `.env.smoke`:
@@ -132,7 +134,7 @@ infisical run --projectId=7395aabc-4cab-4cfe-aef2-a66899da5430 --env=staging --d
   node deploy/bondery/scripts/smoke-release.mjs --service api --tag 1.8.0
 ```
 
-Use `defaultEnvironment: dev` in `.infisical.json` for `pnpm env:pull`; release smoke uses the **staging** slug.
+Use `defaultEnvironment: development` in `.infisical.json` for `pnpm env:pull`; release smoke uses **`staging`**; Dokploy ops sync uses **`production`**.
 
 ## Dokploy ops env sync (`sync-dokploy-env.yml`)
 

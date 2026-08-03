@@ -83,7 +83,7 @@ infisical login
 pnpm run env:pull
 ```
 
-[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings (e.g. `dev`), not the display name (`development`).
+[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings: `development` (local `env:pull`), `staging` (release smoke), or `production` (Dokploy ops sync).
 
 ## Authoring vs generated files
 

@@ -1,6 +1,6 @@
 {
   "projectId": "<your-infisical-project-id>",
-  "defaultEnvironment": "dev",
+  "defaultEnvironment": "development",
   "domain": "https://eu.infisical.com",
   "secretsPath": "/"
 }

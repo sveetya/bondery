@@ -27,6 +27,14 @@ const ROOT_ENV_EXAMPLE = join(repoRoot, ".env.local.example");
 const INFISICAL_CONFIG = join(repoRoot, ".infisical.json");
 const INFISICAL_CONFIG_EXAMPLE = join(repoRoot, ".infisical.json.example");
 
+const INFISICAL_ENV_SLUGS = ["development", "staging", "production"] as const;
+
+/** Renamed slugs — warn so local `.infisical.json` stays in sync with Infisical UI. */
+const LEGACY_INFISICAL_ENV_SLUGS: Record<string, (typeof INFISICAL_ENV_SLUGS)[number]> = {
+  dev: "development",
+  prod: "production",
+};
+
 type InfisicalConfig = {
   defaultEnvironment?: string;
   domain?: string;
@@ -90,13 +98,24 @@ function readInfisicalConfig(): InfisicalPullTarget {
 
   const environment = raw.defaultEnvironment;
   if (!environment) {
-    log.error(".infisical.json must include defaultEnvironment (Infisical slug, e.g. dev)");
+    log.error(".infisical.json must include defaultEnvironment (Infisical slug, e.g. development)");
     process.exit(1);
   }
 
   if (environment.includes(" ")) {
     log.warn(
-      `defaultEnvironment "${environment}" looks like a display name — Infisical expects the slug (e.g. dev)`,
+      `defaultEnvironment "${environment}" contains spaces — Infisical slugs are lowercase single tokens (e.g. development)`,
+    );
+  }
+
+  const legacyReplacement = LEGACY_INFISICAL_ENV_SLUGS[environment];
+  if (legacyReplacement) {
+    log.warn(
+      `defaultEnvironment "${environment}" is a legacy slug — update .infisical.json to "${legacyReplacement}"`,
+    );
+  } else if (!INFISICAL_ENV_SLUGS.includes(environment as (typeof INFISICAL_ENV_SLUGS)[number])) {
+    log.warn(
+      `defaultEnvironment "${environment}" is not a known bondery-secrets slug (${INFISICAL_ENV_SLUGS.join(", ")})`,
     );
   }
 
