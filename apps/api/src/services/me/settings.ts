@@ -4,10 +4,7 @@ import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
-import {
-  captureProductEvent,
-  invalidateProductAnalyticsCache,
-} from "../analytics/posthog-capture.js";
+import { invalidateProductAnalyticsCache } from "../analytics/posthog-capture.js";
 
 export type UserSettingsLanguage = SupportedLocale;
 
@@ -61,7 +58,7 @@ export async function ensureDefaultSettings(ctx: DomainContext) {
   }
 
   try {
-    const created = await db.userSettings.create({
+    return await db.userSettings.create({
       data: {
         aiMessagesMonthResetAt: new Date(),
         colorScheme: "auto",
@@ -73,12 +70,6 @@ export async function ensureDefaultSettings(ctx: DomainContext) {
         userId: user.id,
       },
     });
-
-    void captureProductEvent(ctx, "signup_flow:user_create", {
-      signup_method: "email",
-    });
-
-    return created;
   } catch {
     throw internal("settings_failed_to_create_default_settings");
   }

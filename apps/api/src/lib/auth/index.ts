@@ -11,6 +11,7 @@
  *
  * `databaseHooks.user.create.after` seeds `user_settings` + the "myself" `people` row,
  * then sends a welcome email (idempotent via `user_settings.welcome_email_sent_at`).
+ * `databaseHooks.account.create.after` captures `signup_flow:user_create` with OAuth provider.
  */
 
 import { apiKey } from "@better-auth/api-key";
@@ -38,6 +39,7 @@ import { platformAdminAc, platformAdminRoles } from "./platform-admin-access.js"
 import { provisionNewUser } from "./provision-new-user.js";
 import { resolveAuthLocale } from "./resolve-auth-locale.js";
 import { resolveProvisionLocaleFromContext } from "./resolve-provision-locale.js";
+import { resolveSignupMethodFromProviderId } from "./resolve-signup-method.js";
 import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
 import { createBetterAuthSecondaryStorage } from "./secondary-storage.js";
 import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
@@ -142,29 +144,49 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
 
   databaseHooks: {
+    account: {
+      create: {
+        after: async (account) => {
+          const accountCount = await prisma.account.count({
+            where: { userId: account.userId },
+          });
+          if (accountCount !== 1) {
+            return;
+          }
+
+          const user = await prisma.user.findUnique({
+            select: { email: true, id: true },
+            where: { id: account.userId },
+          });
+          if (!user) {
+            return;
+          }
+
+          const signup_method = resolveSignupMethodFromProviderId(account.providerId);
+
+          void import("../../services/analytics/posthog-capture.js")
+            .then(({ captureProductEvent }) =>
+              captureProductEvent(
+                { user: { email: user.email, id: user.id } },
+                "signup_flow:user_create",
+                { signup_method },
+              ),
+            )
+            .catch(() => {
+              // captureProductEvent is best-effort during signup
+            });
+        },
+      },
+    },
     user: {
       create: {
         after: async (user, ctx) => {
           const locale = resolveProvisionLocaleFromContext(ctx ?? undefined);
-          const { settingsCreated } = await provisionNewUser({
+          await provisionNewUser({
             locale,
             name: user.name,
             userId: user.id,
           });
-
-          if (settingsCreated) {
-            void import("../../services/analytics/posthog-capture.js")
-              .then(({ captureProductEvent }) =>
-                captureProductEvent(
-                  { user: { email: user.email, id: user.id } },
-                  "signup_flow:user_create",
-                  { signup_method: "email" },
-                ),
-              )
-              .catch(() => {
-                // captureProductEvent is best-effort during signup
-              });
-          }
 
           void import("../../services/notifications/welcome.js")
             .then(({ sendWelcomeEmailIfNeeded }) =>

@@ -20,7 +20,7 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 | `enrichment:batch_end` | `total_enriched` | client | Batch complete |
 | `enrichment:contact_update` | `source: "linkedin"` | client | Single LinkedIn enrich |
 | `feedback:nps_submit` | `score`, `has_general_feedback`, `has_reason` | client | After API success |
-| `signup_flow:user_create` | `signup_method` | **server** | On first `user_settings` row |
+| `signup_flow:user_create` | `signup_method`: `oauth_github` \| `oauth_linkedin` \| `email` \| `unknown` | **server** | First OAuth account on signup (`account.create` hook) |
 | `signup_flow:onboarding_complete` | — | **server** | First onboarding completion |
 | `signup_flow:activation_complete` | `activation_type` | **server** | One-shot per milestone |
 | `account_settings:account_delete` | — | **server** | Before account teardown |

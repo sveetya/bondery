@@ -115,10 +115,7 @@ export async function upsertSubscriptionFromStripe(
     void captureSubscriptionCreate(userId, subscription, mirror);
   }
 
-  if (
-    options?.eventType === "customer.subscription.deleted" ||
-    (options?.eventType === "customer.subscription.updated" && subscription.cancel_at_period_end)
-  ) {
+  if (options?.eventType === "customer.subscription.deleted") {
     void captureSubscriptionCancel(userId, subscription, mirror);
   }
 

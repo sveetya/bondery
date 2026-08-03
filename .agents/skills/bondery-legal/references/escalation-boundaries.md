@@ -9,7 +9,7 @@ What an agent **may** do vs. what **must** go to a human owner or legal counsel.
 | Propose factual copy fix in Privacy.tsx | **reality-sync** | Replace "Supabase" with "Postgres (self-managed)" in subprocessor table |
 | Update subprocessor registry | — | Add GitHub OAuth row with code pointer |
 | Update policy-claims-inventory status | — | Mark backup purge `implemented` after job merges |
-| File Plane issue for product gap | — | "Build analytics opt-out toggle per Privacy §6" |
+| File Plane issue for product gap | — | Example: "Add cookie consent banner per Privacy §6" |
 | Propose PR description noting disclosure impact | — | "Adds Sentry — requires Privacy §15 update" |
 | Read and cite vendor privacy/DPA URLs | — | Link `https://posthog.com/privacy` |
 
