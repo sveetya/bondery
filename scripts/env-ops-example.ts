@@ -2,6 +2,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { createCliLogger } from "@bondery/helpers/cli";
 import {
+  collectOpsSyncRows,
   ENV_MANIFEST,
   OPS_GROUP_GUIDES,
   resolveExampleValue,
@@ -34,6 +35,8 @@ export function collectOpsExampleRows(packageVersion: string) {
   }
   return sortOpsExampleRows(rows);
 }
+
+export { collectOpsSyncRows };
 
 export function writeOpsExample(
   repoRoot: string,
