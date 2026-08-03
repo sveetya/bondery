@@ -1,10 +1,17 @@
 name: Sync Dokploy env
 
-# Manual Infisical production → Dokploy ops compose env sync (domain keys only).
+# Manual Infisical production → Dokploy compose env sync (website or plausible stack).
 
 on:
   workflow_dispatch:
     inputs:
+      target:
+        description: Dokploy compose stack to sync
+        type: choice
+        options:
+          - website
+          - plausible
+        default: website
       dry_run:
         description: Log upload keys without calling Dokploy API
         type: boolean
@@ -49,4 +56,4 @@ jobs:
         with:
           dry_run: ${{ inputs.dry_run }}
           redeploy: ${{ inputs.redeploy }}
-          target: ops
+          target: ${{ inputs.target }}

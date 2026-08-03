@@ -177,10 +177,12 @@ export type DeployExample = {
 export type OpsExample = DeployExample;
 
 /** Infisical → Dokploy sync payload (`sync-infisical-to-dokploy.mjs`). */
-export type OpsSync = {
-  /** Include in Dokploy compose.saveEnvironment upload */
-  include: boolean;
+export type DokploySync = {
+  /** Dokploy compose stacks that receive this key on sync */
+  targets: readonly DokploySyncTarget[];
 };
+
+export type DokploySyncTarget = "website" | "plausible";
 
 /** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
 export type PlausibleExample = DeployExample;
@@ -209,8 +211,8 @@ export type EnvVarDef = {
   deployExample?: DeployExample;
   /** Ops marketing Compose operator example (`deploy/ops/.env.example`) */
   opsExample?: OpsExample;
-  /** Infisical production → Dokploy ops compose env sync */
-  opsSync?: OpsSync;
+  /** Infisical production → Dokploy compose env sync */
+  dokploySync?: DokploySync;
   /** Plausible CE Compose operator example (`deploy/plausible/.env.example`) */
   plausibleExample?: PlausibleExample;
   /** Boot without `.env` (OpenAPI generation, API integration tests) */
@@ -666,6 +668,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       value: "app.usebondery.com",
     },
     description: "Public webapp hostname for Traefik Host() rules (no scheme).",
+    dokploySync: { targets: ["website"] },
     exampleValue: "app.usebondery.com",
     group: "Infra",
     opsExample: {
@@ -673,7 +676,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "app.usebondery.com",
     },
-    opsSync: { include: true },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -687,6 +689,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     },
     description:
       "Public marketing website hostname (no scheme). Compose derives BONDERY_PUBLIC_WEBSITE_URL for api/webapp.",
+    dokploySync: { targets: ["website"] },
     exampleValue: "usebondery.com",
     group: "Infra",
     opsExample: {
@@ -694,7 +697,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "usebondery.com",
     },
-    opsSync: { include: true },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -702,6 +704,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
     description: "Public Plausible CE hostname for Traefik Host() rules (no scheme).",
+    dokploySync: { targets: ["website", "plausible"] },
     exampleValue: "plausible.usebondery.com",
     group: "Infra",
     opsExample: {
@@ -709,7 +712,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "plausible.usebondery.com",
     },
-    opsSync: { include: true },
     plausibleExample: {
       group: "Public hostname",
       include: true,
@@ -722,6 +724,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION",
     description: "Plausible CE sign-up policy (maps to DISABLE_REGISTRATION in the container).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "invite_only",
     group: "Infra",
     plausibleExample: {
@@ -736,30 +739,33 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD",
     description: "Postgres password for the Plausible CE metadata database.",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Database",
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
-    requiredIn: [],
+    requiredIn: ["production"],
     secret: true,
     targets: [],
   },
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE",
     description: "Plausible CE SECRET_KEY_BASE (session signing).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Analytics",
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
-    requiredIn: [],
+    requiredIn: ["production"],
     secret: true,
     targets: [],
   },
   {
     canonical: "BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY",
     description: "Plausible CE TOTP_VAULT_KEY (2FA encryption).",
+    dokploySync: { targets: ["plausible"] },
     exampleValue: "",
     group: "Analytics",
     plausibleExample: { group: "Plausible secrets", include: true, value: "" },
-    requiredIn: [],
+    requiredIn: ["production"],
     secret: true,
     targets: [],
   },
@@ -1235,7 +1241,26 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
 ] as const;
+
+export const DOKPLOY_SYNC_TARGETS = {
+  plausible: {
+    composeIdKey: "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
+    webhookKey: "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
+  },
+  website: {
+    composeIdKey: "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
+    webhookKey: "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+  },
+} as const satisfies Record<
+  DokploySyncTarget,
+  {
+    composeIdKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
+    webhookKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
+  }
+>;
 
 /** Ops secrets — GitHub Actions only; never written by `pnpm run env` */
 export const OPS_ENV_VARS = [
@@ -1243,6 +1268,8 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
   "BONDERY_OPS_CHROME_EXTENSION_ID",
   "BONDERY_OPS_CHROME_PUBLISHER_ID",
   "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
@@ -1257,18 +1284,29 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_TURBO_TOKEN",
 ] as const;
 
-export type OpsSyncRow = { key: string; value: string };
+export type DokploySyncRow = { key: string; value: string };
 
-/** Build Dokploy upload rows from Infisical-loaded env (opsSync manifest entries only). */
+/** @deprecated Use collectDokploySyncRows(env, "website") */
 export function collectOpsSyncRows(env: Record<string, string>): {
   missingRequired: string[];
-  rows: OpsSyncRow[];
+  rows: DokploySyncRow[];
 } {
-  const rows: OpsSyncRow[] = [];
+  return collectDokploySyncRows(env, "website");
+}
+
+/** Build Dokploy upload rows for a sync target from Infisical-loaded env. */
+export function collectDokploySyncRows(
+  env: Record<string, string>,
+  target: DokploySyncTarget,
+): {
+  missingRequired: string[];
+  rows: DokploySyncRow[];
+} {
+  const rows: DokploySyncRow[] = [];
   const missingRequired: string[] = [];
 
   for (const entry of ENV_MANIFEST) {
-    if (!entry.opsSync?.include) {
+    if (!entry.dokploySync?.targets.includes(target)) {
       continue;
     }
 

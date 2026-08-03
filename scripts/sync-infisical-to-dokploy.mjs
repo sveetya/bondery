@@ -1,14 +1,18 @@
 /**
- * Sync Infisical production env (opsSync keys) to Dokploy compose environment.
+ * Sync Infisical production env (dokploySync keys) to Dokploy compose environment.
  *
  * Prerequisites: Infisical secrets-action has loaded production keys into process.env.
  *
  * Usage:
- *   node scripts/sync-infisical-to-dokploy.mjs --target ops [--dry-run] [--redeploy]
+ *   node scripts/sync-infisical-to-dokploy.mjs --target website|plausible [--dry-run] [--redeploy]
  */
 
 import { pathToFileURL } from "node:url";
-import { collectOpsSyncRows, OPS_DOKPLOY_SYNC_CONFIG_KEYS } from "@bondery/helpers/env";
+import {
+  collectDokploySyncRows,
+  DOKPLOY_SYNC_TARGETS,
+  OPS_DOKPLOY_SYNC_CONFIG_KEYS,
+} from "@bondery/helpers/env";
 import { parseEnvContent } from "@bondery/helpers/env/check-env";
 
 /** @see scripts/env-file-format.ts */
@@ -19,27 +23,43 @@ export function quoteEnvValue(value) {
   return value;
 }
 
-const REQUIRED_DOKPLOY_CONFIG_KEYS = OPS_DOKPLOY_SYNC_CONFIG_KEYS.filter(
-  (key) => key !== "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
-);
+const SHARED_DOKPLOY_CONFIG_KEYS = ["BONDERY_OPS_DOKPLOY_HOST", "BONDERY_OPS_DOKPLOY_API_KEY"];
 
-/** @typedef {{ host: string; apiKey: string; composeId: string; deployWebhook: string }} DokployConfig */
+/** @typedef {{ host: string; apiKey: string; composeId: string; deployWebhook: string; target: string; webhookKey: string }} DokployConfig */
+
+/**
+ * @param {string} target
+ * @returns {target is keyof typeof DOKPLOY_SYNC_TARGETS}
+ */
+export function isDokploySyncTarget(target) {
+  return Object.hasOwn(DOKPLOY_SYNC_TARGETS, target);
+}
 
 /**
  * @param {Record<string, string | undefined>} env
+ * @param {keyof typeof DOKPLOY_SYNC_TARGETS} target
  * @returns {DokployConfig}
  */
-export function readDokployConfig(env) {
+export function readDokployConfig(env, target) {
+  const targetConfig = DOKPLOY_SYNC_TARGETS[target];
   const missing = [];
-  for (const key of REQUIRED_DOKPLOY_CONFIG_KEYS) {
+
+  for (const key of SHARED_DOKPLOY_CONFIG_KEYS) {
     const value = env[key]?.trim();
     if (!value) {
       missing.push(key);
     }
   }
 
+  const composeId = env[targetConfig.composeIdKey]?.trim();
+  if (!composeId) {
+    missing.push(targetConfig.composeIdKey);
+  }
+
   if (missing.length > 0) {
-    console.error("sync-infisical-to-dokploy: missing required Infisical keys:");
+    console.error(
+      `sync-infisical-to-dokploy: missing required Infisical keys for target "${target}":`,
+    );
     for (const key of missing) {
       console.error(`  - ${key}`);
     }
@@ -48,9 +68,11 @@ export function readDokployConfig(env) {
 
   return {
     apiKey: env.BONDERY_OPS_DOKPLOY_API_KEY.trim(),
-    composeId: env.BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID.trim(),
-    deployWebhook: env.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK?.trim() ?? "",
+    composeId,
+    deployWebhook: env[targetConfig.webhookKey]?.trim() ?? "",
     host: env.BONDERY_OPS_DOKPLOY_HOST.trim().replace(/\/$/, ""),
+    target,
+    webhookKey: targetConfig.webhookKey,
   };
 }
 
@@ -58,18 +80,22 @@ export function readDokployConfig(env) {
  * Keys written to Dokploy (never includes connection config keys).
  *
  * @param {Record<string, string | undefined>} env
+ * @param {keyof typeof DOKPLOY_SYNC_TARGETS} target
  */
-export function buildOpsUploadPayload(env) {
-  const { missingRequired, rows } = collectOpsSyncRows(
+export function buildUploadPayload(env, target) {
+  const { missingRequired, rows } = collectDokploySyncRows(
     Object.fromEntries(
       Object.entries(env)
         .filter(([, value]) => value !== undefined)
         .map(([k, v]) => [k, v]),
     ),
+    target,
   );
 
   if (missingRequired.length > 0) {
-    console.error("sync-infisical-to-dokploy: missing required production values:");
+    console.error(
+      `sync-infisical-to-dokploy: missing required production values for target "${target}":`,
+    );
     for (const key of missingRequired) {
       console.error(`  - ${key}`);
     }
@@ -89,6 +115,11 @@ export function buildOpsUploadPayload(env) {
   return { rows, uploadKeys };
 }
 
+/** @deprecated Use buildUploadPayload */
+export function buildOpsUploadPayload(env) {
+  return buildUploadPayload(env, "website");
+}
+
 /**
  * @param {Array<{ key: string; value: string }>} rows
  * @param {typeof quoteEnvValue} quote
@@ -98,13 +129,13 @@ export function formatEnvPayload(rows, quote) {
 }
 
 /**
- * Merge opsSync updates into existing Dokploy env text (preserves unsynced keys).
+ * Merge sync updates into existing Dokploy env text (preserves unsynced keys).
  *
  * @param {string | null | undefined} existingEnv
  * @param {Array<{ key: string; value: string }>} rows
  * @param {typeof quoteEnvValue} quote
  */
-export function mergeOpsEnv(existingEnv, rows, quote) {
+export function mergeComposeEnv(existingEnv, rows, quote) {
   const merged = parseEnvContent(existingEnv ?? "");
   for (const row of rows) {
     merged[row.key] = row.value;
@@ -115,6 +146,11 @@ export function mergeOpsEnv(existingEnv, rows, quote) {
   );
 
   return keys.map((key) => `${key}=${quote(merged[key])}`).join("\n");
+}
+
+/** @deprecated Use mergeComposeEnv */
+export function mergeOpsEnv(existingEnv, rows, quote) {
+  return mergeComposeEnv(existingEnv, rows, quote);
 }
 
 /**
@@ -216,17 +252,22 @@ function parseArgs(argv) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
-  if (args.target !== "ops") {
-    console.error("sync-infisical-to-dokploy: only --target ops is supported in phase 1");
+  if (args.target === "ops") {
+    console.error("sync-infisical-to-dokploy: --target ops was renamed to --target website");
     process.exit(1);
   }
 
-  const config = readDokployConfig(process.env);
-  const { rows, uploadKeys } = buildOpsUploadPayload(process.env);
-  const existingEnv = args.dryRun ? null : await fetchComposeEnv(config);
-  const envPayload = mergeOpsEnv(existingEnv, rows, quoteEnvValue);
+  if (!isDokploySyncTarget(args.target)) {
+    console.error("sync-infisical-to-dokploy: --target must be website or plausible");
+    process.exit(1);
+  }
 
-  console.log("sync-infisical-to-dokploy: upload keys:");
+  const config = readDokployConfig(process.env, args.target);
+  const { rows, uploadKeys } = buildUploadPayload(process.env, args.target);
+  const existingEnv = args.dryRun ? null : await fetchComposeEnv(config);
+  const envPayload = mergeComposeEnv(existingEnv, rows, quoteEnvValue);
+
+  console.log(`sync-infisical-to-dokploy: target ${args.target}, upload keys:`);
   for (const key of uploadKeys) {
     console.log(`  - ${key}`);
   }
@@ -242,7 +283,7 @@ async function main() {
   if (args.redeploy) {
     if (!config.deployWebhook) {
       console.error(
-        "sync-infisical-to-dokploy: --redeploy requires BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK in Infisical",
+        `sync-infisical-to-dokploy: --redeploy requires ${config.webhookKey} in Infisical`,
       );
       process.exit(1);
     }

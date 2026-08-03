@@ -61,14 +61,16 @@ node deploy/ops/scripts/check-compose.mjs
 
 ## Infisical → Dokploy env sync
 
-Domain hostnames (`BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN`) can be synced from Infisical **production** to Dokploy via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml). Dokploy API creds and optional redeploy webhook are also stored in Infisical (not GitHub secrets).
+Domain hostnames can be synced from Infisical **production** to the **website** Dokploy app via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml) with `target: website`. Dokploy API creds and optional redeploy webhook are stored in Infisical (not GitHub secrets).
 
 **Not synced** (keep in Dokploy UI): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_INFRA_WEBSITE_IMAGE_TAG`.
 
-1. Add all keys under `bondery-secrets` → `production` → `/` (see [workflows README](../../.github/workflows/README.md#dokploy-ops-env-sync-sync-dokploy-envyml)).
+1. Add website keys under `bondery-secrets` → `production` → `/` (see [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml)).
 2. Grant OIDC identity read on production; extend subject for `sync-dokploy-env.yml`.
-3. First run: `dry_run: true` → confirm upload keys are domains only.
+3. First run: `target: website`, `dry_run: true` → confirm upload keys are domains only.
 4. Backup Dokploy env; run `dry_run: false`.
+
+Plausible CE secrets sync to a **separate** Dokploy compose app — see [`deploy/plausible/README.md`](../plausible/README.md).
 
 ## Security
 
