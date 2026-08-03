@@ -1042,7 +1042,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     syncable: true,
-    targets: [t("webapp")],
+    targets: [t("api"), t("webapp")],
   },
   {
     canonical: "BONDERY_PUBLIC_POSTHOG_HOST",
@@ -1053,7 +1053,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     syncable: true,
-    targets: [t("webapp")],
+    targets: [t("api"), t("webapp")],
   },
   {
     canonical: "BONDERY_PUBLIC_PLAUSIBLE_DOMAIN",
