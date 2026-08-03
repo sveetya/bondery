@@ -33,7 +33,7 @@
     "fastify": "^5.10.0",
     "fastify-zod-openapi": "^5.7.0",
     "i18next-cli": "^1.67.3",
-    "ioredis": "^5.11.1",
+    "ioredis": "^6.0.0",
     "jose": "^6.2.4",
     "nodemailer": "^9.0.3",
     "pg-boss": "^12.26.3",
