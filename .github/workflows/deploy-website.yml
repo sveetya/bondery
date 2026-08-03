@@ -142,6 +142,7 @@ jobs:
           printf '%s\n' \
             'BONDERY_INFRA_WEBAPP_DOMAIN=app.example-smoke.test' \
             'BONDERY_INFRA_WEBSITE_DOMAIN=www.example-smoke.test' \
+            'BONDERY_INFRA_PLAUSIBLE_DOMAIN=plausible.example-smoke.test' \
             > .env.smoke
           printf '%s\n' \
             'services:' \
