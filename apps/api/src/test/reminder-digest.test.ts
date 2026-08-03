@@ -40,6 +40,7 @@ function setConfiguredEmailEnv(): void {
   process.env.BONDERY_PRIVATE_EMAIL_USER = "user";
   process.env.BONDERY_PRIVATE_EMAIL_PASS = "secret";
   process.env.BONDERY_PRIVATE_EMAIL_ADDRESS = "robot@usebondery.com";
+  process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO = "team@usebondery.com";
 }
 
 function buildCtx() {

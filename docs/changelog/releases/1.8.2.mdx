@@ -5,6 +5,10 @@ hidden: true
 
 ## [1.8.2] - 03.08.2026
 
+### 🔄 Changed
+
+- API: Transactional email (welcome, reminders, trial ending, account deleted) now uses `BONDERY_PRIVATE_EMAIL_REPLY_TO` for the Reply-To header instead of the SMTP From address.
+
 ### 🐛 Fixed
 
 - API: First OAuth signup failed on fresh Postgres deploys because `compute_next_reminder_at_utc` expected `time` while `user_settings.reminder_send_hour` is `TEXT`. `release-migrate` now applies the corrected function signature and drops the obsolete overload.

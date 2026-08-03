@@ -155,6 +155,7 @@ export async function sendOneUserDigest(
     await sendRenderedEmail({
       from: `Robot from Bondery <${config.fromAddress}>`,
       html: emailHtml,
+      replyTo: config.replyToAddress,
       subject,
       to: user.email,
     });

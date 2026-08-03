@@ -907,6 +907,17 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [t("api")],
   },
   {
+    canonical: "BONDERY_PRIVATE_EMAIL_REPLY_TO",
+    deployExample: { group: "Email", include: true, value: "team@usebondery.com" },
+    description: "Reply-To address for automated transactional email",
+    exampleValue: "team@usebondery.com",
+    group: "Email",
+    requiredIn: ["development", "production"],
+    secret: false,
+    syncable: true,
+    targets: [t("api")],
+  },
+  {
     canonical: "BONDERY_PRIVATE_REDIS_URL",
     deployExample: { group: "Redis", include: true, value: "redis://redis:6379" },
     description: "Redis connection URL",

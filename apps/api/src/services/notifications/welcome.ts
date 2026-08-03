@@ -48,7 +48,7 @@ export async function sendWelcomeEmail(
     {
       from: `Robot from Bondery <${config.fromAddress}>`,
       html,
-      replyTo: config.fromAddress,
+      replyTo: config.replyToAddress,
       subject: readCopyString(bundle, "subject"),
       to: input.email,
     },
