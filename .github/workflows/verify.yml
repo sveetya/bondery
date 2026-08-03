@@ -20,17 +20,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: biomejs/setup-biome@v2
         with:
@@ -51,17 +41,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:
@@ -103,17 +83,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:
@@ -140,17 +110,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:

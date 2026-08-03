@@ -53,7 +53,7 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 
 **Branch protection:** `.github/rulesets/protect-main.json` sets `strict_required_status_checks_policy: true` so PRs must be up to date with `main` before merge. Apply with `pnpm run github:rulesets -- main`.
 
-**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Host CI installs **pnpm 11.18.0** via `pnpm/action-setup` + `pnpm install --frozen-lockfile`. Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
+**Node on runners:** Host jobs pin Node 26 via `devEngines.runtime` in root `package.json` (`pnpm/setup@v1` reads it and installs the runtime). Production Docker images use `node:26-alpine`. Host CI uses the shared `setup-pnpm` composite (`pnpm/setup` + `pnpm ci`); pnpm version comes from `packageManager` (`pnpm@11.18.0`). Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 
