@@ -28,6 +28,9 @@ export const envSchema = {
     BONDERY_PRIVATE_EMAIL_PORT: {
       type: "number",
     },
+    BONDERY_PRIVATE_EMAIL_REPLY_TO: {
+      type: "string",
+    },
     BONDERY_PRIVATE_EMAIL_USER: {
       type: "string",
     },
@@ -140,6 +143,7 @@ declare module "fastify" {
       BONDERY_PRIVATE_EMAIL_USER: string;
       BONDERY_PRIVATE_EMAIL_PASS: string;
       BONDERY_PRIVATE_EMAIL_ADDRESS: string;
+      BONDERY_PRIVATE_EMAIL_REPLY_TO: string;
       BONDERY_PRIVATE_EMAIL_PORT: number;
       BONDERY_PRIVATE_POSTHOG_API_SECRET: string;
       BONDERY_PRIVATE_POSTHOG_PROJECT_ID: string;

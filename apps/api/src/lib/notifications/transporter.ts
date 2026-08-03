@@ -20,6 +20,7 @@ export type EmailConfig = {
   user: string;
   pass: string;
   fromAddress: string;
+  replyToAddress: string;
 };
 
 export type RenderedEmailOptions = {
@@ -196,12 +197,14 @@ export function emailConfigFromEnv(env: {
   BONDERY_PRIVATE_EMAIL_USER: string;
   BONDERY_PRIVATE_EMAIL_PASS: string;
   BONDERY_PRIVATE_EMAIL_ADDRESS: string;
+  BONDERY_PRIVATE_EMAIL_REPLY_TO: string;
 }): EmailConfig {
   return {
     fromAddress: env.BONDERY_PRIVATE_EMAIL_ADDRESS,
     host: env.BONDERY_PRIVATE_EMAIL_HOST,
     pass: env.BONDERY_PRIVATE_EMAIL_PASS,
     port: Number(env.BONDERY_PRIVATE_EMAIL_PORT),
+    replyToAddress: env.BONDERY_PRIVATE_EMAIL_REPLY_TO,
     user: env.BONDERY_PRIVATE_EMAIL_USER,
   };
 }
@@ -211,7 +214,8 @@ export function emailConfigFromProcessEnv(): EmailConfig | null {
   const user = process.env.BONDERY_PRIVATE_EMAIL_USER;
   const pass = process.env.BONDERY_PRIVATE_EMAIL_PASS;
   const fromAddress = process.env.BONDERY_PRIVATE_EMAIL_ADDRESS;
-  if (!host || !user || !pass || !fromAddress) {
+  const replyToAddress = process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO;
+  if (!host || !user || !pass || !fromAddress || !replyToAddress) {
     return null;
   }
   return {
@@ -219,6 +223,7 @@ export function emailConfigFromProcessEnv(): EmailConfig | null {
     host,
     pass,
     port: Number(process.env.BONDERY_PRIVATE_EMAIL_PORT ?? 587),
+    replyToAddress,
     user,
   };
 }
