@@ -1249,16 +1249,20 @@ export const DOKPLOY_SYNC_TARGETS = {
   plausible: {
     composeIdKey: "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
     webhookKey: "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
+    /** Satisfy Dokploy watch-path checks when CI triggers the deploy webhook. */
+    webhookPathSentinels: ["deploy/plausible"],
   },
   website: {
     composeIdKey: "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
     webhookKey: "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+    webhookPathSentinels: ["deploy/ops"],
   },
 } as const satisfies Record<
   DokploySyncTarget,
   {
     composeIdKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
     webhookKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
+    webhookPathSentinels: readonly string[];
   }
 >;
 

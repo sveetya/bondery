@@ -204,15 +204,35 @@ export async function saveComposeEnv(config, envPayload) {
 }
 
 /**
+ * GitHub push payload for Dokploy when watch paths are configured.
+ *
+ * @param {string} repository
+ * @param {readonly string[]} pathSentinels
+ * @param {string} [branch]
+ */
+export function buildDeployWebhookPayload(repository, pathSentinels, branch = "release") {
+  return {
+    commits: [
+      {
+        added: [],
+        modified: [...pathSentinels],
+        removed: [],
+      },
+    ],
+    ref: `refs/heads/${branch}`,
+    repository: { full_name: repository },
+  };
+}
+
+/**
  * @param {string} webhookUrl
  * @param {string} repository
+ * @param {readonly string[]} pathSentinels
+ * @param {string} [branch]
  */
-export async function triggerDeployWebhook(webhookUrl, repository) {
+export async function triggerDeployWebhook(webhookUrl, repository, pathSentinels, branch) {
   const response = await fetch(webhookUrl, {
-    body: JSON.stringify({
-      ref: "refs/heads/release",
-      repository: { full_name: repository },
-    }),
+    body: JSON.stringify(buildDeployWebhookPayload(repository, pathSentinels, branch)),
     headers: {
       "Content-Type": "application/json",
       "X-GitHub-Event": "push",
@@ -291,7 +311,8 @@ async function main() {
     const repository =
       // biome-ignore lint/suspicious/noUndeclaredEnvVars: GitHub Actions runner env, not a turbo task input
       process.env.GITHUB_REPOSITORY ?? "usebondery/bondery";
-    await triggerDeployWebhook(config.deployWebhook, repository);
+    const pathSentinels = DOKPLOY_SYNC_TARGETS[args.target].webhookPathSentinels;
+    await triggerDeployWebhook(config.deployWebhook, repository, pathSentinels);
     console.log("sync-infisical-to-dokploy: triggered deploy webhook");
   }
 }

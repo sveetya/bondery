@@ -28,6 +28,7 @@ Expect **~2 GB RAM** for Postgres + ClickHouse + Plausible on a small VPS.
 | Compose path | `deploy/plausible/compose.yml` |
 | Domain | `BONDERY_INFRA_PLAUSIBLE_DOMAIN` (Traefik labels in compose) |
 | Environment | See [`deploy/plausible/.env.example`](.env.example) |
+| Watch paths | `deploy/plausible/**` (so git pushes and CI env-sync webhooks both match) |
 
 Set these in Dokploy **Environment** (compose maps them to Plausible CE container env):
 
