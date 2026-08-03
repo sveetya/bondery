@@ -4,6 +4,7 @@ import type { createCliLogger } from "@bondery/helpers/cli";
 import {
   ENV_MANIFEST,
   OPS_GROUP_GUIDES,
+  collectOpsSyncRows,
   resolveExampleValue,
   sortOpsExampleRows,
 } from "@bondery/helpers/env";
@@ -34,6 +35,8 @@ export function collectOpsExampleRows(packageVersion: string) {
   }
   return sortOpsExampleRows(rows);
 }
+
+export { collectOpsSyncRows };
 
 export function writeOpsExample(
   repoRoot: string,

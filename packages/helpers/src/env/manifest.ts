@@ -176,6 +176,12 @@ export type DeployExample = {
 /** Same shape as `DeployExample` — ops marketing stack (`deploy/ops/.env.example`). */
 export type OpsExample = DeployExample;
 
+/** Infisical → Dokploy sync payload (`sync-infisical-to-dokploy.mjs`). */
+export type OpsSync = {
+  /** Include in Dokploy compose.saveEnvironment upload */
+  include: boolean;
+};
+
 /** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
 export type PlausibleExample = DeployExample;
 
@@ -203,6 +209,8 @@ export type EnvVarDef = {
   deployExample?: DeployExample;
   /** Ops marketing Compose operator example (`deploy/ops/.env.example`) */
   opsExample?: OpsExample;
+  /** Infisical production → Dokploy ops compose env sync */
+  opsSync?: OpsSync;
   /** Plausible CE Compose operator example (`deploy/plausible/.env.example`) */
   plausibleExample?: PlausibleExample;
   /** Boot without `.env` (OpenAPI generation, API integration tests) */
@@ -665,6 +673,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "app.usebondery.com",
     },
+    opsSync: { include: true },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -685,6 +694,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "usebondery.com",
     },
+    opsSync: { include: true },
     requiredIn: ["production"],
     secret: false,
     targets: [],
@@ -699,6 +709,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
       value: "plausible.usebondery.com",
     },
+    opsSync: { include: true },
     plausibleExample: {
       group: "Public hostname",
       include: true,
@@ -1218,8 +1229,20 @@ export const TURBO_SYSTEM_PASSTHROUGH = [
   "FORCE_COLOR",
 ] as const;
 
+/** Infisical production keys read by sync workflow (never uploaded to Dokploy). */
+export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
+  "BONDERY_OPS_DOKPLOY_HOST",
+  "BONDERY_OPS_DOKPLOY_API_KEY",
+  "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+] as const;
+
 /** Ops secrets — GitHub Actions only; never written by `pnpm run env` */
 export const OPS_ENV_VARS = [
+  "BONDERY_OPS_DOKPLOY_HOST",
+  "BONDERY_OPS_DOKPLOY_API_KEY",
+  "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
   "BONDERY_OPS_CHROME_EXTENSION_ID",
   "BONDERY_OPS_CHROME_PUBLISHER_ID",
   "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
@@ -1233,6 +1256,44 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_TURBO_TEAM",
   "BONDERY_OPS_TURBO_TOKEN",
 ] as const;
+
+export type OpsSyncRow = { key: string; value: string };
+
+/** Build Dokploy upload rows from Infisical-loaded env (opsSync manifest entries only). */
+export function collectOpsSyncRows(env: Record<string, string>): {
+  missingRequired: string[];
+  rows: OpsSyncRow[];
+} {
+  const rows: OpsSyncRow[] = [];
+  const missingRequired: string[] = [];
+
+  for (const entry of ENV_MANIFEST) {
+    if (!entry.opsSync?.include) {
+      continue;
+    }
+
+    const raw = env[entry.canonical];
+    const value = raw?.trim() ?? "";
+
+    if (entry.requiredIn.includes("production") && value === "") {
+      missingRequired.push(entry.canonical);
+      continue;
+    }
+
+    if (value === "") {
+      continue;
+    }
+
+    rows.push({ key: entry.canonical, value });
+  }
+
+  rows.sort((a, b) => a.key.localeCompare(b.key, "en", { sensitivity: "variant" }));
+
+  return {
+    missingRequired,
+    rows,
+  };
+}
 
 export function applyTransform(transform: EnvTargetWrite["transform"], value: string): string {
   const base = value.replace(/\/$/, "");

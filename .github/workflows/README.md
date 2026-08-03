@@ -24,7 +24,9 @@ smoke/
 shared/
   prepare-dockerignore/    -> .github/actions/shared/prepare-dockerignore/
   ghcr-login/              -> .github/actions/shared/ghcr-login/
+  infisical-fetch-secrets/   -> .github/actions/shared/infisical-fetch-secrets/
   infisical-staging-secrets/ -> .github/actions/shared/infisical-staging-secrets/
+  dokploy-save-compose-env/  -> .github/actions/shared/dokploy-save-compose-env/
   turbo-remote-cache/      -> .github/actions/shared/turbo-remote-cache/
   website-prune-build/     -> .github/actions/shared/website-prune-build/
   dokploy-deploy-webhook/  -> .github/actions/shared/dokploy-deploy-webhook/
@@ -45,6 +47,7 @@ shared/
 | `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website promotes `:sha` when staged on main |
 | `release-*` | Versioned production releases | Git tags `*-X.Y.Z`; promotes `:sha-<short>` to semver (no rebuild unless `force_rebuild`) |
 | `shared-*` | Reusable workflows (not triggered directly) | `workflow_call` only |
+| `sync-dokploy-env` | Infisical → Dokploy ops env sync | `workflow_dispatch` (OIDC only; no GitHub secrets) |
 
 Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub rejects some workflow expressions when combined with certain name encodings, and because reusable-workflow `with:` blocks cannot use the `env` context.
 
@@ -130,3 +133,22 @@ infisical run --projectId=7395aabc-4cab-4cfe-aef2-a66899da5430 --env=staging --d
 ```
 
 Use `defaultEnvironment: dev` in `.infisical.json` for `pnpm env:pull`; release smoke uses the **staging** slug.
+
+## Dokploy ops env sync (`sync-dokploy-env.yml`)
+
+Manual workflow: fetch **production** Infisical secrets via OIDC, upload `opsSync` domain keys to the Dokploy ops compose app (`production-ops-d3big1`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
+
+| Infisical key (production) | Role |
+|----------------------------|------|
+| `BONDERY_OPS_DOKPLOY_HOST`, `BONDERY_OPS_DOKPLOY_API_KEY`, `BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID` | Dokploy API (required) |
+| `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` | Optional redeploy when `redeploy: true` |
+| `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` | Uploaded to Dokploy |
+
+**Ops checklist:**
+
+1. Identity `f8b9e69d-bc32-4066-ad99-8ad6ecff2d21` — **read** on **production** (in addition to staging).
+2. OIDC subject covers `sync-dokploy-env.yml`.
+3. First run with `dry_run: true` — verify upload keys (domains only, not `BONDERY_OPS_*`).
+4. `dry_run: false` — backup Dokploy env before first live sync; SHA / version / image tag stay in Dokploy UI.
+
+`deploy-website.yml` may still use `vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` for CD; duplicate in Infisical is fine until migrated.
