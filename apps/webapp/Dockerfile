@@ -18,10 +18,10 @@ ENV PNPM_HOME=/pnpm
 ENV PATH="${PNPM_HOME}:${PATH}"
 ENV PNPM_STORE_DIR=/pnpm/store
 COPY --from=prune /app/out/json/ .
-COPY --from=prune /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
 RUN --mount=type=cache,id=bondery-pnpm-store-v2,target=/pnpm/store,sharing=locked \
-    pnpm fetch --store-dir "${PNPM_STORE_DIR}"
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
