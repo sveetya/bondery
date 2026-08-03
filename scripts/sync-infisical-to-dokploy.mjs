@@ -8,11 +8,8 @@
  */
 
 import { pathToFileURL } from "node:url";
+import { collectOpsSyncRows, OPS_DOKPLOY_SYNC_CONFIG_KEYS } from "@bondery/helpers/env";
 import { parseEnvContent } from "@bondery/helpers/env/check-env";
-import {
-  collectOpsSyncRows,
-  OPS_DOKPLOY_SYNC_CONFIG_KEYS,
-} from "@bondery/helpers/env";
 
 /** @see scripts/env-file-format.ts */
 export function quoteEnvValue(value) {
@@ -65,7 +62,9 @@ export function readDokployConfig(env) {
 export function buildOpsUploadPayload(env) {
   const { missingRequired, rows } = collectOpsSyncRows(
     Object.fromEntries(
-      Object.entries(env).filter(([, value]) => value !== undefined).map(([k, v]) => [k, v]),
+      Object.entries(env)
+        .filter(([, value]) => value !== undefined)
+        .map(([k, v]) => [k, v]),
     ),
   );
 
@@ -133,9 +132,7 @@ export async function fetchComposeEnv(config) {
 
   if (!response.ok) {
     const body = await response.text();
-    console.error(
-      `sync-infisical-to-dokploy: compose.one failed (${response.status}): ${body}`,
-    );
+    console.error(`sync-infisical-to-dokploy: compose.one failed (${response.status}): ${body}`);
     process.exit(1);
   }
 
@@ -189,9 +186,7 @@ export async function triggerDeployWebhook(webhookUrl, repository) {
 
   if (!response.ok) {
     const body = await response.text();
-    console.error(
-      `sync-infisical-to-dokploy: deploy webhook failed (${response.status}): ${body}`,
-    );
+    console.error(`sync-infisical-to-dokploy: deploy webhook failed (${response.status}): ${body}`);
     process.exit(1);
   }
 }

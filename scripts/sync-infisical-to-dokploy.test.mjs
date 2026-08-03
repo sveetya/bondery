@@ -99,6 +99,6 @@ describe("sync-infisical-to-dokploy", () => {
       quoteEnvValue,
     );
 
-    assert.equal(payload, "BONDERY_INFRA_GIT_SHA=\"abc def\"");
+    assert.equal(payload, 'BONDERY_INFRA_GIT_SHA="abc def"');
   });
 });
