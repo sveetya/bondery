@@ -1,0 +1,17 @@
+name: Setup pnpm and install dependencies
+description: >-
+  Install pnpm (from packageManager) and Node.js (from devEngines.runtime in
+  package.json) via pnpm/setup, cache the pnpm store, then run pnpm ci.
+  Caller must checkout the repo first.
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/setup@v1
+      with:
+        cache: true
+        install: false
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm ci

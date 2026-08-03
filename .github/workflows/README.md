@@ -53,7 +53,7 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 
 **Branch protection:** `.github/rulesets/protect-main.json` sets `strict_required_status_checks_policy: true` so PRs must be up to date with `main` before merge. Apply with `pnpm run github:rulesets -- main`.
 
-**Node on runners:** Host jobs and production Docker images pin Node 26 via `.nvmrc` (`node-version-file` in `setup-node@v7`, `node:26-alpine` in Dockerfiles). Host CI installs **pnpm 11.18.0** via `pnpm/action-setup` + `pnpm install --frozen-lockfile`. Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
+**Node on runners:** Host jobs pin Node 26 via `devEngines.runtime` in root `package.json` (`pnpm/setup@v1` reads it and installs the runtime). Production Docker images use `node:26-alpine` with `pnpm install --no-runtime` (Node is already in the image). Host CI uses the shared `setup-pnpm` composite (`pnpm/setup` + `pnpm ci`); pnpm version comes from `packageManager` (`pnpm@11.18.0`). Docker builder/runner stages install pnpm globally (`npm install -g pnpm@11.18.0`) because `node:26-alpine` does not ship `corepack`.
 
 **Dokploy webhooks** (optional repository **variables**, not secrets):
 
@@ -74,7 +74,7 @@ Payload always uses `refs/heads/release` so manual runs and tag releases match t
 
 **Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
 
-Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store`): `pnpm fetch` after copying pruned manifests, then `pnpm install` after copying full sources. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
+Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages use BuildKit cache mounts for the pnpm store (`id=bondery-pnpm-store-v2`): `pnpm install --no-runtime` after copying pruned manifests, then again after copying full sources. `--no-runtime` skips `devEngines.runtime` (Node is already in the image); `pnpm fetch` is not used because it cannot skip runtime packages on Alpine. Requires BuildKit (enabled by default in Docker 23+ and GitHub Actions `docker/build-push-action`).
 
 ## Docker channels
 
@@ -102,7 +102,7 @@ DOCKER_BUILDKIT=1 docker build -f apps/api/Dockerfile .
 DOCKER_BUILDKIT=1 docker build -f apps/website/Dockerfile .
 ```
 
-If you change lockfile layout or pnpm major version, bump the BuildKit cache id in Dockerfiles (`bondery-pnpm-store`) to avoid stale store entries.
+If you change lockfile layout or pnpm major version, bump the BuildKit cache id in Dockerfiles (`bondery-pnpm-store-v2`) to avoid stale store entries.
 
 ## Release smoke and Infisical
 
