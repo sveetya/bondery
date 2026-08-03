@@ -1,5 +1,5 @@
 name: Dokploy save compose env
-description: Sync Infisical opsSync keys to Dokploy compose environment (expects Infisical env loaded).
+description: Sync Infisical dokploySync keys to Dokploy compose environment (expects Infisical env loaded).
 
 inputs:
   dry_run:
@@ -7,13 +7,13 @@ inputs:
     required: false
     default: "true"
   redeploy:
-    description: Trigger ops deploy webhook after save (requires webhook in Infisical)
+    description: Trigger deploy webhook after save (requires webhook in Infisical for the selected target)
     required: false
     default: "false"
   target:
-    description: Sync target (phase 1 — ops only)
+    description: Sync target (website or plausible Dokploy compose app)
     required: false
-    default: ops
+    default: website
 
 runs:
   using: composite

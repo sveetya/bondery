@@ -136,21 +136,30 @@ infisical run --projectId=7395aabc-4cab-4cfe-aef2-a66899da5430 --env=staging --d
 
 Use `defaultEnvironment: development` in `.infisical.json` for `pnpm env:pull`; release smoke uses **`staging`**; Dokploy ops sync uses **`production`**.
 
-## Dokploy ops env sync (`sync-dokploy-env.yml`)
+## Dokploy env sync (`sync-dokploy-env.yml`)
 
-Manual workflow: fetch **production** Infisical secrets via OIDC, upload `opsSync` domain keys to the Dokploy ops compose app (`production-ops-d3big1`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
+Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifest `dokploySync` keys to a Dokploy compose app. Pick **website** (`deploy/ops`) or **plausible** (`deploy/plausible`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
 
 | Infisical key (production) | Role |
 |----------------------------|------|
-| `BONDERY_OPS_DOKPLOY_HOST`, `BONDERY_OPS_DOKPLOY_API_KEY`, `BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID` | Dokploy API (required) |
-| `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` | Optional redeploy when `redeploy: true` |
-| `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` | Uploaded to Dokploy |
+| `BONDERY_OPS_DOKPLOY_HOST`, `BONDERY_OPS_DOKPLOY_API_KEY` | Dokploy API (required for all targets) |
+| `BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID` | Website stack compose id |
+| `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` | Optional redeploy for **website** when `redeploy: true` |
+| `BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID` | Plausible stack compose id |
+| `BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK` | Optional redeploy for **plausible** when `redeploy: true` |
+
+**Uploaded keys by target:**
+
+| Target | Keys |
+|--------|------|
+| `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
+| `plausible` | `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE`, `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY`, `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD`, `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` (optional) |
 
 **Ops checklist:**
 
 1. Identity `f8b9e69d-bc32-4066-ad99-8ad6ecff2d21` — **read** on **production** (in addition to staging).
 2. OIDC subject covers `sync-dokploy-env.yml`.
-3. First run with `dry_run: true` — verify upload keys (domains only, not `BONDERY_OPS_*`).
+3. First run with `dry_run: true` per target — verify upload keys (no `BONDERY_OPS_*` connection keys).
 4. `dry_run: false` — backup Dokploy env before first live sync; SHA / version / image tag stay in Dokploy UI.
 
 `deploy-website.yml` may still use `vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` for CD; duplicate in Infisical is fine until migrated.
