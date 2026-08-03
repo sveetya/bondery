@@ -97,7 +97,7 @@ function DeleteContactsModalBody({
 
           const deletedCount = result.deletedCount ?? contactIds.length;
 
-          captureEvent("contacts_bulk_deleted", { count: deletedCount });
+          captureEvent("contacts:bulk_delete", { item_count: deletedCount });
 
           notifications.hide(loadingNotification);
           notifications.show(

@@ -120,7 +120,7 @@ export function GroupsClient() {
         try {
           await deleteGroupMutation.mutateAsync(groupId);
 
-          captureEvent("group_deleted");
+          captureEvent("groups:group_delete");
 
           notifications.update({
             ...successNotificationTemplate({

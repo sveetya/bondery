@@ -183,6 +183,11 @@
       "Valid": "Platné: {count}"
     },
     "PleaseWait": "Prosím čekejte...",
+    "ProductAnalytics": {
+      "Description": "Pomozte nám zlepšovat Bondery pomocí pseudonymních údajů o používání. Sbíráme využití funkcí a počty — ne obsah kontaktů, jména ani e-maily.",
+      "SwitchLabel": "Sdílet produktovou analytiku",
+      "Title": "Produktová analytika"
+    },
     "SigningOut": "Odhlašování...",
     "SignOut": "Odhlásit se",
     "SignOutButton": "Odhlásit se",

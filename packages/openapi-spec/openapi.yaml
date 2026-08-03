@@ -15947,6 +15947,8 @@ paths:
                           - de
                       leftSwipeAction:
                         type: string
+                      productAnalyticsEnabled:
+                        type: boolean
                       reminderSendHour:
                         type: string
                         pattern: ^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$
@@ -16019,6 +16021,7 @@ paths:
                       - groupSortOrder
                       - language
                       - leftSwipeAction
+                      - productAnalyticsEnabled
                       - reminderSendHour
                       - rightSwipeAction
                       - tagSortOrder
@@ -16157,6 +16160,8 @@ paths:
                     - call
                     - message
                     - email
+                productAnalyticsEnabled:
+                  type: boolean
                 reminderSendHour:
                   type: string
                   pattern: ^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$
@@ -16231,6 +16236,9 @@ paths:
                       leftSwipeAction:
                         nullable: true
                         type: string
+                      productAnalyticsEnabled:
+                        nullable: true
+                        type: boolean
                       reminderSendHour:
                         nullable: true
                         type: string

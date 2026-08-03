@@ -146,11 +146,25 @@ export const auth = betterAuth({
       create: {
         after: async (user, ctx) => {
           const locale = resolveProvisionLocaleFromContext(ctx ?? undefined);
-          await provisionNewUser({
+          const { settingsCreated } = await provisionNewUser({
             locale,
             name: user.name,
             userId: user.id,
           });
+
+          if (settingsCreated) {
+            void import("../../services/analytics/posthog-capture.js")
+              .then(({ captureProductEvent }) =>
+                captureProductEvent(
+                  { user: { email: user.email, id: user.id } },
+                  "signup_flow:user_create",
+                  { signup_method: "email" },
+                ),
+              )
+              .catch(() => {
+                // captureProductEvent is best-effort during signup
+              });
+          }
 
           void import("../../services/notifications/welcome.js")
             .then(({ sendWelcomeEmailIfNeeded }) =>

@@ -37,6 +37,7 @@ model UserSettings {
   aiMessagesUsed            Int             @default(0) @map("ai_messages_used")
   aiMessagesThisMonth       Int             @default(0) @map("ai_messages_this_month")
   aiMessagesMonthResetAt    DateTime        @map("ai_messages_month_reset_at")
+  productAnalyticsEnabled   Boolean         @default(true) @map("product_analytics_enabled")
   createdAt                 DateTime        @default(now()) @map("created_at")
   updatedAt                 DateTime        @updatedAt @map("updated_at")
 

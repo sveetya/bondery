@@ -167,7 +167,7 @@ function AddGroupForm({
         await addContactsMutation.mutateAsync({ contactIds: selectedIds, groupId });
       }
 
-      captureEvent("group_created");
+      captureEvent("groups:group_create");
 
       notifications.hide(loadingNotification);
 

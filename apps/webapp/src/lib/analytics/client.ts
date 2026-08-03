@@ -2,16 +2,50 @@
 
 import posthog from "posthog-js";
 
+import {
+  isAnalyticsCaptureAllowed,
+  isBrowserDntEnabled,
+  setProductAnalyticsPreference,
+  syncBrowserDntState,
+} from "./preference";
+
 export { posthog };
+
+/** PostHog event names must use `category:object_action`. */
+export const PRODUCT_EVENT_NAME_PATTERN = /^[a-z][a-z0-9_]*:[a-z][a-z0-9_]*$/;
+
+/**
+ * Applies PostHog opt-in/opt-out based on browser DNT and the user's preference.
+ */
+export function applyPostHogConsentState(productAnalyticsEnabled: boolean): void {
+  syncBrowserDntState();
+  setProductAnalyticsPreference(productAnalyticsEnabled);
+
+  if (!posthog.__loaded) {
+    return;
+  }
+
+  if (isBrowserDntEnabled() || !productAnalyticsEnabled) {
+    posthog.opt_out_capturing();
+    return;
+  }
+
+  posthog.opt_in_capturing();
+}
 
 /**
  * Captures an analytics event from a client component.
  * Posthog-js is initialized in `instrumentation-client.ts` — this is just a
  * thin re-export so client components get a consistent import path.
- *
- * @param event - The event name (e.g. "contact_created").
- * @param properties - Optional event properties. Do not include PII like names or emails.
  */
 export function captureEvent(event: string, properties?: Record<string, unknown>) {
+  if (!PRODUCT_EVENT_NAME_PATTERN.test(event)) {
+    return;
+  }
+
+  if (!isAnalyticsCaptureAllowed() || !posthog.__loaded) {
+    return;
+  }
+
   posthog.capture(event, properties);
 }

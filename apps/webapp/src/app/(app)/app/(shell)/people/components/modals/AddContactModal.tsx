@@ -136,7 +136,7 @@ export function AddContactForm({
         }),
       );
 
-      captureEvent("contact_created");
+      captureEvent("contacts:contact_create");
 
       closeModal();
 

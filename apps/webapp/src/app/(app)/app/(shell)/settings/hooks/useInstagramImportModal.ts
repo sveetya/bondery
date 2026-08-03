@@ -8,13 +8,14 @@ import { SOCIAL_IMPORT_COMMIT_BATCH_SIZE } from "@bondery/schemas/constants";
 import { notifications } from "@mantine/notifications";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState } from "react";
+import { captureImportComplete } from "@/lib/analytics/imports";
 import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useModalDismiss } from "@/lib/modals";
 import {
   useCommitInstagramImportMutation,
   useParseInstagramImportMutation,
 } from "@/lib/query/hooks/useImports";
-import { useUpdateImportFollowupMutation } from "@/lib/query/hooks/useSettings";
+import { useSettingsQuery, useUpdateImportFollowupMutation } from "@/lib/query/hooks/useSettings";
 import {
   INSTAGRAM_STEP_PROGRESS,
   type InstagramImportStep,
@@ -46,6 +47,7 @@ export function useInstagramImportModal({
   const parseImport = useParseInstagramImportMutation();
   const commitImport = useCommitInstagramImportMutation();
   const followupMutation = useUpdateImportFollowupMutation();
+  const { data: settingsResult } = useSettingsQuery();
 
   const zipValidationMessage = (code: ZipValidationErrorCode): string => {
     switch (code) {
@@ -244,6 +246,7 @@ export function useInstagramImportModal({
 
     setIsImporting(true);
     setImportProgress({ current: 0, total: selectedContacts.length });
+    const isFirstImport = settingsResult?.data?.importCompletedAt == null;
 
     let totalImported = 0;
     let totalUpdated = 0;
@@ -280,6 +283,8 @@ export function useInstagramImportModal({
           title: t("SuccessTitle"),
         }),
       );
+
+      captureImportComplete("instagram", totalImported + totalUpdated, isFirstImport);
 
       closeModal();
 

@@ -26,6 +26,7 @@ export interface UserSettings {
   leftSwipeAction: string;
   name?: string | null;
   onboardingCompletedAt: string | null;
+  productAnalyticsEnabled: boolean;
   reminderSendHour: string;
   rightSwipeAction: string;
   tagSortOrder: string;
@@ -38,6 +39,7 @@ export interface UpdateUserSettingsInput {
   groupSortOrder?: GroupSortOrderPreference;
   language?: SupportedLocale;
   leftSwipeAction?: SwipeActionPreference;
+  productAnalyticsEnabled?: boolean;
   reminderSendHour?: string;
   rightSwipeAction?: SwipeActionPreference;
   tagSortOrder?: TagSortOrderPreference;

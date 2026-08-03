@@ -4,6 +4,10 @@ import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import {
+  captureProductEvent,
+  invalidateProductAnalyticsCache,
+} from "../analytics/posthog-capture.js";
 
 export type UserSettingsLanguage = SupportedLocale;
 
@@ -28,12 +32,14 @@ export function formatSettingsPatchData(result: {
   rightSwipeAction?: string | null;
   groupSortOrder?: string | null;
   tagSortOrder?: string | null;
+  productAnalyticsEnabled?: boolean | null;
 }) {
   return {
     colorScheme: result.colorScheme,
     groupSortOrder: result.groupSortOrder,
     language: result.language,
     leftSwipeAction: result.leftSwipeAction,
+    productAnalyticsEnabled: result.productAnalyticsEnabled,
     reminderSendHour: result.reminderSendHour,
     rightSwipeAction: result.rightSwipeAction,
     tagSortOrder: result.tagSortOrder,
@@ -55,7 +61,7 @@ export async function ensureDefaultSettings(ctx: DomainContext) {
   }
 
   try {
-    return await db.userSettings.create({
+    const created = await db.userSettings.create({
       data: {
         aiMessagesMonthResetAt: new Date(),
         colorScheme: "auto",
@@ -67,6 +73,12 @@ export async function ensureDefaultSettings(ctx: DomainContext) {
         userId: user.id,
       },
     });
+
+    void captureProductEvent(ctx, "signup_flow:user_create", {
+      signup_method: "email",
+    });
+
+    return created;
   } catch {
     throw internal("settings_failed_to_create_default_settings");
   }
@@ -86,6 +98,7 @@ export async function updateUserSettings(ctx: DomainContext, input: UpdateSettin
     rightSwipeAction?: string;
     groupSortOrder?: string;
     tagSortOrder?: string;
+    productAnalyticsEnabled?: boolean;
   } = {};
 
   if (input.timezone !== undefined) {
@@ -114,6 +127,9 @@ export async function updateUserSettings(ctx: DomainContext, input: UpdateSettin
   }
   if (input.tagSortOrder !== undefined) {
     updatePayload.tagSortOrder = input.tagSortOrder;
+  }
+  if (input.productAnalyticsEnabled !== undefined) {
+    updatePayload.productAnalyticsEnabled = input.productAnalyticsEnabled;
   }
 
   if (Object.keys(updatePayload).length === 0) {
@@ -164,6 +180,10 @@ export async function updateUserSettings(ctx: DomainContext, input: UpdateSettin
           ...updatePayload,
         },
       });
+
+  if (input.productAnalyticsEnabled !== undefined) {
+    invalidateProductAnalyticsCache(user.id);
+  }
 
   return {
     data: formatSettingsPatchData(result),

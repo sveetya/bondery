@@ -31,7 +31,7 @@ export async function provisionNewUser(params: {
   userId: string;
   name?: string | null;
   locale?: SupportedLocale;
-}): Promise<void> {
+}): Promise<{ settingsCreated: boolean }> {
   const { userId, name } = params;
   const locale = coerceSupportedLocale(params.locale ?? DEFAULT_LOCALE) as DbSupportedLocale;
   const now = new Date();
@@ -72,4 +72,6 @@ export async function provisionNewUser(params: {
       },
     });
   }
+
+  return { settingsCreated: !settings };
 }

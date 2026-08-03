@@ -2,18 +2,23 @@ import type { ImportFollowupPlatform } from "@bondery/schemas";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { captureProductEvent } from "../analytics/posthog-capture.js";
 
 export async function completeOnboarding(ctx: DomainContext): Promise<{ success: true }> {
   const db = domainDb(ctx);
   const { user } = ctx;
 
-  await db.userSettings.updateMany({
+  const result = await db.userSettings.updateMany({
     data: { onboardingCompletedAt: new Date() },
     where: {
       onboardingCompletedAt: null,
       userId: user.id,
     },
   });
+
+  if (result.count > 0) {
+    await captureProductEvent(ctx, "signup_flow:onboarding_complete");
+  }
 
   return { success: true };
 }

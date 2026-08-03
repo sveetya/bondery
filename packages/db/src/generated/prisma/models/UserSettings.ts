@@ -58,6 +58,7 @@ export type UserSettingsMinAggregateOutputType = {
   aiMessagesUsed: number | null
   aiMessagesThisMonth: number | null
   aiMessagesMonthResetAt: Date | null
+  productAnalyticsEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -84,6 +85,7 @@ export type UserSettingsMaxAggregateOutputType = {
   aiMessagesUsed: number | null
   aiMessagesThisMonth: number | null
   aiMessagesMonthResetAt: Date | null
+  productAnalyticsEnabled: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -110,6 +112,7 @@ export type UserSettingsCountAggregateOutputType = {
   aiMessagesUsed: number
   aiMessagesThisMonth: number
   aiMessagesMonthResetAt: number
+  productAnalyticsEnabled: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -148,6 +151,7 @@ export type UserSettingsMinAggregateInputType = {
   aiMessagesUsed?: true
   aiMessagesThisMonth?: true
   aiMessagesMonthResetAt?: true
+  productAnalyticsEnabled?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -174,6 +178,7 @@ export type UserSettingsMaxAggregateInputType = {
   aiMessagesUsed?: true
   aiMessagesThisMonth?: true
   aiMessagesMonthResetAt?: true
+  productAnalyticsEnabled?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -200,6 +205,7 @@ export type UserSettingsCountAggregateInputType = {
   aiMessagesUsed?: true
   aiMessagesThisMonth?: true
   aiMessagesMonthResetAt?: true
+  productAnalyticsEnabled?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -313,6 +319,7 @@ export type UserSettingsGroupByOutputType = {
   aiMessagesUsed: number
   aiMessagesThisMonth: number
   aiMessagesMonthResetAt: Date
+  productAnalyticsEnabled: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserSettingsCountAggregateOutputType | null
@@ -362,6 +369,7 @@ export type UserSettingsWhereInput = {
   aiMessagesUsed?: Prisma.IntFilter<"UserSettings"> | number
   aiMessagesThisMonth?: Prisma.IntFilter<"UserSettings"> | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFilter<"UserSettings"> | boolean
   createdAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -389,6 +397,7 @@ export type UserSettingsOrderByWithRelationInput = {
   aiMessagesUsed?: Prisma.SortOrder
   aiMessagesThisMonth?: Prisma.SortOrder
   aiMessagesMonthResetAt?: Prisma.SortOrder
+  productAnalyticsEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -419,6 +428,7 @@ export type UserSettingsWhereUniqueInput = Prisma.AtLeast<{
   aiMessagesUsed?: Prisma.IntFilter<"UserSettings"> | number
   aiMessagesThisMonth?: Prisma.IntFilter<"UserSettings"> | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFilter<"UserSettings"> | boolean
   createdAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserSettings"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -446,6 +456,7 @@ export type UserSettingsOrderByWithAggregationInput = {
   aiMessagesUsed?: Prisma.SortOrder
   aiMessagesThisMonth?: Prisma.SortOrder
   aiMessagesMonthResetAt?: Prisma.SortOrder
+  productAnalyticsEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserSettingsCountOrderByAggregateInput
@@ -480,6 +491,7 @@ export type UserSettingsScalarWhereWithAggregatesInput = {
   aiMessagesUsed?: Prisma.IntWithAggregatesFilter<"UserSettings"> | number
   aiMessagesThisMonth?: Prisma.IntWithAggregatesFilter<"UserSettings"> | number
   aiMessagesMonthResetAt?: Prisma.DateTimeWithAggregatesFilter<"UserSettings"> | Date | string
+  productAnalyticsEnabled?: Prisma.BoolWithAggregatesFilter<"UserSettings"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserSettings"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserSettings"> | Date | string
 }
@@ -505,6 +517,7 @@ export type UserSettingsCreateInput = {
   aiMessagesUsed?: number
   aiMessagesThisMonth?: number
   aiMessagesMonthResetAt: Date | string
+  productAnalyticsEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutUserSettingsInput
@@ -532,6 +545,7 @@ export type UserSettingsUncheckedCreateInput = {
   aiMessagesUsed?: number
   aiMessagesThisMonth?: number
   aiMessagesMonthResetAt: Date | string
+  productAnalyticsEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -557,6 +571,7 @@ export type UserSettingsUpdateInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutUserSettingsNestedInput
@@ -584,6 +599,7 @@ export type UserSettingsUncheckedUpdateInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -610,6 +626,7 @@ export type UserSettingsCreateManyInput = {
   aiMessagesUsed?: number
   aiMessagesThisMonth?: number
   aiMessagesMonthResetAt: Date | string
+  productAnalyticsEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -635,6 +652,7 @@ export type UserSettingsUpdateManyMutationInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -661,6 +679,7 @@ export type UserSettingsUncheckedUpdateManyInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -692,6 +711,7 @@ export type UserSettingsCountOrderByAggregateInput = {
   aiMessagesUsed?: Prisma.SortOrder
   aiMessagesThisMonth?: Prisma.SortOrder
   aiMessagesMonthResetAt?: Prisma.SortOrder
+  productAnalyticsEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -723,6 +743,7 @@ export type UserSettingsMaxOrderByAggregateInput = {
   aiMessagesUsed?: Prisma.SortOrder
   aiMessagesThisMonth?: Prisma.SortOrder
   aiMessagesMonthResetAt?: Prisma.SortOrder
+  productAnalyticsEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -749,6 +770,7 @@ export type UserSettingsMinOrderByAggregateInput = {
   aiMessagesUsed?: Prisma.SortOrder
   aiMessagesThisMonth?: Prisma.SortOrder
   aiMessagesMonthResetAt?: Prisma.SortOrder
+  productAnalyticsEnabled?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -819,6 +841,7 @@ export type UserSettingsCreateWithoutUserInput = {
   aiMessagesUsed?: number
   aiMessagesThisMonth?: number
   aiMessagesMonthResetAt: Date | string
+  productAnalyticsEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -844,6 +867,7 @@ export type UserSettingsUncheckedCreateWithoutUserInput = {
   aiMessagesUsed?: number
   aiMessagesThisMonth?: number
   aiMessagesMonthResetAt: Date | string
+  productAnalyticsEnabled?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -885,6 +909,7 @@ export type UserSettingsUpdateWithoutUserInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -910,6 +935,7 @@ export type UserSettingsUncheckedUpdateWithoutUserInput = {
   aiMessagesUsed?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesThisMonth?: Prisma.IntFieldUpdateOperationsInput | number
   aiMessagesMonthResetAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  productAnalyticsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -938,6 +964,7 @@ export type UserSettingsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   aiMessagesUsed?: boolean
   aiMessagesThisMonth?: boolean
   aiMessagesMonthResetAt?: boolean
+  productAnalyticsEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -965,6 +992,7 @@ export type UserSettingsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   aiMessagesUsed?: boolean
   aiMessagesThisMonth?: boolean
   aiMessagesMonthResetAt?: boolean
+  productAnalyticsEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -992,6 +1020,7 @@ export type UserSettingsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   aiMessagesUsed?: boolean
   aiMessagesThisMonth?: boolean
   aiMessagesMonthResetAt?: boolean
+  productAnalyticsEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1019,11 +1048,12 @@ export type UserSettingsSelectScalar = {
   aiMessagesUsed?: boolean
   aiMessagesThisMonth?: boolean
   aiMessagesMonthResetAt?: boolean
+  productAnalyticsEnabled?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "language" | "timezone" | "timeFormat" | "colorScheme" | "leftSwipeAction" | "rightSwipeAction" | "groupSortOrder" | "tagSortOrder" | "reminderSendHour" | "nextReminderAtUtc" | "onboardingCompletedAt" | "welcomeEmailSentAt" | "gettingStartedDismissedAt" | "importCompletedAt" | "importFollowupPlatform" | "importFollowupStatus" | "aiMessagesUsed" | "aiMessagesThisMonth" | "aiMessagesMonthResetAt" | "createdAt" | "updatedAt", ExtArgs["result"]["userSettings"]>
+export type UserSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "language" | "timezone" | "timeFormat" | "colorScheme" | "leftSwipeAction" | "rightSwipeAction" | "groupSortOrder" | "tagSortOrder" | "reminderSendHour" | "nextReminderAtUtc" | "onboardingCompletedAt" | "welcomeEmailSentAt" | "gettingStartedDismissedAt" | "importCompletedAt" | "importFollowupPlatform" | "importFollowupStatus" | "aiMessagesUsed" | "aiMessagesThisMonth" | "aiMessagesMonthResetAt" | "productAnalyticsEnabled" | "createdAt" | "updatedAt", ExtArgs["result"]["userSettings"]>
 export type UserSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -1061,6 +1091,7 @@ export type $UserSettingsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     aiMessagesUsed: number
     aiMessagesThisMonth: number
     aiMessagesMonthResetAt: Date
+    productAnalyticsEnabled: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["userSettings"]>
@@ -1508,6 +1539,7 @@ export interface UserSettingsFieldRefs {
   readonly aiMessagesUsed: Prisma.FieldRef<"UserSettings", 'Int'>
   readonly aiMessagesThisMonth: Prisma.FieldRef<"UserSettings", 'Int'>
   readonly aiMessagesMonthResetAt: Prisma.FieldRef<"UserSettings", 'DateTime'>
+  readonly productAnalyticsEnabled: Prisma.FieldRef<"UserSettings", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"UserSettings", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserSettings", 'DateTime'>
 }

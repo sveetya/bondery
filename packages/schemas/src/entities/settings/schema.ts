@@ -80,6 +80,7 @@ const mutableUserSettingsInputSchema = z.object({
   groupSortOrder: groupSortOrderPreferenceSchema,
   language: supportedLocaleSchema.nullable(),
   leftSwipeAction: swipeActionPreferenceSchema,
+  productAnalyticsEnabled: z.boolean(),
   reminderSendHour: reminderSendHourSchema,
   rightSwipeAction: swipeActionPreferenceSchema,
   tagSortOrder: tagSortOrderPreferenceSchema,
@@ -93,6 +94,7 @@ const mutableUserSettingsSchema = z.object({
   groupSortOrder: z.string(),
   language: supportedLocaleSchema,
   leftSwipeAction: z.string(),
+  productAnalyticsEnabled: z.boolean(),
   reminderSendHour: reminderSendHourSchema,
   rightSwipeAction: z.string(),
   tagSortOrder: z.string(),
@@ -111,6 +113,7 @@ export const userSettingsSchema = z.object({
   importFollowupPlatform: importFollowupPlatformSchema.nullable().optional(),
   importFollowupStatus: importFollowupStatusSchema.nullable().optional(),
   onboardingCompletedAt: nullableDateTimeSchema,
+  productAnalyticsEnabled: z.boolean(),
 }) satisfies z.ZodType<UserSettings>;
 
 export const updateUserSettingsInputSchema = mutableUserSettingsInputSchema

@@ -63,7 +63,7 @@ export function FeedbackModal({ modalId }: FeedbackModalProps) {
         }),
       );
 
-      captureEvent("nps_submitted", {
+      captureEvent("feedback:nps_submit", {
         has_general_feedback: values.generalFeedback.trim().length > 0,
         has_reason: values.npsReason.trim().length > 0,
         score: values.npsScore,

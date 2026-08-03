@@ -1,0 +1,50 @@
+# Event catalog
+
+Living list of product analytics events. **Canonical names** use PostHog `category:object_action`.
+
+## Canonical events
+
+| Event | Properties | Capture | Notes |
+|-------|------------|---------|-------|
+| `contacts:contact_create` | — | client | After successful create |
+| `contacts:contact_delete` | — | client | Single contact delete |
+| `contacts:bulk_delete` | `item_count` | client | Bulk delete |
+| `tags:tag_create` | — | client | |
+| `tags:tag_update` | — | client | |
+| `tags:tag_delete` | — | client | |
+| `groups:group_create` | — | client | |
+| `groups:group_delete` | — | client | |
+| `interactions:interaction_create` | `activity_type`, `participant_count` | client | |
+| `interactions:interaction_update` | `activity_type`, `participant_count` | client | |
+| `enrichment:batch_start` | `eligible_count` | client | Extension batch enrich |
+| `enrichment:batch_end` | `total_enriched` | client | Batch complete |
+| `enrichment:contact_update` | `source: "linkedin"` | client | Single LinkedIn enrich |
+| `feedback:nps_submit` | `score`, `has_general_feedback`, `has_reason` | client | After API success |
+| `signup_flow:user_create` | `signup_method` | **server** | On first `user_settings` row |
+| `signup_flow:onboarding_complete` | — | **server** | First onboarding completion |
+| `signup_flow:activation_complete` | `activation_type` | **server** | One-shot per milestone |
+| `account_settings:account_delete` | — | **server** | Before account teardown |
+| `auth:session_create` | — | client | Once per browser tab session |
+| `auth:session_end` | — | client | On logout / session end |
+| `imports:import_complete` | `import_source`, `item_count`, `is_first_import` | client | Import modal success |
+| `billing:subscription_create` | `plan_interval`, `plan_tier`, `cancel_at_period_end` | **server** | Stripe webhook |
+| `billing:subscription_cancel` | `plan_interval`, `plan_tier`, `cancel_at_period_end` | **server** | Stripe webhook |
+
+### `activation_type` values
+
+`first_contact` | `first_import` | `first_interaction` | `first_group`
+
+### `import_source` values
+
+`linkedin` | `instagram` | `vcard`
+
+## Plausible (website)
+
+Plausible does not use custom event names in product code — automatic pageviews only.
+
+## Adding an event
+
+1. Pick `category:object_action` per [naming-and-schema.md](./naming-and-schema.md).
+2. Add a row to the canonical table above.
+3. Implement via wrappers in [posthog-capture.md](./posthog-capture.md).
+4. Verify per [verification.md](./verification.md).

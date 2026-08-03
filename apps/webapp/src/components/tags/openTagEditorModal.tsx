@@ -220,7 +220,7 @@ function TagEditorModalBody({
         }
 
         notifications.hide(loadingId);
-        captureEvent("tag_created");
+        captureEvent("tags:tag_create");
 
         closeModalSync();
         notifications.show(
@@ -277,7 +277,7 @@ function TagEditorModalBody({
 
         await syncMembers(tag.id);
 
-        captureEvent("tag_updated");
+        captureEvent("tags:tag_update");
 
         notifications.hide(loadingId);
         closeModalSync();
@@ -331,7 +331,7 @@ function TagEditorModalBody({
         try {
           await deleteTagMutation.mutateAsync(tag.id);
 
-          captureEvent("tag_deleted");
+          captureEvent("tags:tag_delete");
 
           closeModalSync();
           notifications.show(

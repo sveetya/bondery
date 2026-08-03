@@ -229,10 +229,13 @@ function NewActivityForm({
         ? await updateInteractionMutation.mutateAsync(payload)
         : await createInteractionMutation.mutateAsync(payload);
 
-      captureEvent(activity ? "interaction_updated" : "interaction_created", {
-        activity_type: values.type,
-        participant_count: values.participantIds.length,
-      });
+      captureEvent(
+        activity ? "interactions:interaction_update" : "interactions:interaction_create",
+        {
+          activity_type: values.type,
+          participant_count: values.participantIds.length,
+        },
+      );
 
       notifications.show(
         successNotificationTemplate({

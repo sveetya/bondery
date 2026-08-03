@@ -51,11 +51,11 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 
 **Legal:** Update claims inventory when shipped.
 
-## 6. Analytics opt-out + `DO_NOT_TRACK`
+## 6. Analytics opt-out + browser DNT
 
-**Gap:** Policy claims settings toggle; `DO_NOT_TRACK` in manifest unused.
+**Status:** Implemented — Settings → Data management → Product analytics toggle (`productAnalyticsEnabled`); browser DNT honored in `instrumentation-client.ts`.
 
-**Target:** Settings toggle + wire `DO_NOT_TRACK` in `instrumentation-client.ts`; respect DNT header.
+**Note:** `DO_NOT_TRACK` env in manifest is for third-party CLI telemetry, not product analytics.
 
 ## 7. Retention enforcement jobs
 
@@ -87,7 +87,6 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 | P1 | Subprocessor manifest + generated Privacy table | Engineering |
 | P1 | CI vendor drift check | Engineering |
 | P2 | Cookie consent banner | Product + legal review |
-| P2 | Analytics opt-out | Product |
 | P2 | Self-host docs clarification | Docs |
 | P3 | Full account export | Product |
 | P3 | Retention jobs | Engineering |
