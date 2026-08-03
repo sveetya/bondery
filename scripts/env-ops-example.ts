@@ -2,9 +2,9 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { createCliLogger } from "@bondery/helpers/cli";
 import {
+  collectOpsSyncRows,
   ENV_MANIFEST,
   OPS_GROUP_GUIDES,
-  collectOpsSyncRows,
   resolveExampleValue,
   sortOpsExampleRows,
 } from "@bondery/helpers/env";
