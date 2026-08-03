@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  buildDeployWebhookPayload,
   buildOpsUploadPayload,
   buildUploadPayload,
   formatEnvPayload,
@@ -185,5 +186,13 @@ describe("sync-infisical-to-dokploy", () => {
     );
 
     assert.equal(payload, 'BONDERY_INFRA_GIT_SHA="abc def"');
+  });
+
+  it("buildDeployWebhookPayload includes path sentinels for Dokploy watch paths", () => {
+    const payload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/plausible"]);
+
+    assert.equal(payload.ref, "refs/heads/release");
+    assert.equal(payload.repository.full_name, "usebondery/bondery");
+    assert.deepEqual(payload.commits[0].modified, ["deploy/plausible"]);
   });
 });
