@@ -73,6 +73,7 @@ export function Footer() {
                 { href: "/#features", key: "features", title: "Features" },
                 { href: "/#pricing", key: "pricing", title: "Pricing" },
                 { href: HELP_DOCS_URL, key: "help-docs", target: "_blank", title: "Help Docs" },
+                { href: "/roadmap", key: "roadmap", target: "_blank", title: "Roadmap" },
               ]}
               title="Product"
             />

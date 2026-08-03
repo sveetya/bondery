@@ -30,7 +30,8 @@ Do not create a dated version section for every merge. A dated section represent
 4. Reset [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx) to an empty `## [Unreleased]` section with category headings as needed.
 5. Add `Breaking` notes with migration links when applicable.
 6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
-7. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
+7. After deploy smoke passes, move matching ROADMAP cards from Ready for Release to Released per [`bondery-roadmap`](../../bondery-roadmap/references/release-day.md).
+8. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
 
 Dependency-only work follows the [Package upgrade workflow](../../../workflows/chores/UPGRADE-PACKAGES.md) and normally uses the `📦 Dependencies` category with a `deps:` commit prefix.
 
@@ -43,3 +44,4 @@ Dependency-only work follows the [Package upgrade workflow](../../../workflows/c
 - [ ] Breaking and self-hosting actions are explicit
 - [ ] Full technical release workflow completed separately
 - [ ] Monthly announcement content was drafted from curated outcomes
+- [ ] ROADMAP cards updated to Released with changelog links (after deploy smoke)

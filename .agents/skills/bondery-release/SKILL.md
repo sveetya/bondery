@@ -42,6 +42,7 @@ metadata:
 | Concern | Owner |
 |---------|--------|
 | Version scheme, `Unreleased` → dated section | [`bondery-changelog`](../bondery-changelog/SKILL.md) |
+| Public roadmap state updates (Ready for Release → Released) | [`bondery-roadmap`](../bondery-roadmap/SKILL.md) |
 | CI triggers, Docker channels, promote semantics | [`.github/workflows/README.md`](../../../.github/workflows/README.md) |
 | Execute file edits and commits | Cursor implementer agent |
 | Watch `release-*` / `deploy-website` CI | Cursor babysit skill |
@@ -74,4 +75,5 @@ Full index: [references/README.md](references/README.md).
 - [ ] Tested pair pinned in manifest + `deploy/bondery/.env.example`; promoted to `release` if needed
 - [ ] Dokploy env updated; changed service(s) redeployed
 - [ ] Manual smoke: login + one authenticated mutation on product stack
+- [ ] ROADMAP cards updated (Ready for Release → Released) per [`bondery-roadmap`](../bondery-roadmap/SKILL.md)
 - [ ] Post-release comms if monthly release ([post-release.md](references/post-release.md))

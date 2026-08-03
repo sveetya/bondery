@@ -98,6 +98,9 @@ export const HELP_DOCS_URL = "https://usebondery.com/docs";
 export const CHANGELOG_URL = `${HELP_DOCS_URL}/changelog`;
 
 export const GITHUB_REPO_URL = "https://api.github.com/repos/usebondery/bondery";
+export const PUBLIC_ROADMAP_PLANE_URL =
+  "https://sites.plane.so/issues/8a364296fbbc4c858adeb1952a72a451";
+export const ROADMAP_URL = "https://usebondery.com/roadmap";
 export const STATUS_PAGE_URL = "https://bondery.openstatus.dev/";
 export const SUPPORT_EMAIL = "team@usebondery.com";
 
