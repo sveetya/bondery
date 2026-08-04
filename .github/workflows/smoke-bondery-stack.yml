@@ -1,6 +1,6 @@
 name: Smoke · Bondery stack
 
-# Manual full-stack smoke drill. Release smoke is chained inside release-api.yml / release-webapp.yml.
+# Manual full-stack smoke drill. Release smoke runs inside release.yml via shared-release-container.yml.
 
 on:
   workflow_dispatch:

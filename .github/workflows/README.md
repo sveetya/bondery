@@ -15,9 +15,6 @@ deploy/
 
 release/
   bondery.yml              -> release.yml           vX.Y.Z unified product release
-  api.yml                  -> release-api.yml       api-X.Y.Z (deprecated)
-  webapp.yml               -> release-webapp.yml    webapp-X.Y.Z (deprecated)
-  extension.yml            -> release-extension.yml ext-X.Y.Z (deprecated)
 
 smoke/
   bondery-stack.yml        -> smoke-bondery-stack.yml  manual workflow_dispatch drill
@@ -30,7 +27,6 @@ shared/
   infisical-staging-secrets/ -> .github/actions/shared/infisical-staging-secrets/
   infisical-production-secrets/ -> .github/actions/shared/infisical-production-secrets/
   derive-public-urls/        -> .github/actions/shared/derive-public-urls/
-  resolve-ci-env-fallback/   -> .github/actions/shared/resolve-ci-env-fallback/
   dokploy-save-compose-env/  -> .github/actions/shared/dokploy-save-compose-env/
   turbo-remote-cache/      -> .github/actions/shared/turbo-remote-cache/
   website-prune-build/     -> .github/actions/shared/website-prune-build/
@@ -41,7 +37,6 @@ shared/
   release-container.yml    -> shared-release-container.yml
   release-extension.yml    -> shared-release-extension.yml
   github-release-append.yml -> shared-github-release-append.yml
-  container-github-release.yml -> shared-container-github-release.yml
   smoke-bondery.yml        -> shared-smoke-bondery.yml
   promote-production.yml   -> shared-promote-production.yml
 ```
@@ -53,7 +48,7 @@ shared/
 | `verify` | Quality gates | **PR only** (`website-build` path-filtered; `contract` always runs). Uses `concurrency` to cancel stale runs. |
 | `stage-images` | Integration images on main | Push to `main` (path-filtered matrix: api, webapp, website) |
 | `deploy-*` | Production CD (floating channel) | Push to `release` (path-filtered); website promotes `:sha` when staged on main |
-| `release-*` | Versioned production releases | Git tag `vX.Y.Z` (unified); legacy `api-*`/`webapp-*`/`ext-*` deprecated |
+| `release-*` | Versioned production releases | Git tag `vX.Y.Z` (unified product release) |
 | `shared-*` | Reusable workflows (not triggered directly) | `workflow_call` only |
 | `sync-dokploy-env` | Infisical → Dokploy ops env sync | `workflow_dispatch` (OIDC only; no GitHub secrets) |
 
@@ -63,23 +58,23 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 
 **Node on runners:** Host jobs pin Node 26 via `devEngines.runtime` in root `package.json` (`pnpm/setup@v1` reads it and installs the runtime). Production Docker images use `node:26-slim` with `pnpm install --no-runtime` (Node is already in the image). Host CI uses the shared `setup-pnpm` composite (`pnpm/setup` + `pnpm ci`); pnpm version comes from `packageManager` (`pnpm@11.18.0`). Docker builder stages install pnpm globally (`npm install -g pnpm@11.18.0`) — Node 25+ does not ship corepack.
 
-**Dokploy webhooks** (Infisical **production** via OIDC; GitHub variables are fallback during cutover):
+**Dokploy webhooks** (Infisical **production** via OIDC):
 
 | Infisical key | Workflow | Dokploy app |
 |---------------|----------|-------------|
 | `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` | `deploy-website.yml` (after smoke) | `deploy/ops` marketing website |
-| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` (and legacy `release-api.yml`, `release-webapp.yml`) | `deploy/bondery` product stack |
+| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` | `deploy/bondery` product stack |
 
-Workflows fetch production secrets with `infisical-production-secrets`, then `resolve-ci-env-fallback` fills any missing keys from GitHub variables until those variables are deleted. Empty webhook skips redeploy (manual Dokploy).
+Workflows fetch production secrets with `infisical-production-secrets`. Empty webhook skips redeploy (manual Dokploy).
 
-**Extension release** (`shared-release-extension.yml`, legacy `release-extension.yml`): production Infisical for `BONDERY_INFRA_CHROME_EXTENSION_ID`, publisher id, and public URLs (derived from `BONDERY_INFRA_*_DOMAIN` + `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID`). **Still on GitHub secrets:** `PRIVATE_CHROME_*` signing keys, `BONDERY_OPS_TURBO_*`. **GHCR:** `BONDERY_OPS_GHCR_WRITE_TOKEN` from Infisical production (`ghcr-login-infisical`).
+**Extension release** (`shared-release-extension.yml`): production Infisical for `BONDERY_INFRA_CHROME_EXTENSION_ID`, publisher id, and public URLs (derived from `BONDERY_INFRA_*_DOMAIN` + `BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID`). **Still on GitHub secrets:** `PRIVATE_CHROME_*` signing keys, `BONDERY_OPS_TURBO_*`. **GHCR:** `BONDERY_OPS_GHCR_WRITE_TOKEN` from Infisical production (`ghcr-login-infisical`).
 
 **Turbo remote cache** (`BONDERY_OPS_TURBO_TOKEN` secret + `BONDERY_OPS_TURBO_TEAM` variable):
 
 | Where | Mechanism |
 |-------|-----------|
 | `verify` `contract`, `website-build` | `turbo-remote-cache` action |
-| `release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
+| `shared-release-extension` | job `env` `TURBO_TOKEN` / `TURBO_TEAM` |
 | Docker builds (api, webapp, website) | `shared-docker-build-push` passes `TURBO_TEAM` build-arg + `turbo_token` secret; Dockerfiles mount secret on `turbo build` |
 
 **Verify path filters:** `website-build` runs when marketing-site paths change. `contract` always runs. API HTTP integration (`test:api`) is not in CI; run manually when changing routes if needed. Auth integration (`pnpm --filter api run test:auth`) is local-only until the suite is repaired.
@@ -92,7 +87,7 @@ Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages 
 |---------|-------------|-------------|
 | Stage (api/webapp) | `main` | `:beta`, `:sha-<short>` |
 | Stage (website) | `main` | `:sha-<short>` only |
-| Release (api/webapp) | `vX.Y.Z` (unified) | Promote `:sha-<short>` → `:X.Y.Z`; `:production` after smoke; legacy `api-*`/`webapp-*` deprecated |
+| Release (api/webapp) | `vX.Y.Z` (unified) | Promote `:sha-<short>` → `:X.Y.Z`; `:production` after smoke |
 | Deploy (website) | push to `release` | Promote `:sha-<short>` → `:production` when image exists on main; else build |
 
 `:sha-<short>` is the **immutable artifact** built on `main`. `:beta` is a floating integration pointer for api/webapp only.
@@ -131,11 +126,11 @@ If you change lockfile layout or pnpm major version, bump the BuildKit cache id 
 
 **Ops checklist (Infisical UI — before relying on Infisical-only CI):**
 
-1. Populate production keys above (copy webhook URLs from GitHub variables if needed).
+1. Populate production keys above.
 2. Machine identity `f8b9e69d-bc32-4066-ad99-8ad6ecff2d21` — **read** on **production** and **staging**.
-3. OIDC subjects cover: `release.yml`, `shared-release-extension.yml`, `release-extension.yml`, `deploy-website.yml`, `release-api.yml`, `release-webapp.yml`, smoke workflows, `sync-dokploy-env.yml`.
+3. OIDC subjects cover: `release.yml`, `shared-release-extension.yml`, `deploy-website.yml`, smoke workflows, `sync-dokploy-env.yml`.
 4. Audience: `https://github.com/usebondery`.
-5. After a green release with Infisical-only values, delete migrated GitHub **variables** (keep Turbo, GHCR, `PRIVATE_CHROME_*` secrets).
+5. GitHub retains only Turbo (`BONDERY_OPS_TURBO_*`) and Chrome signing (`PRIVATE_CHROME_*`) secrets.
 
 Release smoke (`shared-smoke-bondery.yml`, `smoke-bondery-stack.yml`) boots the API with `NODE_ENV=production`, which **live-verifies SMTP** at startup. Fake `smtp.example.com` placeholders from `deploy/bondery/.env.example` fail that check.
 
@@ -191,4 +186,4 @@ Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifes
 3. First run with `dry_run: true` per target — verify upload keys (no `BONDERY_OPS_*` connection keys).
 4. `dry_run: false` — backup Dokploy env before first live sync; SHA / version / image tag stay in Dokploy UI.
 
-Release and deploy workflows read Dokploy webhook URLs from **production Infisical** (OIDC). GitHub repository variables remain as fallback until operators confirm and delete them.
+Release and deploy workflows read Dokploy webhook URLs from **production Infisical** (OIDC).

@@ -14,7 +14,7 @@ PR → verify → merge main → stage-images (:sha for changed services)
 
 ## Critical ordering rule
 
-**When the Chrome extension changed:** do not push `main:release` or `api-*` / `webapp-*` tags until the user **explicitly confirms** the extension is live in the Chrome Web Store. Deploying the webapp/API before the extension is live breaks `MIN_EXTENSION_VERSION` gating.
+**When the Chrome extension changed:** do not push `main:release` or `vX.Y.Z` until the user **explicitly confirms** the extension is live in the Chrome Web Store. Deploying the webapp/API before the extension is live breaks `MIN_EXTENSION_VERSION` gating.
 
 Agents must **stop and ask** after pushing `ext-X.Y.Z` until the user confirms CWS approval.
 

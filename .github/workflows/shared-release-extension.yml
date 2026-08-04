@@ -16,16 +16,6 @@ on:
 
         type: string
 
-      extension_tag:
-
-        description: Optional legacy ext-X.Y.Z prefix for asset filenames
-
-        required: false
-
-        type: string
-
-        default: ""
-
     outputs:
 
       zip_path:
@@ -100,16 +90,6 @@ jobs:
 
       - uses: ./.github/actions/shared/derive-public-urls
 
-
-
-      - uses: ./.github/actions/shared/resolve-ci-env-fallback
-
-        with:
-
-          profile: extension
-
-
-
       - name: Verify extension CI env
 
         run: node scripts/check-ci-infisical.mjs extension
@@ -126,7 +106,7 @@ jobs:
 
         env:
 
-          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+          ASSET_SUFFIX: ${{ inputs.version }}
 
         run: |
 
@@ -164,7 +144,7 @@ jobs:
 
         env:
 
-          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+          ASSET_SUFFIX: ${{ inputs.version }}
 
         run: |
 
@@ -250,7 +230,7 @@ jobs:
 
         env:
 
-          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+          ASSET_SUFFIX: ${{ inputs.version }}
 
         run: |
 

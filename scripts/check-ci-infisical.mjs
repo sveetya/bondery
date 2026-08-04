@@ -2,7 +2,7 @@
 
 /**
 
- * Assert required CI env vars are set after Infisical fetch (+ optional GitHub fallback).
+ * Assert required CI env vars are set after Infisical production fetch.
 
  *
 

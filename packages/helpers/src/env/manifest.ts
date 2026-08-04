@@ -1112,7 +1112,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       commented: true,
       group: "Image pin",
       include: true,
-      value: "1.8.2",
+      value: "1.8.3",
     },
     description:
       "Product version: pins api and webapp container images to ghcr.io/usebondery/{api,webapp}:X.Y.Z when set; also surfaced in runtime config and health probes. Omit for floating :production channel.",

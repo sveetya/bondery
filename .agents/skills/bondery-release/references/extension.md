@@ -13,8 +13,6 @@ git push origin vX.Y.Z
 
 [`release.yml`](../../../../.github/workflows/release.yml) runs the extension job when `apps/chrome-extension/**` changed.
 
-Legacy `ext-X.Y.Z` still triggers [`release-extension.yml`](../../../../.github/workflows/release-extension.yml) during migration (CWS publish only — no separate GitHub release).
-
 ## Stop for Chrome Web Store
 
 After pushing the tag:
@@ -42,6 +40,6 @@ OAuth setup, unpacked extension loading, and simulating `MIN_EXTENSION_VERSION`:
 ## Extension checklist
 
 - [ ] `ext-X.Y.Z` matches release `X.Y.Z`
-- [ ] `release-extension` workflow succeeded
+- [ ] `release.yml` extension job succeeded
 - [ ] User confirmed extension live in CWS before product deploy
 - [ ] `MIN_EXTENSION_VERSION` updated on `main` if API gating changed (see [prerequisites.md](prerequisites.md))

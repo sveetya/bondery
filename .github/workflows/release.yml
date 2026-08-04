@@ -52,7 +52,6 @@ jobs:
   validate:
     uses: ./.github/workflows/shared-release-validate.yml
     with:
-      tag_prefix: v
       release_mode: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'release' }}
       dispatch_version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
 
@@ -335,10 +334,6 @@ jobs:
           persist-credentials: false
 
       - uses: ./.github/actions/shared/infisical-production-secrets
-
-      - uses: ./.github/actions/shared/resolve-ci-env-fallback
-        with:
-          profile: services-webhook
 
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:

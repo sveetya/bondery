@@ -56,7 +56,7 @@ git push origin vX.Y.Z
 
 [`release.yml`](../../../../.github/workflows/release.yml) path-filters which components promote. Unchanged api/webapp images are retagged from the previous `v*` version.
 
-Legacy `api-*` / `webapp-*` / `ext-*` tags still trigger deprecated workflows during migration — prefer `vX.Y.Z`.
+Production releases use unified `vX.Y.Z` tags only (`release.yml`).
 
 ## Prerequisites checklist
 

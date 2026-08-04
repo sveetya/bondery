@@ -1,0 +1,18 @@
+---
+title: "Changelog 1.8.3"
+hidden: true
+---
+
+## [1.8.3] - 04.08.2026
+
+### ✨ Added
+
+- Release: unified `vX.Y.Z` product releases — one GitHub release, shared `BONDERY_INFRA_VERSION` pin for api + webapp, extension publish in the same pipeline.
+- CI: production operator secrets loaded from Infisical via OIDC (Dokploy webhooks, GHCR, Chrome Web Store ids, extension public URLs).
+- Infra: `BONDERY_INFRA_WEBSITE_IMAGE_TAG` for ops-stack website image pins (defaults to floating `:production`).
+- Health: Liveness and readiness probes on api, webapp, and website now share `{ status, timestamp, version?, gitSha? }` payloads; readiness failures return `status: "unhealthy"` with `error`.
+
+### 🔄 Changed
+
+- Ops: Website Compose image uses `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (omit for `:production`); build metadata env vars apply to api and website containers.
+- CI: Removed deprecated per-service release tags (`api-*`, `webapp-*`, `ext-*`) and GitHub variable fallbacks for migrated Infisical keys.

@@ -63,7 +63,7 @@ Redeploy the **full** Compose app (Dokploy's default) so `api` `pre_start` runs 
 
 ### CI redeploy webhook
 
-After unified `vX.Y.Z` release tags (or legacy `api-*` / `webapp-*`), GitHub Actions fetches **production Infisical** and POSTs to `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` with `refs/heads/release`. Set the Dokploy Compose app branch to **`release`**. Leave the webhook unset in Infisical to redeploy manually.
+After unified `vX.Y.Z` release tags, GitHub Actions fetches **production Infisical** and POSTs to `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` with `refs/heads/release`. Set the Dokploy Compose app branch to **`release`**. Leave the webhook unset in Infisical to redeploy manually.
 
 ### Isolated Deployments
 

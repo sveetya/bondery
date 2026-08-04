@@ -3,10 +3,6 @@ name: Shared - Release validate
 on:
   workflow_call:
     inputs:
-      tag_prefix:
-        description: Git tag prefix (api, webapp, ext, or v for unified product tags)
-        required: true
-        type: string
       manual_release_tag:
         description: Optional tag override for workflow_dispatch callers
         required: false
@@ -34,9 +30,6 @@ on:
       version:
         description: Semver extracted from the tag
         value: ${{ jobs.validate.outputs.version }}
-      legacy:
-        description: True when tag uses legacy api/webapp/ext prefix
-        value: ${{ jobs.validate.outputs.legacy }}
 
 jobs:
   validate:
@@ -44,7 +37,6 @@ jobs:
     outputs:
       tag: ${{ steps.release_meta.outputs.tag }}
       version: ${{ steps.release_meta.outputs.version }}
-      legacy: ${{ steps.release_meta.outputs.legacy }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -55,12 +47,9 @@ jobs:
         id: release_meta
         env:
           MANUAL_RELEASE_TAG: ${{ inputs.manual_release_tag }}
-          TAG_PREFIX: ${{ inputs.tag_prefix }}
           RELEASE_MODE: ${{ inputs.release_mode }}
           DISPATCH_VERSION: ${{ inputs.dispatch_version }}
         run: |
-          LEGACY=false
-
           if [ "$RELEASE_MODE" = "retry-promote" ]; then
             if [ -z "$DISPATCH_VERSION" ]; then
               echo "retry-promote requires dispatch_version"
@@ -88,31 +77,15 @@ jobs:
             TAG="${GITHUB_REF_NAME}"
           fi
 
-          if [ "$TAG_PREFIX" = "v" ]; then
-            if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
-              echo "Invalid unified release tag: $TAG"
-              echo "Expected format: vX.Y.Z"
-              exit 1
-            fi
-            VERSION="${TAG#v}"
-          else
-            LEGACY=true
-            if ! echo "$TAG" | grep -Eq "^${TAG_PREFIX}-[0-9]+\\.[0-9]+\\.[0-9]+$"; then
-              echo "Invalid release tag: $TAG"
-              echo "Expected format: ${TAG_PREFIX}-X.Y.Z"
-              exit 1
-            fi
-            VERSION="${TAG#${TAG_PREFIX}-}"
+          if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid unified release tag: $TAG"
+            echo "Expected format: vX.Y.Z"
+            exit 1
           fi
+          VERSION="${TAG#v}"
 
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "legacy=$LEGACY" >> "$GITHUB_OUTPUT"
-
-      - name: Warn on legacy product tags
-        if: steps.release_meta.outputs.legacy == 'true'
-        run: |
-          echo "::warning::Legacy tag ${{ steps.release_meta.outputs.tag }} is deprecated. Use vX.Y.Z unified tags instead."
 
       - name: Ensure tag commit is on release branch
         if: inputs.require_release_branch
@@ -125,23 +98,11 @@ jobs:
           fi
 
       - name: Ensure root package.json matches release version
-        if: inputs.release_mode == 'release' && inputs.tag_prefix == 'v'
+        if: inputs.release_mode == 'release'
         run: |
           ROOT_VERSION=$(node -p "require('./package.json').version")
           VERSION="${{ steps.release_meta.outputs.version }}"
           if [ "$ROOT_VERSION" != "$VERSION" ]; then
             echo "root package.json version ($ROOT_VERSION) must equal release tag ($VERSION)"
             exit 1
-          fi
-
-      - name: Ensure release tag exists for manual legacy runs
-        if: inputs.manual_release_tag != '' && steps.release_meta.outputs.legacy == 'true'
-        run: |
-          TAG="${{ steps.release_meta.outputs.tag }}"
-          git fetch --tags
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag already exists: $TAG"
-          else
-            git tag "$TAG" "$GITHUB_SHA"
-            git push origin "$TAG"
           fi

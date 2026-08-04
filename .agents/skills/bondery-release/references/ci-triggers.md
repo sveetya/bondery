@@ -12,9 +12,6 @@ This file interprets CI for release captains. If anything conflicts, trust the w
 | Stage artifacts | push `main` | `stage-images.yml` | `:sha-<short>` (+ `:beta` for api/webapp) per changed service |
 | Website CD | push `release` | `deploy-website.yml` | Promote `:sha` → `:production` or build fallback; smoke; Dokploy ops webhook |
 | **Unified release** | tag `vX.Y.Z` | `release.yml` | One GitHub release; promote/smoke api/webapp; CWS extension; Dokploy webhook |
-| Legacy API | tag `api-X.Y.Z` | `release-api.yml` | Deprecated — no per-service GitHub release |
-| Legacy webapp | tag `webapp-X.Y.Z` | `release-webapp.yml` | Deprecated |
-| Legacy extension | tag `ext-X.Y.Z` | `release-extension.yml` | Deprecated — CWS only, no GitHub release |
 
 ## Promote-first semantics
 
@@ -41,12 +38,12 @@ Release tags **do not rebuild by default**. They promote `ghcr.io/usebondery/{ap
 
 ## Dokploy webhooks
 
-Fetched from **Infisical production** (OIDC) in CI. GitHub repository variables are fallback during migration.
+Fetched from **Infisical production** (OIDC) in CI.
 
 | Infisical key | Workflow |
 |---------------|----------|
 | `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` | `deploy-website.yml` |
-| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` (and legacy `release-api` / `release-webapp`) |
+| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` |
 
 Payload uses `refs/heads/release` so tag releases match Dokploy branch filters.
 

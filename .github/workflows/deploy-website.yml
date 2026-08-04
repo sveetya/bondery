@@ -190,10 +190,6 @@ jobs:
 
       - uses: ./.github/actions/shared/infisical-production-secrets
 
-      - uses: ./.github/actions/shared/resolve-ci-env-fallback
-        with:
-          profile: website-webhook
-
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:
           webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
