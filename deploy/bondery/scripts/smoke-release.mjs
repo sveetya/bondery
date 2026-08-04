@@ -254,45 +254,26 @@ function prepareEnvSmoke() {
   copyFileSync(resolve(BONDERY_DIR, ".env.smoke"), resolve(BONDERY_DIR, ".env"));
 }
 
-/** Paired API semver from deploy/.env.example — webapp-only releases keep the current API pin. */
-function readPairedApiImageTag() {
-  const example = readFileSync(resolve(BONDERY_DIR, ".env.example"), "utf8");
-  const versionMatch = example.match(/^BONDERY_INFRA_VERSION=(\d+\.\d+\.\d+)/m);
-  if (versionMatch) {
-    return versionMatch[1];
-  }
-  throw new Error("Could not resolve paired API image tag from deploy/bondery/.env.example");
-}
-
-/** Pin compose image tags in smoke env (webapp smoke must not pull api:production). */
-function applySmokeImageTags(service, tag) {
+/** Pin BONDERY_INFRA_VERSION for paired api/webapp compose images in smoke. */
+function applySmokeVersion(tag) {
   const envPath = resolve(BONDERY_DIR, ".env.smoke");
   const lines = readFileSync(envPath, "utf8").split("\n");
-  const imageTags =
-    service === "webapp"
-      ? {
-          BONDERY_INFRA_API_IMAGE_TAG: readPairedApiImageTag(),
-          BONDERY_INFRA_WEBAPP_IMAGE_TAG: tag,
-        }
-      : { BONDERY_INFRA_API_IMAGE_TAG: tag };
-
-  const seen = new Set();
+  const key = "BONDERY_INFRA_VERSION";
+  let found = false;
   const out = lines.map((line) => {
     if (!line || line.trimStart().startsWith("#") || !line.includes("=")) {
       return line;
     }
-    const key = line.split("=")[0]?.trim();
-    if (key && key in imageTags) {
-      seen.add(key);
-      return `${key}=${imageTags[key]}`;
+    const lineKey = line.split("=")[0]?.trim();
+    if (lineKey === key) {
+      found = true;
+      return `${key}=${tag}`;
     }
     return line;
   });
 
-  for (const [key, value] of Object.entries(imageTags)) {
-    if (!seen.has(key)) {
-      out.push(`${key}=${value}`);
-    }
+  if (!found) {
+    out.push(`${key}=${tag}`);
   }
 
   writeFileSync(envPath, `${out.join("\n")}\n`);
@@ -363,7 +344,7 @@ const { service, tag, imageName } = parseArgs();
 
 try {
   prepareEnvSmoke();
-  applySmokeImageTags(service, tag);
+  applySmokeVersion(tag);
   writeOverride(service, imageName, tag);
 
   run("node scripts/check-compose.mjs");

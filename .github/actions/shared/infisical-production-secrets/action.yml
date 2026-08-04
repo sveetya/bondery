@@ -1,0 +1,9 @@
+name: Infisical production secrets
+description: Fetch Infisical production secrets via OIDC for CI release/deploy workflows.
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/shared/infisical-fetch-secrets
+      with:
+        env-slug: production

@@ -1,15 +1,19 @@
-# Chrome extension release
+# Chrome extension release (unified product release)
 
 Extension releases are **sequential and blocking** when extension code changed. See [sequencing-and-gates.md](sequencing-and-gates.md).
 
 ## Tag and CI
 
+Prefer unified product tags:
+
 ```bash
-git tag ext-X.Y.Z
-git push origin ext-X.Y.Z
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
-Triggers [`release-extension.yml`](../../../../.github/workflows/release-extension.yml) (`Release - Extension`). Manual dispatch is also available with input `release_tag: ext-X.Y.Z`.
+[`release.yml`](../../../../.github/workflows/release.yml) runs the extension job when `apps/chrome-extension/**` changed.
+
+Legacy `ext-X.Y.Z` still triggers [`release-extension.yml`](../../../../.github/workflows/release-extension.yml) during migration (CWS publish only — no separate GitHub release).
 
 ## Stop for Chrome Web Store
 

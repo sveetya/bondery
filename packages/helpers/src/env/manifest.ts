@@ -770,38 +770,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     targets: [],
   },
   {
-    canonical: "BONDERY_INFRA_API_IMAGE_TAG",
-    deployExample: {
-      commented: true,
-      group: "Image tags",
-      include: true,
-      value: "1.8.2",
-    },
-    description: "API container image tag (omit for floating production channel).",
-    exampleValue: "",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [],
-    turboAffectsCache: false,
-  },
-  {
-    canonical: "BONDERY_INFRA_WEBAPP_IMAGE_TAG",
-    deployExample: {
-      commented: true,
-      group: "Image tags",
-      include: true,
-      value: "1.8.1",
-    },
-    description: "Webapp container image tag (omit for floating production channel).",
-    exampleValue: "",
-    group: "Infra",
-    requiredIn: [],
-    secret: false,
-    targets: [],
-    turboAffectsCache: false,
-  },
-  {
     canonical: "BONDERY_INFRA_WEBSITE_IMAGE_TAG",
     description: "Website container image tag (omit for floating production channel).",
     exampleValue: "",
@@ -1140,14 +1108,21 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   // --- Infra (optional local) ---
   {
     canonical: "BONDERY_INFRA_VERSION",
-    deployExample: { group: "Build metadata", include: true },
-    description: "App version surfaced in runtime config and health probes",
+    deployExample: {
+      commented: true,
+      group: "Image pin",
+      include: true,
+      value: "1.8.2",
+    },
+    description:
+      "Product version: pins api and webapp container images to ghcr.io/usebondery/{api,webapp}:X.Y.Z when set; also surfaced in runtime config and health probes. Omit for floating :production channel.",
     exampleValue: "",
     group: "Infra",
     opsExample: { group: "Build metadata", include: true, value: "" },
     requiredIn: [],
     secret: false,
     targets: [t("api"), t("webapp"), t("website")],
+    turboAffectsCache: false,
   },
   {
     canonical: "BONDERY_INFRA_GIT_SHA",
@@ -1240,7 +1215,7 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
   "BONDERY_OPS_DOKPLOY_HOST",
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
-  "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
 ] as const;
@@ -1254,7 +1229,7 @@ export const DOKPLOY_SYNC_TARGETS = {
   },
   website: {
     composeIdKey: "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
-    webhookKey: "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+    webhookKey: "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
     webhookPathSentinels: ["deploy/ops"],
   },
 } as const satisfies Record<
@@ -1271,10 +1246,10 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_DOKPLOY_HOST",
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
-  "BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
-  "BONDERY_OPS_CHROME_EXTENSION_ID",
   "BONDERY_OPS_CHROME_PUBLISHER_ID",
   "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
   "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",

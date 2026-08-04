@@ -32,6 +32,8 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **Rotation runbooks:** `docs/deploy/secrets.mdx`.
 
+**CI operator secrets:** Release/deploy workflows fetch **Infisical production** via GitHub OIDC (`infisical-production-secrets`, `ghcr-login-infisical`). Staging Infisical is for release-smoke SMTP only. Turbo and Chrome signing keys (`PRIVATE_CHROME_*`) remain GitHub repository secrets. See [`.github/workflows/README.md`](../../../../.github/workflows/README.md).
+
 ## Secrets rules
 
 - No hardcoded API keys, tokens, or passwords in source

@@ -22,7 +22,15 @@ permissions:
   id-token: write
 
 jobs:
+  deprecation:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::warning::api-X.Y.Z tags are deprecated. Use unified vX.Y.Z tags (release.yml) instead."
+          echo "Per-service GitHub releases are no longer created."
+
   validate:
+    needs: deprecation
     uses: ./.github/workflows/shared-release-validate.yml
     with:
       tag_prefix: api
@@ -97,26 +105,25 @@ jobs:
       image_name: ghcr.io/usebondery/api
       version: ${{ needs.validate.outputs.version }}
 
-  github-release:
-    needs: [validate, smoke]
-    if: ${{ always() && needs.smoke.result == 'success' }}
-    uses: ./.github/workflows/shared-container-github-release.yml
-    with:
-      tag: ${{ needs.validate.outputs.tag }}
-      version: ${{ needs.validate.outputs.version }}
-      image_name: ghcr.io/usebondery/api
-      product_name: Bondery API
-
   notify-dokploy:
     needs: [image_ready, smoke, promote-production]
     if: ${{ always() && needs.smoke.result == 'success' && needs.promote-production.result == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
+      - uses: ./.github/actions/shared/infisical-production-secrets
+
+      - uses: ./.github/actions/shared/resolve-ci-env-fallback
+        with:
+          profile: services-webhook
+
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:
-          webhook_url: ${{ vars.BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK }}
+          webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK }}
           branch: release

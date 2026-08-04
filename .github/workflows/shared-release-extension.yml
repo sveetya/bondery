@@ -1,170 +1,297 @@
-name: Release - Extension
+name: Shared - Release extension
 
-permissions:
-  contents: write
-  id-token: write
+
 
 on:
-  push:
-    tags:
-      - "ext-*.*.*" # Trigger on extension version tags like ext-1.0.0, ext-1.2.3
-  workflow_dispatch: # Allow manual triggering
+
+  workflow_call:
+
     inputs:
-      release_tag:
-        description: "Extension tag to release (format: ext-X.Y.Z)"
+
+      version:
+
+        description: Extension semver (X.Y.Z)
+
         required: true
+
         type: string
 
-jobs:
-  deprecation:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "::warning::ext-X.Y.Z tags are deprecated for unified releases. Prefer vX.Y.Z (release.yml)."
-          echo "Extension-only emergencies may still use ext-X.Y.Z until cutover."
+      extension_tag:
 
-  build-and-release:
-    needs: deprecation
+        description: Optional legacy ext-X.Y.Z prefix for asset filenames
+
+        required: false
+
+        type: string
+
+        default: ""
+
+    outputs:
+
+      zip_path:
+
+        description: Path to extension zip artifact
+
+        value: ${{ jobs.build.outputs.zip_path }}
+
+      crx_path:
+
+        description: Path to extension crx artifact
+
+        value: ${{ jobs.build.outputs.crx_path }}
+
+      public_key_path:
+
+        description: Path to public key pem artifact
+
+        value: ${{ jobs.build.outputs.public_key_path }}
+
+
+
+permissions:
+
+  contents: read
+
+  id-token: write
+
+
+
+jobs:
+
+  build:
+
     runs-on: ubuntu-latest
+
+    outputs:
+
+      zip_path: ${{ steps.paths.outputs.zip_path }}
+
+      crx_path: ${{ steps.paths.outputs.crx_path }}
+
+      public_key_path: ${{ steps.paths.outputs.public_key_path }}
+
     env:
+
       TURBO_TELEMETRY_DISABLED: 1
+
       PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON: ${{ secrets.PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON }}
+
       PRIVATE_CHROME_PRIVATE_SIGNING_KEY: ${{ secrets.PRIVATE_CHROME_PRIVATE_SIGNING_KEY }}
+
       TURBO_TEAM: ${{ vars.BONDERY_OPS_TURBO_TEAM }}
+
       TURBO_TOKEN: ${{ secrets.BONDERY_OPS_TURBO_TOKEN }}
 
+
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
+
+      - uses: actions/checkout@v7
+
         with:
+
           persist-credentials: false
+
+
 
       - uses: ./.github/actions/shared/infisical-production-secrets
 
+
+
       - uses: ./.github/actions/shared/derive-public-urls
 
+
+
       - uses: ./.github/actions/shared/resolve-ci-env-fallback
+
         with:
+
           profile: extension
 
+
+
       - name: Verify extension CI env
+
         run: node scripts/check-ci-infisical.mjs extension
+
+
 
       - uses: ./.github/actions/shared/setup-pnpm
 
-      - name: Resolve release metadata
-        id: release_meta
+
+
+      - name: Resolve asset paths
+
+        id: paths
+
+        env:
+
+          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+
         run: |
-          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
-            TAG="${{ inputs.release_tag }}"
-          else
-            TAG="${GITHUB_REF_NAME}"
-          fi
 
-          if ! echo "$TAG" | grep -Eq '^ext-[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "❌ Invalid release tag: $TAG"
-            echo "Expected format: ext-X.Y.Z"
-            exit 1
-          fi
+          echo "zip_path=bondery-extension-${ASSET_SUFFIX}.zip" >> "$GITHUB_OUTPUT"
 
-          VERSION="${TAG#ext-}"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "crx_path=apps/chrome-extension/bondery-extension-${ASSET_SUFFIX}.crx" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure release tag exists for manual runs
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          TAG="${{ steps.release_meta.outputs.tag }}"
-          git fetch --tags
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag already exists: $TAG"
-          else
-            git tag "$TAG" "$GITHUB_SHA"
-            git push origin "$TAG"
-          fi
+          echo "public_key_path=bondery-extension-${ASSET_SUFFIX}.public-key.pem" >> "$GITHUB_OUTPUT"
+
+
 
       - name: Create production environment file
+
         run: |
+
           echo "BONDERY_PUBLIC_WEBAPP_URL=$BONDERY_PUBLIC_WEBAPP_URL" > apps/chrome-extension/.env.production.local
+
           echo "BONDERY_PUBLIC_API_URL=$BONDERY_PUBLIC_API_URL" >> apps/chrome-extension/.env.production.local
+
           echo "BONDERY_PUBLIC_OAUTH_CLIENT_ID=$BONDERY_PUBLIC_OAUTH_CLIENT_ID" >> apps/chrome-extension/.env.production.local
 
+
+
       - name: Build Chrome Extension
+
         env:
+
           NODE_ENV: production
+
         run: pnpm exec turbo build --filter=chrome-extension...
 
-      - name: Validate keys, create signed CRX, and prepare public key asset
+
+
+      - name: Create signed CRX and zip
+
+        env:
+
+          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+
         run: |
+
           PRIVATE_KEY_PATH="apps/chrome-extension/private-key.pem"
+
           PUBLIC_KEY_PATH="apps/chrome-extension/public-key.pem"
-          CRX_PATH="apps/chrome-extension/bondery-extension-${{ steps.release_meta.outputs.tag }}.crx"
-          PUBLIC_KEY_ASSET_PATH="./bondery-extension-${{ steps.release_meta.outputs.tag }}.public-key.pem"
+
+          CRX_PATH="apps/chrome-extension/bondery-extension-${ASSET_SUFFIX}.crx"
+
+          PUBLIC_KEY_ASSET_PATH="./bondery-extension-${ASSET_SUFFIX}.public-key.pem"
+
+
 
           printf "%b" "$PRIVATE_CHROME_PRIVATE_SIGNING_KEY" > "$PRIVATE_KEY_PATH"
+
           openssl pkey -in "$PRIVATE_KEY_PATH" -pubout -out "$PUBLIC_KEY_PATH"
 
+
+
           pnx crx3@2 \
+
             -p "$PRIVATE_KEY_PATH" \
+
             -o "$CRX_PATH" \
+
             apps/chrome-extension/dist/chrome-mv3
+
+
 
           cp "$PUBLIC_KEY_PATH" "$PUBLIC_KEY_ASSET_PATH"
 
+
+
           node -e "const fs=require('fs'); const crx=fs.readFileSync(process.argv[1]); if(crx.subarray(0,4).toString()!=='Cr24'){ console.error('Invalid CRX header'); process.exit(1);} " "$CRX_PATH"
 
-          rm -f \
-            "$PRIVATE_KEY_PATH" \
-            "$PUBLIC_KEY_PATH"
 
-      - name: Authenticate to Google Cloud
-        id: gcp_auth
-        uses: google-github-actions/auth@v3
-        with:
-          credentials_json: ${{ secrets.PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON }}
-          token_format: access_token
-          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
 
-      - name: Fetch Chrome Web Store item status
-        run: |
-          STATUS_RESPONSE=$(curl -sS -X GET \
-            "https://chromewebstore.googleapis.com/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:fetchStatus" \
-            -H "Authorization: Bearer ${{ steps.gcp_auth.outputs.access_token }}")
+          rm -f "$PRIVATE_KEY_PATH" "$PUBLIC_KEY_PATH"
 
-          echo "$STATUS_RESPONSE" | node -e "const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); if(data.error){ console.error('❌ fetchStatus failed'); console.error(input); process.exit(1);} const itemState = data.itemState || 'UNKNOWN'; const uploadState = data.uploadState || 'UNKNOWN'; console.log(`✅ fetchStatus OK | itemState=${itemState} uploadState=${uploadState}`);"
 
-      - name: Create zip archive
-        run: |
+
           cd apps/chrome-extension/dist/chrome-mv3
-          zip -r ../../../../bondery-extension-${{ steps.release_meta.outputs.tag }}.zip .
+
+          zip -r "../../../../bondery-extension-${ASSET_SUFFIX}.zip" .
+
           cd ../../..
 
-      - name: Upload CRX to Chrome Web Store
+
+
+      - name: Authenticate to Google Cloud
+
+        id: gcp_auth
+
+        uses: google-github-actions/auth@v3
+
+        with:
+
+          credentials_json: ${{ secrets.PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON }}
+
+          token_format: access_token
+
+          access_token_scopes: https://www.googleapis.com/auth/chromewebstore
+
+
+
+      - name: Fetch Chrome Web Store item status
+
         run: |
-          CRX_PATH="./apps/chrome-extension/bondery-extension-${{ steps.release_meta.outputs.tag }}.crx"
-          CRX_FILE_NAME="bondery-extension-${{ steps.release_meta.outputs.version }}.crx"
 
-          echo "CRX file diagnostics:"
-          ls -lh "$CRX_PATH"
-          node -e "const fs=require('fs'); const crypto=require('crypto'); const p=process.argv[1]; const b=fs.readFileSync(p); const magic=b.subarray(0,4).toString(); const version=b.readUInt32LE(4); const sha256=crypto.createHash('sha256').update(b).digest('hex'); console.log(JSON.stringify({path:p,sizeBytes:b.length,magic,version,sha256},null,2)); if(magic!=='Cr24'){ process.exit(1);} " "$CRX_PATH"
+          STATUS_RESPONSE=$(curl -sS -X GET \
 
-          HTTP_CODE=$(curl -sS -o /tmp/cws-upload-response.json -w "%{http_code}" -X POST \
-            "https://chromewebstore.googleapis.com/upload/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:upload" \
-            -H "Authorization: Bearer ${{ steps.gcp_auth.outputs.access_token }}" \
-            -H "X-Goog-Upload-Protocol: raw" \
-            -H "X-Goog-Upload-File-Name: $CRX_FILE_NAME" \
-            -H "Content-Type: application/x-chrome-extension" \
-            --data-binary @"$CRX_PATH")
+            "https://chromewebstore.googleapis.com/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:fetchStatus" \
 
-          echo "Upload HTTP status: $HTTP_CODE"
-          cat /tmp/cws-upload-response.json
-
-          node -e "const fs=require('fs'); const code=Number(process.argv[1]); const input=fs.readFileSync('/tmp/cws-upload-response.json','utf8'); if(code < 200 || code >= 300){ console.error('Upload request failed with non-2xx status'); console.error(input); process.exit(1);} try { const data=JSON.parse(input); console.log('Upload response summary:', JSON.stringify({uploadState:data.uploadState, crxVersion:data.crxVersion}, null, 2)); } catch { console.log('Upload response was not JSON'); }" "$HTTP_CODE"
-
-      - name: Publish Chrome Web Store item
-        run: |
-          PUBLISH_RESPONSE=$(curl -sS -X POST \
-            "https://chromewebstore.googleapis.com/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:publish" \
             -H "Authorization: Bearer ${{ steps.gcp_auth.outputs.access_token }}")
 
+
+
+          echo "$STATUS_RESPONSE" | node -e "const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); if(data.error){ console.error('❌ fetchStatus failed'); console.error(input); process.exit(1);} const itemState = data.itemState || 'UNKNOWN'; const uploadState = data.uploadState || 'UNKNOWN'; console.log(\`✅ fetchStatus OK | itemState=\${itemState} uploadState=\${uploadState}\`);"
+
+
+
+      - name: Upload CRX to Chrome Web Store
+
+        env:
+
+          ASSET_SUFFIX: ${{ inputs.extension_tag != '' && inputs.extension_tag || inputs.version }}
+
+        run: |
+
+          CRX_PATH="./apps/chrome-extension/bondery-extension-${ASSET_SUFFIX}.crx"
+
+          CRX_FILE_NAME="bondery-extension-${{ inputs.version }}.crx"
+
+
+
+          HTTP_CODE=$(curl -sS -o /tmp/cws-upload-response.json -w "%{http_code}" -X POST \
+
+            "https://chromewebstore.googleapis.com/upload/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:upload" \
+
+            -H "Authorization: Bearer ${{ steps.gcp_auth.outputs.access_token }}" \
+
+            -H "X-Goog-Upload-Protocol: raw" \
+
+            -H "X-Goog-Upload-File-Name: $CRX_FILE_NAME" \
+
+            -H "Content-Type: application/x-chrome-extension" \
+
+            --data-binary @"$CRX_PATH")
+
+
+
+          node -e "const fs=require('fs'); const code=Number(process.argv[1]); const input=fs.readFileSync('/tmp/cws-upload-response.json','utf8'); if(code < 200 || code >= 300){ console.error('Upload request failed'); console.error(input); process.exit(1);} try { const data=JSON.parse(input); console.log('Upload summary:', JSON.stringify({uploadState:data.uploadState, crxVersion:data.crxVersion}, null, 2)); } catch { console.log('Upload response was not JSON'); }" "$HTTP_CODE"
+
+
+
+      - name: Publish Chrome Web Store item
+
+        run: |
+
+          PUBLISH_RESPONSE=$(curl -sS -X POST \
+
+            "https://chromewebstore.googleapis.com/v2/publishers/$BONDERY_OPS_CHROME_PUBLISHER_ID/items/$BONDERY_INFRA_CHROME_EXTENSION_ID:publish" \
+
+            -H "Authorization: Bearer ${{ steps.gcp_auth.outputs.access_token }}")
+
+
+
           echo "$PUBLISH_RESPONSE" | node -e "const fs=require('fs'); const input=fs.readFileSync(0,'utf8'); const data=JSON.parse(input); const state=String(data.state||'').toUpperCase(); const status=data.status; const okStatus = Array.isArray(status) ? status.map(String).map(s=>s.toUpperCase()).includes('OK') : String(status||'').toUpperCase()==='OK'; const okState = ['PENDING_REVIEW','PUBLISHED'].includes(state); if(!(okStatus || okState)){ console.error(input); process.exit(1);} console.log('✅ publish accepted | state=' + (state || 'UNKNOWN'));"
+
+

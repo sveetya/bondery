@@ -18,15 +18,7 @@ export function collectDeployExampleRows(packageVersion: string) {
     }
     const group = deploy.group ?? entry.group;
     let value = resolveExampleValue(entry, "deploy");
-    if (entry.canonical === "BONDERY_INFRA_VERSION" && !deploy.value) {
-      value = packageVersion;
-    }
-    if (
-      (entry.canonical === "BONDERY_INFRA_API_IMAGE_TAG" ||
-        entry.canonical === "BONDERY_INFRA_WEBAPP_IMAGE_TAG") &&
-      deploy.commented &&
-      !deploy.value
-    ) {
+    if (entry.canonical === "BONDERY_INFRA_VERSION" && deploy.commented && !deploy.value) {
       value = packageVersion;
     }
     rows.push({

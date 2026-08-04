@@ -41,10 +41,7 @@ jobs:
         run: docker network create dokploy-network || true
 
       - name: Log in to GHCR
-        uses: ./.github/actions/shared/ghcr-login
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+        uses: ./.github/actions/shared/ghcr-login-infisical
 
       - name: Fetch Infisical staging secrets
         uses: ./.github/actions/shared/infisical-staging-secrets

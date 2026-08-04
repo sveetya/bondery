@@ -63,7 +63,7 @@ Redeploy the **full** Compose app (Dokploy's default) so `api` `pre_start` runs 
 
 ### CI redeploy webhook
 
-After `api-*.*.*` / `webapp-*.*.*` tags build and push `:production`, [`.github/workflows/release-api.yml`](../../.github/workflows/release-api.yml) and [`.github/workflows/release-webapp.yml`](../../.github/workflows/release-webapp.yml) POST to `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (GitHub **variable**) with `refs/heads/release`. Set the Dokploy Compose app branch to **`release`**. Leave the variable empty to redeploy manually.
+After unified `vX.Y.Z` release tags (or legacy `api-*` / `webapp-*`), GitHub Actions fetches **production Infisical** and POSTs to `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` with `refs/heads/release`. Set the Dokploy Compose app branch to **`release`**. Leave the webhook unset in Infisical to redeploy manually.
 
 ### Isolated Deployments
 
@@ -78,7 +78,7 @@ Leave Dokploy **Isolated Deployments** off for the default Bondery app (one stac
 | Image | `ghcr.io/usebondery/website:${BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production}` (floating `:production` when unset) |
 | Domain | `BONDERY_INFRA_WEBSITE_DOMAIN` Traefik label → port `26630` |
 
-**CI:** Path-filtered PRs and pushes to `main` run `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) (pruned production `next build`). Push to `release` runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) (Docker build-push → smoke → optional Dokploy webhook); image tags `:production` + `:sha-<short>`. Repository variable `BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK` triggers redeploy (`refs/heads/release`).
+**CI:** Path-filtered PRs and pushes to `main` run `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) (pruned production `next build`). Push to `release` runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) (Docker build-push → smoke → optional Dokploy webhook from Infisical production); image tags `:production` + `:sha-<short>`. Infisical key `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` triggers redeploy (`refs/heads/release`).
 
 ```bash
 BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com

@@ -3,7 +3,8 @@ description: >-
   POST a GitHub-style push payload so Dokploy redeploys a Compose app.
   Use an explicit branch (default release) — not GITHUB_REF_NAME — so
   workflow_dispatch and tag-based release flows match the Dokploy app branch setting.
-  Webhook URLs are repository variables (BONDERY_OPS_DOKPLOY_*_DEPLOY_WEBHOOK).
+  Webhook URLs come from Infisical production (job env) after OIDC fetch,
+  with optional GitHub variable fallback during migration.
 
 inputs:
   webhook_url:

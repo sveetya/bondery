@@ -1,41 +1,35 @@
 # Dokploy pins and env examples
 
-Self-hosters and production should run **pinned semver image tags** for api/webapp, not floating `:production`.
+Self-hosters and production should pin **`BONDERY_INFRA_VERSION`** (not floating `:production`) so api and webapp move together.
 
-## Manifest pins
+## Manifest pin
 
-Edit [`packages/helpers/src/env/manifest.ts`](../../../../packages/helpers/src/env/manifest.ts) — set `deployExample.value` on:
-
-- `BONDERY_INFRA_API_IMAGE_TAG`
-- `BONDERY_INFRA_WEBAPP_IMAGE_TAG`
+Run `pnpm run sync-version` on release prep — it updates `deployExample.value` on `BONDERY_INFRA_VERSION` in [`packages/helpers/src/env/manifest.ts`](../../../../packages/helpers/src/env/manifest.ts) and regenerates [`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example).
 
 For the marketing website ops stack, set `opsExample.value` on:
 
 - `BONDERY_INFRA_WEBSITE_IMAGE_TAG`
 
-If only one service changed in the release, bump only that pin; leave the other at the last tested compatible version.
-
 ## Regenerate deploy examples
 
 ```bash
-pnpm run build -w @bondery/helpers
-pnpm run env -- --write-examples
+pnpm run sync-version
+# or after manual manifest edit:
+pnpm --filter @bondery/helpers run build
+pnpm run env:examples
 ```
 
-[`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example) will include commented pins:
+[`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example) includes:
 
 ```env
-# BONDERY_INFRA_API_IMAGE_TAG=X.Y.Z
-# BONDERY_INFRA_WEBAPP_IMAGE_TAG=X.Y.Z
+# BONDERY_INFRA_VERSION=X.Y.Z
 ```
 
-[`deploy/ops/.env.example`](../../../../deploy/ops/.env.example) will include:
+[`deploy/ops/.env.example`](../../../../deploy/ops/.env.example) may include:
 
 ```env
 # BONDERY_INFRA_WEBSITE_IMAGE_TAG=X.Y.Z
 ```
-
-Uncomment or set values to match manifest. Commit manifest + regenerated example on `main`, then promote to `release` if pins changed after the release push.
 
 ## Dokploy redeploy
 
@@ -46,25 +40,25 @@ Uncomment or set values to match manifest. Commit manifest + regenerated example
 
 On Dokploy product Compose:
 
-1. Set the same `BONDERY_INFRA_*_IMAGE_TAG` values in app env.
-2. Redeploy **only the changed service** when possible:
+1. Set `BONDERY_INFRA_VERSION=X.Y.Z` in app env (pins both container images).
+2. Save env and redeploy **api + webapp together**:
 
 ```bash
-docker compose up -d --no-deps webapp
-# or
-docker compose up -d --no-deps api
+docker compose up -d api webapp
 ```
+
+Do not roll back or upgrade api/webapp independently in production.
 
 Website is a separate Dokploy app (`deploy/ops`). Omit `BONDERY_INFRA_WEBSITE_IMAGE_TAG` for floating `:production`, or pin for rollback.
 
-## Record rollback pair
+## Record rollback version
 
-Before changing pins, note the previous `(BONDERY_INFRA_API_IMAGE_TAG, BONDERY_INFRA_WEBAPP_IMAGE_TAG)` pair in the PR or release notes. For website, note the previous `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (or `:production`). See [rollback-hotfix.md](rollback-hotfix.md).
+Before changing pins, note the previous `BONDERY_INFRA_VERSION` in the PR or release notes. For website, note the previous `BONDERY_INFRA_WEBSITE_IMAGE_TAG` (or `:production`). See [rollback-hotfix.md](rollback-hotfix.md).
 
 ## Pins checklist
 
-- [ ] Pins match the semver tags that passed CI smoke
-- [ ] `pnpm run env -- --write-examples` run after manifest edit
-- [ ] `deploy/bondery/.env.example` and `deploy/ops/.env.example` committed
+- [ ] `BONDERY_INFRA_VERSION` matches semver tags that passed CI smoke
+- [ ] `pnpm run sync-version` (or `env:examples`) run after manifest edit
+- [ ] `deploy/bondery/.env.example` committed
 - [ ] Dokploy product env updated
-- [ ] Only changed service(s) redeployed when possible
+- [ ] api + webapp redeployed together

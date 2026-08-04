@@ -29,7 +29,7 @@ Do not create a dated version section for every merge. A dated section represent
 3. Create [`docs/changelog/releases/X.Y.Z.mdx`](../../../../docs/changelog/releases/) with `## [X.Y.Z] - DD.MM.YYYY` and the accumulated entries; add an import in [`docs/changelog.mdx`](../../../../docs/changelog.mdx) directly below `<Unreleased />`.
 4. Reset [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx) to an empty `## [Unreleased]` section with category headings as needed.
 5. Add `Breaking` notes with migration links when applicable.
-6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
+6. Complete package version bumps via `pnpm run sync-version`, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
 7. After deploy smoke passes, move matching ROADMAP cards from Ready for Release to Released per [`bondery-roadmap`](../../bondery-roadmap/references/release-day.md).
 8. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
 

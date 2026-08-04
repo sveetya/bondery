@@ -87,5 +87,5 @@
     "predev": "pnpm run check:env",
     "test:sync": "tsx --test src/lib/sync/pull-wake.test.ts"
   },
-  "version": "0.1.0"
+  "version": "1.8.2"
 }

@@ -59,6 +59,9 @@ jobs:
       - name: Check env sync (examples + turbo)
         run: pnpm run env:check
 
+      - name: Check product version sync
+        run: pnpm run check:versions
+
       - name: Docs checks
         run: pnpm run check:docs
 
