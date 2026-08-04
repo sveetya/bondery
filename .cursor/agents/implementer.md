@@ -36,6 +36,8 @@ Then identify if the task touches any additional domains (auth, storage, backgro
 
 For user-visible changes, dependency updates, release preparation, or changelog edits, read `bondery-changelog` (`/.agents/skills/bondery-changelog/SKILL.md`).
 
+For Plane MAIN work items, weekly cycles, intake/sanity checks, or internal kanban grooming, read `bondery-pm` (`/.agents/skills/bondery-pm/SKILL.md`).
+
 A plan that contradicts codebase conventions is not an implementation — it's a bug waiting to happen.
 
 ## Step 1: Understand the Monorepo Structure

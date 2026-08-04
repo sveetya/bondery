@@ -49,6 +49,7 @@ Do not duplicate content across skills — link and keep a single source of trut
 | Legal disclosure, subprocessors, policy claims | `bondery-legal` |
 | Product changelog, commit prefixes, release notes | `bondery-changelog` |
 | Public roadmap, Plane ROADMAP project | `bondery-roadmap` |
+| Internal MAIN board, cycles, sanity checks | `bondery-pm` |
 | Release operator runbook (deploy, tags, pins, gates) | `bondery-release` |
 | Skill authoring | `bondery-skill-authoring` |
 | Verification loop, PR gates, change-scoped checks | `bondery-verification-loop` |
