@@ -15,7 +15,7 @@ Default owner UUID: `fe2bd70b-7756-40cf-b771-c767fc2c3559` (Marek Svitek).
 
 | Plane group | State | Description |
 |-------------|-------|-------------|
-| backlog | **Intake** | Raw ideas, drafts, agent-created cards awaiting sanity check (default, triage) |
+| backlog | **Inbox** | Raw ideas awaiting sanity check |
 | backlog | **Icebox** | Valid work, not now — reviewed but deferred |
 | unstarted | **Bet** | Reviewed and roughly scoped; may enter a weekly cycle |
 | unstarted | **Bet for Next Cycle** | Queued for next weekly cycle (Mon–Sun) |
@@ -28,7 +28,7 @@ Default owner UUID: `fe2bd70b-7756-40cf-b771-c767fc2c3559` (Marek Svitek).
 ### Transition rules
 
 ```
-Intake → (sanity check) → Icebox | Bet | Bet for Next Cycle
+Inbox → (sanity check) → Icebox | Bet | Bet for Next Cycle
 Bet for Next Cycle → (cycle setup Mon) → Bet → Building
 Building → Release queue → Released
 Icebox → Bet (when prioritized) | Won't do (stale 60d+)
@@ -39,7 +39,7 @@ Resolve state UUIDs via Plane MCP `list_states` when updating cards — names be
 
 | State | UUID |
 |-------|------|
-| Intake | `9a91a8c3-76a3-48ea-9613-bbd9a54dd575` | Default triage state (rename legacy **Backlog** column to **Intake** in Plane when empty) |
+| Inbox | `94a37b5a-efab-4a97-ad54-bb175fbd5423` |
 | Icebox | `dfe776d8-97de-4fdd-8d47-380db2c407a7` |
 | Bet | `a78477d7-bcc0-4659-879f-a640e5c36008` |
 | Bet for Next Cycle | `fcbaa781-5998-404b-b212-4d7e2cc30cb6` |

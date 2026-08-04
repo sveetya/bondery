@@ -4,7 +4,7 @@
 |-----------|-----------|
 | [states-and-labels.md](states-and-labels.md) | Configuring MAIN states, labels, field rules, UUIDs |
 | [title-and-description.md](title-and-description.md) | Writing titles, descriptions, blocked comments |
-| [intake-and-sanity-check.md](intake-and-sanity-check.md) | Processing Intake, five sanity-check questions |
+| [intake-and-sanity-check.md](intake-and-sanity-check.md) | Processing Inbox, five sanity-check questions |
 | [cycles.md](cycles.md) | Setting up weekly cycles, rollover, cap enforcement |
 | [vs-roadmap.md](vs-roadmap.md) | Deciding MAIN vs ROADMAP; linking public cards |
 | [parent-tasks.md](parent-tasks.md) | Splitting epics into parent + child tasks |

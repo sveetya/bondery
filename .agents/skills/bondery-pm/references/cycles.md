@@ -4,6 +4,8 @@ Cycles are the weekly commitment container (Mon–Sun). State = execution progre
 
 **Cap:** 3–5 items per active cycle (solo founder + agents).
 
+**First cycle note:** `Week of 2026-08-04` exists but starts **empty** (migration seed was cleared). Add 3–5 items from Bet for Next Cycle when you commit the week.
+
 ## Set up new cycle
 
 Triggered when user says *"set up a new cycle"* or at the start of each week:

@@ -1,34 +1,32 @@
-# Intake and sanity check
+# Inbox and sanity check
 
-## Intake
+## Inbox
 
-All new cards land in **Intake** (default state). Agents must not skip to Building.
+All new cards land in **Inbox** (default triage state). Agents must not skip to Building.
 
-Intake holds raw ideas, drafts, and agent-created cards until a sanity check is complete.
+Inbox UUID: `94a37b5a-efab-4a97-ad54-bb175fbd5423`
 
-## Five sanity-check questions
+## Sanity check
 
-Before a card moves from **Intake** → **Icebox** or **Bet**, the description must include a `## Sanity check` section with answers to all five:
+Before a card moves from **Inbox** → **Icebox** or **Bet**, the description must include a `## Sanity check` section with answers to all five:
 
-1. **Who is the user?** — Specific persona (e.g. "mobile contact manager"), or `operator/founder` for infra, docs, and business ops.
-2. **What pain or opportunity?** — One sentence: what problem this solves or what it unlocks.
-3. **How do we know?** — Evidence source: support ticket, churn feedback, usage/analytics, founder intuition, ROADMAP vote, agent suggestion, etc.
-4. **What's the smallest shippable slice this week?** — If not shippable this week, answer `not this week` and move to **Icebox** instead of **Bet**.
+1. **Who is the user?** — Persona or `operator/founder`.
+2. **What pain or opportunity?** — One sentence on the problem or upside.
+3. **How do we know?** — Support ticket, churn, usage, founder, ROADMAP vote, agent, analytics, …
+4. **Smallest shippable slice** — This week's slice, or `not this week`.
 5. **How will we know it worked?** — Metric, qualitative signal, or concrete outcome (e.g. "unblocks self-host docs", "reduces API p95 by 20%").
 
-**Note:** This is a description section, not Plane triage and not a comment thread.
+## Triage outcomes
 
-## Decision after sanity check
+| Result | Next state |
+|--------|------------|
+| Valid, not now | **Icebox** |
+| Ready to scope | **Bet** or **Bet for Next Cycle** |
+| Cannot answer honestly | Stay in **Inbox** or **Won't do** with reason comment |
 
-| Outcome | Next state |
-|---------|------------|
-| All five answered + shippable this week or soon | **Bet** (or **Bet for Next Cycle** if queued for Monday) |
-| All five answered + not now | **Icebox** |
-| Cannot answer honestly | Stay in **Intake** or **Won't do** with reason comment |
+## Inbox checklist
 
-## Intake checklist
-
-- [ ] Card is in Intake state
-- [ ] All five sanity-check questions answered in description
-- [ ] Source + Surface labels assigned
-- [ ] Owner assigned before leaving Intake
+- [ ] Card is in Inbox state
+- [ ] Title is `[Type] outcome-oriented title` (see [title-and-description.md](title-and-description.md))
+- [ ] `## Outcome` and `## Sanity check` sections present in description
+- [ ] Owner assigned before leaving Inbox

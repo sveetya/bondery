@@ -6,7 +6,7 @@ One-time rules used for bulk MAIN board migration (Aug 2026). Kept for audit.
 
 | Old state | New state |
 |-----------|-----------|
-| Backlog | **Icebox** (default); **Intake** if created in last 7 days with empty description |
+| Backlog | **Inbox** if created in last 7 days with empty description; else **Icebox** |
 | Todo | **Bet for Next Cycle** |
 | In Progress | **Building** |
 | Waiting on external party | **Blocked** |

@@ -8,6 +8,8 @@
 
 **Outcome over component** — bad: `[Feature] Export button`. Good: `[Feature] Let users bulk-export cycle reports as CSV`.
 
+Titles should mirror the `## Outcome` sentence in the description. When the Outcome is still a label (e.g. `LLC`, `Overview`), groom the Outcome first, then retitle.
+
 ### Examples
 
 | Type | Example |
@@ -61,5 +63,5 @@ Migrated cards without a complete sanity check get this footer until groomed:
 
 - [ ] Title matches regex with valid type prefix
 - [ ] Outcome is user/operator-facing, not component jargon
-- [ ] Sanity check section complete before leaving Intake
+- [ ] Sanity check section complete before leaving Inbox
 - [ ] Blocked/Won't do use comments, not description sections

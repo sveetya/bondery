@@ -8,7 +8,7 @@ MCP sequences for common MAIN board operations. Always verify `project_id = 5ab1
 create_work_item(
   project_id=MAIN,
   name="[Chore] ...",
-  state=Intake,
+  state=94a37b5a-efab-4a97-ad54-bb175fbd5423,  # Inbox
   assignees=[fe2bd70b-7756-40cf-b771-c767fc2c3559],
   labels=[Source: Agents, Surface: ...]
 )
@@ -35,7 +35,9 @@ list_work_items(pql='state = "<Icebox UUID>" AND created_at < "<60 days ago>"')
 
 ```
 retrieve_work_item_by_identifier("ROADMAP-n")
-create_work_item_relation(source=MAIN item, target=ROADMAP item, relates_to)
+# Prefer MCP when list_work_item_relation_definitions works:
+# create_work_item_relation(..., relation_definition_id=..., relation_definition_label="relates to")
+# Otherwise link in Plane UI → Relations → relates to
 update_work_item(description_html with ## Roadmap section)
 ```
 
@@ -55,6 +57,6 @@ One-time legacy migration logic lives in [`../scripts/migrate-main-board.mjs`](.
 ## Agent workflows checklist
 
 - [ ] MAIN project UUID verified before every write
-- [ ] New cards start in Intake with Source: Agents
-- [ ] Sanity check in description before leaving Intake
+- [ ] New cards start in Inbox with Source: Agents
+- [ ] Sanity check in description before leaving Inbox
 - [ ] Blocked/Won't do use comments only
