@@ -42,7 +42,7 @@ curl -s http://localhost:26632/health/live
 |---------|-------|------|--------|
 | `webapp` | `ghcr.io/usebondery/webapp` | 26632 | Liveness `/health/live` |
 | `api` | `ghcr.io/usebondery/api` | 26631 | Better Auth + Prisma; waits for Redis + Postgres + SeaweedFS |
-| `redis` | `redis:7.4-alpine` | internal | AOF + volume `redis-data` |
+| `redis` | `redis:8.10` | internal | AOF + volume `redis-data` |
 | `db` | `postgis/postgis:17-3.5` | internal | Named volume `postgres-data` |
 | `seaweedfs-*` | SeaweedFS | 8333 (Traefik) | S3 creds from `.env` → rendered at startup (`seaweedfs/entrypoint.sh`) |
 
