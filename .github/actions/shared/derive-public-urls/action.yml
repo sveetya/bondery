@@ -1,0 +1,21 @@
+name: Derive public URLs from infra domains
+description: >-
+  After Infisical production fetch, derive BONDERY_PUBLIC_WEBAPP_URL and
+  BONDERY_PUBLIC_API_URL from BONDERY_INFRA_* domains and map OAuth client id.
+
+runs:
+  using: composite
+  steps:
+    - name: Derive public URLs
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -n "${BONDERY_INFRA_WEBAPP_DOMAIN:-}" ]; then
+          echo "BONDERY_PUBLIC_WEBAPP_URL=https://${BONDERY_INFRA_WEBAPP_DOMAIN}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${BONDERY_INFRA_API_DOMAIN:-}" ]; then
+          echo "BONDERY_PUBLIC_API_URL=https://${BONDERY_INFRA_API_DOMAIN}" >> "$GITHUB_ENV"
+        fi
+        if [ -n "${BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID:-}" ]; then
+          echo "BONDERY_PUBLIC_OAUTH_CLIENT_ID=${BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID}" >> "$GITHUB_ENV"
+        fi

@@ -54,6 +54,8 @@ services:
       BONDERY_PRIVATE_S3_ACCESS_KEY_ID: ${BONDERY_PRIVATE_S3_ACCESS_KEY_ID:?BONDERY_PRIVATE_S3_ACCESS_KEY_ID must be set}
       BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY: ${BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY:?BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY must be set}
       BONDERY_PUBLIC_STORAGE_URL: https://${BONDERY_INFRA_STORAGE_DOMAIN:?BONDERY_INFRA_STORAGE_DOMAIN must be set}
+      BONDERY_INFRA_GIT_SHA: ${BONDERY_INFRA_GIT_SHA:-}
+      BONDERY_INFRA_VERSION: ${BONDERY_INFRA_VERSION:-}
     healthcheck:
       interval: 30s
       retries: 3
@@ -66,7 +68,7 @@ services:
           "fetch('http://127.0.0.1:26631/health/live').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       timeout: 5s
-    image: ghcr.io/usebondery/api:${BONDERY_INFRA_API_IMAGE_TAG:-production}
+    image: ghcr.io/usebondery/api:${BONDERY_INFRA_VERSION:-production}
     pre_start:
       - command:
           - node
@@ -115,7 +117,7 @@ services:
           "fetch('http://127.0.0.1:26632/health/live').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
       timeout: 5s
-    image: ghcr.io/usebondery/webapp:${BONDERY_INFRA_WEBAPP_IMAGE_TAG:-production}
+    image: ghcr.io/usebondery/webapp:${BONDERY_INFRA_VERSION:-production}
     pull_policy: always
     labels:
       - traefik.enable=true

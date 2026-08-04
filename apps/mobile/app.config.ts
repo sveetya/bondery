@@ -72,6 +72,6 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     scheme: "bondery",
     slug: "bondery",
     userInterfaceStyle: "automatic",
-    version: "1.6.0",
+    version: "1.8.3",
   };
 };

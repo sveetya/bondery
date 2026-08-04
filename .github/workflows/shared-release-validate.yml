@@ -3,10 +3,6 @@ name: Shared - Release validate
 on:
   workflow_call:
     inputs:
-      tag_prefix:
-        description: Git tag prefix (api, webapp, ext)
-        required: true
-        type: string
       manual_release_tag:
         description: Optional tag override for workflow_dispatch callers
         required: false
@@ -17,6 +13,16 @@ on:
         required: false
         type: boolean
         default: true
+      release_mode:
+        description: release (new unified tag) or retry-promote (CI recovery)
+        required: false
+        type: string
+        default: release
+      dispatch_version:
+        description: Semver for retry-promote dispatch (must match root package.json)
+        required: false
+        type: string
+        default: ""
     outputs:
       tag:
         description: Resolved release tag
@@ -41,21 +47,43 @@ jobs:
         id: release_meta
         env:
           MANUAL_RELEASE_TAG: ${{ inputs.manual_release_tag }}
-          TAG_PREFIX: ${{ inputs.tag_prefix }}
+          RELEASE_MODE: ${{ inputs.release_mode }}
+          DISPATCH_VERSION: ${{ inputs.dispatch_version }}
         run: |
-          if [ -n "$MANUAL_RELEASE_TAG" ]; then
+          if [ "$RELEASE_MODE" = "retry-promote" ]; then
+            if [ -z "$DISPATCH_VERSION" ]; then
+              echo "retry-promote requires dispatch_version"
+              exit 1
+            fi
+            if ! echo "$DISPATCH_VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+              echo "Invalid dispatch_version: $DISPATCH_VERSION"
+              exit 1
+            fi
+            TAG="v${DISPATCH_VERSION}"
+            VERSION="$DISPATCH_VERSION"
+            git fetch --tags
+            if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+              echo "retry-promote requires existing tag $TAG"
+              exit 1
+            fi
+            ROOT_VERSION=$(node -p "require('./package.json').version")
+            if [ "$ROOT_VERSION" != "$VERSION" ]; then
+              echo "root package.json version ($ROOT_VERSION) must equal dispatch_version ($VERSION)"
+              exit 1
+            fi
+          elif [ -n "$MANUAL_RELEASE_TAG" ]; then
             TAG="$MANUAL_RELEASE_TAG"
           else
             TAG="${GITHUB_REF_NAME}"
           fi
 
-          if ! echo "$TAG" | grep -Eq "^${TAG_PREFIX}-[0-9]+\\.[0-9]+\\.[0-9]+$"; then
-            echo "Invalid release tag: $TAG"
-            echo "Expected format: ${TAG_PREFIX}-X.Y.Z"
+          if ! echo "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Invalid unified release tag: $TAG"
+            echo "Expected format: vX.Y.Z"
             exit 1
           fi
+          VERSION="${TAG#v}"
 
-          VERSION="${TAG#${TAG_PREFIX}-}"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
@@ -69,14 +97,12 @@ jobs:
             exit 1
           fi
 
-      - name: Ensure release tag exists for manual runs
-        if: inputs.manual_release_tag != ''
+      - name: Ensure root package.json matches release version
+        if: inputs.release_mode == 'release'
         run: |
-          TAG="${{ steps.release_meta.outputs.tag }}"
-          git fetch --tags
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag already exists: $TAG"
-          else
-            git tag "$TAG" "$GITHUB_SHA"
-            git push origin "$TAG"
+          ROOT_VERSION=$(node -p "require('./package.json').version")
+          VERSION="${{ steps.release_meta.outputs.version }}"
+          if [ "$ROOT_VERSION" != "$VERSION" ]; then
+            echo "root package.json version ($ROOT_VERSION) must equal release tag ($VERSION)"
+            exit 1
           fi

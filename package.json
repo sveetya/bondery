@@ -72,6 +72,7 @@
     "check:package-imports": "node scripts/check-package-imports.mjs",
     "check:sync-patterns": "pnpm --filter mobile run check:sync-patterns",
     "check:types": "turbo check:types",
+    "check:versions": "node scripts/check-versions.mjs",
     "db:functions": "pnpm --filter @bondery/db run db:functions",
     "db:generate": "pnpm --filter @bondery/db run db:generate",
     "db:migrate:deploy": "pnpm --filter @bondery/db run db:migrate:deploy",
@@ -119,6 +120,7 @@
     "stop:redis": "docker compose -f deploy/bondery/docker-compose.dev-redis.yml down",
     "stop:seaweedfs": "docker compose -f deploy/bondery/docker-compose.seaweedfs.yml -f deploy/bondery/docker-compose.seaweedfs.dev.yml --env-file .env.local down",
     "sync-exports": "node scripts/sync-package-exports.mjs",
+    "sync-version": "node scripts/sync-version.mjs",
     "test:api": "pnpm --filter api run test:api",
     "test:api:sync": "pnpm --filter api run test:sync",
     "test:auth": "pnpm --filter api run test:auth",
@@ -129,5 +131,5 @@
     "tsc-native": "node scripts/tsc-native.mjs",
     "turbo:clean": "turbo daemon clean"
   },
-  "version": "1.8.2"
+  "version": "1.8.3"
 }

@@ -1,0 +1,21 @@
+name: Log in to GHCR (Infisical)
+description: Fetch BONDERY_OPS_GHCR_WRITE_TOKEN from Infisical production via OIDC, then authenticate Docker with GHCR.
+
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/shared/infisical-production-secrets
+
+    - name: Verify GHCR token present
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ -z "${BONDERY_OPS_GHCR_WRITE_TOKEN:-}" ]; then
+          echo "::error::BONDERY_OPS_GHCR_WRITE_TOKEN missing after Infisical production fetch"
+          exit 1
+        fi
+
+    - uses: ./.github/actions/shared/ghcr-login
+      with:
+        username: ${{ github.repository_owner }}
+        password: ${{ env.BONDERY_OPS_GHCR_WRITE_TOKEN }}

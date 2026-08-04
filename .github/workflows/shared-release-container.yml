@@ -1,0 +1,104 @@
+name: Shared - Release container
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        description: api or webapp
+        required: true
+        type: string
+      version:
+        description: Semver image tag (X.Y.Z)
+        required: true
+        type: string
+      checkout_ref:
+        description: Git ref for smoke scripts (release tag)
+        required: true
+        type: string
+      source_tag:
+        description: Promote source tag (sha-short or previous semver)
+        required: true
+        type: string
+      force_rebuild:
+        description: Rebuild from source instead of promoting source_tag
+        required: false
+        type: boolean
+        default: false
+      use_production_gate:
+        description: Use production-containers environment before promote-production
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  promote:
+    if: ${{ !inputs.force_rebuild }}
+    uses: ./.github/workflows/shared-promote-image-tag.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/${{ inputs.service }}
+      source_tag: ${{ inputs.source_tag }}
+      target_tag: ${{ inputs.version }}
+
+  build-push:
+    if: ${{ inputs.force_rebuild }}
+    uses: ./.github/workflows/shared-docker-build-push.yml
+    secrets: inherit
+    with:
+      checkout_ref: ${{ inputs.checkout_ref }}
+      dockerfile: apps/${{ inputs.service }}/Dockerfile
+      dockerignore_file: .dockerignore.${{ inputs.service }}
+      image_name: ghcr.io/usebondery/${{ inputs.service }}
+      docker_tags: |
+        type=raw,value=${{ inputs.version }}
+        type=sha,prefix=sha-,format=short
+      oci_title: Bondery ${{ inputs.service }}
+      oci_description: Bondery production ${{ inputs.service }}
+      oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/api-container.md
+      oci_version: ${{ inputs.version }}
+      git_sha: ${{ github.sha }}
+      build_args: |
+        BONDERY_INFRA_GIT_SHA=${{ github.sha }}
+        BONDERY_INFRA_VERSION=${{ inputs.version }}
+
+  image_ready:
+    needs: [promote, build-push]
+    if: ${{ always() && (needs.promote.result == 'success' || needs.build-push.result == 'success') }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{ inputs.service }} image ready at ${{ inputs.version }}"
+
+  smoke:
+    needs: image_ready
+    if: ${{ needs.image_ready.result == 'success' }}
+    uses: ./.github/workflows/shared-smoke-bondery.yml
+    secrets: inherit
+    with:
+      checkout_ref: ${{ inputs.checkout_ref }}
+      image_name: ghcr.io/usebondery/${{ inputs.service }}
+      image_tag: ${{ inputs.version }}
+      service: ${{ inputs.service }}
+
+  promote-production:
+    needs: smoke
+    if: ${{ needs.smoke.result == 'success' && !inputs.use_production_gate }}
+    uses: ./.github/workflows/shared-promote-production.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/${{ inputs.service }}
+      version: ${{ inputs.version }}
+
+  promote-production-gated:
+    needs: smoke
+    if: ${{ needs.smoke.result == 'success' && inputs.use_production_gate }}
+    environment: production-containers
+    uses: ./.github/workflows/shared-promote-production.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/${{ inputs.service }}
+      version: ${{ inputs.version }}

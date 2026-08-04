@@ -36,7 +36,7 @@ describe("sync-infisical-to-dokploy", () => {
   it("website payload excludes Dokploy config keys and plausible secrets", () => {
     const env = {
       ...websiteEnv,
-      BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK: "https://dokploy.example.com/hook",
+      BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK: "https://dokploy.example.com/hook",
       BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE: "should-not-upload",
     };
 
