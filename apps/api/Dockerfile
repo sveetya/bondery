@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:26-alpine AS base
-RUN apk add --no-cache libc6-compat
+FROM node:26-slim AS base
 RUN npm install -g pnpm@11.18.0
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
@@ -20,12 +19,12 @@ ENV PNPM_STORE_DIR=/pnpm/store
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-RUN --mount=type=cache,id=bondery-pnpm-store-v2,target=/pnpm/store,sharing=locked \
+RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
-RUN --mount=type=cache,id=bondery-pnpm-store-v2,target=/pnpm/store,sharing=locked \
+RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 ENV DATABASE_URL=postgresql://postgres:password@127.0.0.1:54322/bondery
 RUN pnpm -r --filter "api^..." run build && pnpm --filter api run build
@@ -45,7 +44,7 @@ RUN node -e "import('@bondery/db').then(() => console.log('@bondery/db resolvabl
   && node --check dist/cli/release-migrate.js \
   && node --check dist/cli/ensure-storage-buckets.js
 
-FROM node:26-alpine AS runner
+FROM node:26-slim AS runner
 WORKDIR /app
 
 ARG BONDERY_INFRA_VERSION
