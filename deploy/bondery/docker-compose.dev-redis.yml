@@ -6,7 +6,7 @@
 
 services:
   redis:
-    image: redis:7-alpine
+    image: redis:8.10
     container_name: bondery-redis
     restart: unless-stopped
     command: redis-server --save "" --appendonly no
