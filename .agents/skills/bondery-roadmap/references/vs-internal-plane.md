@@ -18,11 +18,16 @@
 
 Do not mandate an internal ticket for every public card or vice versa. Many public items start from community feedback without an internal twin. Optional: link internal epic ID in a private comment when useful.
 
+## Internal execution
+
+For bugs, chores, weekly cycles, sanity checks, and internal kanban hygiene, use **[bondery-pm](../../bondery-pm/SKILL.md)** — the MAIN project counterpart to this skill.
+
 ## Distinction from other docs
 
 | Surface | Owns |
 |---------|------|
 | **ROADMAP** (this skill) | Future intent and confidence |
+| **MAIN** (`bondery-pm`) | Internal execution, cycles, task breakdown |
 | **Changelog** | Shipped facts and versions |
 | **bondery-legal long-term-roadmap** | Compliance evolution, manifest, policy claims |
 
