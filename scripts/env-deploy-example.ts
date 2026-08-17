@@ -1,13 +1,13 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { createCliLogger } from "@bondery/helpers/cli";
+import { DEPLOY_GENERATED_HEADER, formatEnvFile } from "./env-file-format.js";
 import {
   DEPLOY_GROUP_GUIDES,
   ENV_MANIFEST,
   resolveExampleValue,
   sortDeployExampleRows,
-} from "@bondery/helpers/env";
-import { DEPLOY_GENERATED_HEADER, formatEnvFile } from "./env-file-format.js";
+} from "./env-manifest.ts";
 
 export function collectDeployExampleRows(packageVersion: string) {
   const rows = [];
@@ -18,7 +18,7 @@ export function collectDeployExampleRows(packageVersion: string) {
     }
     const group = deploy.group ?? entry.group;
     let value = resolveExampleValue(entry, "deploy");
-    if (entry.canonical === "BONDERY_INFRA_VERSION" && deploy.commented && !deploy.value) {
+    if (entry.canonical === "BONDERY_INFRA_VERSION") {
       value = packageVersion;
     }
     rows.push({

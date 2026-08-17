@@ -2,8 +2,8 @@
 /**
  * Regenerate committed env examples + turbo.json from packages/helpers/src/env/manifest.ts.
  *
- *   pnpm run env:examples           # write files only
- *   pnpm run env:examples -- --stage  # also `git add` outputs (pre-commit)
+ *   pnpm run env:examples           # write files only (prefer env:sync for full sync)
+ *   pnpm run env:examples -- --stage  # also `git add` outputs (pre-commit via env:sync)
  */
 
 import { execSync } from "node:child_process";

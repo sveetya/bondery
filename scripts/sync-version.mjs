@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Propagate root package.json version to workspace packages, mobile native fields,
- * and manifest BONDERY_INFRA_VERSION deploy pin. Regenerates deploy env examples.
+ * Propagate root package.json version to workspace packages and mobile native fields.
+ * Regenerates env examples via env:sync.
  *
  *   pnpm run sync-version
  *   pnpm run sync-version -- --check   # dry-run; exit 1 on drift
@@ -94,25 +94,6 @@ function updateAndroidVersionName(version) {
   return true;
 }
 
-function updateManifestDeployPin(version) {
-  const rel = "packages/helpers/src/env/manifest.ts";
-  const abs = join(root, rel);
-  const content = readFileSync(abs, "utf8");
-  const pattern =
-    /(canonical: "BONDERY_INFRA_VERSION",[\s\S]*?deployExample: \{[\s\S]*?value: )"[^"]*"/;
-  if (!pattern.test(content)) {
-    throw new Error(`Could not find BONDERY_INFRA_VERSION deployExample.value in ${rel}`);
-  }
-  const updated = content.replace(pattern, `$1"${version}"`);
-  if (updated === content) {
-    return false;
-  }
-  if (!checkOnly) {
-    writeFileSync(abs, updated);
-  }
-  return true;
-}
-
 function main() {
   const version = readRootVersion();
   const changes = [];
@@ -127,9 +108,6 @@ function main() {
   }
   if (updateAndroidVersionName(version)) {
     changes.push("apps/mobile/android/app/build.gradle");
-  }
-  if (updateManifestDeployPin(version)) {
-    changes.push("packages/helpers/src/env/manifest.ts");
   }
 
   if (checkOnly) {
@@ -149,7 +127,7 @@ function main() {
     for (const path of changes) {
       console.log(`  - ${path}`);
     }
-    execSync("pnpm run env:examples", { cwd: root, stdio: "inherit" });
+    execSync("pnpm run env:sync", { cwd: root, stdio: "inherit" });
   } else {
     console.log(`Version ${version} already synced across targets`);
   }

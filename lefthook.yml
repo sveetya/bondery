@@ -1,11 +1,20 @@
 pre-commit:
   parallel: false
   commands:
-    env-examples:
+    env-sync:
       glob:
+        - "package.json"
         - "packages/helpers/src/env/manifest.ts"
         - "scripts/env.ts"
-      run: pnpm run env:examples -- --stage
+        - "scripts/env-manifest.ts"
+        - "scripts/env-deploy-example.ts"
+        - "scripts/env-ops-example.ts"
+        - "scripts/env-plausible-example.ts"
+        - "scripts/generate-env-examples.mjs"
+        - "scripts/env-sync.mjs"
+        - "scripts/sync-version.mjs"
+        - "scripts/check-versions.mjs"
+      run: pnpm run env:sync -- --stage
     openapi:
       glob:
         - "apps/api/src/**/*.ts"
