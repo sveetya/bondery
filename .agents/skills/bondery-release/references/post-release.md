@@ -8,7 +8,9 @@ Run only after technical deploy is confirmed (CI smoke green, Dokploy healthy, m
 
 2. **Community announce** — Discord and Reddit via the announce CLI (`pnpm` script in website package — see blog workflow).
 
-3. **(Future)** In-app notification for the new version.
+3. **Roadmap** — community posts can link to [the public roadmap](https://usebondery.com/roadmap) for what's next.
+
+4. **(Future)** In-app notification for the new version.
 
 ## Patch / hotfix
 

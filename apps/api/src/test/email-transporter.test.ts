@@ -17,6 +17,7 @@ const baseConfig = {
   fromAddress: "robot@usebondery.com",
   host: "smtp.example.com",
   pass: "secret",
+  replyToAddress: "team@usebondery.com",
   user: "user",
 };
 
@@ -26,6 +27,7 @@ type EmailEnvSnapshot = {
   nodeEnv?: string;
   pass?: string;
   port?: string;
+  replyTo?: string;
   user?: string;
 };
 
@@ -36,6 +38,7 @@ function snapshotEmailEnv(): EmailEnvSnapshot {
     nodeEnv: process.env.NODE_ENV,
     pass: process.env.BONDERY_PRIVATE_EMAIL_PASS,
     port: process.env.BONDERY_PRIVATE_EMAIL_PORT,
+    replyTo: process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO,
     user: process.env.BONDERY_PRIVATE_EMAIL_USER,
   };
 }
@@ -46,6 +49,7 @@ function setConfiguredEmailEnv(): void {
   process.env.BONDERY_PRIVATE_EMAIL_USER = baseConfig.user;
   process.env.BONDERY_PRIVATE_EMAIL_PASS = baseConfig.pass;
   process.env.BONDERY_PRIVATE_EMAIL_ADDRESS = baseConfig.fromAddress;
+  process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO = baseConfig.replyToAddress;
 }
 
 function clearEmailEnv(): void {
@@ -53,6 +57,7 @@ function clearEmailEnv(): void {
   delete process.env.BONDERY_PRIVATE_EMAIL_USER;
   delete process.env.BONDERY_PRIVATE_EMAIL_PASS;
   delete process.env.BONDERY_PRIVATE_EMAIL_ADDRESS;
+  delete process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO;
   delete process.env.BONDERY_PRIVATE_EMAIL_PORT;
 }
 
@@ -71,6 +76,7 @@ function restoreEmailEnv(snapshot: EmailEnvSnapshot): void {
   restore("user", "BONDERY_PRIVATE_EMAIL_USER");
   restore("pass", "BONDERY_PRIVATE_EMAIL_PASS");
   restore("address", "BONDERY_PRIVATE_EMAIL_ADDRESS");
+  restore("replyTo", "BONDERY_PRIVATE_EMAIL_REPLY_TO");
   restore("nodeEnv", "NODE_ENV");
 }
 

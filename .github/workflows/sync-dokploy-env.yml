@@ -1,0 +1,49 @@
+name: Sync Dokploy env
+
+# Manual Infisical production → Dokploy compose env sync (website or plausible stack).
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Dokploy compose stack to sync
+        type: choice
+        options:
+          - website
+          - plausible
+        default: website
+      dry_run:
+        description: Log upload keys without calling Dokploy API
+        type: boolean
+        default: true
+      redeploy:
+        description: Trigger ops deploy webhook after save
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sync-ops:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/shared/setup-pnpm
+
+      - name: Build helpers (env manifest exports)
+        run: pnpm --filter @bondery/helpers run build
+
+      - uses: ./.github/actions/shared/infisical-fetch-secrets
+        with:
+          env-slug: production
+
+      - uses: ./.github/actions/shared/dokploy-save-compose-env
+        with:
+          dry_run: ${{ inputs.dry_run }}
+          redeploy: ${{ inputs.redeploy }}
+          target: ${{ inputs.target }}

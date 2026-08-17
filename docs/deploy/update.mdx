@@ -22,13 +22,13 @@ This pulls the latest `api`/`webapp` images and runs `docker compose up -d`. Whe
 
 ### Pinning a version
 
-Pin semver tags when you want a frozen rollback target instead of tracking `production`:
+Pin semver via `BONDERY_INFRA_VERSION` when you want a frozen rollback target instead of tracking `production` (pins **both** api and webapp):
 
 ```bash
-BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.4 BONDERY_INFRA_API_IMAGE_TAG=1.7.4 docker compose up -d
+BONDERY_INFRA_VERSION=1.7.4 docker compose up -d api webapp
 ```
 
-Avoid `--no-deps api` on releases that ship schema changes — it can skip dependency ordering so `webapp` starts before `api` is healthy.
+Always redeploy api and webapp together when changing the version pin.
 
 ## Backups
 

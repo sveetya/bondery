@@ -28,6 +28,7 @@ Expect **~2 GB RAM** for Postgres + ClickHouse + Plausible on a small VPS.
 | Compose path | `deploy/plausible/compose.yml` |
 | Domain | `BONDERY_INFRA_PLAUSIBLE_DOMAIN` (Traefik labels in compose) |
 | Environment | See [`deploy/plausible/.env.example`](.env.example) |
+| Watch paths | `deploy/plausible/**` (so git pushes and CI env-sync webhooks both match) |
 
 Set these in Dokploy **Environment** (compose maps them to Plausible CE container env):
 
@@ -40,6 +41,15 @@ Set these in Dokploy **Environment** (compose maps them to Plausible CE containe
 | `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` | `invite_only` (optional) |
 
 Compose derives `BASE_URL` as `https://<BONDERY_INFRA_PLAUSIBLE_DOMAIN>`.
+
+## Infisical → Dokploy env sync
+
+Plausible secrets and domain can be synced from Infisical **production** via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml) with `target: plausible`. Requires `BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID` (and optional `BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK`) in Infisical — see [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml).
+
+1. First run: `target: plausible`, `dry_run: true` — verify upload keys (Plausible env vars only, not `BONDERY_OPS_*` connection keys).
+2. Backup Dokploy env before first live sync; `redeploy: true` restarts the plausible compose app only.
+
+## Onboarding
 
 1. Visit `https://<BONDERY_INFRA_PLAUSIBLE_DOMAIN>` and create the first admin user.
 2. In Plausible, add a site: **`usebondery.com`** (must match the marketing hostname).

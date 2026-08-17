@@ -18,7 +18,7 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **CLI:**
 - `pnpm run env` — sync root `.env.local` → per-app files
-- `pnpm run env:examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
+- `pnpm run env:sync` — build helpers, regenerate examples + `turbo.json`, `check:versions` (pre-commit when manifest changes)
 - `pnpm run env -- --check` — regenerate + fail if git dirty (**CI**)
 
 **Adding a new secret:**
@@ -31,6 +31,8 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 **Webapp boot:** `runtimeConfig.server.ts` — rejects build placeholders and localhost URLs in production.
 
 **Rotation runbooks:** `docs/deploy/secrets.mdx`.
+
+**CI operator secrets:** Release/deploy workflows fetch **Infisical production** via GitHub OIDC (`infisical-production-secrets`, `ghcr-login-infisical`). Staging Infisical is for release-smoke SMTP only. Turbo and Chrome signing keys (`PRIVATE_CHROME_*`) remain GitHub repository secrets. See [`.github/workflows/README.md`](../../../../.github/workflows/README.md).
 
 ## Secrets rules
 

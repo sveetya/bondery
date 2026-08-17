@@ -1,9 +1,12 @@
 ---
-title: "Changelog 1.8.2"
-hidden: true
+title: "1.8.2"
 ---
 
 ## [1.8.2] - 03.08.2026
+
+### 🔄 Changed
+
+- API: Transactional email (welcome, reminders, trial ending, account deleted) now uses `BONDERY_PRIVATE_EMAIL_REPLY_TO` for the Reply-To header instead of the SMTP From address.
 
 ### 🐛 Fixed
 

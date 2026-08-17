@@ -1,0 +1,389 @@
+name: Release - Bondery
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: CI failure recovery only
+        required: true
+        type: choice
+        options:
+          - retry-promote
+      version:
+        description: Product version X.Y.Z (must match root package.json and existing v tag)
+        required: true
+        type: string
+      ref:
+        description: Optional git ref to checkout (default release branch HEAD)
+        required: false
+        type: string
+        default: ""
+      components:
+        description: Components to retry
+        required: true
+        type: choice
+        options:
+          - all
+          - api
+          - webapp
+          - extension
+          - api+webapp
+        default: all
+      force_rebuild:
+        description: Rebuild Docker images from source instead of promoting :sha
+        required: false
+        type: boolean
+        default: false
+      note:
+        description: Optional CI incident note appended to the GitHub release
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
+jobs:
+  validate:
+    uses: ./.github/workflows/shared-release-validate.yml
+    with:
+      release_mode: ${{ github.event_name == 'workflow_dispatch' && inputs.mode != '' && inputs.mode || 'release' }}
+      dispatch_version: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' && inputs.version || '' }}
+
+  detect_changes:
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.set.outputs.api }}
+      webapp: ${{ steps.set.outputs.webapp }}
+      extension: ${{ steps.set.outputs.extension }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: dorny/paths-filter@v4
+        if: github.event_name == 'push'
+        id: filter
+        with:
+          filters: |
+            api:
+              - apps/api/**
+              - deploy/bondery/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - pnpm-workspace.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.api
+              - .github/actions/shared/**
+              - .github/workflows/release.yml
+              - .github/workflows/shared-release-container.yml
+            webapp:
+              - apps/webapp/**
+              - deploy/bondery/**
+              - packages/**
+              - scripts/**
+              - docs/**
+              - package.json
+              - pnpm-lock.yaml
+              - pnpm-workspace.yaml
+              - .nvmrc
+              - turbo.json
+              - .dockerignore.webapp
+              - .github/actions/shared/**
+              - .github/workflows/release.yml
+              - .github/workflows/shared-release-container.yml
+            extension:
+              - apps/chrome-extension/**
+              - packages/**
+              - package.json
+              - pnpm-lock.yaml
+              - turbo.json
+
+      - name: Resolve component flags
+        id: set
+        env:
+          COMPONENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.components != '' && inputs.components || '' }}
+          FILTER_API: ${{ steps.filter.outputs.api }}
+          FILTER_WEBAPP: ${{ steps.filter.outputs.webapp }}
+          FILTER_EXTENSION: ${{ steps.filter.outputs.extension }}
+        run: |
+          if [ -n "$COMPONENTS" ]; then
+            case "$COMPONENTS" in
+              all)
+                echo "api=true" >> "$GITHUB_OUTPUT"
+                echo "webapp=true" >> "$GITHUB_OUTPUT"
+                echo "extension=true" >> "$GITHUB_OUTPUT"
+                ;;
+              api)
+                echo "api=true" >> "$GITHUB_OUTPUT"
+                echo "webapp=false" >> "$GITHUB_OUTPUT"
+                echo "extension=false" >> "$GITHUB_OUTPUT"
+                ;;
+              webapp)
+                echo "api=false" >> "$GITHUB_OUTPUT"
+                echo "webapp=true" >> "$GITHUB_OUTPUT"
+                echo "extension=false" >> "$GITHUB_OUTPUT"
+                ;;
+              extension)
+                echo "api=false" >> "$GITHUB_OUTPUT"
+                echo "webapp=false" >> "$GITHUB_OUTPUT"
+                echo "extension=true" >> "$GITHUB_OUTPUT"
+                ;;
+              api+webapp)
+                echo "api=true" >> "$GITHUB_OUTPUT"
+                echo "webapp=true" >> "$GITHUB_OUTPUT"
+                echo "extension=false" >> "$GITHUB_OUTPUT"
+                ;;
+              *)
+                echo "Unknown components: $COMPONENTS"
+                exit 1
+                ;;
+            esac
+          else
+            echo "api=${FILTER_API:-false}" >> "$GITHUB_OUTPUT"
+            echo "webapp=${FILTER_WEBAPP:-false}" >> "$GITHUB_OUTPUT"
+            echo "extension=${FILTER_EXTENSION:-false}" >> "$GITHUB_OUTPUT"
+          fi
+
+  resolve_meta:
+    needs: validate
+    runs-on: ubuntu-latest
+    outputs:
+      short_sha: ${{ steps.sha.outputs.short }}
+      prev_version: ${{ steps.prev.outputs.prev_version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve short SHA
+        id: sha
+        run: echo "short=$(echo "${GITHUB_SHA}" | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve previous product version tag
+        id: prev
+        env:
+          CURRENT: ${{ needs.validate.outputs.version }}
+        run: |
+          git fetch --tags
+          PREV_TAG=$(git tag -l 'v*' --sort=-version:refname | grep -v "^v${CURRENT}$" | head -1 || true)
+          if [ -n "$PREV_TAG" ]; then
+            echo "prev_version=${PREV_TAG#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "prev_version=" >> "$GITHUB_OUTPUT"
+          fi
+
+  github_release_init:
+    needs: validate
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create unified GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.validate.outputs.tag }}
+          name: Bondery ${{ needs.validate.outputs.version }}
+          prerelease: true
+          generate_release_notes: false
+          body: |
+            [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
+
+            Release publishing in progress for ${{ needs.validate.outputs.version }}. Do not pin until this pre-release is removed.
+
+  release_api:
+    needs: [validate, detect_changes, resolve_meta]
+    if: needs.detect_changes.outputs.api == 'true'
+    uses: ./.github/workflows/shared-release-container.yml
+    secrets: inherit
+    with:
+      service: api
+      version: ${{ needs.validate.outputs.version }}
+      checkout_ref: ${{ needs.validate.outputs.tag }}
+      source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
+      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
+      use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
+
+  release_webapp:
+    needs: [validate, detect_changes, resolve_meta]
+    if: needs.detect_changes.outputs.webapp == 'true'
+    uses: ./.github/workflows/shared-release-container.yml
+    secrets: inherit
+    with:
+      service: webapp
+      version: ${{ needs.validate.outputs.version }}
+      checkout_ref: ${{ needs.validate.outputs.tag }}
+      source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
+      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
+      use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
+
+  retag_api:
+    needs: [validate, detect_changes, resolve_meta]
+    if: >-
+      github.event_name == 'push' &&
+      needs.detect_changes.outputs.api != 'true' &&
+      needs.resolve_meta.outputs.prev_version != ''
+    uses: ./.github/workflows/shared-promote-image-tag.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/api
+      source_tag: ${{ needs.resolve_meta.outputs.prev_version }}
+      target_tag: ${{ needs.validate.outputs.version }}
+
+  retag_webapp:
+    needs: [validate, detect_changes, resolve_meta]
+    if: >-
+      github.event_name == 'push' &&
+      needs.detect_changes.outputs.webapp != 'true' &&
+      needs.resolve_meta.outputs.prev_version != ''
+    uses: ./.github/workflows/shared-promote-image-tag.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/webapp
+      source_tag: ${{ needs.resolve_meta.outputs.prev_version }}
+      target_tag: ${{ needs.validate.outputs.version }}
+
+  release_extension:
+    needs: [validate, detect_changes]
+    if: needs.detect_changes.outputs.extension == 'true'
+    uses: ./.github/workflows/shared-release-extension.yml
+    secrets: inherit
+    with:
+      version: ${{ needs.validate.outputs.version }}
+
+  notify_dokploy:
+    needs:
+      - validate
+      - release_api
+      - release_webapp
+      - retag_api
+      - retag_webapp
+    if: >-
+      always() &&
+      (
+        needs.release_api.result == 'success' ||
+        needs.release_webapp.result == 'success' ||
+        needs.retag_api.result == 'success' ||
+        needs.retag_webapp.result == 'success'
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/shared/infisical-production-secrets
+
+      - uses: ./.github/actions/shared/dokploy-deploy-webhook
+        with:
+          webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK }}
+          branch: release
+
+  github_release_finalize:
+    needs:
+      - validate
+      - detect_changes
+      - release_api
+      - release_webapp
+      - retag_api
+      - retag_webapp
+      - release_extension
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.validate.outputs.tag }}
+          persist-credentials: false
+
+      - name: Finalize GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.validate.outputs.tag }}
+          VERSION: ${{ needs.validate.outputs.version }}
+          RELEASE_API_RESULT: ${{ needs.release_api.result }}
+          RETAG_API_RESULT: ${{ needs.retag_api.result }}
+          RELEASE_WEBAPP_RESULT: ${{ needs.release_webapp.result }}
+          RETAG_WEBAPP_RESULT: ${{ needs.retag_webapp.result }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          RETRY_NOTE: ${{ github.event_name == 'workflow_dispatch' && inputs.note || '' }}
+        run: |
+          component_ok() {
+            local release_result="$1"
+            local retag_result="$2"
+            if [ "$release_result" = "success" ] || [ "$retag_result" = "success" ]; then
+              return 0
+            fi
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] && \
+              [ "$release_result" = "skipped" ] && [ "$retag_result" = "skipped" ]; then
+              return 0
+            fi
+            return 1
+          }
+
+          BODY_FILE=$(mktemp)
+          if component_ok "$RELEASE_API_RESULT" "$RETAG_API_RESULT" && \
+            component_ok "$RELEASE_WEBAPP_RESULT" "$RETAG_WEBAPP_RESULT"; then
+            cat > "$BODY_FILE" <<EOF
+          [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
+
+          ## Images
+
+          - [ghcr.io/usebondery/api:${VERSION}](https://github.com/usebondery/bondery/pkgs/container/api)
+          - [ghcr.io/usebondery/webapp:${VERSION}](https://github.com/usebondery/bondery/pkgs/container/webapp)
+
+          ## What's new?
+
+          [Changelog ${VERSION}](https://usebondery.com/docs/changelog/releases/${VERSION})
+          EOF
+            if [ -n "$RETRY_NOTE" ]; then
+              printf '\n%s\n' "$RETRY_NOTE" >> "$BODY_FILE"
+            fi
+            gh release edit "$TAG" --notes-file "$BODY_FILE" --prerelease=false
+
+            RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}" --jq .id)"
+            gh api "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/reactions" -f content=heart
+            gh api "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/reactions" -f content=hooray
+          else
+            cat > "$BODY_FILE" <<EOF
+          [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
+
+          Release publishing did not finish. Do not pin this version. Stay on your current pin.
+          EOF
+            if [ -n "$RETRY_NOTE" ]; then
+              printf '\n%s\n' "$RETRY_NOTE" >> "$BODY_FILE"
+            fi
+            gh release edit "$TAG" --notes-file "$BODY_FILE" --prerelease=true
+          fi
+
+      - name: Upload extension assets
+        if: needs.release_extension.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.validate.outputs.tag }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          ZIP="bondery-extension-${VERSION}.zip"
+          CRX="apps/chrome-extension/bondery-extension-${VERSION}.crx"
+          PEM="bondery-extension-${VERSION}.public-key.pem"
+          if [ -f "$ZIP" ] && [ -f "$CRX" ] && [ -f "$PEM" ]; then
+            gh release upload "$TAG" "$ZIP" "$CRX" "$PEM" --clobber
+          else
+            echo "Extension asset files not found — skip upload"
+          fi

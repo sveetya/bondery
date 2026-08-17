@@ -59,11 +59,12 @@ pnpm run dev
 | `pnpm run env:development` | Sync only `*.development.local` (+ mobile/db `.env.local`) |
 | `pnpm run env:production` | Sync only `*.env.production.local` (for local `pnpm run build`) |
 | `pnpm run env:pull` | Pull `syncable` manifest secrets from Infisical → `.env.local` → `env:development` |
-| `pnpm run env:examples` | Regenerate `.env*.example`, `deploy/bondery/.env.example`, `deploy/ops/.env.example`, and `turbo.json` from the manifest |
+| `pnpm run env:sync` | Build helpers, regenerate examples + `turbo.json`, run `check:versions` |
+| `pnpm run env:examples` | Regenerate only (no helpers build / version check) |
 
 `env:development` and `env:production` use the **same values** from root `.env.local` (localhost URLs). Local production-mode builds are not deploys — they need your local URLs, not `usebondery.com`.
 
-Pre-commit runs `env:examples --stage` when you change [`manifest.ts`](../../packages/helpers/src/env/manifest.ts) or [`scripts/env.ts`](../../scripts/env.ts) — same pattern as OpenAPI. CI safety net:
+Pre-commit runs `env:sync --stage` when you change the manifest, env scripts, or root `package.json` — same pattern as OpenAPI. CI safety net:
 
 ```bash
 pnpm run env:check   # regenerate + fail if git dirty
@@ -83,7 +84,7 @@ infisical login
 pnpm run env:pull
 ```
 
-[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings (e.g. `dev`), not the display name (`development`).
+[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings: `development` (local `env:pull`), `staging` (release smoke), or `production` (Dokploy ops sync).
 
 ## Authoring vs generated files
 
@@ -105,7 +106,7 @@ Out-of-runtime Next scripts (`check-env`, `announce`) call `loadEnvConfig` from 
 
 ## Production / self-host
 
-Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `pnpm run env:examples`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
+Operators copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `deploy/bondery/.env` for Compose — same `BONDERY_*` names; Compose derives `DATABASE_URL` and public URLs from domains. The example file is **generated** from the manifest (`deployExample` metadata) via `pnpm run env:sync`. See [Self-hosting](../deploy/get-started.mdx). Bondery production deployment on Dokploy is documented in [Dokploy deployment](./dokploy.mdx) (contributors / operators only).
 
 ## Manifest
 

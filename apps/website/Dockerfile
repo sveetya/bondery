@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:26-alpine AS base
-RUN apk add --no-cache libc6-compat
+FROM node:26-slim AS base
 RUN npm install -g pnpm@11.18.0
 WORKDIR /app
 ENV TURBO_TELEMETRY_DISABLED=1
@@ -20,8 +19,8 @@ ENV PNPM_STORE_DIR=/pnpm/store
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=prune /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
-RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm fetch --store-dir "${PNPM_STORE_DIR}"
+RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 COPY --from=prune /app/out/full/ .
 COPY scripts ./scripts
 COPY docs ./docs
@@ -29,14 +28,14 @@ COPY docs ./docs
 # Runtime injects real BONDERY_PUBLIC_* via deploy/ops Compose.
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
-RUN --mount=type=cache,id=bondery-pnpm-store,target=/pnpm/store,sharing=locked \
-    pnpm install --frozen-lockfile --ignore-scripts --store-dir "${PNPM_STORE_DIR}"
+RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=website
 RUN pnpm prune --prod --ignore-scripts
 
-FROM node:26-alpine AS runner
+FROM node:26-slim AS runner
 WORKDIR /app
 
 ARG BONDERY_INFRA_VERSION

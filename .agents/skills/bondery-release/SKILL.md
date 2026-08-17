@@ -2,9 +2,9 @@
 name: bondery-release
 description: >
   Bondery release operator runbook — prerequisites on main, extension gates, promote
-  main:release and product tags, Dokploy image pins, rollback, and hotfix sequencing.
-  Use when cutting a monthly or patch release, pushing to release, tagging api-X.Y.Z /
-  webapp-X.Y.Z / ext-X.Y.Z, pinning image tags, promoting to production, or rolling back.
+  main:release and unified vX.Y.Z tags, Dokploy BONDERY_INFRA_VERSION pin, rollback, and hotfix sequencing.
+  Use when cutting a monthly or patch release, pushing to release, tagging vX.Y.Z,
+  pinning product version, promoting to production, or rolling back.
 metadata:
   version: "1.0.0"
   namespace: bondery
@@ -15,9 +15,9 @@ metadata:
 ## When to use
 
 - Cutting a monthly, patch, or hotfix release (`X.Y.Z`)
-- Pushing `main` to `release` or tagging `api-*`, `webapp-*`, `ext-*`
-- Pinning `BONDERY_INFRA_*_IMAGE_TAG` after a tested deploy
-- Rolling back production or self-host pins
+- Pushing `main` to `release` or tagging `vX.Y.Z`
+- Setting `BONDERY_INFRA_VERSION` in Dokploy after a tested deploy
+- Rolling back production or self-host pins (paired api + webapp)
 - Coordinating Chrome extension publish before product deploy
 
 ## When not to use
@@ -30,11 +30,11 @@ metadata:
 
 ## Non-negotiables
 
-1. **`:sha-<short>` must exist on `main`** before `api-X.Y.Z` / `webapp-X.Y.Z` — merge to `main` first; [`stage-images.yml`](../../../.github/workflows/stage-images.yml) builds artifacts on push to `main`.
-2. **Product tags promote, they do not rebuild** — release workflows promote `ghcr.io/usebondery/{api,webapp}:sha-<short>` → `:X.Y.Z` unless `force_rebuild: true` on manual dispatch (human-approved only).
-3. **Extension gate (when extension changed):** do not push `main:release` or product tags until the user confirms the Chrome Web Store listing is live.
+1. **`:sha-<short>` must exist on `main`** before `vX.Y.Z` — merge to `main` first; [`stage-images.yml`](../../../.github/workflows/stage-images.yml) builds artifacts on push to `main`.
+2. **Product tags promote, they do not rebuild** — [`release.yml`](../../../.github/workflows/release.yml) promotes `ghcr.io/usebondery/{api,webapp}:sha-<short>` → `:X.Y.Z` unless `force_rebuild` on `retry-promote` dispatch.
+3. **Extension gate (when extension changed):** do not approve `production-containers` or update Dokploy until the user confirms the Chrome Web Store listing is live.
 4. **Website exception:** `git push origin main:release` is **not** extension-gated — marketing CD only ([`deploy-website.yml`](../../../.github/workflows/deploy-website.yml)).
-5. **Pin the tested api/webapp pair** in [`packages/helpers/src/env/manifest.ts`](../../../packages/helpers/src/env/manifest.ts) — do not use floating `:production` as the production/self-host pin for api/webapp.
+5. **Pin `BONDERY_INFRA_VERSION`** in Dokploy (and manifest via `sync-version`) — pins **both** api and webapp images; redeploy together.
 6. **CI truth:** [`.github/workflows/README.md`](../../../.github/workflows/README.md) overrides remembered release folklore.
 
 ## Related skills and docs
@@ -42,6 +42,7 @@ metadata:
 | Concern | Owner |
 |---------|--------|
 | Version scheme, `Unreleased` → dated section | [`bondery-changelog`](../bondery-changelog/SKILL.md) |
+| Public roadmap state updates (Ready for Release → Released) | [`bondery-roadmap`](../bondery-roadmap/SKILL.md) |
 | CI triggers, Docker channels, promote semantics | [`.github/workflows/README.md`](../../../.github/workflows/README.md) |
 | Execute file edits and commits | Cursor implementer agent |
 | Watch `release-*` / `deploy-website` CI | Cursor babysit skill |
@@ -68,10 +69,10 @@ Full index: [references/README.md](references/README.md).
 - [ ] Prerequisites on `main` complete ([prerequisites.md](references/prerequisites.md))
 - [ ] Changelog dated section cut (`bondery-changelog`)
 - [ ] Target commit merged to `main`; `stage-images` produced `:sha-<short>` for changed services
-- [ ] If extension changed: `ext-X.Y.Z` pushed; **user confirmed CWS live** before product deploy
+- [ ] If extension changed: CWS publish succeeded; **user confirmed CWS live** before approving `production-containers`
 - [ ] `main:release` pushed when website (or full stack) ready
-- [ ] `api-X.Y.Z` / `webapp-X.Y.Z` tagged only for changed services; CI promote + smoke green
-- [ ] Tested pair pinned in manifest + `deploy/bondery/.env.example`; promoted to `release` if needed
-- [ ] Dokploy env updated; changed service(s) redeployed
+- [ ] `vX.Y.Z` tagged; unified CI promote + smoke green
+- [ ] `BONDERY_INFRA_VERSION` synced via `sync-version`; Dokploy updated; api + webapp redeployed together
 - [ ] Manual smoke: login + one authenticated mutation on product stack
+- [ ] ROADMAP cards updated (Ready for Release → Released) per [`bondery-roadmap`](../bondery-roadmap/SKILL.md)
 - [ ] Post-release comms if monthly release ([post-release.md](references/post-release.md))

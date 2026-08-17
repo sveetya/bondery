@@ -42,7 +42,7 @@ curl -s http://localhost:26632/health/live
 |---------|-------|------|--------|
 | `webapp` | `ghcr.io/usebondery/webapp` | 26632 | Liveness `/health/live` |
 | `api` | `ghcr.io/usebondery/api` | 26631 | Better Auth + Prisma; waits for Redis + Postgres + SeaweedFS |
-| `redis` | `redis:7.4-alpine` | internal | AOF + volume `redis-data` |
+| `redis` | `redis:8.10` | internal | AOF + volume `redis-data` |
 | `db` | `postgis/postgis:17-3.5` | internal | Named volume `postgres-data` |
 | `seaweedfs-*` | SeaweedFS | 8333 (Traefik) | S3 creds from `.env` → rendered at startup (`seaweedfs/entrypoint.sh`) |
 
@@ -57,19 +57,19 @@ Compose entrypoint: **`docker-compose.yml`** includes **`docker-compose.postgres
 
 ### Upgrades / rollback
 
-```bash
-# Upgrade only webapp (API + Redis + Postgres stay up)
-BONDERY_INFRA_WEBAPP_IMAGE_TAG=1.7.3 docker compose up -d --no-deps webapp
+Pin `BONDERY_INFRA_VERSION` to move **api and webapp together** (coordinated deploy). Roll back by setting the previous semver and redeploying the full product stack:
 
-# Upgrade only API (re-runs api pre_start when image changes)
-BONDERY_INFRA_API_IMAGE_TAG=1.7.3 docker compose up -d --no-deps api
+```bash
+BONDERY_INFRA_VERSION=1.7.3 docker compose up -d api webapp
 ```
+
+Do not upgrade or roll back api/webapp independently in production — contract changes ship as a pair.
 
 Schema migrations run automatically via `api` `pre_start` on deploy — no separate `db:migrate:deploy` step for Compose deployments.
 
 ### CI redeploy webhook (Bondery production)
 
-After `api-*.*.*` / `webapp-*.*.*` release tags: GitHub Actions builds the semver image, runs compose smoke against that tag, promotes `:production` only on success, then calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` (repository **variable**) with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
+After `vX.Y.Z` release tags: GitHub Actions promotes semver images, runs compose smoke, promotes `:production` on success, then fetches **production Infisical** and calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
 
 ### Release smoke (local)
 

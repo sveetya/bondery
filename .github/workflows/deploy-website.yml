@@ -28,10 +28,15 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 jobs:
   resolve:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      id-token: write
     outputs:
       short_sha: ${{ steps.sha.outputs.short }}
       image_exists: ${{ steps.inspect.outputs.exists }}
@@ -53,10 +58,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Log in to GHCR
-        uses: ./.github/actions/shared/ghcr-login
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+        uses: ./.github/actions/shared/ghcr-login-infisical
 
       - name: Check for staged website image
         id: inspect
@@ -114,6 +116,7 @@ jobs:
     permissions:
       contents: read
       packages: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -129,10 +132,7 @@ jobs:
         run: docker network create dokploy-network || true
 
       - name: Log in to GHCR
-        uses: ./.github/actions/shared/ghcr-login
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+        uses: ./.github/actions/shared/ghcr-login-infisical
 
       - name: Start website from SHA tag
         working-directory: deploy/ops
@@ -142,6 +142,7 @@ jobs:
           printf '%s\n' \
             'BONDERY_INFRA_WEBAPP_DOMAIN=app.example-smoke.test' \
             'BONDERY_INFRA_WEBSITE_DOMAIN=www.example-smoke.test' \
+            'BONDERY_INFRA_PLAUSIBLE_DOMAIN=plausible.example-smoke.test' \
             > .env.smoke
           printf '%s\n' \
             'services:' \
@@ -179,12 +180,17 @@ jobs:
     needs: [image_ready, smoke]
     if: ${{ always() && needs.smoke.result == 'success' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
+      - uses: ./.github/actions/shared/infisical-production-secrets
+
       - uses: ./.github/actions/shared/dokploy-deploy-webhook
         with:
-          webhook_url: ${{ vars.BONDERY_OPS_DOKPLOY_OPS_DEPLOY_WEBHOOK }}
+          webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK }}
           branch: release

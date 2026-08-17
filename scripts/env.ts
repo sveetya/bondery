@@ -10,7 +10,8 @@
  *   pnpm run setup:dev
  *
  * Codegen / CI (not day-to-day DX):
- *   pnpm run env:examples
+ *   pnpm run env:sync              # build helpers → examples + turbo → check:versions
+ *   pnpm run env:examples          # regenerate only (no helpers build / version check)
  *   pnpm run env:check             # regenerate + fail if git dirty
  */
 
@@ -236,7 +237,7 @@ function writeTurbo(dryRun) {
     api: getRuntimeNamesForTarget("api"),
     "chrome-extension": [
       ...getRuntimeNamesForTarget("chrome-extension"),
-      "BONDERY_OPS_CHROME_EXTENSION_ID",
+      "BONDERY_INFRA_CHROME_EXTENSION_ID",
       "BONDERY_OPS_CHROME_PUBLISHER_ID",
       "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
       "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",

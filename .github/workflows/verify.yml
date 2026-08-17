@@ -20,17 +20,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: biomejs/setup-biome@v2
         with:
@@ -51,17 +41,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:
@@ -73,11 +53,11 @@ jobs:
           DATABASE_URL: postgresql://postgres:password@127.0.0.1:54322/bondery
         run: pnpm -r --filter "api^..." run build
 
-      - name: Build helpers for root scripts
-        run: pnpm --filter @bondery/helpers run build
-
       - name: Check env sync (examples + turbo)
         run: pnpm run env:check
+
+      - name: Check product version sync
+        run: pnpm run check:versions
 
       - name: Docs checks
         run: pnpm run check:docs
@@ -103,17 +83,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:
@@ -140,17 +110,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 11.18.0
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/shared/setup-pnpm
 
       - uses: ./.github/actions/shared/turbo-remote-cache
         with:

@@ -12,7 +12,7 @@ const requiredVars = [...getRequiredVarsForTarget("chrome-extension", environmen
 
 if (environment === "production" && isCi) {
   requiredVars.push(
-    "BONDERY_OPS_CHROME_EXTENSION_ID",
+    "BONDERY_INFRA_CHROME_EXTENSION_ID",
     "BONDERY_OPS_CHROME_PUBLISHER_ID",
     "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
     "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",

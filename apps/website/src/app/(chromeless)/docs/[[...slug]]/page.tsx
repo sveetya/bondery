@@ -11,7 +11,13 @@ import { createRelativeLink } from "fumadocs-ui/mdx";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OpenAPIPage } from "@/components/api-page";
+import { ChangelogFeed } from "@/components/changelog-feed";
 import { getMDXComponents } from "@/components/mdx";
+import {
+  getChangelogMergedToc,
+  isChangelogIndexSlug,
+  isUnpublishedChangelogSlug,
+} from "@/lib/changelog";
 import { getDocsGithubUrl, getPageMarkdownUrl } from "@/lib/get-llm-text";
 import { openapi } from "@/lib/openapi";
 import { getPageImage, source } from "@/lib/source";
@@ -22,7 +28,13 @@ type PageProps = {
 
 export default async function DocPage(props: PageProps) {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  const slug = params.slug ?? [];
+
+  if (isUnpublishedChangelogSlug(slug)) {
+    notFound();
+  }
+
+  const page = source.getPage(slug);
   if (!page) {
     notFound();
   }
@@ -31,9 +43,10 @@ export default async function DocPage(props: PageProps) {
   const lastEdit = page.data.lastModified ? new Date(page.data.lastModified) : null;
   const markdownUrl = getPageMarkdownUrl(page);
   const githubUrl = getDocsGithubUrl(page);
+  const toc = isChangelogIndexSlug(slug) ? getChangelogMergedToc() : page.data.toc;
 
   return (
-    <DocsPage full={page.data.full} toc={page.data.toc}>
+    <DocsPage full={page.data.full} toc={toc}>
       <DocsTitle>{page.data.title}</DocsTitle>
       {page.data.description ? (
         <DocsDescription className="mb-0">{page.data.description}</DocsDescription>
@@ -46,8 +59,9 @@ export default async function DocPage(props: PageProps) {
         <MDX
           components={getMDXComponents({
             a: createRelativeLink(source, page),
-            OpenAPIPage: async (props) => (
-              <OpenAPIPage {...(await openapi.preloadOpenAPIPage(page))} {...props} />
+            ChangelogFeed: () => <ChangelogFeed page={page} />,
+            OpenAPIPage: async (openApiProps) => (
+              <OpenAPIPage {...(await openapi.preloadOpenAPIPage(page))} {...openApiProps} />
             ),
           })}
         />
@@ -58,12 +72,18 @@ export default async function DocPage(props: PageProps) {
 }
 
 export async function generateStaticParams() {
-  return source.generateParams();
+  return source.generateParams().filter((param) => !isUnpublishedChangelogSlug(param.slug));
 }
 
 export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params;
-  const page = source.getPage(params.slug);
+  const slug = params.slug ?? [];
+
+  if (isUnpublishedChangelogSlug(slug)) {
+    notFound();
+  }
+
+  const page = source.getPage(slug);
   if (!page) {
     notFound();
   }

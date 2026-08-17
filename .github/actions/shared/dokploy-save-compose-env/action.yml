@@ -1,0 +1,36 @@
+name: Dokploy save compose env
+description: Sync Infisical dokploySync keys to Dokploy compose environment (expects Infisical env loaded).
+
+inputs:
+  dry_run:
+    description: Log upload keys without calling Dokploy API
+    required: false
+    default: "true"
+  redeploy:
+    description: Trigger deploy webhook after save (requires webhook in Infisical for the selected target)
+    required: false
+    default: "false"
+  target:
+    description: Sync target (website or plausible Dokploy compose app)
+    required: false
+    default: website
+
+runs:
+  using: composite
+  steps:
+    - name: Sync Infisical env to Dokploy
+      shell: bash
+      env:
+        DRY_RUN: ${{ inputs.dry_run }}
+        REDEPLOY: ${{ inputs.redeploy }}
+        TARGET: ${{ inputs.target }}
+      run: |
+        set -euo pipefail
+        args=(--target "$TARGET")
+        if [ "$DRY_RUN" = "true" ]; then
+          args+=(--dry-run)
+        fi
+        if [ "$REDEPLOY" = "true" ]; then
+          args+=(--redeploy)
+        fi
+        node scripts/sync-infisical-to-dokploy.mjs "${args[@]}"

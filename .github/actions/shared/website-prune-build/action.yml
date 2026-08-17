@@ -11,20 +11,20 @@ runs:
       shell: bash
       run: pnx turbo@2.10.4 prune website --docker
 
-    - name: Fetch pruned dependencies
+    - name: Install pruned dependencies (manifests only)
       shell: bash
       run: |
         cd out/json
-        pnpm fetch
+        pnpm install --frozen-lockfile --ignore-scripts --no-runtime
 
-    - name: Install pruned dependencies
+    - name: Install pruned dependencies (full sources)
       shell: bash
       run: |
         cp -r out/full/* out/json/
         cp -r docs out/json/docs
         cp -r scripts out/json/scripts
         cd out/json
-        pnpm install --frozen-lockfile --ignore-scripts
+        pnpm install --frozen-lockfile --ignore-scripts --no-runtime
 
     - name: Build website
       shell: bash

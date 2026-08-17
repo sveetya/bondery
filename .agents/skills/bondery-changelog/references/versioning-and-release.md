@@ -26,11 +26,12 @@ Do not create a dated version section for every merge. A dated section represent
 
 1. Calculate `X.Y.Z` from the release year/month and existing releases in that month.
 2. Review all changes since the previous release; add missing notable entries and remove internal noise.
-3. Create [`docs/changelog/releases/X.Y.Z.mdx`](../../../../docs/changelog/releases/) with `## [X.Y.Z] - DD.MM.YYYY` and the accumulated entries; add an import in [`docs/changelog.mdx`](../../../../docs/changelog.mdx) directly below `<Unreleased />`.
+3. Create [`docs/changelog/releases/X.Y.Z.mdx`](../../../../docs/changelog/releases/) with `title: "X.Y.Z"`, `## [X.Y.Z] - DD.MM.YYYY`, and the accumulated entries; prepend `"X.Y.Z"` to [`docs/changelog/releases/meta.json`](../../../../docs/changelog/releases/meta.json) (newest first).
 4. Reset [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx) to an empty `## [Unreleased]` section with category headings as needed.
 5. Add `Breaking` notes with migration links when applicable.
-6. Complete package version bumps, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
-7. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
+6. Complete package version bumps via `pnpm run sync-version`, generated artifacts, builds, extension gates, deployment, and rollback steps via [`bondery-release`](../../bondery-release/SKILL.md).
+7. After deploy smoke passes, move matching ROADMAP cards from Ready for Release to Released per [`bondery-roadmap`](../../bondery-roadmap/references/release-day.md).
+8. For a monthly release, use the curated changelog as source material for the [Blog post workflow](../../../workflows/blog/BLOG-POST.md); do not paste commit logs into user communications.
 
 Dependency-only work follows the [Package upgrade workflow](../../../workflows/chores/UPGRADE-PACKAGES.md) and normally uses the `📦 Dependencies` category with a `deps:` commit prefix.
 
@@ -38,8 +39,9 @@ Dependency-only work follows the [Package upgrade workflow](../../../workflows/c
 
 - [ ] Version derives from release year, month, and patch sequence
 - [ ] All notable changes since the previous release were reviewed
-- [ ] Entries moved from `unreleased.mdx` into `releases/X.Y.Z.mdx`; import added to `changelog.mdx`
+- [ ] Entries moved from `unreleased.mdx` into `releases/X.Y.Z.mdx`; `"X.Y.Z"` prepended to `releases/meta.json`
 - [ ] A clean `Unreleased` section remains in `unreleased.mdx`
 - [ ] Breaking and self-hosting actions are explicit
 - [ ] Full technical release workflow completed separately
 - [ ] Monthly announcement content was drafted from curated outcomes
+- [ ] ROADMAP cards updated to Released with changelog links (after deploy smoke)

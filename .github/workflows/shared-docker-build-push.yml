@@ -55,14 +55,13 @@ on:
         type: string
         default: buildkit
     secrets:
-      BONDERY_OPS_GHCR_WRITE_TOKEN:
-        required: true
       BONDERY_OPS_TURBO_TOKEN:
         required: false
 
 permissions:
   contents: read
   packages: write
+  id-token: write
 
 env:
   TURBO_TELEMETRY_DISABLED: 1
@@ -99,10 +98,7 @@ jobs:
 
       - name: Log in to GHCR
         if: inputs.push
-        uses: ./.github/actions/shared/ghcr-login
-        with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.BONDERY_OPS_GHCR_WRITE_TOKEN }}
+        uses: ./.github/actions/shared/ghcr-login-infisical
 
       - name: Docker metadata
         if: inputs.push

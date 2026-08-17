@@ -30,6 +30,13 @@
     "typescript": "^7.0.2",
     "yaml": "^2.9.0"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "onFail": "download",
+      "version": "26"
+    }
+  },
   "engines": {
     "node": ">=26",
     "pnpm": ">=11.18.0"
@@ -46,7 +53,7 @@
     "build:translations": "turbo build --filter=@bondery/translations",
     "build:webapp": "turbo build --filter=webapp",
     "build:website": "turbo build --filter=website",
-    "check": "biome ci . && pnpm run check:package-imports && pnpm --filter @bondery/helpers run build && pnpm run env:check && pnpm run check:docs && pnpm run check:openapi && pnpm run test:webapp:runtime-config && pnpm run check:contracts && pnpm run check:types && pnpm run check:i18n && pnpm run check:api-errors && pnpm run test:api:sync",
+    "check": "biome ci . && pnpm run check:package-imports && pnpm run env:check && pnpm run check:docs && pnpm run check:openapi && pnpm run test:webapp:runtime-config && pnpm run check:contracts && pnpm run check:types && pnpm run check:i18n && pnpm run check:api-errors && pnpm run test:api:sync",
     "check:api-errors": "pnpm run check:api-errors:catalog && pnpm run check:api-errors:translations && pnpm run check:api-errors:client-display",
     "check:api-errors:catalog": "node scripts/check-api-errors-catalog.mjs",
     "check:api-errors:client-display": "node scripts/check-api-errors-client-display.mjs",
@@ -65,6 +72,7 @@
     "check:package-imports": "node scripts/check-package-imports.mjs",
     "check:sync-patterns": "pnpm --filter mobile run check:sync-patterns",
     "check:types": "turbo check:types",
+    "check:versions": "node scripts/check-versions.mjs",
     "db:functions": "pnpm --filter @bondery/db run db:functions",
     "db:generate": "pnpm --filter @bondery/db run db:generate",
     "db:migrate:deploy": "pnpm --filter @bondery/db run db:migrate:deploy",
@@ -83,11 +91,12 @@
     "dev:webapp-api-emails": "turbo watch webapp#dev api#dev @bondery/emails#preview --concurrency 20",
     "dev:website": "turbo watch website#dev --concurrency 20",
     "env": "node --import tsx scripts/env.ts --all",
-    "env:check": "node --import tsx scripts/env.ts --check",
+    "env:check": "pnpm --filter @bondery/helpers run build && node --import tsx scripts/env.ts --check",
     "env:development": "node --import tsx scripts/env.ts --development",
     "env:examples": "node scripts/generate-env-examples.mjs",
     "env:production": "node --import tsx scripts/env.ts --production",
     "env:pull": "node --import tsx scripts/env-pull.ts",
+    "env:sync": "node scripts/env-sync.mjs",
     "generate:doc-links": "node scripts/generate-doc-links.mjs",
     "generate:openapi": "turbo generate:openapi --filter=api",
     "github:repo-settings": "bash .github/scripts/apply-repo-settings.sh",
@@ -112,6 +121,7 @@
     "stop:redis": "docker compose -f deploy/bondery/docker-compose.dev-redis.yml down",
     "stop:seaweedfs": "docker compose -f deploy/bondery/docker-compose.seaweedfs.yml -f deploy/bondery/docker-compose.seaweedfs.dev.yml --env-file .env.local down",
     "sync-exports": "node scripts/sync-package-exports.mjs",
+    "sync-version": "node scripts/sync-version.mjs",
     "test:api": "pnpm --filter api run test:api",
     "test:api:sync": "pnpm --filter api run test:sync",
     "test:auth": "pnpm --filter api run test:auth",
@@ -122,5 +132,5 @@
     "tsc-native": "node scripts/tsc-native.mjs",
     "turbo:clean": "turbo daemon clean"
   },
-  "version": "1.8.2"
+  "version": "1.8.3"
 }
