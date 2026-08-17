@@ -198,14 +198,9 @@ jobs:
           prerelease: true
           generate_release_notes: false
           body: |
-            # Bondery ${{ needs.validate.outputs.version }}
+            [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
 
-            Changelog: https://usebondery.com/docs/changelog
-
-            ## Status
-            - API: pending
-            - Webapp: pending
-            - Extension: pending
+            Release publishing in progress for ${{ needs.validate.outputs.version }}. Do not pin until this pre-release is removed.
 
   release_api:
     needs: [validate, detect_changes, resolve_meta]
@@ -267,48 +262,6 @@ jobs:
     with:
       version: ${{ needs.validate.outputs.version }}
 
-  append_api:
-    needs: [validate, release_api, retag_api]
-    if: always() && (needs.release_api.result == 'success' || needs.retag_api.result == 'success')
-    uses: ./.github/workflows/shared-github-release-append.yml
-    with:
-      tag: ${{ needs.validate.outputs.tag }}
-      section: |
-        ### API
-        Image: `ghcr.io/usebondery/api:${{ needs.validate.outputs.version }}`
-        ${{ needs.release_api.result == 'success' && 'Promoted from sha, smoke passed.' || 'Retagged unchanged image from previous version.' }}
-
-  append_webapp:
-    needs: [validate, release_webapp, retag_webapp]
-    if: always() && (needs.release_webapp.result == 'success' || needs.retag_webapp.result == 'success')
-    uses: ./.github/workflows/shared-github-release-append.yml
-    with:
-      tag: ${{ needs.validate.outputs.tag }}
-      section: |
-        ### Webapp
-        Image: `ghcr.io/usebondery/webapp:${{ needs.validate.outputs.version }}`
-        ${{ needs.release_webapp.result == 'success' && 'Promoted from sha, smoke passed.' || 'Retagged unchanged image from previous version.' }}
-
-  append_extension:
-    needs: [validate, release_extension]
-    if: always() && needs.release_extension.result == 'success'
-    uses: ./.github/workflows/shared-github-release-append.yml
-    with:
-      tag: ${{ needs.validate.outputs.tag }}
-      section: |
-        ### Extension
-        Chrome Web Store version `${{ needs.validate.outputs.version }}` submitted.
-
-  append_retry_note:
-    needs: validate
-    if: github.event_name == 'workflow_dispatch' && inputs.note != ''
-    uses: ./.github/workflows/shared-github-release-append.yml
-    with:
-      tag: ${{ needs.validate.outputs.tag }}
-      section: |
-        ### CI retry-promote
-        ${{ inputs.note }}
-
   notify_dokploy:
     needs:
       - validate
@@ -364,30 +317,60 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.validate.outputs.tag }}
           VERSION: ${{ needs.validate.outputs.version }}
-          API_OK: ${{ needs.release_api.result == 'success' || needs.retag_api.result == 'success' }}
-          WEBAPP_OK: ${{ needs.release_webapp.result == 'success' || needs.retag_webapp.result == 'success' }}
-          EXT_OK: ${{ needs.release_extension.result == 'success' }}
-          EXT_SKIPPED: ${{ needs.detect_changes.outputs.extension != 'true' }}
+          RELEASE_API_RESULT: ${{ needs.release_api.result }}
+          RETAG_API_RESULT: ${{ needs.retag_api.result }}
+          RELEASE_WEBAPP_RESULT: ${{ needs.release_webapp.result }}
+          RETAG_WEBAPP_RESULT: ${{ needs.retag_webapp.result }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          RETRY_NOTE: ${{ github.event_name == 'workflow_dispatch' && inputs.note || '' }}
         run: |
+          component_ok() {
+            local release_result="$1"
+            local retag_result="$2"
+            if [ "$release_result" = "success" ] || [ "$retag_result" = "success" ]; then
+              return 0
+            fi
+            if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] && \
+              [ "$release_result" = "skipped" ] && [ "$retag_result" = "skipped" ]; then
+              return 0
+            fi
+            return 1
+          }
+
           BODY_FILE=$(mktemp)
-          cat > "$BODY_FILE" <<EOF
-          # Bondery ${VERSION}
+          if component_ok "$RELEASE_API_RESULT" "$RETAG_API_RESULT" && \
+            component_ok "$RELEASE_WEBAPP_RESULT" "$RETAG_WEBAPP_RESULT"; then
+            cat > "$BODY_FILE" <<EOF
+          [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
 
-          Changelog: https://usebondery.com/docs/changelog
+          ## Images
 
-          ## Container images
-          - API: \`ghcr.io/usebondery/api:${VERSION}\`
-          - Webapp: \`ghcr.io/usebondery/webapp:${VERSION}\`
+          - [ghcr.io/usebondery/api:${VERSION}](https://github.com/usebondery/bondery/pkgs/container/api)
+          - [ghcr.io/usebondery/webapp:${VERSION}](https://github.com/usebondery/bondery/pkgs/container/webapp)
 
-          ## Components
-          - API: ${API_OK}
-          - Webapp: ${WEBAPP_OK}
-          - Extension: ${EXT_OK} (skipped=${EXT_SKIPPED})
+          ## What's new?
 
-          Pin production with \`BONDERY_INFRA_VERSION=${VERSION}\` and redeploy api + webapp together.
+          [Changelog ${VERSION}](https://usebondery.com/docs/changelog/releases/${VERSION})
           EOF
+            if [ -n "$RETRY_NOTE" ]; then
+              printf '\n%s\n' "$RETRY_NOTE" >> "$BODY_FILE"
+            fi
+            gh release edit "$TAG" --notes-file "$BODY_FILE" --prerelease=false
 
-          gh release edit "$TAG" --notes-file "$BODY_FILE" --prerelease=false
+            RELEASE_ID="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}" --jq .id)"
+            gh api "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/reactions" -f content=heart
+            gh api "repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}/reactions" -f content=hooray
+          else
+            cat > "$BODY_FILE" <<EOF
+          [Docs](https://usebondery.com/docs) · [Changelog](https://usebondery.com/docs/changelog)
+
+          Release publishing did not finish. Do not pin this version. Stay on your current pin.
+          EOF
+            if [ -n "$RETRY_NOTE" ]; then
+              printf '\n%s\n' "$RETRY_NOTE" >> "$BODY_FILE"
+            fi
+            gh release edit "$TAG" --notes-file "$BODY_FILE" --prerelease=true
+          fi
 
       - name: Upload extension assets
         if: needs.release_extension.result == 'success'

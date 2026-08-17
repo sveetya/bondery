@@ -25,7 +25,7 @@ Mirror [`apps/website/src/app/status/route.ts`](../../../../apps/website/src/app
 | GitHub README | Centered nav row |
 | Website footer | Product group — `/roadmap`, `target="_blank"` |
 | Docs | `docs/roadmap.mdx` in Help & updates nav |
-| Changelog | Intro cross-link in `docs/changelog.mdx` |
+| Changelog | Intro cross-link in `docs/changelog/index.mdx` |
 
 ## Public URL checklist
 

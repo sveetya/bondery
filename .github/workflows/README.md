@@ -36,7 +36,6 @@ shared/
   release-validate.yml     -> shared-release-validate.yml
   release-container.yml    -> shared-release-container.yml
   release-extension.yml    -> shared-release-extension.yml
-  github-release-append.yml -> shared-github-release-append.yml
   smoke-bondery.yml        -> shared-smoke-bondery.yml
   promote-production.yml   -> shared-promote-production.yml
 ```

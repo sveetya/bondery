@@ -13,7 +13,7 @@ Omit routine implementation details, formatting, test maintenance, and internal 
 
 ## Document structure
 
-In-flight work lives in [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx). Each shipped release is a hidden partial under `docs/changelog/releases/X.Y.Z.mdx`, imported newest-first by [`docs/changelog.mdx`](../../../../docs/changelog.mdx).
+In-flight work lives in [`docs/changelog/unreleased.mdx`](../../../../docs/changelog/unreleased.mdx) (`hidden: true`; unpublished; not in `meta.json`). Each shipped release is a page under `docs/changelog/releases/X.Y.Z.mdx` with `title: "X.Y.Z"`, listed newest-first in [`docs/changelog/releases/meta.json`](../../../../docs/changelog/releases/meta.json). The hub at [`docs/changelog/index.mdx`](../../../../docs/changelog/index.mdx) composes Unreleased plus all releases via `ChangelogFeed`.
 
 Keep this order within each partial:
 

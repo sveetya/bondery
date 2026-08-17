@@ -65,12 +65,34 @@ function assertNoLegacyImageTagEnv() {
 
 function checkReleaseChangelog(version) {
   const changelogPath = join(root, `docs/changelog/releases/${version}.mdx`);
+  const metaPath = join(root, "docs/changelog/releases/meta.json");
+  // biome-ignore lint/suspicious/noUndeclaredEnvVars: GitHub Actions PR metadata only
+  const branch = process.env.GITHUB_HEAD_REF ?? "";
+  const isReleaseBranch = branch.startsWith("chore/release-");
+
   if (!existsSync(changelogPath)) {
-    // biome-ignore lint/suspicious/noUndeclaredEnvVars: GitHub Actions PR metadata only
-    const branch = process.env.GITHUB_HEAD_REF ?? "";
-    if (branch.startsWith("chore/release-")) {
+    if (isReleaseBranch) {
       fail(`Release branch ${branch} requires docs/changelog/releases/${version}.mdx`);
     }
+    return;
+  }
+
+  if (!existsSync(metaPath)) {
+    if (isReleaseBranch) {
+      fail(`Release branch ${branch} requires docs/changelog/releases/meta.json`);
+    }
+    return;
+  }
+
+  const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+  const pages = meta.pages ?? [];
+
+  if (!pages.includes(version)) {
+    fail(`docs/changelog/releases/meta.json must list ${version} in pages`);
+  }
+
+  if (pages[0] !== version) {
+    fail(`docs/changelog/releases/meta.json must list ${version} first (newest first)`);
   }
 }
 
