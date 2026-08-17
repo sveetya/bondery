@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { DocsLayoutClient } from "@/components/docs-layout-client";
 import { getDocsLayoutTabs } from "@/lib/docs-tabs";
 import { baseOptions } from "@/lib/layout.shared";
-import { source } from "@/lib/source";
+import { getFilteredPageTree } from "@/lib/source";
 
 export default function DocsRootLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,7 +14,7 @@ export default function DocsRootLayout({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <DocsLayoutClient tabs={getDocsLayoutTabs()} tree={source.getPageTree()} {...baseOptions()}>
+      <DocsLayoutClient tabs={getDocsLayoutTabs()} tree={getFilteredPageTree()} {...baseOptions()}>
         {children}
       </DocsLayoutClient>
     </RootProvider>

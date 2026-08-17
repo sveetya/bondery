@@ -22,7 +22,7 @@ Skip if the release does not change extension–API compatibility.
 
 ## 3. Product changelog
 
-Cut the changelog per [`bondery-changelog` versioning](../../bondery-changelog/references/versioning-and-release.md): create `docs/changelog/releases/X.Y.Z.mdx`, add its import to `docs/changelog.mdx`, and reset `docs/changelog/unreleased.mdx`. Follow [`bondery-changelog` format](../../bondery-changelog/references/format.md).
+Cut the changelog per [`bondery-changelog` versioning](../../bondery-changelog/references/versioning-and-release.md): create `docs/changelog/releases/X.Y.Z.mdx`, prepend `"X.Y.Z"` to `docs/changelog/releases/meta.json`, and reset `docs/changelog/unreleased.mdx`. Follow [`bondery-changelog` format](../../bondery-changelog/references/format.md).
 
 ## 4. OpenAPI spec
 
@@ -62,7 +62,7 @@ Production releases use unified `vX.Y.Z` tags only (`release.yml`).
 
 - [ ] `pnpm run sync-version` and `pnpm run check:versions` pass
 - [ ] `MIN_EXTENSION_VERSION` updated if extension/API compatibility changed
-- [ ] `docs/changelog/releases/X.Y.Z.mdx` created; import added to `docs/changelog.mdx`; fresh `Unreleased` in `unreleased.mdx`
+- [ ] `docs/changelog/releases/X.Y.Z.mdx` created; `"X.Y.Z"` prepended to `docs/changelog/releases/meta.json`; fresh `Unreleased` in `unreleased.mdx`
 - [ ] OpenAPI generated and committed
 - [ ] `pnpm run build` (or verification loop) passes
 - [ ] Changes merged on `main`

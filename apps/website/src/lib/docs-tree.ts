@@ -12,6 +12,7 @@ const TAB_SLUGS: Record<TabKey, Set<string>> = {
     "bondery",
     "concepts",
     "getting-help-and-troubleshooting",
+    "roadmap",
     "changelog",
   ]),
   selfhost: new Set(["deploy"]),

@@ -57,9 +57,9 @@ Lead with the reader's goal. A user page explains *what to do*; a contributor pa
 
 ### Changelog partials (`docs/changelog/`)
 
-- **In-flight entries** — edit [`docs/changelog/unreleased.mdx`](../../changelog/unreleased.mdx) (`title` + `hidden: true`; not in `meta.json`).
-- **Shipped releases** — one file per version under `docs/changelog/releases/X.Y.Z.mdx` (`title: "Changelog X.Y.Z"`, `hidden: true`), imported newest-first by [`docs/changelog.mdx`](../../changelog.mdx).
-- Do not add release partials to `meta.json`; the public page stays a single sidebar entry.
+- **In-flight entries** — edit [`docs/changelog/unreleased.mdx`](../../changelog/unreleased.mdx) (`title: "Release notes for next version update"`, `hidden: true`; unpublished; not in `meta.json`).
+- **Shipped releases** — one file per version under `docs/changelog/releases/X.Y.Z.mdx` (`title: "X.Y.Z"`), listed newest-first in [`docs/changelog/releases/meta.json`](../../changelog/releases/meta.json).
+- **Hub page** — [`docs/changelog/index.mdx`](../../changelog/index.mdx) at `/docs/changelog` composes Unreleased plus all releases via `ChangelogFeed`; do not add manual imports per release.
 
 ### Architecture decision records (`docs/adr/`)
 
@@ -129,7 +129,7 @@ Update docs in the **same change** when behavior, architecture, or setup steps c
 2. Nearby `meta.json` files
 3. In-app help links — add or update `docId` (and `docSections` for section anchors) in the page frontmatter, then run `pnpm run generate:doc-links`. Use `helpDoc="your.docId"` or `doc="your.docId"` in the webapp; never hardcode `HELP_DOCS_URL` paths.
 4. Cross-links from related concept pages
-5. [Changelog](../changelog.mdx) for user-visible release notes
+5. [Changelog](../changelog/index.mdx) for user-visible release notes
 
 ### In-app doc link frontmatter
 

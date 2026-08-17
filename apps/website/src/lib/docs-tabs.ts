@@ -20,6 +20,7 @@ function collectProductUrls(): Set<string> {
       matchesPrefix(url, "/docs/bondery") ||
       matchesPrefix(url, "/docs/concepts") ||
       matchesPrefix(url, "/docs/getting-help-and-troubleshooting") ||
+      matchesPrefix(url, "/docs/roadmap") ||
       matchesPrefix(url, "/docs/changelog")
     ) {
       urls.add(url);
