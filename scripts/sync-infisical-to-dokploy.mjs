@@ -4,7 +4,7 @@
  * Prerequisites: Infisical secrets-action has loaded production keys into process.env.
  *
  * Usage:
- *   node scripts/sync-infisical-to-dokploy.mjs --target website|plausible [--dry-run] [--redeploy]
+ *   node scripts/sync-infisical-to-dokploy.mjs --target website|plausible|services [--dry-run] [--redeploy]
  */
 
 import { pathToFileURL } from "node:url";

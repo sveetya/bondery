@@ -1,6 +1,6 @@
 name: Sync Dokploy env
 
-# Manual Infisical production → Dokploy compose env sync (website or plausible stack).
+# Manual Infisical production → Dokploy compose env sync (website, services, or plausible stack).
 
 on:
   workflow_dispatch:
@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - website
+          - services
           - plausible
         default: website
       dry_run:

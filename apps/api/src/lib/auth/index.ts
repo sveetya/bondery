@@ -39,8 +39,8 @@ import { platformAdminAc, platformAdminRoles } from "./platform-admin-access.js"
 import { provisionNewUser } from "./provision-new-user.js";
 import { resolveAuthLocale } from "./resolve-auth-locale.js";
 import { resolveProvisionLocaleFromContext } from "./resolve-provision-locale.js";
-import { resolveSignupMethodFromProviderId } from "./resolve-signup-method.js";
 import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
+import { resolveSignupMethodFromProviderId } from "./resolve-signup-method.js";
 import { createBetterAuthSecondaryStorage } from "./secondary-storage.js";
 import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
 

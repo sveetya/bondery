@@ -11,7 +11,7 @@ inputs:
     required: false
     default: "false"
   target:
-    description: Sync target (website or plausible Dokploy compose app)
+    description: Sync target (website, services, or plausible Dokploy compose app)
     required: false
     default: website
 

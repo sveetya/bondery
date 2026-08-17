@@ -71,6 +71,12 @@ Schema migrations run automatically via `api` `pre_start` on deploy — no separ
 
 After `vX.Y.Z` release tags: GitHub Actions promotes semver images, runs compose smoke, promotes `:production` on success, then fetches **production Infisical** and calls `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` with `refs/heads/release`. Configure the Dokploy Compose app branch to **`release`**. See [dokploy.mdx](../../docs/contributing/dokploy.mdx).
 
+### Infisical → Dokploy env sync
+
+Product stack secrets and hostnames can be synced from Infisical **production** via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml) with `target: services`. Requires `BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID` (and optional `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK`) in Infisical — see [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml).
+
+**Not synced** (keep in Dokploy UI or compose derives): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL`.
+
 ### Release smoke (local)
 
 Reproduce the CI release smoke against a pulled GHCR tag:

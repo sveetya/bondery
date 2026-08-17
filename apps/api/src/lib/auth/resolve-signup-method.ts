@@ -3,9 +3,9 @@
  * Map Better Auth `account.providerId` — do not pass raw provider strings to analytics.
  */
 export const SIGNUP_METHOD = {
+  email: "email",
   oauth_github: "oauth_github",
   oauth_linkedin: "oauth_linkedin",
-  email: "email",
   unknown: "unknown",
 } as const;
 

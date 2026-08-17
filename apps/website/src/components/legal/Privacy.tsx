@@ -246,9 +246,9 @@ export function Privacy() {
       <Text mb="lg">
         We may use analytics tools to understand how users interact with our Services and to improve
         them. This may include page views, feature usage, session duration, and pseudonymous
-        interaction data (such as which features you use). We do not include contact content,
-        names, or emails in product analytics events. You can disable product analytics in your
-        account settings under Data management.
+        interaction data (such as which features you use). We do not include contact content, names,
+        or emails in product analytics events. You can disable product analytics in your account
+        settings under Data management.
       </Text>
 
       <Title mb="sm" mt="lg" order={3}>
