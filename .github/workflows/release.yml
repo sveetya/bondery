@@ -52,8 +52,8 @@ jobs:
   validate:
     uses: ./.github/workflows/shared-release-validate.yml
     with:
-      release_mode: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'release' }}
-      dispatch_version: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
+      release_mode: ${{ github.event_name == 'workflow_dispatch' && inputs.mode != '' && inputs.mode || 'release' }}
+      dispatch_version: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' && inputs.version || '' }}
 
   detect_changes:
     needs: validate
@@ -113,7 +113,7 @@ jobs:
       - name: Resolve component flags
         id: set
         env:
-          COMPONENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.components || '' }}
+          COMPONENTS: ${{ github.event_name == 'workflow_dispatch' && inputs.components != '' && inputs.components || '' }}
           FILTER_API: ${{ steps.filter.outputs.api }}
           FILTER_WEBAPP: ${{ steps.filter.outputs.webapp }}
           FILTER_EXTENSION: ${{ steps.filter.outputs.extension }}
@@ -217,7 +217,7 @@ jobs:
       version: ${{ needs.validate.outputs.version }}
       checkout_ref: ${{ needs.validate.outputs.tag }}
       source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
-      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild }}
+      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
       use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
 
   release_webapp:
@@ -230,7 +230,7 @@ jobs:
       version: ${{ needs.validate.outputs.version }}
       checkout_ref: ${{ needs.validate.outputs.tag }}
       source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
-      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild }}
+      force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
       use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
 
   retag_api:
