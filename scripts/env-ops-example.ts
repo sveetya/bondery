@@ -1,14 +1,14 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { createCliLogger } from "@bondery/helpers/cli";
+import { formatEnvFile, OPS_GENERATED_HEADER } from "./env-file-format.js";
 import {
   collectOpsSyncRows,
   ENV_MANIFEST,
   OPS_GROUP_GUIDES,
   resolveExampleValue,
   sortOpsExampleRows,
-} from "@bondery/helpers/env";
-import { formatEnvFile, OPS_GENERATED_HEADER } from "./env-file-format.js";
+} from "./env-manifest.ts";
 
 export function collectOpsExampleRows(packageVersion: string) {
   const rows = [];

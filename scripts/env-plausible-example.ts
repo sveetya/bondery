@@ -1,13 +1,13 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { createCliLogger } from "@bondery/helpers/cli";
+import { formatEnvFile, PLAUSIBLE_GENERATED_HEADER } from "./env-file-format.js";
 import {
   ENV_MANIFEST,
   PLAUSIBLE_GROUP_GUIDES,
   resolveExampleValue,
   sortPlausibleExampleRows,
-} from "@bondery/helpers/env";
-import { formatEnvFile, PLAUSIBLE_GENERATED_HEADER } from "./env-file-format.js";
+} from "./env-manifest.ts";
 
 export function collectPlausibleExampleRows() {
   const rows = [];

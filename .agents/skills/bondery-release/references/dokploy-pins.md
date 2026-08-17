@@ -2,9 +2,11 @@
 
 Self-hosters and production should pin **`BONDERY_INFRA_VERSION`** (not floating `:production`) so api and webapp move together.
 
-## Manifest pin
+## Version pin source
 
-Run `pnpm run sync-version` on release prep — it updates `deployExample.value` on `BONDERY_INFRA_VERSION` in [`packages/helpers/src/env/manifest.ts`](../../../../packages/helpers/src/env/manifest.ts) and regenerates [`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example).
+`BONDERY_INFRA_VERSION` in [`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example) is generated from **root `package.json` version** — not a duplicate field in [`packages/helpers/src/env/manifest.ts`](../../../../packages/helpers/src/env/manifest.ts).
+
+Run `pnpm run sync-version` on release prep — it propagates the root version to workspace packages and mobile native fields, then runs `env:sync` to regenerate examples.
 
 For the marketing website ops stack, set `opsExample.value` on:
 
@@ -14,9 +16,8 @@ For the marketing website ops stack, set `opsExample.value` on:
 
 ```bash
 pnpm run sync-version
-# or after manual manifest edit:
-pnpm --filter @bondery/helpers run build
-pnpm run env:examples
+# or after manifest / version edits:
+pnpm run env:sync
 ```
 
 [`deploy/bondery/.env.example`](../../../../deploy/bondery/.env.example) includes:
@@ -58,7 +59,7 @@ Before changing pins, note the previous `BONDERY_INFRA_VERSION` in the PR or rel
 ## Pins checklist
 
 - [ ] `BONDERY_INFRA_VERSION` matches semver tags that passed CI smoke
-- [ ] `pnpm run sync-version` (or `env:examples`) run after manifest edit
+- [ ] `pnpm run sync-version` (or `env:sync`) run after manifest or version edit
 - [ ] `deploy/bondery/.env.example` committed
 - [ ] Dokploy product env updated
 - [ ] api + webapp redeployed together

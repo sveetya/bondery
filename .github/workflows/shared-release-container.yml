@@ -84,19 +84,23 @@ jobs:
       image_tag: ${{ inputs.version }}
       service: ${{ inputs.service }}
 
-  promote-production:
-    needs: smoke
-    if: ${{ needs.smoke.result == 'success' && !inputs.use_production_gate }}
-    uses: ./.github/workflows/shared-promote-production.yml
-    secrets: inherit
-    with:
-      image_name: ghcr.io/usebondery/${{ inputs.service }}
-      version: ${{ inputs.version }}
-
-  promote-production-gated:
+  extension_production_gate:
     needs: smoke
     if: ${{ needs.smoke.result == 'success' && inputs.use_production_gate }}
     environment: production-containers
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Extension gate approved — promote to :production"
+
+  promote-production:
+    needs: [smoke, extension_production_gate]
+    if: >-
+      always() &&
+      needs.smoke.result == 'success' &&
+      (
+        needs.extension_production_gate.result == 'success' ||
+        needs.extension_production_gate.result == 'skipped'
+      )
     uses: ./.github/workflows/shared-promote-production.yml
     secrets: inherit
     with:
