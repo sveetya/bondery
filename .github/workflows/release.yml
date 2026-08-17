@@ -351,6 +351,8 @@ jobs:
       - release_extension
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -359,6 +361,7 @@ jobs:
 
       - name: Finalize GitHub release
         env:
+          GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.validate.outputs.tag }}
           VERSION: ${{ needs.validate.outputs.version }}
           API_OK: ${{ needs.release_api.result == 'success' || needs.retag_api.result == 'success' }}
@@ -389,6 +392,7 @@ jobs:
       - name: Upload extension assets
         if: needs.release_extension.result == 'success'
         env:
+          GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.validate.outputs.tag }}
           VERSION: ${{ needs.validate.outputs.version }}
         run: |

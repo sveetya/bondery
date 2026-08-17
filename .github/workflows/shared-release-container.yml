@@ -75,7 +75,9 @@ jobs:
 
   smoke:
     needs: image_ready
-    if: ${{ needs.image_ready.result == 'success' }}
+    # always() required: promote/build-push are mutually exclusive (one skipped), which
+    # makes the default success() check false even when image_ready succeeded.
+    if: ${{ always() && needs.image_ready.result == 'success' }}
     uses: ./.github/workflows/shared-smoke-bondery.yml
     secrets: inherit
     with:

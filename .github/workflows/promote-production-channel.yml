@@ -1,0 +1,46 @@
+name: Promote - Production channel
+
+# Operator recovery: move a semver tag to the floating :production channel after smoke passed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semver tag to promote (e.g. 1.8.3)
+        required: true
+        type: string
+      services:
+        description: Services to promote
+        required: true
+        type: choice
+        default: api+webapp
+        options:
+          - api+webapp
+          - api
+          - webapp
+          - all
+
+jobs:
+  api:
+    if: ${{ inputs.services == 'api' || inputs.services == 'api+webapp' || inputs.services == 'all' }}
+    uses: ./.github/workflows/shared-promote-production.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/api
+      version: ${{ inputs.version }}
+
+  webapp:
+    if: ${{ inputs.services == 'webapp' || inputs.services == 'api+webapp' || inputs.services == 'all' }}
+    uses: ./.github/workflows/shared-promote-production.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/webapp
+      version: ${{ inputs.version }}
+
+  website:
+    if: ${{ inputs.services == 'all' }}
+    uses: ./.github/workflows/shared-promote-production.yml
+    secrets: inherit
+    with:
+      image_name: ghcr.io/usebondery/website
+      version: ${{ inputs.version }}
