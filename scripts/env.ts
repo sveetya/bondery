@@ -10,7 +10,8 @@
  *   pnpm run setup:dev
  *
  * Codegen / CI (not day-to-day DX):
- *   pnpm run env:examples
+ *   pnpm run env:sync              # build helpers → examples + turbo → check:versions
+ *   pnpm run env:examples          # regenerate only (no helpers build / version check)
  *   pnpm run env:check             # regenerate + fail if git dirty
  */
 

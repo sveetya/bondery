@@ -18,7 +18,7 @@ Each var has `secret: boolean`, `requiredIn`, `targets`, and `exampleValue`.
 
 **CLI:**
 - `pnpm run env` — sync root `.env.local` → per-app files
-- `pnpm run env:examples` — regenerate examples + `turbo.json` + `deploy/bondery/.env.example` (pre-commit when manifest changes)
+- `pnpm run env:sync` — build helpers, regenerate examples + `turbo.json`, `check:versions` (pre-commit when manifest changes)
 - `pnpm run env -- --check` — regenerate + fail if git dirty (**CI**)
 
 **Adding a new secret:**

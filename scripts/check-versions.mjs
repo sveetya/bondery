@@ -36,14 +36,6 @@ function readAndroidVersionName() {
   return match?.[1] ?? "";
 }
 
-function readManifestDeployPin() {
-  const content = readFileSync(join(root, "packages/helpers/src/env/manifest.ts"), "utf8");
-  const match = content.match(
-    /canonical: "BONDERY_INFRA_VERSION",[\s\S]*?deployExample: \{[\s\S]*?value: "([^"]+)"/,
-  );
-  return match?.[1] ?? "";
-}
-
 function readDeployExampleVersion() {
   const examplePath = join(root, "deploy/bondery/.env.example");
   if (!existsSync(examplePath)) {
@@ -120,9 +112,6 @@ if (readMobileAppConfigVersion() !== version) {
 }
 if (readAndroidVersionName() !== version) {
   errors.push(`apps/mobile/android/app/build.gradle versionName: ${readAndroidVersionName()}`);
-}
-if (readManifestDeployPin() !== version) {
-  errors.push(`manifest BONDERY_INFRA_VERSION pin: ${readManifestDeployPin()}`);
 }
 
 const deployExampleVersion = readDeployExampleVersion();
