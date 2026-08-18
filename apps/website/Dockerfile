@@ -28,11 +28,12 @@ COPY docs ./docs
 # Runtime injects real BONDERY_PUBLIC_* via deploy/ops Compose.
 ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
-# --force re-injects workspace packages after COPY full. A no-op second install
-# leaves json-only stubs; a Turbo remote-cache hit then skips
-# syncInjectedDepsAfterScripts, so dependents cannot resolve the package.
 RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
-    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --force --store-dir "${PNPM_STORE_DIR}"
+    pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
+# Drop json-only nested injects so tsc resolves hoisted workspace packages.
+# A Turbo remote-cache hit skips syncInjectedDepsAfterScripts, which otherwise
+# leaves dependents resolving an empty stub (TS2307).
+RUN rm -rf packages/*/node_modules
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
     pnpm exec turbo build --filter=website
