@@ -182,7 +182,7 @@ export type DokploySync = {
   targets: readonly DokploySyncTarget[];
 };
 
-export type DokploySyncTarget = "website" | "plausible";
+export type DokploySyncTarget = "website" | "plausible" | "services";
 
 /** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
 export type PlausibleExample = DeployExample;
@@ -453,7 +453,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     description: "Postgres password for bundled self-hosted database",
     exampleValue: EXAMPLE_POSTGRES_PASSWORD,
     group: "Database",
-    requiredIn: ["development"],
+    requiredIn: ["development", "production"],
     secret: true,
     syncable: true,
     targets: [t("db")],
@@ -668,7 +668,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       value: "app.usebondery.com",
     },
     description: "Public webapp hostname for Traefik Host() rules (no scheme).",
-    dokploySync: { targets: ["website"] },
+    dokploySync: { targets: ["website", "services"] },
     exampleValue: "app.usebondery.com",
     group: "Infra",
     opsExample: {
@@ -689,7 +689,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     },
     description:
       "Public marketing website hostname (no scheme). Compose derives BONDERY_PUBLIC_WEBSITE_URL for api/webapp.",
-    dokploySync: { targets: ["website"] },
+    dokploySync: { targets: ["website", "services"] },
     exampleValue: "usebondery.com",
     group: "Infra",
     opsExample: {
@@ -1038,7 +1038,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     syncable: true,
-    targets: [t("webapp")],
+    targets: [t("api"), t("webapp")],
   },
   {
     canonical: "BONDERY_PUBLIC_POSTHOG_HOST",
@@ -1049,7 +1049,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: [],
     secret: false,
     syncable: true,
-    targets: [t("webapp")],
+    targets: [t("api"), t("webapp")],
   },
   {
     canonical: "BONDERY_PUBLIC_PLAUSIBLE_DOMAIN",
@@ -1215,9 +1215,19 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
 ] as const;
+
+/** Keys never synced to deploy/bondery Dokploy compose (derived in compose or Dokploy UI). */
+export const SERVICES_DOKPLOY_SYNC_EXCLUDE = new Set<string>([
+  "BONDERY_INFRA_GIT_SHA",
+  "BONDERY_INFRA_VERSION",
+  "BONDERY_PRIVATE_S3_ENDPOINT",
+  "BONDERY_PUBLIC_STORAGE_URL",
+]);
 
 export const DOKPLOY_SYNC_TARGETS = {
   plausible: {
@@ -1225,6 +1235,11 @@ export const DOKPLOY_SYNC_TARGETS = {
     webhookKey: "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
     /** Satisfy Dokploy watch-path checks when CI triggers the deploy webhook. */
     webhookPathSentinels: ["deploy/plausible"],
+  },
+  services: {
+    composeIdKey: "BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID",
+    webhookKey: "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
+    webhookPathSentinels: ["deploy/bondery"],
   },
   website: {
     composeIdKey: "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
@@ -1246,6 +1261,7 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_DOKPLOY_API_KEY",
   "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
@@ -1263,6 +1279,23 @@ export const OPS_ENV_VARS = [
 ] as const;
 
 export type DokploySyncRow = { key: string; value: string };
+
+/** Whether a manifest entry is uploaded for the given Dokploy sync target. */
+export function entrySyncsToDokployTarget(entry: EnvVarDef, target: DokploySyncTarget): boolean {
+  if (entry.dokploySync?.targets.includes(target)) {
+    return true;
+  }
+
+  if (
+    target === "services" &&
+    entry.deployExample?.include &&
+    !SERVICES_DOKPLOY_SYNC_EXCLUDE.has(entry.canonical)
+  ) {
+    return true;
+  }
+
+  return false;
+}
 
 /** @deprecated Use collectDokploySyncRows(env, "website") */
 export function collectOpsSyncRows(env: Record<string, string>): {
@@ -1284,7 +1317,7 @@ export function collectDokploySyncRows(
   const missingRequired: string[] = [];
 
   for (const entry of ENV_MANIFEST) {
-    if (!entry.dokploySync?.targets.includes(target)) {
+    if (!entrySyncsToDokployTarget(entry, target)) {
       continue;
     }
 

@@ -183,6 +183,11 @@
       "Valid": "Gültig: {count}"
     },
     "PleaseWait": "Bitte warten...",
+    "ProductAnalytics": {
+      "Description": "Hilf uns, Bondery mit pseudonymen Nutzungsdaten zu verbessern. Wir erfassen Funktionsnutzung und Zähler — keine Kontaktinhalte, Namen oder E-Mails.",
+      "SwitchLabel": "Produktanalyse teilen",
+      "Title": "Produktanalyse"
+    },
     "SigningOut": "Abmeldung läuft...",
     "SignOut": "Abmelden",
     "SignOutButton": "Abmelden",

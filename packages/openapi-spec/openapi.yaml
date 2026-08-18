@@ -15914,6 +15914,7 @@ paths:
                   leftSwipeAction: call
                   name: Ada Lovelace
                   onboardingCompletedAt: 2026-01-15T12:00:00.000Z
+                  productAnalyticsEnabled: true
                   providers:
                     - email
                   reminderSendHour: 09:00
@@ -15947,6 +15948,8 @@ paths:
                           - de
                       leftSwipeAction:
                         type: string
+                      productAnalyticsEnabled:
+                        type: boolean
                       reminderSendHour:
                         type: string
                         pattern: ^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$
@@ -16019,6 +16022,7 @@ paths:
                       - groupSortOrder
                       - language
                       - leftSwipeAction
+                      - productAnalyticsEnabled
                       - reminderSendHour
                       - rightSwipeAction
                       - tagSortOrder
@@ -16157,6 +16161,8 @@ paths:
                     - call
                     - message
                     - email
+                productAnalyticsEnabled:
+                  type: boolean
                 reminderSendHour:
                   type: string
                   pattern: ^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$
@@ -16231,6 +16237,9 @@ paths:
                       leftSwipeAction:
                         nullable: true
                         type: string
+                      productAnalyticsEnabled:
+                        nullable: true
+                        type: boolean
                       reminderSendHour:
                         nullable: true
                         type: string

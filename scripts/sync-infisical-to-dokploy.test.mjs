@@ -33,6 +33,50 @@ describe("sync-infisical-to-dokploy", () => {
     BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY: "totp-vault-key",
   };
 
+  const servicesEnv = {
+    BONDERY_INFRA_API_DOMAIN: "api.usebondery.com",
+    BONDERY_INFRA_CHROME_EXTENSION_ID: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
+    BONDERY_INFRA_GIT_SHA: "abc123",
+    BONDERY_INFRA_STORAGE_DOMAIN: "storage.usebondery.com",
+    BONDERY_INFRA_VERSION: "1.8.3",
+    BONDERY_INFRA_WEBAPP_DOMAIN: "app.usebondery.com",
+    BONDERY_INFRA_WEBSITE_DOMAIN: "usebondery.com",
+    BONDERY_OPS_DOKPLOY_API_KEY: "test-api-key",
+    BONDERY_OPS_DOKPLOY_HOST: "https://dokploy.example.com",
+    BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID: "services-compose-id",
+    BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID: "",
+    BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET: "",
+    BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID: "",
+    BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET: "",
+    BONDERY_PRIVATE_BETTER_AUTH_SECRETS: "1:better-auth-secret-min-32-chars-long",
+    BONDERY_PRIVATE_EMAIL_ADDRESS: "robot@usebondery.com",
+    BONDERY_PRIVATE_EMAIL_HOST: "smtp.example.com",
+    BONDERY_PRIVATE_EMAIL_PASS: "email-pass",
+    BONDERY_PRIVATE_EMAIL_PORT: "587",
+    BONDERY_PRIVATE_EMAIL_REPLY_TO: "team@usebondery.com",
+    BONDERY_PRIVATE_EMAIL_USER: "username",
+    BONDERY_PRIVATE_POSTGRES_PASSWORD: "postgres-secret",
+    BONDERY_PRIVATE_REDIS_URL: "redis://redis:6379",
+    BONDERY_PRIVATE_S3_ACCESS_KEY_ID: "bondery_access_key",
+    BONDERY_PRIVATE_S3_ENDPOINT: "http://seaweedfs-s3:8333",
+    BONDERY_PRIVATE_S3_REGION: "eu-central-1",
+    BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY: "bondery_secret_key",
+    BONDERY_PRIVATE_SERVICE_SECRET: "service-secret-min-32-chars-long",
+    BONDERY_PRIVATE_STRIPE_SECRET_KEY: "sk_live_test",
+    BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET: "whsec_test",
+    BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET: "webapp-oauth-secret-min-32-chars",
+    BONDERY_PRIVATE_WEBAPP_SESSION_SECRET: "webapp-session-secret-min-32-chars",
+    BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED: "false",
+    BONDERY_PUBLIC_OAUTH_CLIENT_ID: "chrome-oauth-client",
+    BONDERY_PUBLIC_POSTHOG_HOST: "https://eu.i.posthog.com",
+    BONDERY_PUBLIC_POSTHOG_KEY: "phc_test",
+    BONDERY_PUBLIC_STORAGE_URL: "https://storage.usebondery.com",
+    BONDERY_PUBLIC_STRIPE_PRICE_ID_ANNUAL: "price_annual",
+    BONDERY_PUBLIC_STRIPE_PRICE_ID_MONTHLY: "price_monthly",
+    BONDERY_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_live_test",
+    BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID: "webapp-oauth-client-id",
+  };
+
   it("website payload excludes Dokploy config keys and plausible secrets", () => {
     const env = {
       ...websiteEnv,
@@ -63,6 +107,51 @@ describe("sync-infisical-to-dokploy", () => {
     ]);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_WEBAPP_DOMAIN"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_WEBSITE_DOMAIN"), false);
+  });
+
+  it("services payload includes deployExample keys and excludes derived or ops config", () => {
+    const { uploadKeys } = buildUploadPayload(servicesEnv, "services");
+
+    assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_API_KEY"), false);
+    assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID"), false);
+    assert.equal(uploadKeys.includes("BONDERY_INFRA_GIT_SHA"), false);
+    assert.equal(uploadKeys.includes("BONDERY_INFRA_VERSION"), false);
+    assert.equal(uploadKeys.includes("BONDERY_PRIVATE_S3_ENDPOINT"), false);
+    assert.equal(uploadKeys.includes("BONDERY_PUBLIC_STORAGE_URL"), false);
+    assert.ok(uploadKeys.includes("BONDERY_INFRA_API_DOMAIN"));
+    assert.ok(uploadKeys.includes("BONDERY_PRIVATE_POSTGRES_PASSWORD"));
+    assert.ok(uploadKeys.includes("BONDERY_PUBLIC_POSTHOG_KEY"));
+    assert.ok(uploadKeys.includes("BONDERY_INFRA_STORAGE_DOMAIN"));
+  });
+
+  it("services sync fails when postgres password is missing", () => {
+    const env = { ...servicesEnv };
+    delete env.BONDERY_PRIVATE_POSTGRES_PASSWORD;
+
+    let exited = false;
+    const originalExit = process.exit;
+    process.exit = (code) => {
+      exited = true;
+      assert.equal(code, 1);
+      throw new Error("exit");
+    };
+
+    try {
+      buildUploadPayload(env, "services");
+      assert.fail("expected process.exit(1)");
+    } catch {
+      // expected
+    }
+
+    process.exit = originalExit;
+    assert.equal(exited, true);
+  });
+
+  it("readDokployConfig resolves services compose id", () => {
+    const config = readDokployConfig(servicesEnv, "services");
+    assert.equal(config.composeId, "services-compose-id");
+    assert.equal(config.webhookKey, "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK");
+    assert.equal(config.target, "services");
   });
 
   it("buildOpsUploadPayload remains an alias for website target", () => {
@@ -189,10 +278,12 @@ describe("sync-infisical-to-dokploy", () => {
   });
 
   it("buildDeployWebhookPayload includes path sentinels for Dokploy watch paths", () => {
-    const payload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/plausible"]);
+    const plausiblePayload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/plausible"]);
+    assert.equal(plausiblePayload.ref, "refs/heads/release");
+    assert.equal(plausiblePayload.repository.full_name, "usebondery/bondery");
+    assert.deepEqual(plausiblePayload.commits[0].modified, ["deploy/plausible"]);
 
-    assert.equal(payload.ref, "refs/heads/release");
-    assert.equal(payload.repository.full_name, "usebondery/bondery");
-    assert.deepEqual(payload.commits[0].modified, ["deploy/plausible"]);
+    const servicesPayload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/bondery"]);
+    assert.deepEqual(servicesPayload.commits[0].modified, ["deploy/bondery"]);
   });
 });

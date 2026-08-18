@@ -1149,6 +1149,11 @@ export default interface Resources {
         "Valid": "Valid: {count}"
       },
       "PleaseWait": "Please wait...",
+      "ProductAnalytics": {
+        "Description": "Help us improve Bondery with pseudonymous usage data. We collect feature usage and counts — not contact content, names, or emails.",
+        "SwitchLabel": "Share product analytics",
+        "Title": "Product analytics"
+      },
       "SignOut": "Sign out",
       "SignOutButton": "Sign out",
       "SignOutDescription": "Sign out of your account on this device",

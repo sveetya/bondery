@@ -12,6 +12,7 @@ import { AppShellRefreshRegistrar } from "@/components/shell/AppShellRefreshRegi
 import { AppShellWithQueryBadges } from "@/components/shell/AppShellWithQueryBadges";
 import { AppShellWrapper } from "@/components/shell/AppShellWrapper";
 import { ColorSchemeSync } from "@/components/shell/ColorSchemeSync";
+import { ProductAnalyticsShellSync } from "@/components/shell/ProductAnalyticsShellSync";
 import { ServiceWorkerRegistration } from "@/components/shell/ServiceWorkerRegistration";
 import { SessionResyncOnFocus } from "@/components/shell/SessionResyncOnFocus";
 import { SyncWakeRegistrar } from "@/components/shell/SyncWakeRegistrar";
@@ -54,6 +55,7 @@ export default async function AppShellLayout({ children }: { children: React.Rea
   return (
     <UserSessionProvider avatarUrl={avatarUrl} colorScheme={colorScheme} displayName={displayName}>
       <AppShellRefreshRegistrar />
+      <ProductAnalyticsShellSync />
       <SyncWakeRegistrar />
       <SessionResyncOnFocus />
       <ServiceWorkerRegistration />

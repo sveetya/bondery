@@ -143,7 +143,7 @@ export function useBatchEnrichFromLinkedIn() {
       return;
     }
 
-    captureEvent("batch_enrich_started", { eligible_count: totalEligible });
+    captureEvent("enrichment:batch_start", { eligible_count: totalEligible });
 
     setCancelled(false);
     setState({
@@ -168,7 +168,7 @@ export function useBatchEnrichFromLinkedIn() {
         }),
       );
     } else if (!isCancelled() && completedCount > 0) {
-      captureEvent("batch_enrich_completed", { total_enriched: completedCount });
+      captureEvent("enrichment:batch_end", { total_enriched: completedCount });
       showCompletionNotification(t, completedCount);
     }
   }, [t, runEnrichLoop]);
@@ -266,7 +266,7 @@ export function useBatchEnrichFromLinkedIn() {
           }),
         );
       } else if (!isCancelled() && completedCount > 0) {
-        captureEvent("contact_enriched_linkedin");
+        captureEvent("enrichment:contact_update", { source: "linkedin" });
         notifications.show(
           successNotificationTemplate({
             description: t("AllDoneDescriptionSingle"),

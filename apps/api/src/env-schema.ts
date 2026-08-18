@@ -90,6 +90,14 @@ export const envSchema = {
       default: "https://api.mapy.com",
       type: "string",
     },
+    BONDERY_PUBLIC_POSTHOG_HOST: {
+      default: "https://eu.i.posthog.com",
+      type: "string",
+    },
+    BONDERY_PUBLIC_POSTHOG_KEY: {
+      default: "",
+      type: "string",
+    },
     BONDERY_PUBLIC_STORAGE_URL: {
       type: "string",
     },
@@ -147,6 +155,8 @@ declare module "fastify" {
       BONDERY_PRIVATE_EMAIL_PORT: number;
       BONDERY_PRIVATE_POSTHOG_API_SECRET: string;
       BONDERY_PRIVATE_POSTHOG_PROJECT_ID: string;
+      BONDERY_PUBLIC_POSTHOG_HOST: string;
+      BONDERY_PUBLIC_POSTHOG_KEY: string;
       BONDERY_PRIVATE_ANTHROPIC_API_KEY: string;
       BONDERY_PRIVATE_STRIPE_SECRET_KEY: string;
       BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET: string;

@@ -102,7 +102,9 @@ export async function stripeWebhookRoutes(fastify: FastifyInstance): Promise<voi
             break;
           case "customer.subscription.created":
           case "customer.subscription.updated":
-            await upsertSubscriptionFromStripe(event.data.object, request.log);
+            await upsertSubscriptionFromStripe(event.data.object, request.log, {
+              eventType: event.type,
+            });
             break;
           case "customer.subscription.deleted":
             await upsertSubscriptionFromStripe(
@@ -111,6 +113,7 @@ export async function stripeWebhookRoutes(fastify: FastifyInstance): Promise<voi
                 status: "canceled",
               },
               request.log,
+              { eventType: event.type },
             );
             break;
           case "invoice.paid":

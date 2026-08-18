@@ -3,6 +3,7 @@
 import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
+import { captureEvent, posthog } from "@/lib/analytics/client";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { buildLoginUrl, getClientReturnPathForLogin } from "@/lib/auth/returnIntent";
 import { resetState } from "@/lib/extension/enrichBatchStore";
@@ -69,6 +70,19 @@ export async function endSession({ reason, redirectTo }: EndSessionOptions): Pro
       modals.closeAll();
     } catch {
       // Continue teardown if modal cleanup fails.
+    }
+
+    try {
+      sessionStorage.removeItem("bondery:auth:session_create_fired");
+    } catch {
+      // Continue teardown if session storage cleanup fails.
+    }
+
+    try {
+      captureEvent("auth:session_end");
+      posthog.reset();
+    } catch {
+      // Continue teardown if analytics cleanup fails.
     }
 
     try {

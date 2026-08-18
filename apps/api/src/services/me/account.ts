@@ -10,6 +10,7 @@ import {
 import { validateImageMagicBytes, validateImageUpload } from "../../lib/platform/config.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { resolveContactAvatarUrl } from "../../lib/storage/avatar-urls.js";
+import { captureProductEvent } from "../analytics/posthog-capture.js";
 
 export async function updateAccountMetadata(
   ctx: DomainContext,
@@ -101,6 +102,8 @@ export async function deleteAccount(ctx: DomainContext): Promise<{ success: true
     if (!profile) {
       throw internal("account_failed_to_delete_account");
     }
+
+    await captureProductEvent(ctx, "account_settings:account_delete");
 
     await deleteUserWithTeardown(
       {

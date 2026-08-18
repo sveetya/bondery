@@ -161,11 +161,11 @@ export interface NpsResult {
 export async function getNpsResults(apiSecret: string, projectId: string): Promise<NpsResult> {
   const query = `
     SELECT
-      properties.$survey_response AS rating
+      properties.score AS rating
     FROM events
-    WHERE event = 'survey sent'
+    WHERE event = 'feedback:nps_submit'
       AND timestamp >= now() - INTERVAL 90 DAY
-      AND properties.$survey_response IS NOT NULL
+      AND properties.score IS NOT NULL
   `;
 
   const result = await runHogQLQuery(apiSecret, projectId, query);

@@ -1,5 +1,9 @@
 import type { FastifyBaseLogger } from "fastify";
 import type Stripe from "stripe";
+import {
+  captureSubscriptionCancel,
+  captureSubscriptionCreate,
+} from "../../analytics/billing-events.js";
 import { mapStripeStatus } from "../map-status.js";
 import { getSubscriptionPeriod } from "../stripe-helpers.js";
 import {
@@ -50,6 +54,7 @@ export function extractMirrorFromStripeSubscription(
 export async function upsertSubscriptionFromStripe(
   subscription: Stripe.Subscription,
   log?: FastifyBaseLogger,
+  options?: { eventType?: string },
 ): Promise<void> {
   const email =
     subscription.metadata.email ??
@@ -105,6 +110,14 @@ export async function upsertSubscriptionFromStripe(
     subscription.cancel_at_period_end,
     mirror,
   );
+
+  if (options?.eventType === "customer.subscription.created") {
+    void captureSubscriptionCreate(userId, subscription, mirror);
+  }
+
+  if (options?.eventType === "customer.subscription.deleted") {
+    void captureSubscriptionCancel(userId, subscription, mirror);
+  }
 
   log?.info(
     { status, stripeSubscriptionId: subscription.id, userId },

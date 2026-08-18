@@ -161,13 +161,15 @@ Use `defaultEnvironment: development` in `.infisical.json` for `pnpm env:pull`; 
 
 ## Dokploy env sync (`sync-dokploy-env.yml`)
 
-Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifest `dokploySync` keys to a Dokploy compose app. Pick **website** (`deploy/ops`) or **plausible** (`deploy/plausible`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
+Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifest `dokploySync` keys to a Dokploy compose app. Pick **website** (`deploy/ops`), **services** (`deploy/bondery`), or **plausible** (`deploy/plausible`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
 
 | Infisical key (production) | Role |
 |----------------------------|------|
 | `BONDERY_OPS_DOKPLOY_HOST`, `BONDERY_OPS_DOKPLOY_API_KEY` | Dokploy API (required for all targets) |
 | `BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID` | Website stack compose id |
 | `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` | Optional redeploy for **website** when `redeploy: true` |
+| `BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID` | Product stack compose id (`deploy/bondery`) |
+| `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | Optional redeploy for **services** when `redeploy: true` |
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID` | Plausible stack compose id |
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK` | Optional redeploy for **plausible** when `redeploy: true` |
 
@@ -176,6 +178,7 @@ Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifes
 | Target | Keys |
 |--------|------|
 | `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
+| `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`) |
 | `plausible` | `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE`, `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY`, `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD`, `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` (optional) |
 
 **Ops checklist:**

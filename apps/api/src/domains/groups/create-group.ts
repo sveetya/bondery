@@ -2,6 +2,7 @@ import type { Group } from "@bondery/schemas";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { buildGroupRowChange } from "../../lib/sync/build-changes.js";
 import { emitSyncBatch } from "../../lib/sync/emit-change.js";
+import { maybeCaptureActivation } from "../../services/analytics/maybe-capture-activation.js";
 import { type DomainContext, syncEmitMetaFromContext } from "../_shared/context.js";
 import { domainDb } from "../_shared/domain-db.js";
 import { toGroupDto, toSyncRow } from "../_shared/prisma-helpers.js";
@@ -41,6 +42,9 @@ export async function createGroup(
         [buildGroupRowChange(syncRow)],
         syncEmitMetaFromContext(ctx),
       )) ?? 0;
+
+    void maybeCaptureActivation(ctx, "first_group");
+
     return { data: { group }, serverSequence, txid };
   } catch (error) {
     throw internal("group_failed", error instanceof Error ? error.message : "group_failed");

@@ -4266,6 +4266,7 @@ export const UserSettingsScalarFieldEnum = {
   aiMessagesUsed: 'aiMessagesUsed',
   aiMessagesThisMonth: 'aiMessagesThisMonth',
   aiMessagesMonthResetAt: 'aiMessagesMonthResetAt',
+  productAnalyticsEnabled: 'productAnalyticsEnabled',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

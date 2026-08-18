@@ -44,10 +44,11 @@ Maps checkable factual claims in published legal documents to implementation sta
 | Claim | Policy § | Status | Evidence |
 |-------|--------|--------|----------|
 | Essential cookies: auth session, language prefs | §6 | `implemented` | Webapp cookies (`lib/cookies/`, `oauthClient.server.ts`) |
-| Analytics cookies; disable in account settings | §6 | **unimplemented** | PostHog initializes when key present; **no settings toggle** |
+| Analytics cookies; disable in account settings | §6 | `implemented` | Settings → Data management → Product analytics (`productAnalyticsEnabled`); `apps/webapp/src/app/(app)/app/(shell)/settings/components/cards/ProductAnalyticsSection.tsx` |
 | Marketing site uses self-hosted cookieless analytics | §6 | `implemented` | `apps/website/src/app/layout.tsx`, `deploy/plausible/`, `BONDERY_PUBLIC_PLAUSIBLE_*` |
 | No advertising/tracking/marketing cookies | §6 | `implemented` | No ad SDKs |
-| `DO_NOT_TRACK` disables telemetry | — | **unimplemented** | Declared in `packages/helpers/src/env/manifest.ts` but **not referenced in app TS** |
+| Browser Do Not Track honored for product analytics | §6 | `implemented` | `apps/webapp/instrumentation-client.ts` (`navigator.doNotTrack`) |
+| `DO_NOT_TRACK` env disables product analytics | — | `policy-only` | Env var is for third-party CLI telemetry (e.g. Prisma); not wired to PostHog — see long-term-roadmap §6 |
 | Cookie consent banner | — | **unimplemented** | No consent UI on website |
 
 ## Privacy Policy — subprocessors

@@ -42,12 +42,14 @@ import { useRouter } from "next/navigation";
 import type { JSX } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ContactsTable from "@/components/contacts/ContactsTableV2";
+import { captureImportComplete } from "@/lib/analytics/imports";
 import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useModalDismiss } from "@/lib/modals";
 import {
   useCommitVCardImportMutation,
   useParseVCardImportMutation,
 } from "@/lib/query/hooks/useImports";
+import { useSettingsQuery } from "@/lib/query/hooks/useSettings";
 import { useImporterNavigationProgress } from "../../hooks/useImporterNavigationProgress";
 
 type Step = "intro" | "instructions" | "upload" | "processing" | "preview";
@@ -120,6 +122,7 @@ export function VCardImportModal({
   const router = useRouter();
   const parseImport = useParseVCardImportMutation();
   const commitImport = useCommitVCardImportMutation();
+  const { data: settingsResult } = useSettingsQuery();
   const [step, setStep] = useState<Step>("intro");
   const [isParsing, setIsParsing] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -290,6 +293,7 @@ export function VCardImportModal({
 
     setIsImporting(true);
     setImportProgress({ current: 0, total: selectedContacts.length });
+    const isFirstImport = settingsResult?.data?.importCompletedAt == null;
 
     let totalImported = 0;
     let totalSkipped = 0;
@@ -323,6 +327,8 @@ export function VCardImportModal({
           title: t("SuccessTitle"),
         }),
       );
+
+      captureImportComplete("vcard", totalImported, isFirstImport);
 
       closeModal();
       router.push(WEBAPP_ROUTES.PEOPLE);

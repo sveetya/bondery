@@ -245,9 +245,10 @@ export function Privacy() {
       </Title>
       <Text mb="lg">
         We may use analytics tools to understand how users interact with our Services and to improve
-        them. This may include page views, feature usage, session duration, and anonymized
-        interaction data. You may be able to opt out of analytics tracking in your account settings
-        where available.
+        them. This may include page views, feature usage, session duration, and pseudonymous
+        interaction data (such as which features you use). We do not include contact content, names,
+        or emails in product analytics events. You can disable product analytics in your account
+        settings under Data management.
       </Text>
 
       <Title mb="sm" mt="lg" order={3}>
@@ -347,9 +348,10 @@ export function Privacy() {
       </Text>
       <Text mb="md">
         <strong>Product webapp (app.usebondery.com):</strong> We use PostHog for product analytics.
-        PostHog may set cookies to distinguish users, track sessions, and remember opt-out
-        preferences where available. You can disable analytics tracking in your account settings
-        where that option is provided.
+        PostHog may set cookies to distinguish users, track sessions, and remember your product
+        analytics preference. Product analytics uses a pseudonymous user identifier — not contact
+        content. You can turn off product analytics in Settings → Data management. We also honor the
+        Do Not Track preference in your browser when product analytics is enabled.
       </Text>
 
       <Title mb="sm" mt="lg" order={3}>

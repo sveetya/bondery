@@ -307,6 +307,7 @@ export const EXAMPLE_USER_SETTINGS = {
   leftSwipeAction: "call",
   name: "Ada Lovelace",
   onboardingCompletedAt: EXAMPLE_ISO_TIMESTAMP,
+  productAnalyticsEnabled: true,
   providers: ["email"],
   reminderSendHour: "09:00",
   rightSwipeAction: "email",

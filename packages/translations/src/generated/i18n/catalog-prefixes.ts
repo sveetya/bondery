@@ -122,7 +122,7 @@ export type PersonTabsPrefix = never;
 
 export type ReminderDigestEmailPrefix = "dateTypes";
 
-export type SettingsPagePrefix = "ApiKeys" | "DataManagement" | "DataManagement.InstagramImport" | "DataManagement.LinkedInImport" | "DataManagement.VCardImport" | "Integration" | "Integration.ChromeExtensionModal" | "Preferences" | "Profile" | "Subscription" | "Support";
+export type SettingsPagePrefix = "ApiKeys" | "DataManagement" | "DataManagement.ProductAnalytics" | "DataManagement.InstagramImport" | "DataManagement.LinkedInImport" | "DataManagement.VCardImport" | "Integration" | "Integration.ChromeExtensionModal" | "Preferences" | "Profile" | "Subscription" | "Support";
 
 export type ShareContactEmailBodyPrefix = "labels";
 

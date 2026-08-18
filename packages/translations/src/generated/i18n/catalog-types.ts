@@ -1959,6 +1959,11 @@ export type SettingsPageCatalog = {
     DeleteSuccess: string;
     DeletingAccount: string;
     ImportContactsDescription: string;
+    ProductAnalytics: {
+      Description: string;
+      SwitchLabel: string;
+      Title: string;
+    };
     InstagramImport: {
       AlreadyExists: string;
       Back: string;

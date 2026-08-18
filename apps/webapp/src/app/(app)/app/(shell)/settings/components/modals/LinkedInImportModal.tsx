@@ -16,13 +16,14 @@ import { IconBrandLinkedin } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import type { JSX } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { captureImportComplete } from "@/lib/analytics/imports";
 import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useModalDismiss } from "@/lib/modals";
 import {
   useCommitLinkedInImportMutation,
   useParseLinkedInImportMutation,
 } from "@/lib/query/hooks/useImports";
-import { useUpdateImportFollowupMutation } from "@/lib/query/hooks/useSettings";
+import { useSettingsQuery, useUpdateImportFollowupMutation } from "@/lib/query/hooks/useSettings";
 import { useImportContactSelection } from "../../hooks/useImportContactSelection";
 import { useImporterNavigationProgress } from "../../hooks/useImporterNavigationProgress";
 import {
@@ -58,6 +59,7 @@ export function LinkedInImportModal({
   const parseImport = useParseLinkedInImportMutation();
   const commitImport = useCommitLinkedInImportMutation();
   const followupMutation = useUpdateImportFollowupMutation();
+  const { data: settingsResult } = useSettingsQuery();
   const [step, setStep] = useState<LinkedInImportStep>(initialStep);
   const [isParsing, setIsParsing] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
@@ -211,6 +213,7 @@ export function LinkedInImportModal({
 
     setIsImporting(true);
     setImportProgress({ current: 0, total: selectedContacts.length });
+    const isFirstImport = settingsResult?.data?.importCompletedAt == null;
 
     let totalImported = 0;
     let totalUpdated = 0;
@@ -247,6 +250,8 @@ export function LinkedInImportModal({
           title: t("SuccessTitle"),
         }),
       );
+
+      captureImportComplete("linkedin", totalImported + totalUpdated, isFirstImport);
 
       closeModal();
 

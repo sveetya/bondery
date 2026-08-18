@@ -7,6 +7,7 @@ import { DeleteAccountSection } from "./DeleteAccountSection";
 import { InstagramImportSection } from "./InstagramImportSection";
 import { LinkedInImportSection } from "./LinkedInImportSection";
 import { LogoutSection } from "./LogoutSection";
+import { ProductAnalyticsSection } from "./ProductAnalyticsSection";
 import { SettingsSection } from "./SettingsSection";
 import { VCardImportSection } from "./VCardImportSection";
 
@@ -20,12 +21,6 @@ export function DataManagementCard() {
       title={t("Title")}
     >
       <CardSection inheritPadding py="md">
-        <LogoutSection />
-      </CardSection>
-
-      <Divider />
-
-      <CardSection inheritPadding py="md">
         <Text fw={500} mb={4} size="sm">
           {t("LinkedInImport.SectionTitle")}
         </Text>
@@ -37,6 +32,18 @@ export function DataManagementCard() {
           <InstagramImportSection />
           <VCardImportSection />
         </Group>
+      </CardSection>
+
+      <Divider />
+
+      <CardSection inheritPadding py="md">
+        <ProductAnalyticsSection />
+      </CardSection>
+
+      <Divider />
+
+      <CardSection inheritPadding py="md">
+        <LogoutSection />
       </CardSection>
 
       <Divider />

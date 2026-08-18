@@ -4,6 +4,7 @@ import { upsertContactSocials } from "../../lib/contacts/socials.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import { buildContactSnapshotChanges } from "../../lib/sync/build-changes.js";
 import { emitSyncBatch } from "../../lib/sync/emit-change.js";
+import { maybeCaptureActivation } from "../../services/analytics/maybe-capture-activation.js";
 import { type DomainContext, syncEmitMetaFromContext } from "../_shared/context.js";
 import { domainDb } from "../_shared/domain-db.js";
 import { withPersonTxid } from "../_shared/with-txid.js";
@@ -60,6 +61,8 @@ export async function createContact(
 
   const changes = await buildContactSnapshotChanges(user.id, newContact.id, db);
   const serverSequence = await emitSyncBatch(user.id, changes, syncEmitMetaFromContext(ctx));
+
+  void maybeCaptureActivation(ctx, "first_contact");
 
   return {
     data: { contact, personId: newContact.id },

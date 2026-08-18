@@ -8,6 +8,7 @@ import type {
 import { type DomainContext, DomainError } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
+import { maybeCaptureActivation } from "../analytics/maybe-capture-activation.js";
 import { loadFormattedInteraction } from "./format.js";
 
 export type FormattedInteraction = NonNullable<
@@ -94,6 +95,8 @@ export async function createInteraction(
   if (!formatted) {
     throw internal("interaction_interaction_was_created_but_could_not_be");
   }
+
+  void maybeCaptureActivation(ctx, "first_interaction");
 
   return formatted;
 }

@@ -71,7 +71,7 @@ function DeleteContactModalBody({
         try {
           await deleteContactsMutation.mutateAsync([contactId]);
 
-          captureEvent("contact_deleted");
+          captureEvent("contacts:contact_delete");
 
           notifications.hide(loadingNotification);
           notifications.show(
