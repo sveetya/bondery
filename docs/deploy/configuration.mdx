@@ -1,5 +1,6 @@
 ---
 title: Configuration
+icon: SlidersHorizontal
 ---
 
 Operators configure the stack with **`BONDERY_*`** names. Copy [`deploy/bondery/.env.example`](../../deploy/bondery/.env.example) to `.env` — that file is generated from [`packages/helpers/src/env/manifest.ts`](../../packages/helpers/src/env/manifest.ts) (`deployExample` metadata). Do not hand-edit the example; change the manifest and run `pnpm run env -- --write-examples`.
@@ -72,7 +73,7 @@ Object storage uses **SeaweedFS** (S3-compatible gateway). The API uploads via p
 
 Buckets: `avatars` (contact photos) and `linkedin-logos` (cached LinkedIn company/school logos). Created and given anonymous read policy by `api` `pre_start` → `ensure-storage-buckets`.
 
-On every deploy, `api` `pre_start` runs `release-migrate` (schema, functions, OAuth clients, platform admins) then `ensure-storage-buckets` before the main API process starts. See [Get started](./get-started.mdx) and [Dokploy deployment](../contributing/dokploy.mdx).
+On every deploy, `api` `pre_start` runs `release-migrate` (schema, functions, OAuth clients, platform admins) then `ensure-storage-buckets` before the main API process starts. See [Installation](./installation.mdx) and [Dokploy deployment](../contributing/dokploy.mdx).
 
 ## Local development parity
 
@@ -80,6 +81,7 @@ Contributors use the same variable names in root `.env.local`. See [Environment 
 
 ## Related
 
-* [Get started](./get-started.mdx)
+* [Installation](./installation.mdx)
 * [Secrets management](./secrets.mdx)
-* [Update & backups](./update.mdx)
+* [Updates](./update.mdx)
+* [Backups](./backups.mdx)

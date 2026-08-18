@@ -1,6 +1,6 @@
 import { HELP_DOCS_URL, SOCIAL_LINKS, WEBSITE_ROUTES } from "@bondery/helpers";
 import { AnchorLink } from "@bondery/mantine-next";
-import { Box, Divider, Flex, Paper, Text, Title } from "@mantine/core";
+import { Box, Divider, Flex, Paper, Title } from "@mantine/core";
 import {
   IconBrandDiscordFilled,
   IconBrandGithubFilled,
@@ -157,17 +157,8 @@ export function Footer() {
           </Box>
         </Flex>
         <Divider my="xl" />
-        <Flex
-          align={{ base: "flex-start", md: "center" }}
-          direction={{ base: "column", md: "row" }}
-          gap={{ base: "md" }}
-          justify="space-between"
-          px="md"
-        >
+        <Flex px="md">
           <Logo iconSize={28} textSize="md" />
-          <Text c="dimmed" size="xs" ta="right">
-            Made with 💜 for meaningful connections
-          </Text>
         </Flex>
       </Paper>
     </Box>

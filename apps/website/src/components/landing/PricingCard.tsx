@@ -23,10 +23,10 @@ type PricingCardProps = {
   description: string;
   features: PricingFeature[];
   action: ReactNode;
-  oldPrice?: string;
+  price?: string;
 };
 
-export function PricingCard({ title, description, features, action, oldPrice }: PricingCardProps) {
+export function PricingCard({ title, description, features, action, price }: PricingCardProps) {
   return (
     <Card
       h="100%"
@@ -45,11 +45,11 @@ export function PricingCard({ title, description, features, action, oldPrice }: 
         <Title fw="bold" fz="2rem" order={2}>
           {title}
         </Title>
-        {oldPrice && (
-          <Text c="dimmed" fz="sm" mb={6} td="line-through">
-            {oldPrice}
+        {price ? (
+          <Text c="dimmed" fz="sm" mb={6}>
+            {price}
           </Text>
-        )}
+        ) : null}
       </Flex>
       <Text c="dimmed">{description}</Text>
 

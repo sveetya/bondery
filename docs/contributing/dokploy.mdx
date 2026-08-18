@@ -6,7 +6,7 @@ icon: Cloud
 Canonical production topology — **two** Compose apps:
 
 <Callout type="info">
-**Bondery production only** — not part of the self-host distribution. Self-hosters follow [Self-hosting](../deploy/get-started.mdx).
+**Bondery production only** — not part of the self-host distribution. Self-hosters follow [Installation](../deploy/installation.mdx).
 </Callout>
 
 | Host | Service | Stack |
@@ -16,7 +16,7 @@ Canonical production topology — **two** Compose apps:
 | (internal) | `redis`, `db` | same Compose — **never** attach a public domain |
 | `usebondery.com` | `website` :26630 | [`deploy/ops`](../../deploy/ops/) Compose (Bondery prod only) |
 
-Self-hosters use **only** [`deploy/bondery`](../../deploy/bondery/) (api + webapp + redis + Postgres). Marketing lives in ops and is not part of the self-host distribution. Guides: [`deploy/bondery/README.md`](../../deploy/bondery) · [`docs/deploy/get-started.mdx`](../deploy/get-started.mdx) · [`deploy/ops/README.md`](../../deploy/ops).
+Self-hosters use **only** [`deploy/bondery`](../../deploy/bondery/) (api + webapp + redis + Postgres). Marketing lives in ops and is not part of the self-host distribution. Guides: [`deploy/bondery/README.md`](../../deploy/bondery) · [`docs/deploy/installation.mdx`](../deploy/installation.mdx) · [`deploy/ops/README.md`](../../deploy/ops).
 
 ## Product Compose application (`deploy/bondery`)
 

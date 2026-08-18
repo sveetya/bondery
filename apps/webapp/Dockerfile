@@ -31,9 +31,11 @@ ENV BONDERY_PUBLIC_WEBAPP_URL=https://app.example.com
 ENV BONDERY_PUBLIC_WEBSITE_URL=https://example.com
 RUN --mount=type=cache,id=bondery-pnpm-store-v3,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --ignore-scripts --no-runtime --store-dir "${PNPM_STORE_DIR}"
+# --force: a remote-cache hit skips pnpm syncInjectedDepsAfterScripts, so
+# dependents cannot resolve workspace packages (TS2307 / missing scripts).
 RUN --mount=type=secret,id=turbo_token \
     export TURBO_TOKEN="$(cat /run/secrets/turbo_token 2>/dev/null || true)" && \
-    pnpm exec turbo build --filter=webapp
+    pnpm exec turbo build --filter=webapp --force
 RUN pnpm prune --prod --ignore-scripts
 
 FROM node:26-slim AS runner

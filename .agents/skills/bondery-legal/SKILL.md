@@ -55,7 +55,7 @@ Escalation rules: [references/escalation-boundaries.md](references/escalation-bo
 
 | Document | Path | Status |
 |----------|------|--------|
-| Privacy Policy | `apps/website/src/components/legal/Privacy.tsx` | Published (last updated July 13, 2026) |
+| Privacy Policy | `apps/website/src/components/legal/Privacy.tsx` | Published (last updated August 18, 2026) |
 | Terms of Service | `apps/website/src/components/legal/Terms.tsx` | **Draft placeholder** — not final contractual terms |
 | Layout helper | `apps/website/src/components/legal/shared/LegalDocumentLayout.tsx` | — |
 | Routes | `apps/website/src/app/(marketing)/(legal)/{privacy,terms}/page.tsx` | — |

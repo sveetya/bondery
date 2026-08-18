@@ -7,6 +7,6 @@ import type { Metadata } from "next";
  * localized copy lives in per-route metadata when needed.
  */
 export const rootMetadata: Metadata = {
-  description: "Build bonds that last forever.",
+  description: "The open-source personal CRM for building better bonds.",
   title: WEBAPP_NAME,
 };

@@ -22,11 +22,10 @@ export function About() {
             <GridCol span={{ base: 12, md: 6 }}>
               <Image
                 alt={about.FoundersPhotoAlt}
-                fallbackSrc="/images/team/martin.jpg"
                 fit="cover"
                 h={360}
                 radius="md"
-                src="/images/team/medtech-hackathon.jpg"
+                src="/images/team/sveetya.png"
               />
             </GridCol>
             <GridCol span={{ base: 12, md: 6 }}>

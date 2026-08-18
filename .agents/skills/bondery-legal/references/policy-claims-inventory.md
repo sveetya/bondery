@@ -3,7 +3,7 @@
 Maps checkable factual claims in published legal documents to implementation status. **Gaps are flagged, not hidden.**
 
 **Sources:**
-- Privacy: `apps/website/src/components/legal/Privacy.tsx` (July 13, 2026)
+- Privacy: `apps/website/src/components/legal/Privacy.tsx` (August 18, 2026)
 - Terms: `apps/website/src/components/legal/Terms.tsx` (February 18, 2026 — **draft placeholder**)
 
 | Status | Meaning |

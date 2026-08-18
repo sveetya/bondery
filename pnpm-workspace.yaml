@@ -32,7 +32,7 @@ overrides:
   "@tiptap/react": "3.29.2"
   "@tiptap/starter-kit": "3.29.2"
   "@tiptap/suggestion": "3.29.2"
-  next: "16.3.0-canary.102"
+  next: "16.3.1"
   postcss: "^8.5.17"
   zod-openapi: "^6.0.0"
 

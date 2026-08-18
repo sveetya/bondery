@@ -1,8 +1,7 @@
 ---
 title: Requirements
+icon: Server
 ---
-
-Run the full product stack on your own VPS: **api + webapp + redis + Postgres** via [`deploy/bondery/docker-compose.yml`](../../deploy/bondery/docker-compose.yml).
 
 ## Hardware
 
@@ -22,24 +21,6 @@ The default stack is four containers (`webapp`, `api`, `redis`, `db`) plus Traef
 | DNS | Hostnames for API and webapp (e.g. `api.example.com`, `app.example.com`) |
 | TLS | Traefik (e.g. via Dokploy) or terminate TLS on a reverse proxy |
 
-## Stack layout
-
-<Files>
-  <Folder defaultOpen name="deploy/bondery">
-    <File name="docker-compose.yml" />
-    <File name="docker-compose.postgres.yml" />
-    <File name="docker-compose.override.yml.example" />
-    <File name=".env.example" />
-  </Folder>
-</Files>
-
-| Service | Role |
-|---|---|
-| `webapp` | Next.js app (port 26632) |
-| `api` | Fastify API + Better Auth (port 26631) |
-| `redis` | Rate limits, sync wake, WebSocket tickets |
-| `db` | PostGIS Postgres (internal; port 54322 with host override) |
-
 ## Next step
 
-[Get started](./get-started.mdx) — bring the stack up and run first-boot migrations.
+[Installation](./installation.mdx) — bring the stack up and run first-boot migrations.

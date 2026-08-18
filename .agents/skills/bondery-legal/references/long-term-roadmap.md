@@ -65,7 +65,7 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 
 ## 8. Self-host legal split in docs
 
-**Gap:** `docs/deploy/get-started.mdx` does not state operator-as-controller.
+**Gap:** `docs/deploy/installation.mdx` does not state operator-as-controller.
 
 **Target:** Section clarifying hosted policy ≠ self-host obligations.
 

@@ -18,7 +18,7 @@
     "select": "Vybrat"
   },
   "app": {
-    "description": "Budujte vazby, které vydrží navždy."
+    "description": "Open-source osobní CRM pro budování lepších vazeb."
   },
   "confirm": {
     "noCancel": "Ne, zrušit",

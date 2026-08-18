@@ -3,42 +3,56 @@
 import { LogoIcon } from "@bondery/mantine-next";
 import { Card, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import {
-  IconAddressBook,
-  IconBrandApple,
-  IconBrandFacebook,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandX,
-  IconMail,
-} from "@tabler/icons-react";
-import { AnimatePresence, motion } from "motion/react";
+import { IconApi, IconBrandInstagram, IconBrandLinkedin } from "@tabler/icons-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 
 const SATELLITES = [
-  // Removed Google to create top gap
-  { color: "#0A66C2", icon: IconBrandLinkedin, id: "linkedin", label: "Job update" },
-  { color: "#E4405F", icon: IconBrandInstagram, id: "instagram", label: "Birthday alert" },
-  { color: "#000000", icon: IconBrandX, id: "x", label: "New handle" },
-  { color: "#A2AAAD", icon: IconBrandApple, id: "apple", label: "Contact photo" },
-  { color: "#D44638", icon: IconMail, id: "mail", label: "New email" },
-  { color: "#1877F2", icon: IconBrandFacebook, id: "facebook", label: "Profile link" },
-  { color: "#34D399", icon: IconAddressBook, id: "contacts", label: "Contact merged" },
-];
+  {
+    ariaLabel: "LinkedIn",
+    color: "#0A66C2",
+    icon: IconBrandLinkedin,
+    id: "linkedin",
+    label: "Profile update",
+  },
+  {
+    ariaLabel: "Instagram",
+    color: "#E4405F",
+    icon: IconBrandInstagram,
+    id: "instagram",
+    label: "Instagram import",
+  },
+  {
+    ariaLabel: "API",
+    color: "#7C3AED",
+    icon: IconApi,
+    id: "api",
+    label: "API write",
+  },
+] as const;
+
+function satelliteAngle(index: number): number {
+  return ((index + 1) / 4) * 2 * Math.PI - Math.PI / 2;
+}
 
 export function SyncedConnectionsAnimation() {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const reduceMotion = useReducedMotion();
 
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
+    if (reduceMotion) {
+      return;
+    }
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % SATELLITES.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [reduceMotion]);
 
   const radius = isMobile ? 90 : 130;
   const centerSize = 80;
@@ -53,13 +67,15 @@ export function SyncedConnectionsAnimation() {
       radius="lg"
       style={{
         aspectRatio: "4/3",
-        fontSize: "1rem", // Reset font size context if needed
+        fontSize: "1rem",
         maxWidth: 500,
         width: "100%",
       }}
     >
-      {/* Floating Notification Pill - Inside Top Gap */}
-      <div className="absolute top-0 left-0 right-0 flex justify-center z-30 pointer-events-none h-12">
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 right-0 flex justify-center z-30 pointer-events-none h-12"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -83,28 +99,28 @@ export function SyncedConnectionsAnimation() {
       </div>
 
       <div className="relative w-full h-full flex items-center justify-center">
-        {/* Central Hub - Bondery Logo */}
         <motion.div
           className="relative z-20 bg-white dark:bg-zinc-800 rounded-2xl shadow-xl flex items-center justify-center border border-gray-100 dark:border-zinc-700"
           style={{ height: centerSize, width: centerSize }}
           transition={{ damping: 17, stiffness: 400, type: "spring" }}
-          whileHover={{ scale: 1.1 }}
+          whileHover={reduceMotion ? undefined : { scale: 1.1 }}
         >
           <LogoIcon className="text-zinc-900 dark:text-white" size={48} />
 
           <AnimatePresence>
-            <motion.div
-              animate={{ opacity: [0, 0.3, 0], scale: [1, 1.4, 1.6] }}
-              className="absolute inset-0 rounded-2xl -z-10"
-              initial={{ opacity: 0, scale: 0.8 }}
-              key={`pulse-${activeIndex}`}
-              style={{ backgroundColor: activeSat.color }}
-              transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
-            />
+            {!reduceMotion && (
+              <motion.div
+                animate={{ opacity: [0, 0.3, 0], scale: [1, 1.4, 1.6] }}
+                className="absolute inset-0 rounded-2xl -z-10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                key={`pulse-${activeIndex}`}
+                style={{ backgroundColor: activeSat.color }}
+                transition={{ delay: 1, duration: 0.8, ease: "easeOut" }}
+              />
+            )}
           </AnimatePresence>
         </motion.div>
 
-        {/* Central SVG for Lines */}
         <svg
           className="absolute left-1/2 top-1/2 overflow-visible pointer-events-none z-10"
           style={{
@@ -116,15 +132,9 @@ export function SyncedConnectionsAnimation() {
           viewBox="-300 -300 600 600"
         >
           {SATELLITES.map((sat, index) => {
-            // Calculate angle for 8 slots, skipping index 0 (top)
-            // New map: index 0 -> slot 1, index 1 -> slot 2 ... index 6 -> slot 7
-            const slotIndex = index + 1;
-            const angle = (slotIndex / 8) * 2 * Math.PI - Math.PI / 2;
-
-            // Connect fully to centers (hidden behind z-index elements)
+            const angle = satelliteAngle(index);
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
-
             const isActive = activeIndex === index;
 
             return (
@@ -138,7 +148,7 @@ export function SyncedConnectionsAnimation() {
                 stroke={isActive ? sat.color : colorScheme === "dark" ? "#52525b" : "#d1d5db"}
                 strokeWidth={isActive ? 2 : 1}
                 transition={{ duration: 0.3 }}
-                x1={0} // Start from absolute center
+                x1={0}
                 x2={x}
                 y1={0}
                 y2={y}
@@ -147,20 +157,16 @@ export function SyncedConnectionsAnimation() {
           })}
         </svg>
 
-        {/* Satellites */}
         {SATELLITES.map((sat, index) => {
-          const slotIndex = index + 1;
-          const angle = (slotIndex / 8) * 2 * Math.PI - Math.PI / 2;
-
+          const angle = satelliteAngle(index);
           const x = Math.cos(angle) * radius;
           const y = Math.sin(angle) * radius;
           const isActive = index === activeIndex;
 
           return (
             <div className="absolute left-1/2 top-1/2" key={sat.id} style={{ height: 0, width: 0 }}>
-              {/* Data Packet */}
               <AnimatePresence>
-                {isActive && (
+                {isActive && !reduceMotion && (
                   <motion.div
                     animate={{
                       opacity: [1, 1, 0],
@@ -184,13 +190,14 @@ export function SyncedConnectionsAnimation() {
                 )}
               </AnimatePresence>
 
-              {/* Icon */}
-              <motion.div
+              <motion.button
                 animate={{
-                  opacity: isActive ? 1 : 0.8, // Increased opacity slightly
+                  opacity: isActive ? 1 : 0.8,
                   scale: isActive ? 1.2 : 1,
                 }}
-                className="absolute bg-white dark:bg-zinc-800 rounded-full shadow-lg flex items-center justify-center border border-gray-100 dark:border-zinc-700 z-20 cursor-pointer"
+                aria-label={sat.ariaLabel}
+                aria-pressed={isActive}
+                className="absolute bg-white dark:bg-zinc-800 rounded-full shadow-lg flex items-center justify-center border border-gray-100 dark:border-zinc-700 z-20 cursor-pointer p-0"
                 onClick={() => setActiveIndex(index)}
                 style={{
                   height: satelliteSize,
@@ -201,14 +208,15 @@ export function SyncedConnectionsAnimation() {
                   y: y,
                 }}
                 transition={{ duration: 0.3 }}
-                whileHover={{ opacity: 1, scale: 1.2, zIndex: 30 }}
+                type="button"
+                whileHover={reduceMotion ? undefined : { opacity: 1, scale: 1.2, zIndex: 30 }}
               >
                 <sat.icon
                   color={isActive ? sat.color : "#9ca3af"}
                   size={24}
                   style={{ transition: "color 0.3s" }}
                 />
-              </motion.div>
+              </motion.button>
             </div>
           );
         })}

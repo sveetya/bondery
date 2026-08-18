@@ -34,14 +34,21 @@ export function getChangelogFeedPages() {
 export function getChangelogMergedToc(): TOCItemType[] {
   const { releases, unreleased } = getChangelogFeedPages();
   const toc: TOCItemType[] = [];
+  const seen = new Set<string>();
 
-  if (unreleased?.data.toc.length) {
-    toc.push(...unreleased.data.toc);
-  }
+  const pages = [...(unreleased ? [unreleased] : []), ...releases];
 
-  for (const release of releases) {
-    if (release.data.toc.length) {
-      toc.push(...release.data.toc);
+  for (const page of pages) {
+    for (const item of page.data.toc) {
+      // Category headings ("Added", "Fixed") repeat on every release and share
+      // the same slug. Duplicate TOC urls freeze the docs sidebar. Keep only
+      // unique version headings (## [1.8.3], ## [Unreleased]).
+      if (item.depth !== 2 || seen.has(item.url)) {
+        continue;
+      }
+
+      seen.add(item.url);
+      toc.push(item);
     }
   }
 
