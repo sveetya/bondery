@@ -109,7 +109,7 @@ export function Features() {
       />
 
       <FeatureSection
-        description="Stop juggling notes, calendars and memory. Bondery is the one place for all your contacts, which automatically pulls in updates from LinkedIn so your data stays fresh without the manual work. Available on web, mobile, and via API."
+        description="Import from LinkedIn and Instagram, then keep records current when you save a profile. The same hub is on web and mobile, and open to your apps via API."
         imagePlaceholder={<SyncedConnectionsAnimation />}
         imagePosition="left"
         title="The contact hub that updates itself"

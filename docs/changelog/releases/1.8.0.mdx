@@ -70,4 +70,4 @@ title: "1.8.0"
 
 - **Auth and database stack:** Supabase Auth and the Supabase JS client are removed from webapp and mobile. Self-hosters must run `pnpm run setup:dev`, apply Prisma migrations, set `BONDERY_PRIVATE_BETTER_AUTH_SECRETS`, and configure Better Auth OAuth secrets per [environment configuration](../../contributing/environment.mdx).
 - **Platform admin:** `user_settings.is_admin` is dropped; grant operator access via `user.role = admin` or `BONDERY_PRIVATE_PLATFORM_ADMIN_USER_IDS`.
-- **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [get started](../../deploy/get-started.mdx) for the new bootstrap flow.
+- **Supabase Compose services:** The bundled Supabase stack is replaced by Postgres + Prisma. Update `deploy/bondery/.env` and follow [installation](../../deploy/installation.mdx) for the new bootstrap flow.

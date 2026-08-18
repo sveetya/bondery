@@ -68,7 +68,7 @@ export { postMeta } from "./your-post-slug.meta";
 | `modifiedDate` | No | Set when substantially updating a post. Falls back to `date`. |
 | `description` | Yes | Max 160 chars. Used in meta description, OG, and blog cards. |
 | `category` | Yes | Use `updatesCategoryConfig.slug`, `techCategoryConfig.slug`, or `bondsCategoryConfig.slug` imported from `categories.ts`. |
-| `author` | No | Use `sveetya.name` or `martin.name` imported from `src/data/team.ts`. |
+| `author` | No | Use `sveetya.name` imported from `src/data/team.ts`. |
 | `tags` | No | Array of keywords for OG `article:tag` and meta keywords. 3–7 tags recommended. |
 | `announce` | No | Controls whether and where this post is announced. See below. |
 

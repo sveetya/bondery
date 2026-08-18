@@ -18,7 +18,7 @@ Titles should mirror the `## Outcome` sentence in the description. When the Outc
 | Chore | `[Chore] Upgrade Redis to v8 for connection pooling` |
 | Feature | `[Feature] Let users bulk-export contacts as CSV` |
 | Research | `[Research] Evaluate Prisma 8 migration path` |
-| Business Ops | `[Business Ops] File annual tax return for Bondery s.r.o.` |
+| Business Ops | `[Business Ops] File annual tax return for Sveetech s.r.o.` |
 
 ## Standard task description
 

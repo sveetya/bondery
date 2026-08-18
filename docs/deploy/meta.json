@@ -1,5 +1,4 @@
 {
-  "icon": "Server",
-  "pages": ["requirements", "get-started", "configuration", "secrets", "update"],
+  "pages": ["requirements", "installation", "configuration", "secrets", "update", "backups"],
   "title": "Self-hosting"
 }

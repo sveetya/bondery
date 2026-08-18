@@ -3,6 +3,7 @@
 import { AnchorLink } from "@bondery/mantine-next";
 import { Box, Divider, List, Table, Text, Title } from "@mantine/core";
 import type { ReactNode } from "react";
+import { LEGAL_ENTITY } from "@/data/company";
 import { LegalDocumentLayout } from "./shared/LegalDocumentLayout";
 
 // Types for data-driven sections
@@ -105,9 +106,9 @@ function _BulletList({ items }: { items: ReactNode[] }) {
 
 export function Privacy() {
   return (
-    <LegalDocumentLayout lastUpdated="July 13, 2026" title="Privacy Policy">
+    <LegalDocumentLayout lastUpdated="August 18, 2026" title="Privacy Policy">
       <Text mb="lg">
-        PixelDev s.r.o., IČ: 23476800 (&quot;PixelDev,&quot; &quot;Bondery,&quot; &quot;we,&quot;
+        {LEGAL_ENTITY.legalName}, EUID: {LEGAL_ENTITY.euid} (&quot;Bondery,&quot; &quot;we,&quot;
         &quot;us,&quot; or &quot;our&quot;) respects the privacy of its users (&quot;User,&quot;
         &quot;your,&quot; or &quot;you&quot;). This Privacy Policy explains how we collect, use,
         disclose, and safeguard your information when you use Bondery&apos;s platform, websites, web
@@ -175,11 +176,14 @@ export function Privacy() {
       </Title>
       <Text mb="md">The data controller responsible for your personal data is:</Text>
       <Box mb="lg" pl="md">
-        <Text fw="bold">PixelDev s.r.o.</Text>
-        <Text>IČ: 23476800</Text>
-        <Text>Bělehradská 858/23</Text>
-        <Text>Prague 120 00</Text>
-        <Text>Czech Republic</Text>
+        <Text fw="bold">{LEGAL_ENTITY.legalName}</Text>
+        <Text>EUID: {LEGAL_ENTITY.euid}</Text>
+        <Text>VAT ID: {LEGAL_ENTITY.vatId}</Text>
+        <Text>{LEGAL_ENTITY.streetAddress}</Text>
+        <Text>
+          {LEGAL_ENTITY.postalCode} {LEGAL_ENTITY.addressLocality}
+        </Text>
+        <Text>{LEGAL_ENTITY.addressCountryName}</Text>
       </Box>
 
       <Divider my="xl" />
@@ -463,7 +467,7 @@ export function Privacy() {
         c) Business Transfers
       </Title>
       <Text mb="lg">
-        If PixelDev is involved in a merger, acquisition, or sale of assets, your personal
+        If Sveetech is involved in a merger, acquisition, or sale of assets, your personal
         information may be transferred as part of that transaction. We will notify you of any such
         change and any choices you may have.
       </Text>
@@ -482,8 +486,8 @@ export function Privacy() {
         10. International Data Transfers
       </Title>
       <Text mb="md">
-        PixelDev is based in the Czech Republic (EU). Your data may be processed in the European
-        Union and potentially in other countries where our service providers operate.
+        Sveetech is based in Czechia (EU). Your data may be processed in the European Union and
+        potentially in other countries where our service providers operate.
       </Text>
       <Text mb="md">
         When we transfer data outside the EEA, we ensure appropriate safeguards are in place, such
@@ -552,7 +556,7 @@ export function Privacy() {
         </List.Item>
       </List>
 
-      <Text mb="md">The lead supervisory authority for PixelDev is:</Text>
+      <Text mb="md">The lead supervisory authority for Sveetech is:</Text>
       <Box mb="lg" pl="md">
         <Text fw="bold">Úřad pro ochranu osobních údajů (ÚOOÚ)</Text>
         <Text>Czech Data Protection Authority</Text>
@@ -725,13 +729,6 @@ export function Privacy() {
           team@usebondery.com
         </AnchorLink>
         . We&apos;ll be happy to help!
-      </Text>
-      <Text mb="md">
-        Or you can reach us by mail at our postal address:{" "}
-        <AnchorLink href="https://mapy.com/s/fovafaduso" target="_blank">
-          PixelDev s.r.o., Bělehradská 858/23, Prague 120 00, Czech Republic
-        </AnchorLink>
-        .
       </Text>
     </LegalDocumentLayout>
   );

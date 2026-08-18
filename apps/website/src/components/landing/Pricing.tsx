@@ -115,7 +115,7 @@ export function Pricing() {
           }
           description="Advanced features for power users."
           features={premiumFeatures}
-          oldPrice="$10 USD p.m."
+          price="$10 USD p.m."
           title="Premium"
         />
       </Group>

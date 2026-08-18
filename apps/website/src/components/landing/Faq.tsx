@@ -1,3 +1,4 @@
+import { AnchorLink } from "@bondery/mantine-next";
 import {
   Accordion,
   AccordionControl,
@@ -11,6 +12,8 @@ import {
 type FaqItem = {
   question: string;
   answer: string;
+  docsHref?: string;
+  docsLinkLabel?: string;
 };
 
 type FaqProps = {
@@ -40,11 +43,32 @@ export function Faq({ items }: FaqProps) {
           {items.map((item) => (
             <AccordionItem key={item.question} value={item.question}>
               <AccordionControl>{item.question}</AccordionControl>
-              <AccordionPanel>{item.answer}</AccordionPanel>
+              <AccordionPanel>
+                {item.docsHref && item.docsLinkLabel
+                  ? renderAnswerWithDocsLink(item.answer, item.docsHref, item.docsLinkLabel)
+                  : item.answer}
+              </AccordionPanel>
             </AccordionItem>
           ))}
         </Accordion>
       </Container>
     </Container>
+  );
+}
+
+function renderAnswerWithDocsLink(answer: string, href: string, label: string) {
+  const marker = label;
+  const index = answer.indexOf(marker);
+
+  if (index === -1) {
+    return answer;
+  }
+
+  return (
+    <>
+      {answer.slice(0, index)}
+      <AnchorLink href={href}>{label}</AnchorLink>
+      {answer.slice(index + marker.length)}
+    </>
   );
 }

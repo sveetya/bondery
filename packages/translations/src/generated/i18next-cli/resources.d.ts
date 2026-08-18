@@ -20,7 +20,7 @@ export default interface Resources {
       "select": "Select"
     },
     "app": {
-      "description": "Build bonds that last forever."
+      "description": "The open-source personal CRM for building better bonds."
     },
     "confirm": {
       "noCancel": "No, cancel",
@@ -339,7 +339,7 @@ export default interface Resources {
     "ContactTeamTitle": "Who will reply to your question?",
     "DefaultTeamTitle": "Our team",
     "Description": "Meet the team behind Bondery and learn why we built it.",
-    "FoundersPhotoAlt": "Sveetya and Martin at a hackathon",
+    "FoundersPhotoAlt": "Sveetya, founder of Bondery",
     "HeroEyebrow": "About Bondery",
     "HeroLead": "Bondery helps you keep meaningful relationships active, intentional, and easy to maintain.",
     "HeroTitle": "We are building a better way to stay close to people who matter.",

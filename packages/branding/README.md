@@ -27,4 +27,4 @@ Two layouts: **default** (`OgMarketing`) for site roots, **titled** (`OgTitled`)
 
 - All OG images export as **WebP** (1200×630).
 - Titled cards truncate titles longer than **72 characters** (`OG_TITLE_MAX_LENGTH`). Keep titles short and front-load important words — see the blog writing guide.
-- Default marketing cards use the tagline: `Build bonds that last forever.`
+- Default marketing cards use the tagline: `The open-source personal CRM for building better bonds`

@@ -14,7 +14,7 @@ export const OG_BACKGROUND = "linear-gradient(135deg, #ffffff 0%, #faf5ff 55%, #
 export const OG_SITE_NAME = "Bondery";
 
 /** Default tagline on marketing OG cards (website + webapp root). */
-export const OG_DEFAULT_TAGLINE = "Build bonds that last forever.";
+export const OG_DEFAULT_TAGLINE = "The open-source personal CRM for building better bonds";
 
 /** Matches the website body font (next/font Lexend). */
 export const OG_FONT_FAMILY = "Lexend";

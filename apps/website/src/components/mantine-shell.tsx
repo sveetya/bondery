@@ -1,3 +1,5 @@
+"use client";
+
 import { bonderyTheme } from "@bondery/mantine-next";
 import { MantineProvider, v8CssVariablesResolver } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";

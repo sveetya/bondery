@@ -23,16 +23,8 @@ export const sveetya: TeamMember = {
   image: "/images/team/sveetya.png",
   linkedin: "https://linkedin.com/in/mareksvitek",
   name: "Sveetya",
-  role: "Engineering",
+  role: "Founder",
   x: "https://x.com/sveetya",
-};
-
-export const martin: TeamMember = {
-  description: "Driving development.",
-  image: "/images/team/martin.jpg",
-  linkedin: "https://www.linkedin.com/in/martin-aschermann-6235791a9",
-  name: "Martin",
-  role: "Engineering",
 };
 
 /**
@@ -40,7 +32,7 @@ export const martin: TeamMember = {
  * Used in the Team component on the website and as the author registry for blog posts.
  * The `name` field maps to PostMeta.author.
  */
-export const TEAM_MEMBERS: TeamMember[] = [sveetya, martin];
+export const TEAM_MEMBERS: TeamMember[] = [sveetya];
 
 /** Look up a team member by name (matches PostMeta.author). */
 export function getTeamMember(name: string): TeamMember | undefined {

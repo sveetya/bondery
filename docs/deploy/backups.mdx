@@ -1,0 +1,25 @@
+---
+title: Backups
+icon: DatabaseBackup
+---
+
+| Data | How |
+|------|-----|
+| Postgres | `docker compose exec -T db pg_dump -U postgres bondery > backup-$(date +%F).sql` |
+| SeaweedFS buckets | Snapshot `avatars` and `linkedin-logos` via S3 tools against `BONDERY_PRIVATE_S3_ENDPOINT` |
+| Redis | Volume `redis-data` — rate limits and sync wake only; safe to recreate |
+
+## Restore checklist
+
+1. Stop `api` and `webapp`.
+2. Restore the dump into `db` (`psql` via `docker compose exec -T db`).
+3. Restore storage objects if needed.
+4. Start apps; verify `/health/ready` on api and webapp, and `/api/health/ready` on webapp.
+
+Schedule daily dumps off-box. Rehearse a restore at least once per quarter.
+
+## Related
+
+* [Updates](./update.mdx)
+* [Configuration](./configuration.mdx)
+* [deploy/bondery/README.md](../../deploy/bondery/README.md) — compose reference

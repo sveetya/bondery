@@ -58,6 +58,11 @@ const nextConfig: NextConfig = {
         permanent: true,
         source: "/blog/product/:slug",
       },
+      {
+        destination: "/docs/deploy/installation",
+        permanent: true,
+        source: "/docs/deploy/get-started",
+      },
     ];
   },
   serverExternalPackages: ["@takumi-rs/core"],
