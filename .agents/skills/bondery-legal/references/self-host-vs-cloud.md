@@ -6,7 +6,7 @@ Bondery supports both **hosted cloud** (Bondery-operated) and **self-hosted** de
 
 | Deployment | Data controller (user CRM data) | Data processor |
 |------------|----------------------------------|----------------|
-| **Hosted cloud** | User (for their contacts) | Bondery / Sveetech (platform) |
+| **Hosted cloud** | User (for their contacts) | Bondery / Sveetech (platform) — [legal-entity.md](./legal-entity.md) |
 | **Self-hosted** | **Operator** (the person/org running the instance) | N/A — operator runs the stack |
 
 Privacy Policy language ("we collect…", subprocessors table, retention windows) describes **Bondery's hosted cloud instance**, not an arbitrary self-hosted deployment.
