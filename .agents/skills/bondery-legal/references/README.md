@@ -2,6 +2,7 @@
 
 | File | Topic |
 |------|--------|
+| [legal-entity.md](./legal-entity.md) | Sveetech / Bondery company identity (internal) |
 | [subprocessor-registry.md](./subprocessor-registry.md) | Code-grounded vendor/data-flow inventory |
 | [policy-claims-inventory.md](./policy-claims-inventory.md) | Privacy/Terms claims vs. implementation status |
 | [data-flow-workflow.md](./data-flow-workflow.md) | Trigger → classify → check → fix loop |
