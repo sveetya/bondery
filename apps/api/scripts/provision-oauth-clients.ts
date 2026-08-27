@@ -4,13 +4,14 @@
  *
  * Usage: tsx --env-file=.env.development.local scripts/provision-oauth-clients.ts
  */
+import { pathToFileURL } from "node:url";
 import { provisionOAuthClients } from "../src/lib/bootstrap/provision-oauth-clients.js";
 
 async function main(): Promise<void> {
   await provisionOAuthClients();
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main()
     .then(() => process.exit(0))
     .catch((error) => {
