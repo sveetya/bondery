@@ -57,7 +57,10 @@ Plausible secrets and domain can be synced from Infisical **production** via [`.
 
 ## Website integration
 
-On the **ops** Dokploy app (`deploy/ops`), set `BONDERY_INFRA_PLAUSIBLE_DOMAIN`. Compose derives `BONDERY_PUBLIC_PLAUSIBLE_DOMAIN` and `BONDERY_PUBLIC_PLAUSIBLE_HOST` for the website container.
+On the **ops** Dokploy app (`deploy/ops`), set `BONDERY_INFRA_WEBSITE_DOMAIN` and `BONDERY_INFRA_PLAUSIBLE_DOMAIN`. Compose derives:
+
+- `BONDERY_PUBLIC_PLAUSIBLE_DOMAIN` from the marketing hostname (`BONDERY_INFRA_WEBSITE_DOMAIN`, e.g. `usebondery.com`) — this must match the site registered in Plausible
+- `BONDERY_PUBLIC_PLAUSIBLE_HOST` from `https://` + the CE hostname (`BONDERY_INFRA_PLAUSIBLE_DOMAIN`)
 
 ## Upgrades
 

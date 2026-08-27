@@ -3,6 +3,7 @@
  * Mechanical checks for deploy/ops/docker-compose.yml:
  * - website must enable Traefik with BONDERY_INFRA_WEBSITE_DOMAIN
  * - public URLs must be derived from domain vars
+ * - Plausible site domain must come from the marketing hostname, host from the CE hostname
  * - must not reference PRIVATE_* / BONDERY_PRIVATE_* or use env_file
  * - image must use BONDERY_INFRA_WEBSITE_IMAGE_TAG with production default
  */
@@ -56,6 +57,18 @@ if (website) {
   if (!/BONDERY_PUBLIC_WEBSITE_URL:\s*https:\/\/\$\{BONDERY_INFRA_WEBSITE_DOMAIN/.test(website)) {
     errors.push(
       "website must derive BONDERY_PUBLIC_WEBSITE_URL from https:// + BONDERY_INFRA_WEBSITE_DOMAIN",
+    );
+  }
+  if (!/BONDERY_PUBLIC_PLAUSIBLE_DOMAIN:\s*\$\{BONDERY_INFRA_WEBSITE_DOMAIN/.test(website)) {
+    errors.push(
+      "website must derive BONDERY_PUBLIC_PLAUSIBLE_DOMAIN from BONDERY_INFRA_WEBSITE_DOMAIN (marketing hostname, not the Plausible CE host)",
+    );
+  }
+  if (
+    !/BONDERY_PUBLIC_PLAUSIBLE_HOST:\s*https:\/\/\$\{BONDERY_INFRA_PLAUSIBLE_DOMAIN/.test(website)
+  ) {
+    errors.push(
+      "website must derive BONDERY_PUBLIC_PLAUSIBLE_HOST from https:// + BONDERY_INFRA_PLAUSIBLE_DOMAIN",
     );
   }
   if (
