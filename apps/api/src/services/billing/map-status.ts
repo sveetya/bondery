@@ -19,7 +19,6 @@ export function mapStripeStatus(
 ): SubscriptionStatusValue {
   switch (stripeStatus) {
     case "trialing":
-      return "active";
     case "active":
       return cancelAtPeriodEnd ? "canceling" : "active";
     case "canceled":

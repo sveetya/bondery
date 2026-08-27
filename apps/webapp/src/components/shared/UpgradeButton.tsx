@@ -38,7 +38,14 @@ export function UpgradeButton({ onSuccess, ...rest }: UpgradeButtonProps) {
   return (
     <>
       {upgradesEnabled ? button : <Tooltip label={t("upgradesDisabledTooltip")}>{button}</Tooltip>}
-      <Modal centered onClose={closeCheckout} opened={isModalOpen} size="lg" title="Checkout">
+      <Modal
+        centered
+        keepMounted
+        onClose={closeCheckout}
+        opened={isModalOpen}
+        size="lg"
+        title="Checkout"
+      >
         <div id={checkoutMountId} />
       </Modal>
     </>

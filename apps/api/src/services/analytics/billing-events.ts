@@ -1,5 +1,6 @@
 import type Stripe from "stripe";
 import type { DomainContext } from "../../domains/_shared/context.js";
+import { isScheduledToCancel } from "../billing/stripe-helpers.js";
 import { captureProductEvent } from "./posthog-capture.js";
 
 export type PlanInterval = "month" | "year";
@@ -29,7 +30,7 @@ export async function captureSubscriptionCreate(
   };
 
   await captureProductEvent(ctx, "billing:subscription_create", {
-    cancel_at_period_end: subscription.cancel_at_period_end,
+    cancel_at_period_end: isScheduledToCancel(subscription),
     plan_interval: resolvePlanInterval(mirror.billingInterval),
     plan_tier: resolvePlanTier(mirror.productName),
   });
@@ -48,7 +49,7 @@ export async function captureSubscriptionCancel(
   };
 
   await captureProductEvent(ctx, "billing:subscription_cancel", {
-    cancel_at_period_end: subscription.cancel_at_period_end,
+    cancel_at_period_end: isScheduledToCancel(subscription),
     plan_interval: resolvePlanInterval(mirror.billingInterval),
     plan_tier: resolvePlanTier(mirror.productName),
   });

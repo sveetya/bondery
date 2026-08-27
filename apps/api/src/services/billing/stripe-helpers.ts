@@ -1,5 +1,17 @@
 import type Stripe from "stripe";
 
+/**
+ * Customer Portal period-end cancel in flexible billing mode sets `cancel_at`
+ * and leaves `cancel_at_period_end` false.
+ * @see https://docs.stripe.com/billing/subscriptions/billing-mode/compare#cancellations-in-the-customer-portal
+ */
+export function isScheduledToCancel(subscription: {
+  cancel_at: number | null;
+  cancel_at_period_end: boolean;
+}): boolean {
+  return subscription.cancel_at_period_end || subscription.cancel_at != null;
+}
+
 export function getSubscriptionPeriod(subscription: Stripe.Subscription): {
   currentPeriodEnd: Date | null;
   currentPeriodStart: Date | null;

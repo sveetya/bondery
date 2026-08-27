@@ -23,7 +23,7 @@ metadata:
 
 1. **Stripe is source of truth** — Price IDs in env; `subscriptions` is a webhook mirror.
 2. **Custom Fastify integration** — not Better Auth Stripe plugin (see ADR 0002).
-3. **Webhooks at `/api/webhooks/stripe`** — raw body + `constructEvent` + idempotency table.
+3. **Webhooks at `POST /webhooks/stripe` on the API host** (`https://api.usebondery.com/webhooks/stripe`) — raw body + `constructEvent` + idempotency table. Not the webapp `/api` BFF prefix.
 4. **`GET /api/subscriptions` is DB-only** — no live Stripe API calls on read.
 5. **Embedded Checkout** — `ui_mode: embedded`, return `clientSecret`, `@stripe/stripe-js`.
 6. **Upgrades gated** — `BONDERY_PUBLIC_BILLING_UPGRADES_ENABLED=false` by default.
@@ -36,7 +36,7 @@ metadata:
 | Webhook events | [references/webhook-events.md](references/webhook-events.md) |
 | Stripe product model | [references/stripe-product-model.md](references/stripe-product-model.md) |
 | Access control | [references/access-control.md](references/access-control.md) |
-| Env vars | [references/env-vars.md](references/env-vars.md) |
+| Env vars / local Stripe CLI | [references/env-vars.md](references/env-vars.md) |
 | API routes | [references/api-routes.md](references/api-routes.md) |
 | Webapp checkout | [references/client-integration.md](references/client-integration.md) |
 | Trial-ending email (billing trigger) | [references/trial-ending-email.md](references/trial-ending-email.md) — template/delivery → [bondery-emails](../bondery-emails/references/catalog.md) |

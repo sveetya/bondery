@@ -64,10 +64,11 @@ pnpm run dev
 
 `env:development` and `env:production` use the **same values** from root `.env.local` (localhost URLs). Local production-mode builds are not deploys — they need your local URLs, not `usebondery.com`.
 
-Pre-commit runs `env:sync --stage` when you change the manifest, env scripts, or root `package.json` — same pattern as OpenAPI. CI safety net:
+Pre-commit runs `env:sync --stage` when you change the manifest, env scripts, or root `package.json` — same pattern as OpenAPI.
 
 ```bash
-pnpm run env:check   # regenerate + fail if git dirty
+pnpm run env:check   # CI + `pnpm run check`: regenerate examples; fail if git dirty
+pnpm run check:env   # `pnpm run check` only: per-app required vars against local env files
 ```
 
 Optional flags on `env`: `--no-pull`, `--skip-check`, `--dry-run`, `--only=api,webapp`.
@@ -85,6 +86,20 @@ pnpm run env:pull
 ```
 
 [`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings: `development` (local `env:pull`), `staging` (release smoke), or `production` (Dokploy ops sync).
+
+### Stripe CLI (local webhooks)
+
+`env:pull` syncs shared Stripe **test** keys and price IDs. It does **not** pull `BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET` — that value is a per-machine Stripe CLI listen secret locally, and a Dashboard endpoint secret in Infisical production/staging.
+
+```bash
+# one-time (Stripe CLI on PATH; does not run stripe login)
+stripe login
+pnpm run setup:stripe          # or: pnpm run setup:stripe -- --force
+# restart the API after the secret changes
+
+# while the API is running
+pnpm run dev:stripe
+```
 
 ## Authoring vs generated files
 
