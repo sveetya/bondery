@@ -370,6 +370,7 @@ function AddPeopleToGroupSelectionForm({
                     setInitialSelectedGroupIds((prev) => new Set([...prev, newGroup.id]));
                     setSelectedGroupIds((prev) => new Set([...prev, newGroup.id]));
                   },
+                  repeatable: false,
                 });
               }}
               variant="action"

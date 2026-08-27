@@ -3,7 +3,8 @@ name: bondery-ux
 description: >
   Bondery UX patterns — empty states, loading, lists, forms, modals, i18n, keyboard shortcuts,
   avatars, product flows (onboarding, import, navigation resume). Use when building or reviewing
-  UI in webapp or mobile, writing user-facing copy, or choosing interaction patterns.
+  UI in webapp or mobile, writing user-facing copy, or choosing interaction patterns, including
+  create more, repeatable create, or stay open after create.
 metadata:
   version: "1.0.0"
   namespace: bondery
@@ -36,6 +37,7 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 - Paginated lists use server `pagination.hasMore` for “load more” — see `bondery-api` → `api-design.md`
 - Keyboard shortcut display uses `Kbd` from `@bondery/mantine-next` — not `@mantine/core`
 - `avatar: null` means show initials — no phantom image requests
+- Repetitive web create modals include Create more (or pass `repeatable: false` for nested pickers) — see [create-more.md](references/desktop/create-more.md)
 
 ## Decision tree
 
@@ -48,6 +50,7 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 | API error display | [references/common/api-errors-display.md](references/common/api-errors-display.md) |
 | Avatars | [references/common/avatars.md](references/common/avatars.md) |
 | Web modals / command palette | [references/desktop/modals.md](references/desktop/modals.md), [global-find.md](references/desktop/global-find.md) |
+| Create more / stay-open after create | [references/desktop/create-more.md](references/desktop/create-more.md) |
 | Keyboard shortcut chips | [references/desktop/keyboard-shortcuts.md](references/desktop/keyboard-shortcuts.md) |
 | Mobile forms / sheets | [references/mobile/forms.md](references/mobile/forms.md) |
 | Onboarding / import | [references/product/onboarding.md](references/product/onboarding.md), [import-flow.md](references/product/import-flow.md) |
@@ -63,3 +66,5 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 - [ ] Paginated tables use server `hasMore` for load-more — not client-derived pagination
 - [ ] Keyboard shortcuts use `Kbd` + `parseShortcutKeys` from `@bondery/mantine-next`
 - [ ] Destructive actions have confirmation per [destructive-actions.md](references/common/destructive-actions.md)
+- [ ] Repetitive create modals: Create more switch per create-more.md (or explicit `repeatable: false`)
+- [ ] Create more ON shows a success toast even when the OFF path navigates and skips one

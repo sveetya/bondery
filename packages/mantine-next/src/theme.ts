@@ -107,6 +107,11 @@ export const bonderyTheme = createTheme({
         variant: "filled",
       },
     },
+    Switch: {
+      defaultProps: {
+        withThumbIndicator: false,
+      },
+    },
     Textarea: {
       defaultProps: {
         variant: "filled",
