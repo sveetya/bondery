@@ -1,6 +1,6 @@
 # Page navigation & resume (return intent)
 
-**Product-specific** — Bondery’s `redirect` param, outage recovery, and onboarding bypass for deep links.
+**Product-specific** — Bondery’s `redirect` param, hop-down recovery, and onboarding bypass for deep links.
 
 For **generic** empty/loading patterns during outage, see [../common/empty-states.md](../common/empty-states.md) and [../common/loading-states.md](../common/loading-states.md).
 
@@ -11,10 +11,22 @@ For **generic** empty/loading patterns during outage, see [../common/empty-state
 Users lose context when:
 
 - Session expires mid-task → login
-- API outage → `/app/unavailable`
+- API hop fails mid-task → should stay on the same URL
 - OAuth round-trip for deep links
 
 **Goal:** Return to the **same screen and query string** after recovery — without `sessionStorage`, without login subtitle copy.
+
+**Invariant:** The URL is the user's work. Only loss of identity may change it.
+
+---
+
+## Three layers (do not mix)
+
+| Layer | What it owns | Hop-down / missing data |
+|-------|----------------|-------------------------|
+| **Identity** | Who you are (`getRequestSession`, app layout) | Anonymous → login. Hop-down **stays on the URL**. |
+| **Shell chrome** | Sidebar, session name/avatar/theme, locale | Session-backed. **No** global outage banner, **no** `/health/ready` polling, **no** app-wide offline pill. |
+| **Product data** | Page queries (settings, lists, detail) | Skeleton while pending with no cache, **stale** cache while refetching, `(shell)/error.tsx` + `QueryLoadError` Retry when the page-defining query fails with no data. Never fake defaults (`?? {}` / `?? []` as success) and never app-wide chrome. |
 
 ---
 
@@ -23,14 +35,15 @@ Users lose context when:
 | Trigger | Destination |
 |---------|-------------|
 | Session expired (401) | `/login?redirect=<encoded-path>` |
-| API unavailable | `/app/unavailable?redirect=<encoded-path>` |
 | User sign-out / account delete | `/login` — **no** `redirect` |
 | Chained outage → login | Forward existing `redirect`, not `/app/unavailable` |
+
+Hop failures (502/503/504, BFF synthetic 503, network errors) **do not** set `redirect` or change the URL. Product queries show skeleton, stale data, or `(shell)/error.tsx`.
 
 **Helpers:** `apps/webapp/src/lib/auth/returnIntent.ts`
 
 - `isSafeReturnPath` — same-origin `/app/*` paths; blocks `/login`, `/app/unavailable`, `/auth/*`; allows `/oauth/consent` (extension)
-- `buildLoginUrl`, `buildUnavailableUrl`, `parseReturnIntent`, `captureReturnPath`, `getRequestReturnPath`
+- `buildLoginUrl`, `parseReturnIntent`, `captureReturnPath`, `getRequestReturnPath`
 
 **Server capture:** `apps/webapp/src/proxy.ts` sets `x-pathname` + `x-search`; layout uses `getRequestReturnPath()`.
 
@@ -41,20 +54,21 @@ Users lose context when:
 | Layer | When | Mechanism |
 |-------|------|-----------|
 | **Route auth** | No session visiting `/app/*` | `proxy.ts` → `supabase/proxy.ts` `updateSession` → `buildLoginUrl` |
-| **API transport** | Valid session but API returns 401/503 | `applyTransportErrorPolicy` / `applyServerTransportPolicy` → `endSession` or unavailable redirect |
+| **API transport** | Valid session but API returns 401 | `applyTransportErrorPolicy` / `applyServerTransportPolicy` → login with `redirect` |
 
-API 401 is **not** handled in `supabase/proxy.ts` — it runs in the client/server transport after the app shell is loaded.
+API hop-down is **not** handled via URL change. Client transport classifies hop-down for query retries and otherwise stays silent. RSC transport rethrows into the route `error.tsx`.
 
 ---
 
-## Outage recovery UX
+## Hop-down recovery UX
 
-1. User on deep screen → API fails → `/app/unavailable?redirect=…`
-2. Recovery: **“Back online…”** (`UnavailableClient.tsx`)
-3. Wait **`OUTAGE_RESUME_DELAY_MS`** (300ms) — `apps/webapp/src/lib/auth/constants.ts`
-4. `router.replace(redirect)` or `/app`
+1. User on a deep screen → hop failure → **URL stays**
+2. That page’s query is skeleton (no cache), stale (has cache), or `(shell)/error.tsx` (`QueryLoadError`) when there is no cache
+3. Retry on `error.tsx` calls `useQueryErrorResetBoundary().reset()` then Next `reset()` — not `/app/unavailable`, not a global banner. Cached pages keep rendering and refetch in place
+4. 401 on a product request → login with `redirect`
+5. Tab focus uses TanStack Query `refetchOnWindowFocus` (default `true`). Settings uses `refetchOnWindowFocus: false`. Do not invalidate-all on visibility.
 
-**Unavailable empty state:** [../common/empty-states.md](../common/empty-states.md).
+`/app/unavailable` remains for stale bookmarks only; authenticated users are redirected to `/app` by layout. Nothing new navigates there. Bookmark Retry probes `GET /api/me/session` via `retryApiConnection()`.
 
 ---
 
@@ -88,9 +102,10 @@ Details: [onboarding.md](./onboarding.md).
 | Unauthenticated route guard | `apps/webapp/src/supabase/proxy.ts` |
 | 401 client transport | `handleUnauthorizedSession`, `endSession({ reason: 'session_expired' })` |
 | 401 server transport | `handleServerUnauthorizedSession`, `applyServerTransportPolicy` |
-| Outage client | `handleApiUnavailable`, `applyTransportErrorPolicy` |
-| Outage server | `app/(app)/app/layout.tsx` (`getAppSession`) |
-| Recovery UI | `apps/webapp/src/app/(app)/app/(chromeless)/unavailable/UnavailableClient.tsx` |
+| Hop-down client | `applyTransportErrorPolicy` (silent); page queries / `(shell)/error.tsx` + `QueryErrorResetBoundary` |
+| Hop-down server | `applyServerTransportPolicy` (rethrow), `(shell)/error.tsx` |
+| Identity layout | `getRequestSession`, `app/(app)/app/layout.tsx` |
+| Stale bookmark page | `UnavailableClient.tsx` (`retryApiConnection` session probe only) |
 | OAuth | `apps/webapp/src/app/(app)/auth/callback/route.ts` |
 | API policy | `apps/webapp/src/lib/api/README.md` |
 
@@ -100,22 +115,26 @@ Details: [onboarding.md](./onboarding.md).
 
 | Do | Don’t |
 |----|-------|
-| `redirect` only | `returnUrl` alias |
+| `redirect` only for login | `returnUrl` alias |
 | Validate every consume path | Trust raw URLs |
-| 300ms delay before auto-resume | Instant flash redirect |
+| Stay on URL during hop blips | Hard-nav to `/app/unavailable` on 503 |
 | Skip onboarding once for deep links | Skip onboarding for `/app` home |
 | Attach `redirect` only for `session_expired` | On voluntary sign-out |
+| Show skeleton / stale / `(shell)/error.tsx` for product data | Global outage banner or fake `?? {}` success |
+| Let `refetchOnWindowFocus` refresh queries | Invalidate-all on tab visibility or `router.refresh()` as a heartbeat |
+| `refreshAppShell()` for onboarding / last-resort identity | `router.refresh()` after preference field saves |
 
 ---
 
 ## Manual QA
 
 1. `/app/people/abc` → force 401 → login → sign in → same URL
-2. Deep screen → outage → unavailable → recovery → same URL after delay
-3. Unavailable → login → `redirect` is people URL, not unavailable
+2. Deep screen → kill API → URL stays; page shows skeleton or `(shell)/error.tsx` Retry — **no** global banner, **no** `/app/unavailable` — → API up → Retry (error.tsx reset) or focus refetch restores data
+3. Cursor ↔ Chrome focus on Settings → no 307; settings query does not refetch on focus
 4. Sign out → login without `redirect`
 5. OAuth deep link → skip onboarding once → land on target
 6. Invalid `redirect` → `/app`
+7. Stale `/app/unavailable` bookmark while signed in → layout redirects home
 
 ---
 

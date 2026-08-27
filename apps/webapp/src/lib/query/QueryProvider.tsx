@@ -1,6 +1,6 @@
 "use client";
 
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, QueryErrorResetBoundary } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { type ReactNode, useState } from "react";
 import { getQueryClient } from "./client";
@@ -16,7 +16,9 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <QueryProviderInner>{children}</QueryProviderInner>
+      <QueryErrorResetBoundary>
+        <QueryProviderInner>{children}</QueryProviderInner>
+      </QueryErrorResetBoundary>
       {process.env.NODE_ENV === "development" ? (
         <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} />
       ) : null}

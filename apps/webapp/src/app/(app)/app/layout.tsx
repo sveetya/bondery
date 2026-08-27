@@ -2,15 +2,10 @@ import { WEBAPP_NAME, WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAppSession } from "@/lib/app/getAppSession";
 import { BYPASS_ONBOARDING_ONCE_COOKIE } from "@/lib/auth/constants";
-import { resolveServerSession, signOutServerSession } from "@/lib/auth/resolveServerSession";
-import {
-  buildLoginUrl,
-  buildUnavailableUrl,
-  getRequestReturnPath,
-  getRequestReturnPathForLogin,
-} from "@/lib/auth/returnIntent";
+import { getRequestSession } from "@/lib/auth/getRequestSession";
+import { signOutServerSession } from "@/lib/auth/resolveServerSession";
+import { buildLoginUrl, getRequestReturnPathForLogin } from "@/lib/auth/returnIntent";
 
 /** Sync fallback while per-route generateMetadata streams on client navigation. */
 export const metadata: Metadata = {
@@ -20,52 +15,40 @@ export const metadata: Metadata = {
 /**
  * Auth gate for all `/app/*` routes. Product chrome (sidebar, shell providers)
  * lives in `(shell)/layout.tsx`; system pages use `(chromeless)/layout.tsx`.
+ *
+ * Identity only — hop failures stay on the current URL and degrade in the shell.
  */
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const [cookieStore, headersList] = await Promise.all([cookies(), headers()]);
   const pathname = headersList.get("x-pathname") ?? "";
   const returnPathForLogin = getRequestReturnPathForLogin(headersList);
-  const returnPathForUnavailable = getRequestReturnPath(headersList);
 
-  const session = await resolveServerSession();
+  const session = await getRequestSession();
 
-  if (session.status !== "ok") {
+  if (session.kind === "anonymous") {
     await signOutServerSession();
     redirect(buildLoginUrl(returnPathForLogin));
-  }
-
-  // getAppSession() is cache()-wrapped: shared with resolveLocaleSettings().
-  const appSession = await getAppSession();
-
-  if (appSession.status === "unauthorized") {
-    // Session cookie is valid but API rejected the token — do not sign out (config mismatch).
-    redirect(buildUnavailableUrl(returnPathForUnavailable));
-  }
-
-  if (appSession.status === "unavailable") {
-    if (!pathname.startsWith(WEBAPP_ROUTES.UNAVAILABLE)) {
-      redirect(buildUnavailableUrl(returnPathForUnavailable));
-    }
-    return <>{children}</>;
   }
 
   if (pathname.startsWith(WEBAPP_ROUTES.UNAVAILABLE)) {
     redirect(WEBAPP_ROUTES.HOME);
   }
 
-  const { session: userSession } = appSession;
-  const bypassOnboarding = cookieStore.get(BYPASS_ONBOARDING_ONCE_COOKIE)?.value === "1";
+  if (session.api === "ok" && session.shell) {
+    const bypassOnboarding = cookieStore.get(BYPASS_ONBOARDING_ONCE_COOKIE)?.value === "1";
+    const userSession = session.shell;
 
-  if (
-    !userSession.onboardingCompletedAt &&
-    !bypassOnboarding &&
-    !pathname.startsWith(WEBAPP_ROUTES.ONBOARDING)
-  ) {
-    redirect(WEBAPP_ROUTES.ONBOARDING);
-  }
+    if (
+      !userSession.onboardingCompletedAt &&
+      !bypassOnboarding &&
+      !pathname.startsWith(WEBAPP_ROUTES.ONBOARDING)
+    ) {
+      redirect(WEBAPP_ROUTES.ONBOARDING);
+    }
 
-  if (userSession.onboardingCompletedAt && pathname.startsWith(WEBAPP_ROUTES.ONBOARDING)) {
-    redirect(WEBAPP_ROUTES.HOME);
+    if (userSession.onboardingCompletedAt && pathname.startsWith(WEBAPP_ROUTES.ONBOARDING)) {
+      redirect(WEBAPP_ROUTES.HOME);
+    }
   }
 
   return <>{children}</>;

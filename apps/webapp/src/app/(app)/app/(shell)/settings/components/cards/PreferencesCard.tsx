@@ -16,7 +16,6 @@ import { IconAdjustmentsHorizontal } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
 import { LanguagePicker } from "@/components/shared/LanguagePicker";
 import { TimezonePicker } from "@/components/shared/TimezonePicker";
-import { refreshAppShell } from "@/lib/app/refreshAppShell";
 import { useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useApplyUserLanguage } from "@/lib/i18n/useApplyUserLanguage";
 import { useSettingsQuery, useUpdateSettingsMutation } from "@/lib/query/hooks/useSettings";
@@ -54,26 +53,32 @@ function parseSettingsPreferences(settings: Record<string, unknown>): {
 export function PreferencesCard() {
   const t = useSettingsPageTranslations("Preferences");
   const { data: settingsResult } = useSettingsQuery();
+  const settingsData = settingsResult?.data;
   const preferences = useMemo(
-    () => parseSettingsPreferences(settingsResult?.data ?? {}),
-    [settingsResult?.data],
+    () => (settingsData ? parseSettingsPreferences(settingsData) : undefined),
+    [settingsData],
   );
 
   const updateSettings = useUpdateSettingsMutation();
   const applyUserLanguage = useApplyUserLanguage();
-  const [language, setLanguage] = useState(preferences.language);
-  const [savedLanguage, setSavedLanguage] = useState(preferences.language);
-  const [timezone, setTimezone] = useState(preferences.timezone);
-  const [savedTimezone, setSavedTimezone] = useState(preferences.timezone);
-  const [timeFormat, setTimeFormat] = useState<TimeFormatPreference>(preferences.timeFormat);
+  const [language, setLanguage] = useState(preferences?.language ?? DEFAULT_LOCALE);
+  const [savedLanguage, setSavedLanguage] = useState(preferences?.language ?? DEFAULT_LOCALE);
+  const [timezone, setTimezone] = useState(preferences?.timezone ?? "UTC");
+  const [savedTimezone, setSavedTimezone] = useState(preferences?.timezone ?? "UTC");
+  const [timeFormat, setTimeFormat] = useState<TimeFormatPreference>(
+    preferences?.timeFormat ?? "24h",
+  );
 
   useEffect(() => {
+    if (!preferences) {
+      return;
+    }
     setLanguage(preferences.language);
     setSavedLanguage(preferences.language);
     setTimezone(preferences.timezone);
     setSavedTimezone(preferences.timezone);
     setTimeFormat(preferences.timeFormat);
-  }, [preferences.language, preferences.timezone, preferences.timeFormat]);
+  }, [preferences]);
 
   const renderFieldLabel = (label: string, tooltip: string) => (
     <Group align="center" component="span" gap={4} wrap="nowrap">
@@ -100,7 +105,6 @@ export function PreferencesCard() {
       await updateSettings.mutateAsync({ timezone: nextTimezone });
 
       setSavedTimezone(nextTimezone);
-      refreshAppShell();
 
       notifications.hide(loadingNotification);
       notifications.show(
@@ -139,7 +143,6 @@ export function PreferencesCard() {
 
       setSavedLanguage(nextLanguage);
       await applyUserLanguage(nextLanguage as SupportedLocale);
-      refreshAppShell();
 
       notifications.hide(loadingNotification);
       notifications.show(
@@ -160,6 +163,10 @@ export function PreferencesCard() {
       );
     }
   };
+
+  if (!preferences) {
+    return null;
+  }
 
   return (
     <SettingsSection icon={<IconAdjustmentsHorizontal size={20} stroke={1.5} />} title={t("Title")}>

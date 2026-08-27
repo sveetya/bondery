@@ -15,7 +15,11 @@ export function ProfileCard() {
   const { data: settingsResult } = useSettingsQuery();
   const { data: myselfPerson = null } = useMePersonQuery("small");
 
-  const settings = settingsResult?.data ?? {};
+  const settings = settingsResult?.data;
+  if (!settings) {
+    return null;
+  }
+
   const email = typeof settings.email === "string" ? settings.email : "";
   const providers = Array.isArray(settings.providers) ? (settings.providers as string[]) : [];
   const userIdentities = Array.isArray(settings.identities)

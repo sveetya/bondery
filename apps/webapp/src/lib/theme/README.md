@@ -17,12 +17,12 @@ SSR first paint: `resolveSsrColorScheme()` in root layout sets `data-mantine-col
 
 - **Never** call `setColorScheme` outside [`ColorSchemeSync.tsx`](../components/shell/ColorSchemeSync.tsx).
 - **Never** persist theme in Mantine localStorage (`sessionColorSchemeManager` is a noop).
-- After settings mutations that change theme: `refreshAppShell({ colorScheme })`.
+- After settings mutations that change theme: `applyUserSession({ colorScheme })` / `applyUserSessionFromRef` — do **not** `refreshAppShell()` for a field save.
 - Optimistic UI in settings: `applyUserSession({ colorScheme })` only.
 
 ## Stale tabs
 
-Background tabs resync on focus via [`SessionResyncOnFocus.tsx`](../components/shell/SessionResyncOnFocus.tsx) (`router.refresh()`).
+Background tabs resync product queries via TanStack Query `refetchOnWindowFocus` (default `true`). Settings uses `refetchOnWindowFocus: false`. Theme follows `UserSessionProvider` after a field save; it is not a layout heartbeat.
 
 ## Unauthenticated routes
 

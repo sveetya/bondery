@@ -14,7 +14,9 @@ export function PhotoUploadButton({ avatarUrl, userName }: PhotoUploadButtonProp
 
   const handleOpenUploadModal = () => {
     openPhotoUploadModal({
-      uploadFile: (file) => uploadMePhotoMutation.mutateAsync(file),
+      uploadFile: async (file) => {
+        await uploadMePhotoMutation.mutateAsync(file);
+      },
       variant: "profile",
     });
   };

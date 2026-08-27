@@ -1,15 +1,10 @@
+import { buildApiErrorFromResponse } from "@bondery/helpers/api";
 import { WEBAPP_ROUTES, WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { isApiUnavailableError, isApiUnavailableResponseStatus } from "@/lib/api/availability";
 import { handleServerUnauthorizedSession } from "@/lib/auth/handleServerUnauthorizedSession";
-import { resolveServerSession } from "@/lib/auth/resolveServerSession";
-import {
-  buildUnavailableUrl,
-  getRequestReturnPath,
-  getRequestReturnPathForLogin,
-  parseReturnIntent,
-} from "@/lib/auth/returnIntent";
+import { getRequestReturnPathForLogin, parseReturnIntent } from "@/lib/auth/returnIntent";
 import { isUnauthorizedApiError, isUnauthorizedResponseStatus } from "@/lib/auth/unauthorized";
 
 async function getPathname(): Promise<string> {
@@ -17,17 +12,12 @@ async function getPathname(): Promise<string> {
   return headersList.get("x-pathname") ?? "";
 }
 
-function isOnUnavailableRoute(pathname: string): boolean {
-  return pathname.startsWith(WEBAPP_ROUTES.UNAVAILABLE);
-}
-
 function isOnLoginRoute(pathname: string): boolean {
   return pathname.startsWith(WEBSITE_ROUTES.LOGIN);
 }
 
-async function hasValidServerSession(): Promise<boolean> {
-  const session = await resolveServerSession();
-  return session.status === "ok";
+function isOnUnavailableRoute(pathname: string): boolean {
+  return pathname.startsWith(WEBAPP_ROUTES.UNAVAILABLE);
 }
 
 async function applyUnauthorizedPolicy(errorToRethrow?: unknown): Promise<never> {
@@ -55,17 +45,10 @@ async function applyUnauthorizedPolicy(errorToRethrow?: unknown): Promise<never>
 }
 
 async function applyUnavailablePolicy(error: unknown): Promise<never> {
-  const pathname = await getPathname();
-  if (isOnUnavailableRoute(pathname)) {
+  if (error instanceof Error) {
     throw error;
   }
-
-  if (!(await hasValidServerSession())) {
-    return applyUnauthorizedPolicy(error);
-  }
-
-  const headersList = await headers();
-  redirect(buildUnavailableUrl(getRequestReturnPath(headersList)));
+  throw new Error("Service unavailable");
 }
 
 /** Apply global session/outage policy for thrown transport errors (server RSC). */
@@ -92,16 +75,9 @@ export async function applyServerTransportResponsePolicy(response: Response): Pr
     return;
   }
 
-  const pathname = await getPathname();
-  if (isOnUnavailableRoute(pathname)) {
-    return;
-  }
-
-  if (!(await hasValidServerSession())) {
-    await applyUnauthorizedPolicy();
-    return;
-  }
-
-  const headersList = await headers();
-  redirect(buildUnavailableUrl(getRequestReturnPath(headersList)));
+  const text = await response.text();
+  throw buildApiErrorFromResponse({
+    bodyText: text,
+    status: response.status,
+  });
 }

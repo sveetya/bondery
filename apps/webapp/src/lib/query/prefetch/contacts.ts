@@ -13,8 +13,12 @@ import {
 import { getInteractionsListServer } from "@/lib/api/domains/server/interactions";
 import type { ContactInteractionsParams, ContactsListParams } from "@/lib/api/resources/contacts";
 import type { AvatarPreset } from "@/lib/contacts/avatarParams";
+import type { ContactsListFilterParams } from "@/lib/query/contactsListParams";
+import { fetchInfiniteQueryOrThrow, fetchQueryOrThrow } from "@/lib/query/fetchQueryOrThrow";
 import { contactKeys } from "@/lib/query/keys";
 import { INTERACTIONS_TIMELINE } from "@/lib/query/sharedListParams";
+
+const CONTACTS_INFINITE_PAGE_SIZE = 50;
 
 export async function prefetchContactsList(
   queryClient: QueryClient,
@@ -23,6 +27,31 @@ export async function prefetchContactsList(
   await queryClient.prefetchQuery({
     queryFn: () => getContactsListServer(params),
     queryKey: contactKeys.list(params),
+  });
+}
+
+export async function fetchContactsList(
+  queryClient: QueryClient,
+  params: ContactsListParams,
+): Promise<void> {
+  await fetchQueryOrThrow(queryClient, contactKeys.list(params), () =>
+    getContactsListServer(params),
+  );
+}
+
+export async function fetchContactsInfinite(
+  queryClient: QueryClient,
+  filter: ContactsListFilterParams,
+): Promise<void> {
+  await fetchInfiniteQueryOrThrow(queryClient, {
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) =>
+      getContactsListServer({
+        ...filter,
+        limit: CONTACTS_INFINITE_PAGE_SIZE,
+        offset: pageParam as number,
+      }),
+    queryKey: contactKeys.infinite(filter),
   });
 }
 
@@ -45,6 +74,16 @@ export async function prefetchContactDetail(
     queryFn: () => getContactDetailServer(contactId, avatarPreset),
     queryKey: contactKeys.detail(contactId),
   });
+}
+
+export async function fetchContactDetail(
+  queryClient: QueryClient,
+  contactId: string,
+  avatarPreset: AvatarPreset = "large",
+): Promise<void> {
+  await fetchQueryOrThrow(queryClient, contactKeys.detail(contactId), () =>
+    getContactDetailServer(contactId, avatarPreset),
+  );
 }
 
 export async function prefetchContactLinkedInData(

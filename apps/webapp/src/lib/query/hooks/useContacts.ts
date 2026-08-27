@@ -51,6 +51,7 @@ import { refreshAppShell } from "@/lib/app/refreshAppShell";
 import { syncMergeRecommendationsAfterChange } from "@/lib/merge/syncMergeRecommendations";
 import type { ContactsListFilterParams } from "@/lib/query/contactsListParams";
 import {
+  invalidateAfterContactMerge,
   invalidateContactDetail,
   invalidateContactDomain,
   invalidateContactImportantDates,
@@ -61,6 +62,7 @@ import {
   invalidateSettings,
 } from "@/lib/query/invalidation";
 import { contactKeys } from "@/lib/query/keys";
+import { throwIfPageCannotRender } from "@/lib/query/pageLoadFailure";
 import { nextPaginatedOffset } from "@/lib/query/paginatedInfiniteQuery";
 import { PERSON_INTERACTIONS } from "@/lib/query/personPageQueryParams";
 import { INTERACTIONS_TIMELINE } from "@/lib/query/sharedListParams";
@@ -154,6 +156,7 @@ export function useContactsInfiniteQuery(
       return getContactsList(listParams);
     },
     queryKey: contactKeys.infinite(params),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 
@@ -162,6 +165,7 @@ export function useContactQuery(id: string, enabled = true) {
     enabled: enabled && !!id,
     queryFn: () => getContactDetail(id),
     queryKey: contactKeys.detail(id),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 
@@ -258,6 +262,7 @@ export function useMapPinsQuery(
     },
     queryKey: contactKeys.mapPins(mode, bounds ?? undefined),
     staleTime: 0,
+    throwOnError: throwIfPageCannotRender,
   });
 }
 
@@ -428,11 +433,8 @@ export function useMergeContactsMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: mergeContacts,
-    onSuccess: async () => {
-      await Promise.all([
-        invalidateContactDomain(queryClient),
-        syncMergeRecommendationsAfterChange(queryClient),
-      ]);
+    onSuccess: (data) => {
+      void invalidateAfterContactMerge(queryClient, data);
     },
   });
 }
@@ -451,11 +453,9 @@ export async function mergeContactsWithInvalidation(
   queryClient: ReturnType<typeof useQueryClient>,
   input: Parameters<typeof mergeContacts>[0],
 ) {
-  await mergeContacts(input);
-  await Promise.all([
-    invalidateContactDomain(queryClient),
-    syncMergeRecommendationsAfterChange(queryClient),
-  ]);
+  const result = await mergeContacts(input);
+  await invalidateAfterContactMerge(queryClient, result);
+  return result;
 }
 
 /** Imperative create for modal confirm handlers (no hook context). */

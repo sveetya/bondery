@@ -1,3 +1,4 @@
+import { isApiError } from "@bondery/helpers/api";
 import { API_ROUTES } from "@bondery/helpers/globals/paths";
 import type {
   Activity,
@@ -207,12 +208,23 @@ export async function deleteContactsFiltered(payload: {
   });
 }
 
-export async function mergeContacts(body: Record<string, unknown>): Promise<MergeContactsResponse> {
+async function postMergeContacts(body: Record<string, unknown>): Promise<MergeContactsResponse> {
   return clientApiJson<MergeContactsResponse>(API_ROUTES.CONTACTS_MERGE, {
     body: JSON.stringify(body),
     headers: { "Content-Type": "application/json" },
     method: "POST",
   });
+}
+
+export async function mergeContacts(body: Record<string, unknown>): Promise<MergeContactsResponse> {
+  try {
+    return await postMergeContacts(body);
+  } catch (error) {
+    if (isApiError(error) && error.status >= 500) {
+      return await postMergeContacts(body);
+    }
+    throw error;
+  }
 }
 
 export async function shareContact(body: Record<string, unknown>): Promise<void> {

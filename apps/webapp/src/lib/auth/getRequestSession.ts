@@ -23,6 +23,7 @@ export type RequestSession =
  * Single server-side session primitive for layouts, BFF, and transport.
  *
  * Identity comes from Better Auth. `/me/session` is a derived shell read model.
+ * Layouts use this for auth gates only — hop failures stay on the current URL.
  */
 export const getRequestSession = cache(async (): Promise<RequestSession> => {
   const auth = await fetchBetterAuthSession();

@@ -1,6 +1,6 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/query/client";
-import { prefetchKeepInTouch } from "@/lib/query/prefetch";
+import { fetchKeepInTouch } from "@/lib/query/prefetch";
 import { KeepInTouchClient } from "./KeepInTouchClient";
 
 interface KeepInTouchLoaderProps {
@@ -10,7 +10,7 @@ interface KeepInTouchLoaderProps {
 export async function KeepInTouchLoader({ endDate }: KeepInTouchLoaderProps) {
   const queryClient = getQueryClient();
 
-  await prefetchKeepInTouch(queryClient);
+  await fetchKeepInTouch(queryClient);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

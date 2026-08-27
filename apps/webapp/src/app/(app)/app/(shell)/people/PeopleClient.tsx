@@ -354,6 +354,10 @@ export function PeopleClient({ savedColumnVisibility }: PeopleClientProps) {
     ? !allSelected && excludedIds.size < totalAvailableCount
     : !allSelected && selectedIds.size > 0;
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <Paper p="md" radius="md" ref={paperRef} shadow="sm" withBorder>
       <ContactsTable

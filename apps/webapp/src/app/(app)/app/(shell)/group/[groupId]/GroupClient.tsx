@@ -210,6 +210,10 @@ export function GroupClient({ groupId }: GroupClientProps) {
     });
   };
 
+  if (!group) {
+    return null;
+  }
+
   return (
     <PageWrapper>
       <Stack gap="xl">

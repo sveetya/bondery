@@ -38,6 +38,8 @@ async function proxyToApi(request: NextRequest, pathSegments: string[]) {
   const init: RequestInit = {
     headers,
     method: request.method,
+    // Pass 302s (billing portal) to the browser instead of following them in Node.
+    redirect: "manual",
   };
 
   if (request.method !== "GET" && request.method !== "HEAD") {
@@ -55,7 +57,13 @@ async function proxyToApi(request: NextRequest, pathSegments: string[]) {
     responseHeaders.set("Content-Type", responseContentType);
   }
 
-  for (const name of ["Cache-Control", "Connection", "x-vercel-ai-ui-message-stream"]) {
+  for (const name of [
+    "Cache-Control",
+    "Connection",
+    "Content-Disposition",
+    "Location",
+    "x-vercel-ai-ui-message-stream",
+  ]) {
     const value = apiResponse.headers.get(name);
     if (value) {
       responseHeaders.set(name, value);

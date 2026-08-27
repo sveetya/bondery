@@ -1,6 +1,9 @@
 export { prefetchApiKeys } from "./apiKeys";
-export { prefetchChatSessionMessages, prefetchChatSessions } from "./chat";
+export { fetchChatSessionMessages, prefetchChatSessions } from "./chat";
 export {
+  fetchContactDetail,
+  fetchContactsInfinite,
+  fetchContactsList,
   prefetchContactDetail,
   prefetchContactGroups,
   prefetchContactImportantDates,
@@ -17,17 +20,23 @@ export {
   prefetchEnrichQueueStatus,
 } from "./enrichQueue";
 export {
+  fetchGroupDetail,
+  fetchGroupsList,
   prefetchGroupDetail,
   prefetchGroupMembers,
   prefetchGroupMembersInfinite,
   prefetchGroupsList,
 } from "./groups";
-export { prefetchInteractionsInfinite, prefetchInteractionsList } from "./interactions";
-export { prefetchKeepInTouch } from "./keepInTouch";
+export {
+  fetchInteractionsInfinite,
+  prefetchInteractionsInfinite,
+  prefetchInteractionsList,
+} from "./interactions";
+export { fetchKeepInTouch, prefetchKeepInTouch } from "./keepInTouch";
 export { prefetchMePerson } from "./mePerson";
-export { prefetchMergeRecommendations } from "./mergeRecommendations";
+export { fetchMergeRecommendations, prefetchMergeRecommendations } from "./mergeRecommendations";
 export { prefetchUpcomingReminders } from "./reminders";
-export { prefetchSettings } from "./settings";
-export { prefetchAdminStatsDashboard } from "./stats";
+export { fetchSettings, prefetchSettings } from "./settings";
+export { fetchAdminStatsDashboard, prefetchAdminStatsDashboard } from "./stats";
 export { prefetchSubscription } from "./subscription";
 export { prefetchTagDetail, prefetchTagMembers, prefetchTagsList } from "./tags";

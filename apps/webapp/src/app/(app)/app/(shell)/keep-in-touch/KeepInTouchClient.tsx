@@ -110,7 +110,10 @@ export function KeepInTouchClient({ endDate }: KeepInTouchClientProps) {
   const { data: keepInTouchData } = useKeepInTouchQuery();
 
   const contacts = useMemo(() => {
-    const all = keepInTouchData?.contacts ?? [];
+    const all = keepInTouchData?.contacts;
+    if (!all) {
+      return undefined;
+    }
     return all
       .filter((c) => {
         const nextDue = computeNextDueDate(c.lastInteraction, c.keepFrequencyDays);
@@ -212,6 +215,10 @@ export function KeepInTouchClient({ endDate }: KeepInTouchClientProps) {
       value={activeWindow}
     />
   );
+
+  if (!contacts) {
+    return null;
+  }
 
   // Empty state
   if (contacts.length === 0) {

@@ -65,7 +65,7 @@ export async function deleteAccount(): Promise<void> {
   });
 }
 
-export async function uploadMePhoto(file: File): Promise<void> {
+export async function uploadMePhoto(file: File): Promise<{ avatarUrl: string | null }> {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -79,4 +79,7 @@ export async function uploadMePhoto(file: File): Promise<void> {
     const error = (await response.json()) as { error?: string };
     throw new Error(error.error || "Failed to upload photo");
   }
+
+  const body = (await response.json()) as { data?: { avatarUrl?: string } };
+  return { avatarUrl: body.data?.avatarUrl ?? null };
 }

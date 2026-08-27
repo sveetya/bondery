@@ -5,7 +5,7 @@ import {
   PERSON_SELECTABLE_CONTACTS,
 } from "@/lib/query/personPageQueryParams";
 import {
-  prefetchContactDetail,
+  fetchContactDetail,
   prefetchContactGroups,
   prefetchContactImportantDates,
   prefetchContactInteractionsInfinite,
@@ -39,7 +39,7 @@ export async function prefetchPersonPageQueries(
   ];
 
   if (!options?.skipDetail) {
-    prefetches.unshift(prefetchContactDetail(queryClient, personId));
+    prefetches.unshift(fetchContactDetail(queryClient, personId));
   }
 
   await Promise.all(prefetches);

@@ -24,6 +24,7 @@ import {
   useDuplicateGroupMutation,
   useGroupsListQuery,
 } from "@/lib/query/hooks/useGroups";
+import { isPageLoadFailure } from "@/lib/query/pageLoadFailure";
 import { openAddGroupModal } from "./components/AddGroupModal";
 import { openAddPeopleToGroupModal } from "./components/AddPeopleToGroupModal";
 import { openEditGroupModal } from "./components/EditGroupModal";
@@ -39,7 +40,7 @@ export function GroupsClient() {
   const { navigateWithTitle } = useNavigateWithTitle();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { data } = useGroupsListQuery(LIST_PARAMS);
+  const { data, error, isError } = useGroupsListQuery(LIST_PARAMS);
   const deleteGroupMutation = useDeleteGroupMutation();
   const duplicateGroupMutation = useDuplicateGroupMutation();
   const initialGroups = data?.groups ?? [];
@@ -73,6 +74,10 @@ export function GroupsClient() {
         return groups.sort((a, b) => b.contactCount - a.contactCount);
     }
   }, [initialGroups, sortBy]);
+
+  if (isError && !data && isPageLoadFailure(error)) {
+    throw error;
+  }
 
   const handleCardClick = (groupId: string) => {
     const group = initialGroups.find((item) => item.id === groupId);
@@ -184,6 +189,10 @@ export function GroupsClient() {
       });
     }
   };
+
+  if (!data) {
+    return null;
+  }
 
   return (
     <PageWrapper>

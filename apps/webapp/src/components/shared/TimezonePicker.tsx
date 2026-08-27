@@ -125,16 +125,6 @@ export function TimezonePicker({
     },
   });
 
-  useEffect(() => {
-    setIsMounted(true);
-
-    const interval = setInterval(() => {
-      setNow(new Date());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleChange = (val: string | null) => {
     if (!val) {
       return;

@@ -9,7 +9,7 @@ import { MANTINE_COLOR_SCHEME_STORAGE_KEY } from "@/lib/theme/constants";
  * Applies UserSession.colorScheme to Mantine (one-way).
  *
  * Source of truth: user_settings.color_scheme → getAppSession() → UserSessionProvider.
- * Do not call setColorScheme elsewhere; mutations use refreshAppShell({ colorScheme }).
+ * Do not call setColorScheme elsewhere; theme field saves use applyUserSession({ colorScheme }).
  */
 export function ColorSchemeSync() {
   const { colorScheme } = useUserSession();

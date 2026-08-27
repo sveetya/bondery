@@ -18,6 +18,7 @@ import {
   invalidateKeepInTouchCount,
 } from "@/lib/query/invalidation";
 import { interactionKeys } from "@/lib/query/keys";
+import { throwIfPageCannotRender } from "@/lib/query/pageLoadFailure";
 import { nextPaginatedOffset } from "@/lib/query/paginatedInfiniteQuery";
 import { INTERACTIONS_TIMELINE } from "@/lib/query/sharedListParams";
 
@@ -49,6 +50,7 @@ export function useInteractionsInfiniteQuery(): UseInfiniteQueryResult<
         offset: pageParam as number,
       }),
     queryKey: interactionKeys.infinite(infiniteParams),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 
