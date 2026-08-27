@@ -73,7 +73,12 @@ After `vX.Y.Z` release tags: GitHub Actions promotes semver images, runs compose
 
 ### Infisical → Dokploy env sync
 
-Product stack secrets and hostnames can be synced from Infisical **production** via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml) with `target: services`. Requires `BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID` (and optional `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK`) in Infisical — see [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml).
+Product stack secrets and hostnames can be synced via [`.github/workflows/sync-dokploy-env.yml`](../../.github/workflows/sync-dokploy-env.yml):
+
+- **Production:** `deployment: production`, `target: services` — Infisical production; requires `BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID` (and optional `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK`).
+- **Beta:** `deployment: beta`, `target: services` — Infisical **staging** app secrets + production ops keys; requires `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID` and optional `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` in Infisical **production**.
+
+See [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml).
 
 **Not synced** (keep in Dokploy UI or compose derives): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL`.
 

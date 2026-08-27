@@ -6,6 +6,8 @@ import { Spotlight, spotlight } from "@mantine/spotlight";
 import {
   IconBook2,
   IconCalendarPlus,
+  IconDatabaseImport,
+  IconFileZip,
   IconMail,
   IconSearch,
   IconUserCircle,
@@ -15,6 +17,8 @@ import {
 import { useRouter } from "next/navigation";
 import { openNewActivityModal } from "@/app/(app)/app/(shell)/interactions/components/NewActivityModal";
 import { openAddContactModal } from "@/app/(app)/app/(shell)/people/components/modals/AddContactModal";
+import { openBonderyExportModal } from "@/app/(app)/app/(shell)/settings/components/modals/openBonderyExportModal";
+import { openBonderyImportModal } from "@/app/(app)/app/(shell)/settings/components/modals/openBonderyImportModal";
 import {
   useAppNavigationTranslations,
   useCommandPaletteTranslations,
@@ -91,6 +95,22 @@ export function CommandPalette() {
               leftSection: <IconUserSearch size={20} stroke={1.5} />,
               onClick: () => peopleSearchActions.open(),
               rightSection: <Kbd keys={parseShortcutKeys(HOTKEYS.FIND_PERSON)} size="xs" />,
+            },
+            {
+              description: t("ExportDataDescription"),
+              id: "export-data",
+              keywords: ["export", "download", "zip", "data"],
+              label: t("ExportData"),
+              leftSection: <IconFileZip size={20} stroke={1.5} />,
+              onClick: () => openBonderyExportModal({ entryPoint: "command_palette" }),
+            },
+            {
+              description: t("ImportDataDescription"),
+              id: "import-data",
+              keywords: ["import", "zip", "data"],
+              label: t("ImportData"),
+              leftSection: <IconDatabaseImport size={20} stroke={1.5} />,
+              onClick: () => openBonderyImportModal({ entryPoint: "command_palette" }),
             },
           ],
           group: t("ActionsGroup"),
