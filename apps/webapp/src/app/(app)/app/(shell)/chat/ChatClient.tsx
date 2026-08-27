@@ -51,7 +51,12 @@ function chatSessionIdFromPathname(pathname: string): string | undefined {
 }
 
 function jsonPayloadFromTransportError(error: unknown): string {
-  const bodyText = error instanceof Error ? error.message : String(error);
+  let bodyText: string;
+  if (error instanceof Error) {
+    bodyText = error.message;
+  } else {
+    bodyText = String(error);
+  }
   const jsonStart = bodyText.indexOf("{");
   const jsonEnd = bodyText.lastIndexOf("}");
   if (jsonStart >= 0 && jsonEnd > jsonStart) {
