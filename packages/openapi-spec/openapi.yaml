@@ -15462,7 +15462,7 @@ paths:
             application/json:
               example:
                 exportSummary:
-                  bonderyVersion: 1.8.3
+                  bonderyVersion: 1.8.4
                   groups: 0
                   interactions: 0
                   people: 0
