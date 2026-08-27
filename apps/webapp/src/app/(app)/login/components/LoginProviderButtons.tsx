@@ -3,8 +3,7 @@
 import { CornerLabeledButton } from "@bondery/mantine-next";
 import { Stack } from "@mantine/core";
 import { IconBrandGithubFilled, IconBrandLinkedin } from "@tabler/icons-react";
-import { useEffect, useMemo, useState } from "react";
-import type { WebappAuthClient } from "@/lib/auth/client";
+import { useMemo } from "react";
 import { useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { INTEGRATION_PROVIDERS } from "@/lib/platform/config";
 
@@ -16,28 +15,27 @@ const PROVIDER_ICONS: Record<string, React.ComponentType<{ size?: number }>> = {
 type OAuthProvider = "github" | "linkedin";
 
 type LoginProviderButtonsProps = {
-  authClient: WebappAuthClient;
   getProviderTestId?: (providerKey: string) => string | undefined;
+  lastUsedLoginMethod: string | null;
   loading: boolean;
   onProviderClick: (provider: OAuthProvider) => void;
 };
 
 export function LoginProviderButtons({
-  authClient,
   getProviderTestId,
+  lastUsedLoginMethod,
   loading,
   onProviderClick,
 }: LoginProviderButtonsProps) {
   const t = useLoginPageTranslations();
-  const [lastMethod, setLastMethod] = useState<string | null>(null);
 
   const activeProviders = useMemo(
     () =>
       INTEGRATION_PROVIDERS.filter((provider) => provider.active).sort((a, b) => {
-        if (a.providerKey === "linkedin_oidc" && b.providerKey !== "linkedin_oidc") {
+        if (a.provider === "linkedin" && b.provider !== "linkedin") {
           return -1;
         }
-        if (b.providerKey === "linkedin_oidc" && a.providerKey !== "linkedin_oidc") {
+        if (b.provider === "linkedin" && a.provider !== "linkedin") {
           return 1;
         }
         return 0;
@@ -45,22 +43,11 @@ export function LoginProviderButtons({
     [],
   );
 
-  const activeProviderKeys = useMemo(
-    () => new Set<string>(activeProviders.map((provider) => provider.providerKey)),
-    [activeProviders],
-  );
-
-  useEffect(() => {
-    setLastMethod(authClient.getLastUsedLoginMethod());
-  }, [authClient]);
-
-  const showLastUsedBadge = lastMethod !== null && activeProviderKeys.has(lastMethod);
-
   return (
     <Stack gap="xs" w="100%">
       {activeProviders.map((provider) => {
         const IconComponent = PROVIDER_ICONS[provider.icon] ?? IconBrandGithubFilled;
-        const isLastUsed = showLastUsedBadge && lastMethod === provider.providerKey;
+        const isLastUsed = lastUsedLoginMethod === provider.provider;
 
         return (
           <CornerLabeledButton

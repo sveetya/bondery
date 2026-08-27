@@ -12,12 +12,16 @@ import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 
+type OAuthLoginClientProps = {
+  lastUsedLoginMethod: string | null;
+};
+
 /**
  * Authorization-server login gate — see page.tsx for why this is deliberately
  * independent of the webapp's own session. Always shows the sign-in buttons;
  * never redirects based on any pre-existing webapp state.
  */
-export function OAuthLoginClient() {
+export function OAuthLoginClient({ lastUsedLoginMethod }: OAuthLoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
   const [loading, setLoading] = useState(false);
@@ -84,7 +88,7 @@ export function OAuthLoginClient() {
 
   return (
     <SocialLoginCard
-      authClient={authClient}
+      lastUsedLoginMethod={lastUsedLoginMethod}
       loading={loading}
       onProviderClick={handleOAuthLogin}
       websiteUrl={websiteUrl}
