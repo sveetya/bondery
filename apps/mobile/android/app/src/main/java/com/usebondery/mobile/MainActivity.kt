@@ -1,4 +1,4 @@
-package com.bondery.mobile
+package com.usebondery.mobile
 
 import android.os.Build
 import android.os.Bundle
