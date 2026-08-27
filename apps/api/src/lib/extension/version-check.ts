@@ -37,6 +37,11 @@ function isPublicAuthPath(url: string): boolean {
   );
 }
 
+function isPublicWebhookPath(url: string): boolean {
+  const path = url.split("?")[0] ?? url;
+  return path.startsWith("/webhooks/") || path.startsWith("/api/webhooks/");
+}
+
 /**
  * Registers a global `onRequest` hook for extension version enforcement and
  * early 401 rejection of unauthenticated headless requests.
@@ -53,10 +58,8 @@ export function registerExtensionVersionCheck(fastify: AppFastifyInstance): void
       return;
     }
 
-    // Inbound webhooks from third-party services (e.g. Stripe) have no Cookie
-    // header and no extension version header. They authenticate via HMAC
-    // signatures verified inside their own route handlers.
-    if (request.url.startsWith("/api/webhooks/")) {
+    // Inbound webhooks authenticate via HMAC in the route handler, not session cookies.
+    if (isPublicWebhookPath(request.url)) {
       return;
     }
 

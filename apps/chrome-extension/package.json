@@ -45,8 +45,8 @@
     "dev": "pnpm exec wxt",
     "dev:firefox": "pnpm exec wxt -b firefox",
     "generate-icons": "tsx scripts/generate-icons.ts",
-    "postinstall": "pnpm --filter @bondery/schemas run build && pnpm wxt prepare",
-    "prebuild": "pnpm run check:env && tsx scripts/generate-icons.ts",
+    "postinstall": "wxt prepare",
+    "prebuild": "tsx scripts/generate-icons.ts",
     "zip": "pnpm exec wxt zip",
     "zip:firefox": "pnpm exec wxt zip -b firefox"
   },
