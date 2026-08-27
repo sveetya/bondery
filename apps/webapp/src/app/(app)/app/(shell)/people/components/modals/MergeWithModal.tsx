@@ -25,10 +25,8 @@ import { useCommonTranslations, useMergeWithModalTranslations } from "@/lib/i18n
 import { createModalId, useModalDismiss } from "@/lib/modals";
 import { useMergeContactsMutation } from "@/lib/query/hooks/useContacts";
 import {
-  areValuesEquivalent,
   getAutoLastInteractionChoice,
-  hasMeaningfulValue,
-  MERGE_CONFLICT_FIELDS,
+  listMergeFieldConflicts,
 } from "../../utils/merge-conflict-helpers";
 import { MergeWithPickStep } from "../merge/MergeWithPickStep";
 import { MergeWithResolveStep } from "../merge/MergeWithResolveStep";
@@ -46,6 +44,13 @@ interface OpenMergeWithModalParams {
 }
 
 type Step = "pick" | "resolve" | "processing";
+
+const mergeRequestsInFlight = new Set<string>();
+const mergeRequestsCompleted = new Set<string>();
+
+function mergeRequestKey(leftPersonId: string, rightPersonId: string): string {
+  return [leftPersonId, rightPersonId].toSorted().join(":");
+}
 
 function MergeWithModalTitle() {
   const t = useMergeWithModalTranslations();
@@ -193,25 +198,10 @@ function MergeWithModal({
 
   const conflicts = useMemo(() => {
     if (!leftContact || !rightContact) {
-      return [] as Array<{
-        field: MergeConflictField;
-        leftValue: unknown;
-        rightValue: unknown;
-      }>;
+      return [] as ReturnType<typeof listMergeFieldConflicts>;
     }
 
-    return MERGE_CONFLICT_FIELDS.map((field) => ({
-      field,
-      leftValue: leftContact[field],
-      rightValue: rightContact[field],
-    })).filter(
-      (entry) =>
-        hasMeaningfulValue(entry.leftValue) &&
-        hasMeaningfulValue(entry.rightValue) &&
-        entry.field !== "lastInteraction" &&
-        entry.field !== "avatar" &&
-        !areValuesEquivalent(entry.field, entry.leftValue, entry.rightValue),
-    );
+    return listMergeFieldConflicts(leftContact, rightContact);
   }, [leftContact, rightContact]);
 
   const autoLastInteractionChoice = useMemo(
@@ -260,6 +250,16 @@ function MergeWithModal({
       return;
     }
 
+    const requestKey = mergeRequestKey(leftPersonId, rightPersonId);
+    if (mergeRequestsCompleted.has(requestKey)) {
+      closeModalSync();
+      return;
+    }
+    if (mergeRequestsInFlight.has(requestKey)) {
+      return;
+    }
+    mergeRequestsInFlight.add(requestKey);
+
     setStep("processing");
     setIsSubmitting(true);
 
@@ -281,6 +281,7 @@ function MergeWithModal({
         throw new Error(t("MergeFailed"));
       }
 
+      mergeRequestsCompleted.add(requestKey);
       notifications.hide(loadingNotificationId);
       notifications.show(
         successNotificationTemplate({
@@ -304,6 +305,7 @@ function MergeWithModal({
       );
       setStep("resolve");
     } finally {
+      mergeRequestsInFlight.delete(requestKey);
       setIsSubmitting(false);
     }
   }, [

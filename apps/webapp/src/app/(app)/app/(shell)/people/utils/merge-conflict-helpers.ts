@@ -133,6 +133,12 @@ function normalizeImportantDatesSet(value: unknown): string[] {
     .sort();
 }
 
+export type MergeFieldConflict = {
+  field: MergeConflictField;
+  leftValue: unknown;
+  rightValue: unknown;
+};
+
 export function areValuesEquivalent(
   field: MergeConflictField,
   left: unknown,
@@ -158,6 +164,21 @@ export function areValuesEquivalent(
   }
 
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+export function listMergeFieldConflicts(left: Contact, right: Contact): MergeFieldConflict[] {
+  return MERGE_CONFLICT_FIELDS.map((field) => ({
+    field,
+    leftValue: left[field],
+    rightValue: right[field],
+  })).filter(
+    (entry) =>
+      entry.field !== "lastInteraction" &&
+      entry.field !== "avatar" &&
+      hasMeaningfulValue(entry.leftValue) &&
+      hasMeaningfulValue(entry.rightValue) &&
+      !areValuesEquivalent(entry.field, entry.leftValue, entry.rightValue),
+  );
 }
 
 export function normalizeDisplayText(value: unknown): string {

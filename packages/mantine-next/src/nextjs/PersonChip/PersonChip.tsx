@@ -51,6 +51,8 @@ export interface PersonChipProps {
   people?: ContactPreview[];
   person: PersonChipIdentity | null;
   placeholder?: string;
+  /** Next.js Link prefetch. Pass `false` on merge cards so deleted duplicates are not prefetched. */
+  prefetch?: boolean | null;
   /** Custom right section override — rendered instead of the default chevron/clear icon. */
   rightSection?: ReactNode;
   /** Debounce delay for `onSearch` in milliseconds. Defaults to 300. */
@@ -81,6 +83,7 @@ export function PersonChip({
   showHoverCard = false,
   openInNewTab = false,
   onNavigate,
+  prefetch,
   rightSection,
   onSearch,
   searchDebounceMs = 300,
@@ -267,6 +270,7 @@ export function PersonChip({
         <Link
           href={resolvedHref}
           onClick={() => onNavigate?.()}
+          prefetch={prefetch}
           rel={openInNewTab ? "noopener noreferrer" : undefined}
           target={openInNewTab ? "_blank" : undefined}
         >
