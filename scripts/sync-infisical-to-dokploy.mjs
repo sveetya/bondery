@@ -1,17 +1,22 @@
 /**
- * Sync Infisical production env (dokploySync keys) to Dokploy compose environment.
+ * Sync Infisical env (dokploySync keys) to Dokploy compose environment.
  *
- * Prerequisites: Infisical secrets-action has loaded production keys into process.env.
+ * Prerequisites: Infisical secrets-action has loaded keys into process.env.
+ * Production sync: production Infisical only.
+ * Beta (services-beta): workflow fetches production (ops keys) then staging (app secrets),
+ * restores BONDERY_OPS_DOKPLOY_* from production before running this script.
  *
  * Usage:
- *   node scripts/sync-infisical-to-dokploy.mjs --target website|plausible|services [--dry-run] [--redeploy]
+ *   node scripts/sync-infisical-to-dokploy.mjs --target website|plausible|services|services-beta [--dry-run] [--redeploy]
  */
 
 import { pathToFileURL } from "node:url";
 import {
   collectDokploySyncRows,
   DOKPLOY_SYNC_TARGETS,
+  getDokploySyncWebhookBranch,
   OPS_DOKPLOY_SYNC_CONFIG_KEYS,
+  resolveDokploySyncPayloadTarget,
 } from "@bondery/helpers/env";
 import { parseEnvContent } from "@bondery/helpers/env/check-env";
 
@@ -83,18 +88,19 @@ export function readDokployConfig(env, target) {
  * @param {keyof typeof DOKPLOY_SYNC_TARGETS} target
  */
 export function buildUploadPayload(env, target) {
+  const payloadTarget = resolveDokploySyncPayloadTarget(target);
   const { missingRequired, rows } = collectDokploySyncRows(
     Object.fromEntries(
       Object.entries(env)
         .filter(([, value]) => value !== undefined)
         .map(([k, v]) => [k, v]),
     ),
-    target,
+    payloadTarget,
   );
 
   if (missingRequired.length > 0) {
     console.error(
-      `sync-infisical-to-dokploy: missing required production values for target "${target}":`,
+      `sync-infisical-to-dokploy: missing required production values for target "${target}" (payload ${payloadTarget}):`,
     );
     for (const key of missingRequired) {
       console.error(`  - ${key}`);
@@ -278,7 +284,9 @@ async function main() {
   }
 
   if (!isDokploySyncTarget(args.target)) {
-    console.error("sync-infisical-to-dokploy: --target must be website or plausible");
+    console.error(
+      "sync-infisical-to-dokploy: --target must be website, plausible, services, or services-beta",
+    );
     process.exit(1);
   }
 
@@ -312,7 +320,8 @@ async function main() {
       // biome-ignore lint/suspicious/noUndeclaredEnvVars: GitHub Actions runner env, not a turbo task input
       process.env.GITHUB_REPOSITORY ?? "usebondery/bondery";
     const pathSentinels = DOKPLOY_SYNC_TARGETS[args.target].webhookPathSentinels;
-    await triggerDeployWebhook(config.deployWebhook, repository, pathSentinels);
+    const webhookBranch = getDokploySyncWebhookBranch(args.target);
+    await triggerDeployWebhook(config.deployWebhook, repository, pathSentinels, webhookBranch);
     console.log("sync-infisical-to-dokploy: triggered deploy webhook");
   }
 }

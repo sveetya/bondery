@@ -63,6 +63,7 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 |---------------|----------|-------------|
 | `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` | `deploy-website.yml` (after smoke) | `deploy/ops` marketing website |
 | `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` | `deploy/bondery` product stack |
+| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | not wired yet (`stage-images` later) | `bondery-beta` product stack |
 
 Workflows fetch production secrets with `infisical-production-secrets`. Empty webhook skips redeploy (manual Dokploy).
 
@@ -161,7 +162,23 @@ Use `defaultEnvironment: development` in `.infisical.json` for `pnpm env:pull`; 
 
 ## Dokploy env sync (`sync-dokploy-env.yml`)
 
-Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifest `dokploySync` keys to a Dokploy compose app. Pick **website** (`deploy/ops`), **services** (`deploy/bondery`), or **plausible** (`deploy/plausible`). Dokploy connection creds (`BONDERY_OPS_DOKPLOY_*`) live in Infisical — **no GitHub secrets or variables** for this workflow.
+Manual workflow: upload manifest `dokploySync` keys to a Dokploy compose app via OIDC (no GitHub secrets).
+
+| Input | Role |
+|-------|------|
+| `deployment` | `production` — Infisical production only. `beta` — staging app secrets + production ops keys (product stack only). |
+| `target` | `website` (`deploy/ops`), `services` (`deploy/bondery`), or `plausible` (`deploy/plausible`). With `deployment=beta`, only `services` is allowed (syncs to beta compose via `services-beta`). |
+| `dry_run` | Log env names to runner console instead of uploading to Dokploy API. |
+| `redeploy` | POST Dokploy deploy webhook after save (`refs/heads/release` for production stacks; `refs/heads/main` for beta product stack). |
+
+**Infisical fetch by deployment:**
+
+| `deployment` | App secrets source | Ops keys (`BONDERY_OPS_DOKPLOY_*`) |
+|--------------|-------------------|-------------------------------------|
+| `production` | production | production |
+| `beta` | staging (after production fetch + ops snapshot restore) | production |
+
+Dokploy connection creds and compose ids live in Infisical **production** — including `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID` and `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` for the beta stack.
 
 | Infisical key (production) | Role |
 |----------------------------|------|
@@ -172,6 +189,8 @@ Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifes
 | `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | Optional redeploy for **services** when `redeploy: true` |
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID` | Plausible stack compose id |
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK` | Optional redeploy for **plausible** when `redeploy: true` |
+| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID` | Beta product stack compose id (`bondery-beta`) |
+| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | Optional redeploy for **beta** (`deployment=beta`, `redeploy=true`) or when `stage-images` fires later; payload `refs/heads/main` |
 
 **Uploaded keys by target:**
 
@@ -179,6 +198,7 @@ Manual workflow: fetch **production** Infisical secrets via OIDC, upload manifes
 |--------|------|
 | `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
 | `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`) |
+| `services-beta` | Same upload keys as `services`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
 | `plausible` | `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE`, `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY`, `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD`, `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` (optional) |
 
 **Ops checklist:**

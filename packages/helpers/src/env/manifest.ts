@@ -182,7 +182,7 @@ export type DokploySync = {
   targets: readonly DokploySyncTarget[];
 };
 
-export type DokploySyncTarget = "website" | "plausible" | "services";
+export type DokploySyncTarget = "website" | "plausible" | "services" | "services-beta";
 
 /** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
 export type PlausibleExample = DeployExample;
@@ -232,13 +232,16 @@ export type EnvVarDef = {
  * Infisical `env:pull` — keys with `syncable: true` are pulled into root `.env.local`.
  *
  * Already synced: SMTP, GitHub OAuth, Maps, S3/storage, SERVICE_SECRET, DO_NOT_TRACK,
- * Stripe, Anthropic, PostHog, BONDERY_PRIVATE_POSTGRES_PASSWORD.
+ * Stripe API keys + price IDs, Anthropic, PostHog, BONDERY_PRIVATE_POSTGRES_PASSWORD.
  *
  * Good candidates to add `syncable: true` when the team shares them in Infisical:
  * - BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID / _SECRET — LinkedIn login locally
  * - BONDERY_PRIVATE_PLATFORM_ADMIN_EMAILS — who gets admin on fresh DB bootstrap
  *
  * Usually keep local-only (do not sync):
+ * - BONDERY_PRIVATE_STRIPE_WEBHOOK_SECRET — Stripe CLI `listen` signing secret is per machine
+ *   (`pnpm run setup:stripe`). Infisical production/staging still hold Dashboard endpoint secrets
+ *   for those deploys; `syncable` does not read or write Infisical.
  * - BONDERY_PUBLIC_WEBAPP_OAUTH_CLIENT_ID, BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET,
  *   BONDERY_PRIVATE_WEBAPP_SESSION_SECRET — invented per dev machine; run setup:dev / provision:oauth-clients
  * - BONDERY_PRIVATE_BETTER_AUTH_SECRETS — can be shared or per-env; team policy
@@ -939,7 +942,6 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     group: "Stripe",
     requiredIn: ["production"],
     secret: true,
-    syncable: true,
     targets: [t("api")],
   },
   {
@@ -1219,6 +1221,8 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
   "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK",
 ] as const;
 
 /** Keys never synced to deploy/bondery Dokploy compose (derived in compose or Dokploy UI). */
@@ -1241,6 +1245,12 @@ export const DOKPLOY_SYNC_TARGETS = {
     webhookKey: "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
     webhookPathSentinels: ["deploy/bondery"],
   },
+  "services-beta": {
+    composeIdKey: "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID",
+    webhookBranch: "main",
+    webhookKey: "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK",
+    webhookPathSentinels: ["deploy/bondery"],
+  },
   website: {
     composeIdKey: "BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID",
     webhookKey: "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
@@ -1252,8 +1262,20 @@ export const DOKPLOY_SYNC_TARGETS = {
     composeIdKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
     webhookKey: (typeof OPS_DOKPLOY_SYNC_CONFIG_KEYS)[number];
     webhookPathSentinels: readonly string[];
+    webhookBranch?: string;
   }
 >;
+
+/** Map Dokploy sync target to manifest payload target (services-beta uses services keys). */
+export function resolveDokploySyncPayloadTarget(target: DokploySyncTarget): DokploySyncTarget {
+  return target === "services-beta" ? "services" : target;
+}
+
+/** Git ref branch for Dokploy deploy webhook payload (default release). */
+export function getDokploySyncWebhookBranch(target: DokploySyncTarget): string {
+  const branch = DOKPLOY_SYNC_TARGETS[target] as { webhookBranch?: string };
+  return branch.webhookBranch ?? "release";
+}
 
 /** Ops secrets — GitHub Actions only; never written by `pnpm run env` */
 export const OPS_ENV_VARS = [
@@ -1265,6 +1287,8 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK",
   "BONDERY_OPS_CHROME_PUBLISHER_ID",
   "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
   "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",
@@ -1287,7 +1311,7 @@ export function entrySyncsToDokployTarget(entry: EnvVarDef, target: DokploySyncT
   }
 
   if (
-    target === "services" &&
+    (target === "services" || target === "services-beta") &&
     entry.deployExample?.include &&
     !SERVICES_DOKPLOY_SYNC_EXCLUDE.has(entry.canonical)
   ) {
