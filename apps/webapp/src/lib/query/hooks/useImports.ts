@@ -6,6 +6,7 @@ import type {
   VCardImportCommitRequest,
 } from "@bondery/schemas";
 import { type QueryClient, useMutation, useQueryClient } from "@tanstack/react-query";
+import { importBonderyExportZip } from "@/lib/api/domains/bondery-import";
 import {
   commitInstagramImport,
   commitLinkedInImport,
@@ -71,6 +72,17 @@ export function useCommitInstagramImportMutation() {
       if (finalize) {
         await afterImportCommit(queryClient);
       }
+    },
+  });
+}
+
+export function useImportBonderyExportMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ formData, signal }: { formData: FormData; signal?: AbortSignal }) =>
+      importBonderyExportZip(formData, { signal }),
+    onSuccess: async () => {
+      await afterImportCommit(queryClient);
     },
   });
 }

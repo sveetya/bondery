@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.bondery.mobile'
+    namespace 'com.usebondery.mobile'
     defaultConfig {
-        applicationId 'com.bondery.mobile'
+        applicationId 'com.usebondery.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

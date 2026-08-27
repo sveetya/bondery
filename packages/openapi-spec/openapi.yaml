@@ -15449,6 +15449,536 @@ paths:
                   type: service_unavailable_error
               schema:
                 $ref: "#/components/schemas/ApiError"
+  /me/export/summary:
+    get:
+      tags:
+        - Me
+      description: Count CRM records included in a Bondery data export for the current user.
+      security: *a2
+      responses:
+        "200":
+          description: Export summary counts
+          content:
+            application/json:
+              example:
+                exportSummary:
+                  bonderyVersion: 1.8.3
+                  groups: 0
+                  interactions: 0
+                  people: 0
+                  relationships: 0
+                  tags: 0
+              schema:
+                type: object
+                properties:
+                  exportSummary:
+                    type: object
+                    properties:
+                      bonderyVersion:
+                        type: string
+                        minLength: 1
+                      groups:
+                        type: integer
+                        minimum: 0
+                        maximum: 9007199254740991
+                      interactions:
+                        type: integer
+                        minimum: 0
+                        maximum: 9007199254740991
+                      people:
+                        type: integer
+                        minimum: 0
+                        maximum: 9007199254740991
+                      relationships:
+                        type: integer
+                        minimum: 0
+                        maximum: 9007199254740991
+                      tags:
+                        type: integer
+                        minimum: 0
+                        maximum: 9007199254740991
+                    required:
+                      - bonderyVersion
+                      - groups
+                      - interactions
+                      - people
+                      - relationships
+                      - tags
+                    additionalProperties: false
+                required:
+                  - exportSummary
+                additionalProperties: false
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  doc_url: https://usebondery.com/docs/api/errors/validation_error
+                  message: body.email Invalid input
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: invalid_request_error
+                  param: body.email
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              example:
+                error:
+                  code: auth_required
+                  doc_url: https://usebondery.com/docs/api/errors/auth_required
+                  message: Unauthorized - Please log in
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authentication_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                error:
+                  code: admin_required
+                  doc_url: https://usebondery.com/docs/api/errors/admin_required
+                  message: Forbidden
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authorization_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: contact_not_found
+                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
+                  message: Contact not found
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: not_found_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              example:
+                error:
+                  code: rate_limit_exceeded
+                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
+                  message: Rate limit exceeded. Retry in 42 seconds.
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: rate_limit_error
+                  retry_after: 42
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error:
+                  code: internal_server_error
+                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
+                  message: Internal Server Error
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: api_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              example:
+                error:
+                  code: service_unavailable
+                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
+                  message: Service unavailable
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: service_unavailable_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /me/export:
+    get:
+      tags:
+        - Me
+      description: Download a ZIP of the authenticated user's Bondery CRM data.
+      security: *a2
+      responses:
+        "200":
+          description: Bondery export ZIP
+          content:
+            application/json:
+              example: "PK\x03\x04"
+              schema:
+                type: string
+                description: ZIP archive of Bondery export files
+                example: "PK\x03\x04"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  doc_url: https://usebondery.com/docs/api/errors/validation_error
+                  message: body.email Invalid input
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: invalid_request_error
+                  param: body.email
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              example:
+                error:
+                  code: auth_required
+                  doc_url: https://usebondery.com/docs/api/errors/auth_required
+                  message: Unauthorized - Please log in
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authentication_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                error:
+                  code: admin_required
+                  doc_url: https://usebondery.com/docs/api/errors/admin_required
+                  message: Forbidden
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authorization_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: contact_not_found
+                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
+                  message: Contact not found
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: not_found_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              example:
+                error:
+                  code: rate_limit_exceeded
+                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
+                  message: Rate limit exceeded. Retry in 42 seconds.
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: rate_limit_error
+                  retry_after: 42
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error:
+                  code: internal_server_error
+                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
+                  message: Internal Server Error
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: api_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              example:
+                error:
+                  code: service_unavailable
+                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
+                  message: Service unavailable
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: service_unavailable_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /me/import:
+    post:
+      tags:
+        - Me
+      description: Import a Bondery export ZIP into the current account. Additive only — existing rows are never updated or deleted.
+      security: *a2
+      responses:
+        "200":
+          description: Bondery import result counts
+          content:
+            application/json:
+              example:
+                importResult:
+                  groupMemberships:
+                    inserted: 0
+                    skipped: 0
+                  groups:
+                    inserted: 0
+                    skipped: 0
+                  interactions:
+                    inserted: 0
+                    skipped: 0
+                  people:
+                    inserted: 0
+                    skipped: 0
+                  photos:
+                    inserted: 0
+                    skipped: 0
+                  relationships:
+                    inserted: 0
+                    skipped: 0
+                  tagMemberships:
+                    inserted: 0
+                    skipped: 0
+                  tags:
+                    inserted: 0
+                    skipped: 0
+              schema:
+                type: object
+                properties:
+                  importResult:
+                    type: object
+                    properties:
+                      groupMemberships:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      groups:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      interactions:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      people:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      photos:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      relationships:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      tagMemberships:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                      tags:
+                        type: object
+                        properties:
+                          inserted:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                          skipped:
+                            type: integer
+                            minimum: 0
+                            maximum: 9007199254740991
+                        required:
+                          - inserted
+                          - skipped
+                        additionalProperties: false
+                    required:
+                      - groupMemberships
+                      - groups
+                      - interactions
+                      - people
+                      - photos
+                      - relationships
+                      - tagMemberships
+                      - tags
+                    additionalProperties: false
+                required:
+                  - importResult
+                additionalProperties: false
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  doc_url: https://usebondery.com/docs/api/errors/validation_error
+                  message: body.email Invalid input
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: invalid_request_error
+                  param: body.email
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              example:
+                error:
+                  code: auth_required
+                  doc_url: https://usebondery.com/docs/api/errors/auth_required
+                  message: Unauthorized - Please log in
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authentication_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                error:
+                  code: admin_required
+                  doc_url: https://usebondery.com/docs/api/errors/admin_required
+                  message: Forbidden
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authorization_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: contact_not_found
+                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
+                  message: Contact not found
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: not_found_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              example:
+                error:
+                  code: rate_limit_exceeded
+                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
+                  message: Rate limit exceeded. Retry in 42 seconds.
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: rate_limit_error
+                  retry_after: 42
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error:
+                  code: internal_server_error
+                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
+                  message: Internal Server Error
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: api_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              example:
+                error:
+                  code: service_unavailable
+                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
+                  message: Service unavailable
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: service_unavailable_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /me/initialize:
     post:
       tags:

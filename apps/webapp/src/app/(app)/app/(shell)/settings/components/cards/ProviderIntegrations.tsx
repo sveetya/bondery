@@ -25,6 +25,7 @@ import { useCommonTranslations, useSettingsPageTranslations } from "@/lib/i18n/g
 import { TypedTrans } from "@/lib/i18n/TypedTrans";
 import { INTEGRATION_PROVIDERS } from "@/lib/platform/config";
 import { openChromeExtensionModal } from "../modals/openChromeExtensionModal";
+import { openPwaInstallModal } from "../modals/openPwaInstallModal";
 import { IntegrationCard } from "./IntegrationCard";
 
 interface UserIdentity {
@@ -55,7 +56,6 @@ export function ProviderIntegrations({
 }: ProviderIntegrationsProps) {
   const [providers, setProviders] = useState<string[]>(initialProviders);
   const [isExtensionInstalled, setIsExtensionInstalled] = useState(false);
-  const [extensionVersion, setExtensionVersion] = useState<string | null>(null);
 
   const { canInstall, isChromiumDesktop, isPWAInstalled, isInstalledFromBrowser, install } =
     usePWAInstall();
@@ -73,7 +73,6 @@ export function ProviderIntegrations({
       }
 
       setIsExtensionInstalled(result.state === "installed");
-      setExtensionVersion(result.version);
     });
 
     return () => {
@@ -205,11 +204,9 @@ export function ProviderIntegrations({
 
               return (
                 <IntegrationCard
-                  connectedDescription={tIntegration("ClickToUnlink", {
-                    provider:
-                      provider === "github" ? tIntegration("GitHub") : tIntegration("LinkedIn"),
-                  })}
-                  disabledDescription={tIntegration("LinkedButCannotUnlink")}
+                  badgeLabel={
+                    isConnected ? tIntegration("Connected") : tIntegration("NotConnected")
+                  }
                   displayName={
                     provider === "github" ? tIntegration("GitHub") : tIntegration("LinkedIn")
                   }
@@ -229,28 +226,38 @@ export function ProviderIntegrations({
                     }
                   }}
                   provider={provider}
-                  unconnectedDescription={tIntegration("ClickToLink", {
-                    provider:
-                      provider === "github" ? tIntegration("GitHub") : tIntegration("LinkedIn"),
-                  })}
+                  tooltip={
+                    isDisabled
+                      ? tIntegration("LinkedButCannotUnlink")
+                      : isConnected
+                        ? tIntegration("ClickToUnlink", {
+                            provider:
+                              provider === "github"
+                                ? tIntegration("GitHub")
+                                : tIntegration("LinkedIn"),
+                          })
+                        : tIntegration("ClickToLink", {
+                            provider:
+                              provider === "github"
+                                ? tIntegration("GitHub")
+                                : tIntegration("LinkedIn"),
+                          })
+                  }
                 />
               );
             })
           : null}
         {showExtensionProvider ? (
           <IntegrationCard
-            connectedDescription={
-              extensionVersion
-                ? tIntegration("ExtensionLinkedDescriptionWithVersion", {
-                    version: extensionVersion,
-                  })
-                : tIntegration("ExtensionLinkedDescription")
+            badgeLabel={
+              isExtensionInstalled ? tIntegration("Installed") : tIntegration("NotInstalled")
             }
-            displayName={tIntegration("BonderyChromeExtension")}
+            displayName={tIntegration("BrowserExtension")}
             icon={IconBrowser}
             iconColor="grape"
             isConnected={isExtensionInstalled}
             isDisabled={isExtensionInstalled}
+            isLinkable={false}
             onClick={() => {
               if (isExtensionInstalled) {
                 return;
@@ -259,37 +266,31 @@ export function ProviderIntegrations({
               openChromeExtensionModal();
             }}
             provider="bondery_chrome_extension"
-            unconnectedDescription={tIntegration("ExtensionInstallDescription")}
           />
         ) : null}
         {showPWAProvider
           ? (() => {
               const isInstalled = isPWAInstalled || isInstalledFromBrowser;
-              const isUnsupported = !canInstall && !isInstalled && !isChromiumDesktop;
-              const isMenuInstall = !canInstall && !isInstalled && isChromiumDesktop;
-              const isDisabled = isInstalled || isUnsupported || isMenuInstall;
-              const disabledDescription = isUnsupported
-                ? tIntegration("DesktopAppNotSupportedDescription")
-                : isMenuInstall
-                  ? tIntegration("DesktopAppMenuInstallDescription")
-                  : undefined;
 
               return (
                 <IntegrationCard
-                  connectedDescription={tIntegration("DesktopAppInstalledDescription")}
-                  disabledDescription={disabledDescription}
+                  badgeLabel={
+                    isInstalled ? tIntegration("Installed") : tIntegration("NotInstalled")
+                  }
                   displayName={tIntegration("DesktopApp")}
                   icon={IconDeviceDesktop}
                   iconColor="grape"
                   isConnected={isInstalled}
-                  isDisabled={isDisabled}
+                  isDisabled={isInstalled}
+                  isLinkable={false}
                   onClick={() => {
-                    if (canInstall) {
-                      void install();
+                    if (isInstalled) {
+                      return;
                     }
+
+                    openPwaInstallModal({ canInstall, install, isChromiumDesktop });
                   }}
                   provider="pwa"
-                  unconnectedDescription={tIntegration("DesktopAppInstallDescription")}
                 />
               );
             })()

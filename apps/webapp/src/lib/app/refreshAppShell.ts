@@ -18,7 +18,7 @@ export function registerAppShellRefresh(refresh: () => void): () => void {
   };
 }
 
-/** Re-run layout session probe and optionally patch client shell identity immediately. */
+/** Re-run layout session probe for route gates (onboarding) or last-resort identity. Preference field saves should patch providers instead. */
 export function refreshAppShell(sessionPatch?: UserSessionPatch): void {
   if (sessionPatch) {
     applyUserSessionFromRef(sessionPatch);

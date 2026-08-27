@@ -74,3 +74,4 @@ ngrok1.yml
 ngrok2.yml
 ngrok3.yml
 .cursor/mcp.json
+.supabase-export/

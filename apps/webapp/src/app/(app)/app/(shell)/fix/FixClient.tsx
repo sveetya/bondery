@@ -41,7 +41,7 @@ export function FixClient() {
   const queryClient = useQueryClient();
   const didBootstrapRefresh = useRef(false);
 
-  const { data: recommendations = [], isFetching: isListFetching } =
+  const { data: recommendations, isFetching: isListFetching } =
     useMergeRecommendationsQuery(showDeclined);
   const { data: eligibleCount = 0 } = useEnrichQueueCountQuery();
   const { data: queueStatus = null } = useEnrichQueueStatusQuery();
@@ -49,7 +49,7 @@ export function FixClient() {
   const restoreMutation = useRestoreMergeRecommendationMutation();
 
   useEffect(() => {
-    if (didBootstrapRefresh.current || showDeclined || isListFetching) {
+    if (didBootstrapRefresh.current || showDeclined || isListFetching || recommendations == null) {
       return;
     }
     if (recommendations.length > 0) {
@@ -58,7 +58,7 @@ export function FixClient() {
     }
     didBootstrapRefresh.current = true;
     void syncMergeRecommendationsAfterChange(queryClient, { requestRefresh: true });
-  }, [isListFetching, queryClient, recommendations.length, showDeclined]);
+  }, [isListFetching, queryClient, recommendations, showDeclined]);
 
   const handleRefreshSuggestions = async () => {
     try {
@@ -169,7 +169,7 @@ export function FixClient() {
           <EnrichRecommendationCard eligibleCount={eligibleCount} queueStatus={queueStatus} />
         )}
 
-        {recommendations.length === 0 ? (
+        {recommendations == null ? null : recommendations.length === 0 ? (
           <Paper p="md" radius="md" withBorder>
             <Text c="dimmed" size="sm">
               {showDeclined ? t("DeclinedEmpty") : t("Empty")}
@@ -182,11 +182,15 @@ export function FixClient() {
                 <Paper key={recommendation.id} p="md" radius="md" withBorder>
                   <Group align="center" justify="space-between" wrap="nowrap">
                     <Group align="center" wrap="nowrap">
-                      <PersonChip isClickable person={recommendation.leftPerson} />
+                      <PersonChip isClickable person={recommendation.leftPerson} prefetch={false} />
                       <Text c="dimmed" fw={500} size="sm">
                         {tMerge("MergeWithLabel")}
                       </Text>
-                      <PersonChip isClickable person={recommendation.rightPerson} />
+                      <PersonChip
+                        isClickable
+                        person={recommendation.rightPerson}
+                        prefetch={false}
+                      />
                     </Group>
                     <Button
                       leftSection={<IconRefresh size={16} />}

@@ -71,25 +71,25 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
   const tCommon = useCommonTranslations();
   const deleteInteractionMutation = useDeleteInteractionMutation();
   const createInteractionMutation = useCreateInteractionMutation();
-  const { data: stats, isFetched: statsReady } = useHomeStatsQuery();
+  const { data: stats } = useHomeStatsQuery();
   const { data: settingsResult, isFetched: settingsReady } = useSettingsQuery();
-  const { data: hasInteraction, isFetched: hasInteractionReady } = useHasAnyInteractionQuery();
-  const { data: reminders = [] } = useUpcomingRemindersQuery();
+  const { data: hasInteraction } = useHasAnyInteractionQuery();
+  const { data: reminders } = useUpcomingRemindersQuery();
   const { contacts: timelineContacts, activities: timelineActivities } = useHomeTimelineQuery();
-  const { data: recentlyAdded = [] } = useRecentlyAddedContactsQuery();
-  const { data: recentlyInteracted = [] } = useRecentlyInteractedContactsQuery();
+  const { data: recentlyAdded } = useRecentlyAddedContactsQuery();
+  const { data: recentlyInteracted } = useRecentlyInteractedContactsQuery();
   const formatter = useFormatter();
   const currentMonth = formatter.dateTime(new Date(), { month: "long" });
   const currentYear = formatter.dateTime(new Date(), { year: "numeric" });
 
   const contactsById = useMemo(
-    () => new Map(timelineContacts.map((contact) => [contact.id, contact])),
+    () => new Map((timelineContacts ?? []).map((contact) => [contact.id, contact])),
     [timelineContacts],
   );
 
   function handleLogInteraction() {
     openNewActivityModal({
-      contacts: timelineContacts,
+      contacts: timelineContacts ?? [],
     });
   }
 
@@ -103,13 +103,14 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
     [HOTKEYS.FIND_PERSON, () => peopleSearchActions.open()],
   ]);
 
-  const compactActivities = useMemo(
-    () =>
-      [...timelineActivities]
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 5),
-    [timelineActivities],
-  );
+  const compactActivities = useMemo(() => {
+    if (!timelineActivities) {
+      return undefined;
+    }
+    return [...timelineActivities]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 5);
+  }, [timelineActivities]);
 
   const resolveParticipants = (activity: Activity): Contact[] => {
     return (activity.participants || [])
@@ -138,7 +139,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
   const handleActivityOpen = (activity: Activity) => {
     openNewActivityModal({
       activity,
-      contacts: timelineContacts,
+      contacts: timelineContacts ?? [],
     });
   };
 
@@ -272,36 +273,32 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
 
         <GettingStartedRailSlot
           hasInteraction={hasInteraction ?? false}
-          hasInteractionReady={hasInteractionReady}
+          hasInteractionReady={hasInteraction !== undefined}
           initialSettings={initialSettings}
           settingsData={settingsResult?.data}
           settingsReady={settingsReady}
-          statsReady={statsReady}
-          timelineContacts={timelineContacts}
+          statsReady={stats != null}
+          timelineContacts={timelineContacts ?? []}
           totalContacts={stats?.totalContacts ?? 0}
         />
 
-        <HomeStatsGrid
-          labels={{
-            interactionsTitle: t("Stats.InteractionsTitle"),
-            interactionsTooltip: t("Stats.InteractionsTooltip", {
-              month: currentMonth,
-            }),
-            newContactsTitle: t("Stats.NewContactsTitle"),
-            newContactsTooltip: t("Stats.NewContactsTooltip", {
-              year: currentYear,
-            }),
-            totalContactsTitle: t("Stats.TotalContactsTitle"),
-            totalContactsTooltip: t("Stats.TotalContactsTooltip"),
-          }}
-          stats={
-            stats ?? {
-              newContactsThisYear: 0,
-              thisMonthInteractions: 0,
-              totalContacts: 0,
-            }
-          }
-        />
+        {stats ? (
+          <HomeStatsGrid
+            labels={{
+              interactionsTitle: t("Stats.InteractionsTitle"),
+              interactionsTooltip: t("Stats.InteractionsTooltip", {
+                month: currentMonth,
+              }),
+              newContactsTitle: t("Stats.NewContactsTitle"),
+              newContactsTooltip: t("Stats.NewContactsTooltip", {
+                year: currentYear,
+              }),
+              totalContactsTitle: t("Stats.TotalContactsTitle"),
+              totalContactsTooltip: t("Stats.TotalContactsTooltip"),
+            }}
+            stats={stats}
+          />
+        ) : null}
 
         <SimpleGrid cols={{ base: 1, md: 2 }} spacing="xl" verticalSpacing="xl">
           <Stack gap="md">
@@ -321,7 +318,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
               </Tooltip>
             </Group>
 
-            {compactActivities.length === 0 ? (
+            {compactActivities == null ? null : compactActivities.length === 0 ? (
               <Paper p="md" radius="md" withBorder>
                 <Text c="dimmed" size="sm">
                   {timelineT("NoActivitiesFound")}
@@ -357,7 +354,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
                 </Tooltip>
               </Group>
 
-              {reminders.length === 0 ? (
+              {reminders == null ? null : reminders.length === 0 ? (
                 <Paper p="md" radius="md" withBorder>
                   <Text c="dimmed" size="sm">
                     {t("NoUpcomingReminders")}
@@ -405,7 +402,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
                 </Tooltip>
               </Group>
 
-              {recentlyAdded.length === 0 ? (
+              {recentlyAdded == null ? null : recentlyAdded.length === 0 ? (
                 <Paper p="md" radius="md" withBorder>
                   <Text c="dimmed" size="sm">
                     {t("NoRecentlyAdded")}
@@ -450,7 +447,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
                 </Tooltip>
               </Group>
 
-              {recentlyInteracted.length === 0 ? (
+              {recentlyInteracted == null ? null : recentlyInteracted.length === 0 ? (
                 <Paper p="md" radius="md" withBorder>
                   <Text c="dimmed" size="sm">
                     {t("NoRecentlyInteracted")}

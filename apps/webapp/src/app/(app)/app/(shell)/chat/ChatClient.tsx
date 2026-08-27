@@ -1,20 +1,31 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import {
+  buildApiErrorFromResponse,
+  extractApiErrorFields,
+  getUserFacingError,
+  isApiError,
+} from "@bondery/helpers/api";
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
+import { errorNotificationTemplate } from "@bondery/mantine-next";
 import { ActionIcon, Box, Button, Group, Stack, Text, TextInput } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconMessageChatbot, IconSend } from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PageHeader } from "@/components/shell/PageHeader";
 import { useUserSession } from "@/components/shell/UserSessionProvider";
-import { useChatPageTranslations } from "@/lib/i18n/generated/hooks";
+import { useChatPageTranslations, useCommonTranslations } from "@/lib/i18n/generated/hooks";
 import {
   useChatSessionMessagesQuery,
   useChatSessionsRefreshOnStreamEnd,
   useCreateChatSessionMutation,
 } from "@/lib/query/hooks/useChat";
 import { useSubscriptionQuery } from "@/lib/query/hooks/useSubscription";
+import { chatKeys } from "@/lib/query/keys";
 import { ChatMessage } from "./components/message/ChatMessage";
 import { ChatQuotaAlert } from "./components/quota/ChatQuotaAlert";
 import { ChatQuotaBadge } from "./components/quota/ChatQuotaBadge";
@@ -29,16 +40,76 @@ const SUGGESTED_PROMPT_KEYS = [
   "InteractionsThisWeek",
 ] as const;
 
-export function ChatClient({ sessionId }: { sessionId?: string }) {
+function chatSessionIdFromPathname(pathname: string): string | undefined {
+  const prefix = `${WEBAPP_ROUTES.CHAT}/`;
+  if (!pathname.startsWith(prefix)) {
+    return undefined;
+  }
+
+  const sessionId = pathname.slice(prefix.length).split("/")[0];
+  return sessionId || undefined;
+}
+
+function jsonPayloadFromTransportError(error: unknown): string {
+  let bodyText: string;
+  if (error instanceof Error) {
+    bodyText = error.message;
+  } else {
+    bodyText = String(error);
+  }
+  const jsonStart = bodyText.indexOf("{");
+  const jsonEnd = bodyText.lastIndexOf("}");
+  if (jsonStart >= 0 && jsonEnd > jsonStart) {
+    return bodyText.slice(jsonStart, jsonEnd + 1);
+  }
+  return bodyText;
+}
+
+function chatTransportErrorToApiError(error: unknown) {
+  const bodyText = jsonPayloadFromTransportError(error);
+  const fields = extractApiErrorFields(bodyText);
+  if (!fields.code) {
+    return error;
+  }
+  const status =
+    fields.code === "chat_quota_exceeded" ? 403 : fields.code === "service_unavailable" ? 503 : 500;
+  return buildApiErrorFromResponse({ bodyText, status });
+}
+
+function chatQuotaResetAt(error: unknown): string | undefined {
+  const bodyText = jsonPayloadFromTransportError(error);
+  try {
+    const parsed = JSON.parse(bodyText) as {
+      error?: { details?: { resetAt?: unknown } };
+    };
+    return typeof parsed.error?.details?.resetAt === "string"
+      ? parsed.error.details.resetAt
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function ChatClient() {
   const t = useChatPageTranslations();
+  const tCommon = useCommonTranslations();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const pathname = usePathname();
+  const routeSessionId = chatSessionIdFromPathname(pathname);
   const { avatarUrl: userAvatarUrl, displayName: userName } = useUserSession();
   const { data: subscriptionStatus = null } = useSubscriptionQuery();
-  const { data: hydratedMessages = [] } = useChatSessionMessagesQuery(sessionId, !!sessionId);
+  const {
+    data: hydratedMessages,
+    error: messagesError,
+    isError: isMessagesError,
+    isSuccess: isMessagesSuccess,
+  } = useChatSessionMessagesQuery(routeSessionId, !!routeSessionId);
   const suggestedPrompts = useMemo(
     () => SUGGESTED_PROMPT_KEYS.map((key) => t(`SuggestedPrompts.${key}`)),
     [t],
   );
-  const { chatResetKey } = useChatSessions();
+  const { chatResetKey, setHighlightedSessionId } = useChatSessions();
   const createChatSessionMutation = useCreateChatSessionMutation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageDatesRef = useRef<Map<string, Date>>(new Map());
@@ -50,27 +121,37 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
     subscriptionStatus ? !subscriptionStatus.canUseChat : false,
   );
   // Tracks the active session ID — can be set after lazy creation
-  const sessionIdRef = useRef<string | undefined>(sessionId);
-  // Keep ref in sync if the prop changes (e.g. parent re-renders without remount)
-  useEffect(() => {
-    sessionIdRef.current = sessionId;
-  }, [sessionId]);
+  const sessionIdRef = useRef<string | undefined>(routeSessionId);
+  const createdSessionIdRef = useRef<string | undefined>(undefined);
+
+  const notifyChatErrorRef = useRef<(error: unknown) => void>(() => {});
+  notifyChatErrorRef.current = (error: unknown) => {
+    notifications.show(
+      errorNotificationTemplate({
+        description: getUserFacingError(error, tCommon),
+        title: tCommon("feedback.errorTitle"),
+      }),
+    );
+  };
 
   const { messages, sendMessage, status, setMessages } = useChat({
-    messages: sessionId ? hydratedMessages : undefined,
     onError: (error) => {
-      // Handle 403 quota exceeded from API — extract resetAt if present
-      if (error.message?.includes("403")) {
+      const apiError = chatTransportErrorToApiError(error);
+
+      if (
+        (isApiError(apiError) &&
+          (apiError.code === "chat_quota_exceeded" || apiError.status === 403)) ||
+        (error instanceof Error && error.message.includes("403"))
+      ) {
         setQuotaExceeded(true);
-        try {
-          const body = JSON.parse(error.message.replace(/^.*?({.*}).*$/, "$1"));
-          if (body?.resetAt) {
-            setServerResetAt(body.resetAt);
-          }
-        } catch {
-          /* ignore parse errors */
+        const resetAt = chatQuotaResetAt(error);
+        if (resetAt) {
+          setServerResetAt(resetAt);
         }
+        return;
       }
+
+      notifyChatErrorRef.current(apiError);
     },
     transport: useMemo(
       () =>
@@ -90,11 +171,43 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
     setMessagesSent((n) => n + 1);
   });
 
+  useEffect(() => {
+    if (createdSessionIdRef.current && createdSessionIdRef.current === routeSessionId) {
+      return;
+    }
+
+    if (!routeSessionId) {
+      if (createdSessionIdRef.current) {
+        return;
+      }
+
+      sessionIdRef.current = undefined;
+      setMessages([]);
+      setInputValue("");
+      messageDatesRef.current.clear();
+      return;
+    }
+
+    if (createdSessionIdRef.current && createdSessionIdRef.current !== routeSessionId) {
+      createdSessionIdRef.current = undefined;
+    }
+
+    sessionIdRef.current = routeSessionId;
+
+    if (!isMessagesSuccess) {
+      return;
+    }
+
+    setMessages(hydratedMessages ?? []);
+    messageDatesRef.current.clear();
+  }, [hydratedMessages, isMessagesSuccess, routeSessionId, setMessages]);
+
   // Reset chat state when sidebar "new chat" is clicked (chatResetKey changes)
   const prevResetKeyRef = useRef(chatResetKey);
   useEffect(() => {
     if (chatResetKey !== prevResetKeyRef.current) {
       prevResetKeyRef.current = chatResetKey;
+      createdSessionIdRef.current = undefined;
       setMessages([]);
       setInputValue("");
       setMessagesSent(0);
@@ -105,7 +218,29 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
     }
   }, [chatResetKey, setMessages, subscriptionStatus]);
 
-  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    if (status === "submitted" || status === "streaming") {
+      return;
+    }
+
+    const createdId = createdSessionIdRef.current;
+    if (!createdId) {
+      return;
+    }
+
+    const targetPath = `${WEBAPP_ROUTES.CHAT}/${createdId}`;
+    if (pathname === targetPath) {
+      return;
+    }
+
+    if (pathname !== WEBAPP_ROUTES.CHAT) {
+      return;
+    }
+
+    queryClient.setQueryData(chatKeys.messages(createdId), messages);
+    router.replace(targetPath);
+  }, [messages, pathname, queryClient, router, status]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     // Stamp any newly-seen messages with the current time
@@ -128,13 +263,17 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
       return;
     }
 
-    // No session yet — create one, update URL silently, send immediately in this instance
+    // Create the session first, then send. Do not change the URL until the
+    // stream settles — Next.js treats /app/chat → /app/chat/[id] as a real
+    // navigation and would abort POST /api/chat.
     if (!sessionIdRef.current) {
       try {
         const sessionId = await createChatSessionMutation.mutateAsync();
+        createdSessionIdRef.current = sessionId;
         sessionIdRef.current = sessionId;
-        window.history.pushState(null, "", `${WEBAPP_ROUTES.CHAT}/${sessionId}`);
-      } catch {
+        setHighlightedSessionId(sessionId);
+      } catch (error) {
+        notifyChatErrorRef.current(error);
         return;
       }
     }
@@ -172,10 +311,28 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
     }
   }, [adjustedSubscriptionStatus]);
 
+  if (
+    routeSessionId &&
+    isMessagesError &&
+    hydratedMessages === undefined &&
+    isApiError(messagesError) &&
+    messagesError.status === 404
+  ) {
+    notFound();
+  }
+
   return (
-    <Box style={{ display: "flex", flexDirection: "column", minHeight: "100%" }}>
-      {/* Header + messages in natural flow */}
-      <Box p="xl" pb="md" style={{ flex: 1 }}>
+    <Box
+      style={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "column",
+        height: "100%",
+        minHeight: 0,
+        overflow: "hidden",
+      }}
+    >
+      <Box p="xl" pb="md" style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
         <Stack gap="xl">
           <PageHeader
             helpDoc="concepts.chat"
@@ -228,15 +385,13 @@ export function ChatClient({ sessionId }: { sessionId?: string }) {
         </Stack>
       </Box>
 
-      {/* Sticky input — stays at bottom of the scroll container */}
       <Box
         px="xl"
         py="md"
         style={{
           backgroundColor: "var(--mantine-color-body)",
           borderTop: "1px solid var(--mantine-color-default-border)",
-          bottom: 0,
-          position: "sticky",
+          flexShrink: 0,
         }}
       >
         <Box style={{ margin: "0 auto", maxWidth: 800, width: "100%" }}>

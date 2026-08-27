@@ -12,7 +12,6 @@ export function InstagramImportSection() {
   return (
     <Stack gap="sm">
       <IntegrationCard
-        connectedDescription={t("CardDescription")}
         displayName={t("Instagram")}
         icon={IconBrandInstagram}
         iconColor="pink"
@@ -21,7 +20,6 @@ export function InstagramImportSection() {
         isLinkable={false}
         onClick={() => openInstagramImportModal()}
         provider="instagram_import"
-        unconnectedDescription={t("CardDescription")}
       />
     </Stack>
   );

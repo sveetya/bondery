@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         backgroundColor: "#ffffff",
         foregroundImage: "./assets/images/icon_512.png",
       },
-      package: "com.bondery.mobile",
+      package: "com.usebondery.mobile",
       permissions: ["android.permission.CAMERA", "android.permission.READ_MEDIA_IMAGES"],
     },
     assetBundlePatterns: ["**/*"],

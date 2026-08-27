@@ -10,6 +10,7 @@ export {
   CornerLabeledButton,
   type CornerLabeledButtonProps,
 } from "#CornerLabeledButton/index.js";
+export { CountChip, type CountChipProps } from "#CountChip/index.js";
 // DataTable
 export {
   type BulkAction,

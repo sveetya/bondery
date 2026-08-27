@@ -118,15 +118,28 @@ export async function rpcReplaceEducationHistory(
   `;
 }
 
+function toIsoTimestamp(value: Date | string | null | undefined): string | null {
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value.toISOString();
+  }
+  if (typeof value === "string" && value.length > 0) {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+  }
+  return null;
+}
+
 export async function rpcCheckAndIncrementAiMessages(
   db: RpcClient,
   userId: string,
   limit: number,
   isPremium: boolean,
-): Promise<{ allowed: boolean; messagesUsed: number; resetAt: string }> {
-  const rows = await db.$queryRaw<{ allowed: boolean; messages_used: number; reset_at: Date }[]>`
+): Promise<{ allowed: boolean; messagesUsed: number; resetAt: string | null }> {
+  const rows = await db.$queryRaw<
+    { allowed: boolean; messages_used: number; reset_at: Date | string | null }[]
+  >`
     SELECT allowed, messages_used, reset_at
-    FROM check_and_increment_ai_messages(${userId}::uuid, ${limit}::int, ${isPremium})
+    FROM check_and_increment_ai_messages(${userId}::uuid, ${limit}::int, ${isPremium}::boolean)
   `;
   const row = rows[0];
   if (!row) {
@@ -134,8 +147,8 @@ export async function rpcCheckAndIncrementAiMessages(
   }
   return {
     allowed: row.allowed,
-    messagesUsed: row.messages_used,
-    resetAt: row.reset_at.toISOString(),
+    messagesUsed: Number(row.messages_used),
+    resetAt: toIsoTimestamp(row.reset_at),
   };
 }
 

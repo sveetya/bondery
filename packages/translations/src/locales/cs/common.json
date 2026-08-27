@@ -1,12 +1,15 @@
 {
   "a11y": {
     "back": "Zpět",
-    "info": "Informace"
+    "createMore": "Po vytvoření zůstaňte v dialogu a přidejte další",
+    "info": "Informace",
+    "loading": "Načítání"
   },
   "actions": {
     "back": "Zpět",
     "call": "Volat",
     "cancel": "Zrušit",
+    "createMore": "Vytvořit další",
     "delete": "Smazat",
     "deselect": "Odebrat výběr",
     "done": "Hotovo",
@@ -87,6 +90,7 @@
       "contact_update_failed": "Contact update failed.",
       "email": "Email service not configured.",
       "email_service_not_configured": "Email service not configured.",
+      "export_failed_to_generate": "Váš export se nepodařilo vytvořit. Zkuste to znovu.",
       "extension": "Extension username required.",
       "extension_outdated": "Extension outdated.",
       "extension_username_required": "Extension username required.",
@@ -108,6 +112,8 @@
       "group_not_found": "Group not found.",
       "group_remove_members_invalid_body": "Group remove members invalid body.",
       "import": "Import vcard failed.",
+      "import_bondery_failed": "Váš import se nepodařilo dokončit. Zkuste to znovu.",
+      "import_bondery_invalid": "Toto není platný export z Bondery. Stáhněte ho v Nastavení a zkuste to znovu.",
       "import_failed": "Import failed.",
       "import_instagram_failed": "Import instagram failed.",
       "import_linkedin_failed": "Import linkedin failed.",

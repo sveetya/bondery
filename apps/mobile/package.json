@@ -84,7 +84,6 @@
     "dev": "cross-env EXPO_UNSTABLE_MCP_SERVER=1 expo start --port 26634",
     "dev:prebuild": "pnpm exec expo prebuild --clean",
     "ios": "expo run:ios",
-    "predev": "pnpm run check:env",
     "test:sync": "tsx --test src/lib/sync/pull-wake.test.ts"
   },
   "version": "1.8.3"

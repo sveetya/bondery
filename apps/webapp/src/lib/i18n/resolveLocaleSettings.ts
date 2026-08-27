@@ -3,7 +3,7 @@ import "server-only";
 import type { SupportedLocale } from "@bondery/translations";
 import { DEFAULT_LOCALE } from "@bondery/translations";
 import { cache } from "react";
-import { getAppSession } from "@/lib/app/getAppSession";
+import { getRequestSession } from "@/lib/auth/getRequestSession";
 import { fetchBetterAuthSession } from "@/lib/auth/server";
 import { getLocaleFromHeaders } from "./getLocaleFromHeaders";
 
@@ -25,7 +25,7 @@ const FALLBACK: LocaleSettings = {
  * Strategy:
  * - If no session: derive locale from the browser's Accept-Language header,
  *   use UTC / 24h defaults (locale is cosmetic on unauthenticated routes).
- * - If session exists: use the user's saved session from getAppSession(),
+ * - If session exists: use the user's saved session from getRequestSession(),
  *   which is cache()-deduplicated so the API call runs at most once per render.
  *
  * IMPORTANT: this function uses getSession() (cookie read, no network) to check
@@ -41,15 +41,15 @@ export const resolveLocaleSettings = cache(async (): Promise<LocaleSettings> => 
       return { locale, timeFormat: "24h", timezone: "UTC" };
     }
 
-    const appSession = await getAppSession();
-    if (appSession.status !== "ok") {
+    const requestSession = await getRequestSession();
+    if (requestSession.kind !== "authenticated" || !requestSession.shell) {
       return FALLBACK;
     }
 
     return {
-      locale: appSession.session.locale,
-      timeFormat: appSession.session.timeFormat,
-      timezone: appSession.session.timezone,
+      locale: requestSession.shell.locale,
+      timeFormat: requestSession.shell.timeFormat,
+      timezone: requestSession.shell.timezone,
     };
   } catch {
     return FALLBACK;

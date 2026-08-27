@@ -3,11 +3,27 @@
  */
 
 import type { PrismaClient } from "@bondery/db";
+import { isValidUuid } from "@bondery/helpers/ids";
 import { AVATARS_BUCKET, deleteStorageObjects, getStorage } from "../storage/get-storage.js";
 import { AVATAR_IMAGE_MAX_EDGE, normalizeImageToJpeg } from "../storage/normalize-image.js";
 
 export function getContactAvatarStoragePath(userId: string, contactId: string): string {
   return `${userId}/${contactId}.jpg`;
+}
+
+/** Returns the contact id when `key` is `{userId}/{uuid}.jpg` in the avatars bucket. */
+export function contactIdFromAvatarStorageKey(userId: string, key: string): string | null {
+  const expectedPrefix = `${userId}/`;
+  const normalized = key.replace(/^\/+/, "");
+  if (!normalized.startsWith(expectedPrefix) || !normalized.endsWith(".jpg")) {
+    return null;
+  }
+  const fileName = normalized.slice(expectedPrefix.length);
+  if (fileName.includes("/")) {
+    return null;
+  }
+  const contactId = fileName.slice(0, -".jpg".length);
+  return isValidUuid(contactId) ? contactId : null;
 }
 
 export async function setContactHasAvatar(

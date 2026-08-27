@@ -1,4 +1,5 @@
-import { copyFileSync, existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import sharp from "sharp";
 
@@ -15,12 +16,29 @@ export interface GenerateIconsOptions {
   svgPath: string;
 }
 
+function writeFileIfChanged(filePath: string, contents: Buffer): boolean {
+  if (existsSync(filePath) && readFileSync(filePath).equals(contents)) {
+    return false;
+  }
+  writeFileSync(filePath, contents);
+  return true;
+}
+
+async function rasterizeIcon(svgPath: string, size: number, fileName: string): Promise<Buffer> {
+  const tempDir = mkdtempSync(join(tmpdir(), "bondery-icon-"));
+  try {
+    const tempFile = join(tempDir, fileName);
+    await sharp(svgPath).resize(size, size).toFile(tempFile);
+    return readFileSync(tempFile);
+  } finally {
+    rmSync(tempDir, { force: true, recursive: true });
+  }
+}
+
 /**
- * Generates icons from an SVG source file
- * @param options - Configuration options for icon generation
- * @param options.svgPath - Absolute path to the source SVG file
- * @param options.icons - Array of icon configurations to generate
- * @param options.baseDir - Base directory for resolving relative output paths (typically __dirname from the calling script)
+ * Generates icons from an SVG source file.
+ * Skips the write when the destination already has the same bytes, so Next/Turbo
+ * watchers do not treat a no-op regenerate as a source change.
  */
 export async function generateIcons(options: GenerateIconsOptions): Promise<void> {
   const { svgPath, icons, baseDir } = options;
@@ -33,31 +51,38 @@ export async function generateIcons(options: GenerateIconsOptions): Promise<void
   }
 
   try {
+    let wrote = 0;
     for (const icon of icons) {
       const outputPath = join(baseDir, icon.outDir, icon.name);
       const outputDir = dirname(outputPath);
 
-      // Ensure output directory exists
       if (!existsSync(outputDir)) {
         mkdirSync(outputDir, { recursive: true });
       }
 
+      let nextBytes: Buffer;
       if (icon.format === "svg") {
-        // Copy SVG directly without conversion
-        copyFileSync(svgPath, outputPath);
-        console.log(`✅ Copied ${icon.name} to ${icon.outDir}`);
+        nextBytes = readFileSync(svgPath);
       } else {
-        // Generate raster images (PNG, ICO)
-        if (!icon.size) {
+        const size = icon.size;
+        if (!size) {
           console.error(`❌ Size is required for ${icon.format} format`);
           process.exit(1);
         }
-        await sharp(svgPath).resize(icon.size, icon.size).toFile(outputPath);
+        nextBytes = await rasterizeIcon(svgPath, size, icon.name);
+      }
+
+      if (writeFileIfChanged(outputPath, nextBytes)) {
+        wrote += 1;
         console.log(`✅ Generated ${icon.name} at ${icon.outDir}`);
+      } else {
+        console.log(`✅ Up to date ${icon.name} at ${icon.outDir}`);
       }
     }
 
-    console.log("✨ All icons generated successfully!");
+    console.log(
+      wrote === 0 ? "✨ All icons already up to date!" : "✨ All icons generated successfully!",
+    );
   } catch (error) {
     console.error("❌ Error generating icons:", error);
     process.exit(1);

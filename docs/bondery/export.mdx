@@ -1,0 +1,114 @@
+---
+title: "Export your Bondery data"
+icon: Download
+---
+
+You can download a ZIP of your Bondery data from **Settings → Export**. The same export is available from the command palette (**Export data**).
+
+Use this when you want a copy of your people, groups, tags, and interactions. You can import this ZIP back into Bondery later from **Settings → Import → Bondery JSON**. Keep the ZIP as-is — do not rename or rearrange the files inside it.
+
+## Bondery export vs vCard
+
+| | Bondery export | vCard |
+|---|---|---|
+| Where | Settings → Export | A person's page, or Import → Mobile contacts (vcards) |
+| What's in it | People, groups, tags, interactions, and relationships | One person, in a format phones and other apps understand |
+| Avatars | Included when present (`avatars/{personId}.jpg`) | Optional photo on the contact |
+| Import later | Settings → Import → Bondery JSON | Into Bondery or another app |
+
+To copy people into your phone or another app, use vCard. To keep a Bondery-shaped copy of your network, use the Bondery export ZIP.
+
+## What's in the ZIP
+
+The download is named `bondery-export-YYYY-MM-DD.zip` (UTC date). It always includes these files, even when a type is empty:
+
+- `manifest.json`
+- `myself.json`
+- `people.json`
+- `groups.json`
+- `tags.json`
+- `interactions.json`
+- `relationships.json`
+
+When at least one contact avatar is stored, the ZIP also includes `avatars/{personId}.jpg` (export-time people ids, lowercase `.jpg`). The `avatars/` folder is omitted when there are no avatar objects. Avatars are not listed in `manifest.json` counts. The people count is contacts only. Your profile is `myself.json` (at most one record) so mentions of you can reconnect without inserting a second profile.
+
+The file includes names, emails, notes, and other personal details. Store it somewhere only you can access. API keys, sessions, billing, and chat are not included.
+
+## Import later
+
+To import it later, use **Bondery JSON** under **Settings → Import**. Upload the whole ZIP (up to 100 MB) — Bondery adds what's new and does not delete what you already have. Your current profile stays as it is; people in the file who mention you still connect to you. Contact avatars in the ZIP are attached only to newly added people. Your profile photo is not replaced.
+
+Servers that still cap ZIP archives at 32 entries reject avatar-rich ZIPs. Upgrade the API before importing a ZIP that contains an `avatars/` folder. JSON-only ZIPs keep working.
+
+This is not a complete account dump (no chat, billing, or API keys).
+
+API: `GET /me/export` (ZIP), `GET /me/export/summary` (counts), `POST /me/import` (ZIP).
+
+---
+
+## Format appendix (self-hosters)
+
+`bonderyVersion` is the Bondery app version (from `apps/api/package.json`). That is the schema version.
+
+**manifest.json**
+
+```json
+{
+  "format": "bondery-export",
+  "schemaType": "Manifest",
+  "bonderyVersion": "1.8.3",
+  "exportedAt": "2026-08-19T00:00:00.000Z",
+  "counts": {
+    "people": 0,
+    "groups": 0,
+    "tags": 0,
+    "interactions": 0,
+    "relationships": 0
+  },
+  "includedTypes": [
+    "Myself",
+    "People",
+    "Groups",
+    "Tags",
+    "Interactions",
+    "Relationships"
+  ],
+  "files": [{ "name": "people.json", "schemaType": "People", "count": 0 }]
+}
+```
+
+**Each data file**
+
+```json
+{
+  "bonderyVersion": "1.8.3",
+  "schemaType": "People",
+  "records": []
+}
+```
+
+`schemaType` values: `Myself`, `People`, `Groups`, `Tags`, `Interactions`, `Relationships`, `Manifest`.
+
+Group and tag records include a `members` array:
+
+```json
+{
+  "bonderyVersion": "1.8.3",
+  "schemaType": "Groups",
+  "records": [
+    {
+      "id": "…",
+      "label": "Friends",
+      "color": "#aabbcc",
+      "emoji": "👋",
+      "createdAt": "2026-08-19T00:00:00.000Z",
+      "updatedAt": "2026-08-19T00:00:00.000Z",
+      "members": [
+        { "id": "…", "personId": "…", "createdAt": "2026-08-19T00:00:00.000Z" }
+      ]
+    }
+  ]
+}
+```
+
+Import writes `members` as `people_groups` / `people_tags` rows.

@@ -26,6 +26,10 @@ export async function markBulkImportCompleted(ctx: DomainContext): Promise<void>
   }
 
   if (!before?.importCompletedAt) {
-    await maybeCaptureActivation(ctx, "first_import");
+    try {
+      await maybeCaptureActivation(ctx, "first_import");
+    } catch {
+      // Analytics must not block the import after writes succeed.
+    }
   }
 }

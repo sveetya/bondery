@@ -1,0 +1,10 @@
+export const ALICE_ID = "11111111-1111-4111-8111-111111111111";
+export const BOB_ID = "22222222-2222-4222-8222-222222222222";
+export const PERSON_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+export const GROUP_ID = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+export const TAG_ID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+export const INTERACTION_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+export const RELATIONSHIP_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
+export const NOW = new Date("2026-08-19T15:04:05.000Z");
+export const BONDERY_VERSION = "1.8.3";
+export const CREATED_AT = new Date("2026-01-01T00:00:00.000Z");

@@ -3,7 +3,7 @@ import type { ChatMessage, ChatSession } from "@bondery/schemas";
 import type { UIMessage } from "ai";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
-import { internal } from "../../lib/platform/errors/http-errors.js";
+import { internal, notFound } from "../../lib/platform/errors/http-errors.js";
 
 function toChatSessionDto(row: {
   id: string;
@@ -65,28 +65,22 @@ export async function deleteChatSession(ctx: DomainContext, sessionId: string): 
   });
 
   if (result.count === 0) {
-    throw internal("chat_session_failed_to_delete_session");
+    throw notFound("Chat session not found", "not_found");
   }
 }
 
-export async function persistChatMessages(
-  ctx: DomainContext,
-  sessionId: string,
-  userMessage: UIMessage,
-  assistantText: string,
-): Promise<void> {
-  const { user } = ctx;
-  const db = domainDb(ctx);
-
-  const userText =
+function userMessageText(userMessage: UIMessage): string {
+  return (
     userMessage.parts
       ?.filter((p): p is { type: "text"; text: string } => p.type === "text")
       .map((p) => p.text)
-      .join(" ") ?? "";
+      .join(" ") ?? ""
+  );
+}
 
-  const userContent = { text: userText } satisfies Prisma.InputJsonValue;
-  const assistantContent = { text: assistantText } satisfies Prisma.InputJsonValue;
-
+async function touchOwnedChatSession(ctx: DomainContext, sessionId: string): Promise<boolean> {
+  const { user } = ctx;
+  const db = domainDb(ctx);
   const { count } = await db.chatSession.updateMany({
     data: { updatedAt: new Date() },
     where: { id: sessionId, userId: user.id },
@@ -94,26 +88,63 @@ export async function persistChatMessages(
 
   if (count === 0) {
     ctx.log?.error({ sessionId }, "Failed to update chat session timestamp — session not found");
+    return false;
+  }
+
+  return true;
+}
+
+/** Persist the user turn when the request is accepted, before the model stream. */
+export async function persistUserChatMessage(
+  ctx: DomainContext,
+  sessionId: string,
+  userMessage: UIMessage,
+): Promise<void> {
+  const db = domainDb(ctx);
+
+  if (!(await touchOwnedChatSession(ctx, sessionId))) {
     return;
   }
 
+  const userContent = { text: userMessageText(userMessage) } satisfies Prisma.InputJsonValue;
+
   try {
-    await db.chatMessage.createMany({
-      data: [
-        {
-          content: userContent,
-          role: "user",
-          sessionId,
-        },
-        {
-          content: assistantContent,
-          role: "assistant",
-          sessionId,
-        },
-      ],
+    await db.chatMessage.create({
+      data: {
+        content: userContent,
+        role: "user",
+        sessionId,
+      },
     });
   } catch (error) {
-    ctx.log?.error({ err: error }, "Failed to save chat messages");
+    ctx.log?.error({ err: error }, "Failed to save user chat message");
+  }
+}
+
+/** Persist the assistant reply after the stream completes. */
+export async function persistAssistantChatMessage(
+  ctx: DomainContext,
+  sessionId: string,
+  assistantText: string,
+): Promise<void> {
+  const db = domainDb(ctx);
+
+  if (!(await touchOwnedChatSession(ctx, sessionId))) {
+    return;
+  }
+
+  const assistantContent = { text: assistantText } satisfies Prisma.InputJsonValue;
+
+  try {
+    await db.chatMessage.create({
+      data: {
+        content: assistantContent,
+        role: "assistant",
+        sessionId,
+      },
+    });
+  } catch (error) {
+    ctx.log?.error({ err: error }, "Failed to save assistant chat message");
   }
 }
 

@@ -24,7 +24,18 @@ import { captureEvent } from "@/lib/analytics/client";
 import { ACTIVITY_TYPE_OPTIONS, getActivityTypeConfig } from "@/lib/contacts/activityTypes";
 import { searchContacts } from "@/lib/contacts/searchContacts";
 import { useInteractionTypeLabel } from "@/lib/i18n/useInteractionTypeLabel";
-import { createModalId, useModalDismiss } from "@/lib/modals";
+import {
+  createModalId,
+  forgetActivityModalState,
+  getActivityFormDraft,
+  getCreatedContactsForModal,
+  lockActivityFormDraft,
+  saveActivityFormDraft,
+  unlockActivityFormDraft,
+  useCreatedContactsForModal,
+  useCreateMore,
+  useModalDismiss,
+} from "@/lib/modals";
 import { DEBOUNCE_MS } from "@/lib/platform/config";
 import {
   useCreateInteractionMutation,
@@ -127,23 +138,29 @@ function NewActivityForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isBlocking = isSubmitting;
   const [availableContacts, setAvailableContacts] = useState<ContactSelectable[]>(() => {
-    if (!activity?.participants?.length) {
-      return contacts;
-    }
-    // Seed the pool with participant data embedded in the activity so that chips
-    // for already-selected contacts always resolve to a name, even when those
-    // contacts aren't in the caller's `contacts` prop.
     const pool = new Map(contacts.map((c) => [c.id, c]));
-    for (const p of activity.participants as unknown[]) {
-      const seed = buildParticipantSeed(p);
-      if (seed && !pool.has(seed.id)) {
-        pool.set(seed.id, seed);
+    if (activity?.participants?.length) {
+      // Seed the pool with participant data embedded in the activity so that chips
+      // for already-selected contacts always resolve to a name, even when those
+      // contacts aren't in the caller's `contacts` prop.
+      for (const p of activity.participants as unknown[]) {
+        const seed = buildParticipantSeed(p);
+        if (seed && !pool.has(seed.id)) {
+          pool.set(seed.id, seed);
+        }
       }
+    }
+    for (const created of getCreatedContactsForModal(modalId)) {
+      pool.set(created.id, created);
     }
     return Array.from(pool.values());
   });
   const participantsInputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const appliedCreatedIdsRef = useRef(new Set<string>());
   const isEditMode = Boolean(activity?.id);
+  const { createMore, setCreateMore } = useCreateMore({ enabled: !isEditMode });
+  const createdContacts = useCreatedContactsForModal(modalId);
 
   useEffect(() => {
     // Merge incoming contacts into the pool rather than replacing it, so that
@@ -157,7 +174,12 @@ function NewActivityForm({
     });
   }, [contacts]);
 
-  const { closeModal } = useModalDismiss(modalId, isBlocking);
+  const { closeModal: dismissModal } = useModalDismiss(modalId, isBlocking);
+
+  function closeModal() {
+    forgetActivityModalState(modalId);
+    dismissModal();
+  }
 
   const resolvedInitialParticipantIds = useMemo(
     () =>
@@ -170,15 +192,55 @@ function NewActivityForm({
   );
 
   const form = useForm({
-    initialValues: {
-      date: toLocalDateInputValue(activity ? new Date(activity.date) : new Date()),
-      description: activity?.description || "",
-      participantIds: resolvedInitialParticipantIds,
-      title: activity?.title || "",
-      type: activity?.type || "Call",
+    initialValues: (() => {
+      const draft = getActivityFormDraft(modalId);
+      return {
+        date: draft?.date ?? toLocalDateInputValue(activity ? new Date(activity.date) : new Date()),
+        description: draft?.description ?? activity?.description ?? "",
+        participantIds: Array.from(
+          new Set([
+            ...(draft?.participantIds ?? resolvedInitialParticipantIds),
+            ...getCreatedContactsForModal(modalId).map((contact) => contact.id),
+          ]),
+        ),
+        title: draft?.title ?? activity?.title ?? "",
+        type: draft?.type ?? activity?.type ?? "Call",
+      };
+    })(),
+    mode: "controlled",
+    onValuesChange: (values) => {
+      saveActivityFormDraft(modalId, values);
     },
     validate: schemaResolver(interactionFormSchema, { sync: true }),
   });
+
+  const pickerContacts = useMemo(() => {
+    const pool = new Map(availableContacts.map((contact) => [contact.id, contact]));
+    for (const contact of createdContacts) {
+      pool.set(contact.id, contact);
+    }
+    return Array.from(pool.values());
+  }, [availableContacts, createdContacts]);
+
+  useEffect(() => {
+    const pending = createdContacts.filter(
+      (contact) => !appliedCreatedIdsRef.current.has(contact.id),
+    );
+    if (pending.length === 0) {
+      return;
+    }
+
+    for (const contact of pending) {
+      appliedCreatedIdsRef.current.add(contact.id);
+    }
+
+    const nextParticipantIds = Array.from(
+      new Set([...form.getValues().participantIds, ...pending.map((contact) => contact.id)]),
+    );
+    form.setFieldValue("participantIds", nextParticipantIds);
+    form.validateField("participantIds");
+    queueMicrotask(() => participantsInputRef.current?.focus());
+  }, [createdContacts, form]);
 
   const activityTypeSelectOptions = useMemo(
     () =>
@@ -190,27 +252,6 @@ function NewActivityForm({
   );
 
   const selectedTypeConfig = getActivityTypeConfig(form.values.type);
-
-  const handleContactCreated = (createdContact: ContactSelectable) => {
-    setAvailableContacts((currentContacts) => {
-      if (currentContacts.some((contact) => contact.id === createdContact.id)) {
-        return currentContacts;
-      }
-
-      return [...currentContacts, createdContact];
-    });
-
-    const nextParticipantIds = Array.from(
-      new Set([...form.getValues().participantIds, createdContact.id]),
-    );
-
-    form.setFieldValue("participantIds", nextParticipantIds);
-    form.validateField("participantIds");
-
-    setTimeout(() => {
-      participantsInputRef.current?.focus();
-    }, 0);
-  };
 
   const handleSubmit = async (values: typeof form.values) => {
     setIsSubmitting(true);
@@ -244,6 +285,16 @@ function NewActivityForm({
         }),
       );
 
+      if (!isEditMode && createMore) {
+        form.setFieldValue("title", "");
+        form.setFieldValue("description", "");
+        form.setFieldValue("participantIds", resolvedInitialParticipantIds);
+        form.clearErrors();
+        setIsSubmitting(false);
+        queueMicrotask(() => titleInputRef.current?.focus());
+        return;
+      }
+
       closeModal();
       if (onCreated && !isEditMode && data.interaction?.id) {
         onCreated(data.interaction.id);
@@ -270,11 +321,12 @@ function NewActivityForm({
           label={t("Title")}
           placeholder={t("TitlePlaceholder")}
           {...form.getInputProps("title")}
+          ref={titleInputRef}
         />
 
         <Stack gap={4}>
           <PeopleMultiPickerInput
-            contacts={availableContacts}
+            contacts={pickerContacts}
             disabled={isBlocking}
             error={form.errors.participantIds}
             inputRef={participantsInputRef}
@@ -293,10 +345,21 @@ function NewActivityForm({
           <Button
             disabled={isBlocking}
             onClick={() => {
-              openAddContactModal({ onCreated: handleContactCreated });
+              saveActivityFormDraft(modalId, form.getValues());
+              lockActivityFormDraft(modalId);
+              openAddContactModal({
+                onClose: () => {
+                  window.setTimeout(() => {
+                    unlockActivityFormDraft(modalId);
+                  }, 0);
+                },
+                parentModalId: modalId,
+                repeatable: false,
+              });
             }}
             size="xs"
             style={{ alignSelf: "flex-start", paddingLeft: 0 }}
+            type="button"
             variant="subtle"
           >
             {t("CreateNewPersonFallback")}
@@ -365,6 +428,15 @@ function NewActivityForm({
           cancelDisabled={isBlocking}
           cancelLabel={t("Cancel")}
           onCancel={closeModal}
+          {...(!isEditMode
+            ? {
+                createMoreAriaDescription: tCommon("a11y.createMore"),
+                createMoreChecked: createMore,
+                createMoreDisabled: isBlocking,
+                createMoreLabel: tCommon("actions.createMore"),
+                onCreateMoreChange: setCreateMore,
+              }
+            : {})}
         />
       </Stack>
     </form>

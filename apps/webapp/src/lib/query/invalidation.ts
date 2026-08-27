@@ -1,3 +1,4 @@
+import type { MergeContactsResponse, MergeRecommendation } from "@bondery/schemas";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   chatKeys,
@@ -13,6 +14,35 @@ import {
 
 export async function invalidateContactDomain(queryClient: QueryClient): Promise<void> {
   await queryClient.invalidateQueries({ queryKey: contactKeys.all });
+}
+
+/** Cancel and drop cached queries for a contact deleted by merge. */
+export async function dropMergedContactQueries(
+  queryClient: QueryClient,
+  mergedFromPersonId: string,
+): Promise<void> {
+  await queryClient.cancelQueries({ queryKey: contactKeys.detail(mergedFromPersonId) });
+  queryClient.removeQueries({ queryKey: contactKeys.detail(mergedFromPersonId) });
+}
+
+/** Drop stale duplicate cards that still point at a contact deleted by merge. */
+export function stripDeletedPersonFromMergeRecommendations(
+  queryClient: QueryClient,
+  deletedPersonId: string,
+): void {
+  queryClient.setQueriesData<MergeRecommendation[]>(
+    { queryKey: mergeRecommendationKeys.all },
+    (current) => {
+      if (!Array.isArray(current)) {
+        return current;
+      }
+      return current.filter(
+        (recommendation) =>
+          recommendation.leftPerson.id !== deletedPersonId &&
+          recommendation.rightPerson.id !== deletedPersonId,
+      );
+    },
+  );
 }
 
 export async function invalidateContactLists(queryClient: QueryClient): Promise<void> {
@@ -101,11 +131,14 @@ export async function invalidateGroupDomain(queryClient: QueryClient): Promise<v
 }
 
 export async function invalidateMergeRecommendationDomain(queryClient: QueryClient): Promise<void> {
-  await queryClient.invalidateQueries({ queryKey: mergeRecommendationKeys.all });
+  await queryClient.invalidateQueries(
+    { queryKey: mergeRecommendationKeys.all },
+    { throwOnError: false },
+  );
 }
 
 export async function invalidateEnrichQueueDomain(queryClient: QueryClient): Promise<void> {
-  await queryClient.invalidateQueries({ queryKey: enrichQueueKeys.all });
+  await queryClient.invalidateQueries({ queryKey: enrichQueueKeys.all }, { throwOnError: false });
 }
 
 /** Shell badge: merge + enrich count queries and related list/status caches. */
@@ -114,6 +147,30 @@ export async function invalidateContactsAttention(queryClient: QueryClient): Pro
     invalidateMergeRecommendationDomain(queryClient),
     invalidateEnrichQueueDomain(queryClient),
   ]);
+}
+
+/** Refresh caches after a merge without failing the mutation if the deleted contact 404s. */
+export async function invalidateAfterContactMerge(
+  queryClient: QueryClient,
+  result: MergeContactsResponse,
+): Promise<void> {
+  await dropMergedContactQueries(queryClient, result.mergedFromPersonId);
+  stripDeletedPersonFromMergeRecommendations(queryClient, result.mergedFromPersonId);
+  if (result.contact) {
+    queryClient.setQueryData(contactKeys.detail(result.personId), result.contact);
+  }
+
+  try {
+    await Promise.all([
+      queryClient.invalidateQueries(
+        { queryKey: contactKeys.all, refetchType: "active" },
+        { throwOnError: false },
+      ),
+      invalidateContactsAttention(queryClient),
+    ]);
+  } catch {
+    // Merge already persisted; a 404 on the deleted contact must not fail the mutation.
+  }
 }
 
 export async function invalidateKeepInTouchCount(queryClient: QueryClient): Promise<void> {
@@ -135,13 +192,16 @@ export async function invalidateChatSessionMessages(
   await queryClient.invalidateQueries({ queryKey: chatKeys.messages(sessionId) });
 }
 
-/** Post-import burst: contacts, merge recommendations, and groups. */
+/** Post-import burst: contacts, groups, tags, interactions, and merge recommendations. */
 export async function invalidateAfterImport(queryClient: QueryClient): Promise<void> {
   await Promise.all([
     invalidateContactDomain(queryClient),
     invalidateContactsAttention(queryClient),
     invalidateKeepInTouchCount(queryClient),
     invalidateGroupDomain(queryClient),
+    invalidateTagDomain(queryClient),
+    invalidateInteractionDomain(queryClient),
+    invalidateMergeRecommendationDomain(queryClient),
     invalidateSettings(queryClient),
   ]);
 }

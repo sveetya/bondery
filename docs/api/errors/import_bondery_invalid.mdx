@@ -1,0 +1,32 @@
+---
+title: import_bondery_invalid
+description: Import Bondery Invalid
+---
+
+## When this happens
+
+The uploaded file is not a valid Bondery export ZIP. Typical causes: a LinkedIn, Instagram, or vCard dump; missing or nested export files; a corrupt archive; or JSON that does not match the export schema. Nothing is written when this error is returned.
+
+## What your integration should do
+
+Do not retry the same bytes. Ask the user to upload a `bondery-export-YYYY-MM-DD.zip` downloaded from Settings. Honor `Retry-After` if you also hit the export/import rate limit.
+
+## What end users should see
+
+Show `common.errors.api.import_bondery_invalid` (or the Settings import error copy). Never show the API `message` field.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `import_bondery_invalid` |
+| **doc_url** | `/docs/api/errors/import_bondery_invalid` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/import/parse-bondery-export-zip.ts`
+- `apps/api/src/routes/me/import/index.ts`

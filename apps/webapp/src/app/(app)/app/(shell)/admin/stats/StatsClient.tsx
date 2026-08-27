@@ -11,6 +11,18 @@ import { GithubStarsCard } from "./components/GithubStarsCard";
 import { NpsCard } from "./components/NpsCard";
 import { TotalUsersChart } from "./components/TotalUsersChart";
 
+export function StatsForbiddenState() {
+  const t = useStatsPageTranslations();
+
+  return (
+    <PageWrapper>
+      <Alert color="red" icon={<IconChartBar size={16} />}>
+        {t("Forbidden")}
+      </Alert>
+    </PageWrapper>
+  );
+}
+
 export function StatsClient() {
   const t = useStatsPageTranslations();
   const { data, isLoading } = useAdminStatsDashboardQuery();
@@ -32,13 +44,7 @@ export function StatsClient() {
   const githubStars = data?.githubStars ?? null;
 
   if (!activeUsers && !funnel && !nps && !totalUsers && !githubStars) {
-    return (
-      <PageWrapper>
-        <Alert color="red" icon={<IconChartBar size={16} />}>
-          {t("Forbidden")}
-        </Alert>
-      </PageWrapper>
-    );
+    return <StatsForbiddenState />;
   }
 
   return (

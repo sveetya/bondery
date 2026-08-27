@@ -50,14 +50,19 @@ async function start() {
   // Docker CMD stays `node apps/api/dist/index.js` — validation runs in-process.
   assertRequiredEnvAtStartup();
 
-  if (process.env.NODE_ENV === "development") {
-    await runDevelopmentBootstrap();
-  }
-
   const server = await buildServer();
   const { port, host } = resolveListenAddress(server.config);
+  const isDevelopment = process.env.NODE_ENV === "development";
 
   try {
+    if (isDevelopment) {
+      await server.listen({ host, port });
+      const { gitSha, version } = readBuildMetadata();
+      server.log.info({ gitSha, version }, `Bondery API running at http://${host}:${port}`);
+      await runDevelopmentBootstrap();
+      return;
+    }
+
     await server.listen({ host, port });
     const { gitSha, version } = readBuildMetadata();
     server.log.info({ gitSha, version }, `Bondery API running at http://${host}:${port}`);

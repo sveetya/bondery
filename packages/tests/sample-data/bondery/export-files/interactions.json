@@ -1,0 +1,266 @@
+{
+  "bonderyVersion": "1.8.3",
+  "records": [
+    {
+      "createdAt": "2026-08-26T13:54:27.696Z",
+      "date": "2026-08-14T13:54:27.669Z",
+      "description": "Catch-up on what they are building next.",
+      "id": "01a03e59-ccef-7277-abff-ef6da201469c",
+      "participantIds": [
+        "01a03e59-202a-71ec-bf4b-8b611c9e64eb",
+        "01a03e59-2fc8-728b-a417-0e171d3a4529"
+      ],
+      "title": "Coffee catch-up (1)",
+      "type": "Coffee",
+      "updatedAt": "2026-08-26T13:54:27.696Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.755Z",
+      "date": "2026-08-03T13:54:27.729Z",
+      "description": "First call after a warm intro.",
+      "id": "01a03e59-cd2b-73f1-b93d-b290cebf773a",
+      "participantIds": [
+        "01a03e59-2220-758f-94fb-4e1a73f30d58",
+        "01a03e59-336d-74fd-bbc2-2d62b9698ed4"
+      ],
+      "title": "Intro call (2)",
+      "type": "Call",
+      "updatedAt": "2026-08-26T13:54:27.755Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.786Z",
+      "date": "2026-07-23T13:54:27.774Z",
+      "description": "Walked through the roadmap and open questions.",
+      "id": "01a03e59-cd49-7574-80ed-829cac5772bf",
+      "participantIds": [
+        "01a03e59-23b1-727e-bd0b-e30edda99894",
+        "01a03e59-3644-725b-b0ec-cc80e698509a"
+      ],
+      "title": "Product review (3)",
+      "type": "Meeting",
+      "updatedAt": "2026-08-26T13:54:27.786Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.823Z",
+      "date": "2026-07-12T13:54:27.808Z",
+      "description": "Continued the hallway conversation over dinner.",
+      "id": "01a03e59-cd6f-771e-a394-e6f5754a5faf",
+      "participantIds": [
+        "01a03e59-2521-766e-ab8d-085f2dd423aa",
+        "01a03e59-38da-7321-b059-e1d75fa513e8"
+      ],
+      "title": "Dinner after the talk (4)",
+      "type": "Meal",
+      "updatedAt": "2026-08-26T13:54:27.823Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.862Z",
+      "date": "2026-07-01T13:54:27.842Z",
+      "description": "Short conversation at a local meetup.",
+      "id": "01a03e59-cd95-733a-8073-f907ffae0eb0",
+      "participantIds": [
+        "01a03e59-26b6-71df-97bc-79150869a6c0",
+        "01a03e59-3a2d-71bc-95f6-363a54610edb"
+      ],
+      "title": "Meetup hallway chat (5)",
+      "type": "Networking event",
+      "updatedAt": "2026-08-26T13:54:27.862Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.908Z",
+      "date": "2026-06-20T13:54:27.880Z",
+      "description": "Sent notes and a few links from the last meeting.",
+      "id": "01a03e59-cdc4-72b7-84d7-5cfb4f7a37bb",
+      "participantIds": [
+        "01a03e59-2a6f-747f-9971-8d05fb465777",
+        "01a03e59-40a2-70c1-8820-fec892f6f28e"
+      ],
+      "title": "Follow-up email (6)",
+      "type": "Email",
+      "updatedAt": "2026-08-26T13:54:27.908Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:27.959Z",
+      "date": "2026-06-09T13:54:27.929Z",
+      "description": "Confirmed timing for the next check-in.",
+      "id": "01a03e59-cdf7-71d9-a396-002df136aa2b",
+      "participantIds": [
+        "01a03e59-2d3e-75f1-82cd-d1dca6163386",
+        "01a03e59-43bd-70bf-b678-1673878f566f"
+      ],
+      "title": "Quick ping (7)",
+      "type": "Text/Messaging",
+      "updatedAt": "2026-08-26T13:54:27.959Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.003Z",
+      "date": "2026-05-29T13:54:27.981Z",
+      "description": "Ran into each other at an alumni night.",
+      "id": "01a03e59-ce23-737c-8d33-3429074f05d3",
+      "participantIds": [
+        "01a03e59-2fc8-728b-a417-0e171d3a4529",
+        "01a03e59-4668-72c6-8ce8-9277c98119dd"
+      ],
+      "title": "Alumni mixer (8)",
+      "type": "Party/Social",
+      "updatedAt": "2026-08-26T13:54:28.003Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.048Z",
+      "date": "2026-05-18T13:54:28.022Z",
+      "description": "Judged a round and debriefed with a teammate.",
+      "id": "01a03e59-ce50-7228-b940-a6663f95d9fa",
+      "participantIds": [
+        "01a03e59-336d-74fd-bbc2-2d62b9698ed4",
+        "01a03e59-4917-757f-8b03-3bbdb1e2467a"
+      ],
+      "title": "Hackathon judging (9)",
+      "type": "Competition/Hackathon",
+      "updatedAt": "2026-08-26T13:54:28.048Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.092Z",
+      "date": "2026-05-07T13:54:28.075Z",
+      "description": "Logged a reminder to send an introduction.",
+      "id": "01a03e59-ce7c-7306-b4d7-cfe293d6496f",
+      "participantIds": [
+        "01a03e59-3644-725b-b0ec-cc80e698509a",
+        "01a03e59-4bc9-7144-abe2-d40997bdcd37"
+      ],
+      "title": "Private note (10)",
+      "type": "Note",
+      "updatedAt": "2026-08-26T13:54:28.092Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.138Z",
+      "date": "2026-04-26T13:54:28.111Z",
+      "description": "Catch-up on what they are building next.",
+      "id": "01a03e59-cea9-7028-9da4-b1e6ecb9eeaf",
+      "participantIds": [
+        "01a03e59-38da-7321-b059-e1d75fa513e8",
+        "01a03e59-4d7a-751a-a196-546078322e31"
+      ],
+      "title": "Coffee catch-up (11)",
+      "type": "Coffee",
+      "updatedAt": "2026-08-26T13:54:28.138Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.169Z",
+      "date": "2026-04-15T13:54:28.155Z",
+      "description": "First call after a warm intro.",
+      "id": "01a03e59-cec9-713b-9f03-7c98b705eee4",
+      "participantIds": [
+        "01a03e59-3a2d-71bc-95f6-363a54610edb",
+        "01a03e59-5040-74c2-b626-dd7830ae34d8"
+      ],
+      "title": "Intro call (12)",
+      "type": "Call",
+      "updatedAt": "2026-08-26T13:54:28.169Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.216Z",
+      "date": "2026-04-04T13:54:28.186Z",
+      "description": "Walked through the roadmap and open questions.",
+      "id": "01a03e59-cef8-7509-b2d5-ddc55a4e6249",
+      "participantIds": [
+        "01a03e59-40a2-70c1-8820-fec892f6f28e",
+        "01a03e59-51c2-72dd-af1e-b2400ef8bb68"
+      ],
+      "title": "Product review (13)",
+      "type": "Meeting",
+      "updatedAt": "2026-08-26T13:54:28.216Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.261Z",
+      "date": "2026-03-24T13:54:28.235Z",
+      "description": "Continued the hallway conversation over dinner.",
+      "id": "01a03e59-cf24-711b-9887-f7e880480ef6",
+      "participantIds": [
+        "01a03e59-43bd-70bf-b678-1673878f566f",
+        "01a03e59-551d-700c-91aa-1087d4d77e3a"
+      ],
+      "title": "Dinner after the talk (14)",
+      "type": "Meal",
+      "updatedAt": "2026-08-26T13:54:28.261Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.306Z",
+      "date": "2026-03-13T13:54:28.279Z",
+      "description": "Short conversation at a local meetup.",
+      "id": "01a03e59-cf52-7377-9cb1-0206fd760e81",
+      "participantIds": [
+        "01a03e59-4668-72c6-8ce8-9277c98119dd",
+        "01a03e59-5676-705d-9579-85b5c52fdcec"
+      ],
+      "title": "Meetup hallway chat (15)",
+      "type": "Networking event",
+      "updatedAt": "2026-08-26T13:54:28.306Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.355Z",
+      "date": "2026-03-02T13:54:28.324Z",
+      "description": "Sent notes and a few links from the last meeting.",
+      "id": "01a03e59-cf82-76be-8269-2e70ea6f5931",
+      "participantIds": [
+        "01a03e59-4917-757f-8b03-3bbdb1e2467a",
+        "01a03e59-58f4-7567-afbb-3c1869e200a6"
+      ],
+      "title": "Follow-up email (16)",
+      "type": "Email",
+      "updatedAt": "2026-08-26T13:54:28.355Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.399Z",
+      "date": "2026-02-19T13:54:28.374Z",
+      "description": "Confirmed timing for the next check-in.",
+      "id": "01a03e59-cfaf-73a0-868c-59769a9652ce",
+      "participantIds": [
+        "01a03e59-4bc9-7144-abe2-d40997bdcd37",
+        "01a03e59-5b53-760b-a32c-604182d1fa09"
+      ],
+      "title": "Quick ping (17)",
+      "type": "Text/Messaging",
+      "updatedAt": "2026-08-26T13:54:28.399Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.447Z",
+      "date": "2026-02-08T13:54:28.417Z",
+      "description": "Ran into each other at an alumni night.",
+      "id": "01a03e59-cfdf-7438-8c70-d32f6a2c80f6",
+      "participantIds": [
+        "01a03e59-4d7a-751a-a196-546078322e31",
+        "01a03e59-5dbb-743e-a044-e013b93b0e70"
+      ],
+      "title": "Alumni mixer (18)",
+      "type": "Party/Social",
+      "updatedAt": "2026-08-26T13:54:28.447Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.491Z",
+      "date": "2026-01-28T13:54:28.470Z",
+      "description": "Judged a round and debriefed with a teammate.",
+      "id": "01a03e59-d00b-704f-9302-221f9fba613a",
+      "participantIds": [
+        "01a03e59-5040-74c2-b626-dd7830ae34d8",
+        "01a03e59-5f1d-747b-8116-c54fa6de323c"
+      ],
+      "title": "Hackathon judging (19)",
+      "type": "Competition/Hackathon",
+      "updatedAt": "2026-08-26T13:54:28.491Z"
+    },
+    {
+      "createdAt": "2026-08-26T13:54:28.542Z",
+      "date": "2026-01-17T13:54:28.511Z",
+      "description": "Logged a reminder to send an introduction.",
+      "id": "01a03e59-d03e-757b-9110-f1922ec54bb5",
+      "participantIds": [
+        "01a03e59-51c2-72dd-af1e-b2400ef8bb68",
+        "01a03e59-608e-703e-b52d-23ed4e42ef40"
+      ],
+      "title": "Private note (20)",
+      "type": "Note",
+      "updatedAt": "2026-08-26T13:54:28.542Z"
+    }
+  ],
+  "schemaType": "Interactions"
+}

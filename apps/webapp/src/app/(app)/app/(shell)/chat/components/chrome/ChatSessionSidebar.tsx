@@ -1,5 +1,6 @@
 "use client";
 
+import { getUserFacingError } from "@bondery/helpers/api";
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import {
   DotsMenuButton,
@@ -11,11 +12,12 @@ import type { ChatSession } from "@bondery/schemas";
 import { ActionIcon, Box, Menu, MenuItem, NavLink, ScrollArea, Text, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconMessagePlus, IconTrash } from "@tabler/icons-react";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { openStandardConfirmModal } from "@/components/modals/openStandardConfirmModal";
 import { formatRelativeTime } from "@/lib/i18n/formatRelativeTime";
-import { useChatPageTranslations } from "@/lib/i18n/generated/hooks";
+import { useChatPageTranslations, useCommonTranslations } from "@/lib/i18n/generated/hooks";
 import { useDateFormatter as useFormatter } from "@/lib/i18n/useDateFormatter";
 import { useChatSessionsQuery, useDeleteChatSessionMutation } from "@/lib/query/hooks/useChat";
 import { useChatSessions } from "../../hooks/ChatSessionsContext";
@@ -35,6 +37,7 @@ function SessionListItem({ session, isActive, relativeTime, onDelete }: SessionL
     <NavLink
       active={isActive}
       className="no-scale"
+      component={Link}
       description={relativeTime}
       href={`${WEBAPP_ROUTES.CHAT}/${session.id}`}
       label={session.title ?? t("untitledSession")}
@@ -73,14 +76,21 @@ function SessionListItem({ session, isActive, relativeTime, onDelete }: SessionL
 
 export function ChatSessionSidebar() {
   const t = useChatPageTranslations();
+  const tCommon = useCommonTranslations();
   const formatter = useFormatter();
   const pathname = usePathname();
-  const { triggerChatReset } = useChatSessions();
+  const router = useRouter();
+  const { highlightedSessionId, triggerChatReset } = useChatSessions();
   const { data: sessions = [] } = useChatSessionsQuery();
   const deleteSessionMutation = useDeleteChatSessionMutation();
+  const [canFormatRelativeTime, setCanFormatRelativeTime] = useState(false);
+
+  useEffect(() => {
+    setCanFormatRelativeTime(true);
+  }, []);
 
   function handleNewSession() {
-    window.history.pushState(null, "", WEBAPP_ROUTES.CHAT);
+    router.push(WEBAPP_ROUTES.CHAT);
     triggerChatReset();
   }
 
@@ -102,13 +112,13 @@ export function ChatSessionSidebar() {
           );
           const currentPath = window.location.pathname;
           if (currentPath === `${WEBAPP_ROUTES.CHAT}/${sessionId}`) {
-            window.history.pushState(null, "", WEBAPP_ROUTES.CHAT);
+            router.push(WEBAPP_ROUTES.CHAT);
             triggerChatReset();
           }
-        } catch {
+        } catch (error) {
           notifications.show(
             errorNotificationTemplate({
-              description: "",
+              description: getUserFacingError(error, tCommon),
               title: t("deleteSessionError"),
             }),
           );
@@ -157,12 +167,12 @@ export function ChatSessionSidebar() {
             </Text>
           ) : (
             sessions.map((session) => {
-              const isActive = pathname === `${WEBAPP_ROUTES.CHAT}/${session.id}`;
-              const relativeTime = formatRelativeTime(
-                new Date(session.updatedAt),
-                formatter,
-                t("lessThanMinuteAgo"),
-              );
+              const isActive =
+                pathname === `${WEBAPP_ROUTES.CHAT}/${session.id}` ||
+                (pathname === WEBAPP_ROUTES.CHAT && highlightedSessionId === session.id);
+              const relativeTime = canFormatRelativeTime
+                ? formatRelativeTime(new Date(session.updatedAt), formatter, t("lessThanMinuteAgo"))
+                : "";
               return (
                 <SessionListItem
                   isActive={isActive}

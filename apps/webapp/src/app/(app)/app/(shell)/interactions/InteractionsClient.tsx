@@ -283,6 +283,10 @@ export function InteractionsClient() {
     void fetchNextPage();
   };
 
+  if (!interactionsData) {
+    return null;
+  }
+
   return (
     <PageWrapper>
       <Stack gap="lg">

@@ -114,6 +114,8 @@ describe("sync-infisical-to-dokploy", () => {
 
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_API_KEY"), false);
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID"), false);
+    assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID"), false);
+    assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_GIT_SHA"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_VERSION"), false);
     assert.equal(uploadKeys.includes("BONDERY_PRIVATE_S3_ENDPOINT"), false);
@@ -152,6 +154,31 @@ describe("sync-infisical-to-dokploy", () => {
     assert.equal(config.composeId, "services-compose-id");
     assert.equal(config.webhookKey, "BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK");
     assert.equal(config.target, "services");
+  });
+
+  it("readDokployConfig resolves services-beta staging compose id", () => {
+    const env = {
+      ...servicesEnv,
+      BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID: "beta-services-compose-id",
+      BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK: "https://dokploy.example.com/beta-hook",
+    };
+    delete env.BONDERY_OPS_DOKPLOY_SERVICES_COMPOSE_ID;
+
+    const config = readDokployConfig(env, "services-beta");
+    assert.equal(config.composeId, "beta-services-compose-id");
+    assert.equal(config.webhookKey, "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK");
+    assert.equal(config.target, "services-beta");
+  });
+
+  it("services-beta upload payload matches services keys", () => {
+    const { uploadKeys: servicesKeys } = buildUploadPayload(servicesEnv, "services");
+    const { uploadKeys: betaKeys } = buildUploadPayload(servicesEnv, "services-beta");
+    assert.deepEqual(betaKeys, servicesKeys);
+  });
+
+  it("buildDeployWebhookPayload uses main ref for services-beta redeploy", () => {
+    const payload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/bondery"], "main");
+    assert.equal(payload.ref, "refs/heads/main");
   });
 
   it("buildOpsUploadPayload remains an alias for website target", () => {

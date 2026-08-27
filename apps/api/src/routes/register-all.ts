@@ -28,7 +28,9 @@ import { linkedInImportRoutes } from "./import/linkedin/index.js";
 import { vcardImportRoutes } from "./import/vcard/index.js";
 import { interactionRoutes } from "./interactions/index.js";
 import { meApiKeysRoutes } from "./me/api-keys/index.js";
+import { meExportRoutes } from "./me/export/index.js";
 import { meFeedbackRoutes } from "./me/feedback/index.js";
+import { meImportRoutes } from "./me/import/index.js";
 import { meRoutes } from "./me/index.js";
 import { meInitializeRoutes } from "./me/initialize/index.js";
 import { meOnboardingImportFollowupRoutes } from "./me/onboarding/import-followup.js";
@@ -82,6 +84,8 @@ const ROUTE_MOUNTS: RouteMount[] = [
   { area: "integration", plugin: shareRoutes, prefix: API_ROUTES.CONTACTS_SHARE },
   { area: "integration", plugin: geocodeRoutes, prefix: API_ROUTES.GEOCODE },
   { area: "session", plugin: meRoutes, prefix: API_ROUTES.ME },
+  { area: "session", plugin: meExportRoutes, prefix: API_ROUTES.ME_EXPORT },
+  { area: "session", plugin: meImportRoutes, prefix: API_ROUTES.ME_IMPORT },
   { area: "session", plugin: meInitializeRoutes, prefix: API_ROUTES.ME_INITIALIZE },
   { area: "session", plugin: meSessionRoutes, prefix: API_ROUTES.ME_SESSION },
   { area: "session", plugin: meOnboardingRoutes, prefix: API_ROUTES.ME_ONBOARDING_COMPLETE },

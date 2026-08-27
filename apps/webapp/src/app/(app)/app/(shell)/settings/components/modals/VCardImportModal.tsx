@@ -24,7 +24,6 @@ import {
   Stack,
   Text,
   ThemeIcon,
-  Title,
 } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
 import { modals } from "@mantine/modals";
@@ -51,6 +50,7 @@ import {
 } from "@/lib/query/hooks/useImports";
 import { useSettingsQuery } from "@/lib/query/hooks/useSettings";
 import { useImporterNavigationProgress } from "../../hooks/useImporterNavigationProgress";
+import { ImportIntroStep } from "../import/ImportIntroStep";
 
 type Step = "intro" | "instructions" | "upload" | "processing" | "preview";
 
@@ -347,62 +347,16 @@ export function VCardImportModal({
 
   if (step === "intro") {
     return renderWithNavigationProgress(
-      <Stack gap="xl">
-        <Stack align="center" gap="md" pt="sm">
-          <ThemeIcon color="green" radius="xl" size={110} variant="light">
-            <IconDeviceMobile size={64} />
-          </ThemeIcon>
-          <Title order={4} ta="center">
-            {t("IntroTitle")}
-          </Title>
-        </Stack>
-
-        <Paper p="md" radius="md" withBorder>
-          <Stack gap="sm">
-            <Group align="flex-start" gap="sm" wrap="nowrap">
-              <IconCircleCheck
-                size={18}
-                style={{
-                  color: "var(--mantine-color-green-6)",
-                  flexShrink: 0,
-                  marginTop: 1,
-                }}
-              />
-              <Text size="sm">{t("IntroDescription1")}</Text>
-            </Group>
-            <Group align="flex-start" gap="sm" wrap="nowrap">
-              <IconCircleCheck
-                size={18}
-                style={{
-                  color: "var(--mantine-color-green-6)",
-                  flexShrink: 0,
-                  marginTop: 1,
-                }}
-              />
-              <Text size="sm">{t("IntroDescription2")}</Text>
-            </Group>
-            <Group align="flex-start" gap="sm" wrap="nowrap">
-              <IconCircleCheck
-                size={18}
-                style={{
-                  color: "var(--mantine-color-green-6)",
-                  flexShrink: 0,
-                  marginTop: 1,
-                }}
-              />
-              <Text size="sm">{t("IntroDescription3")}</Text>
-            </Group>
-          </Stack>
-        </Paper>
-
-        <ModalFooter
-          actionLabel={t("Continue")}
-          actionRightSection={<IconArrowRight size={16} />}
-          cancelLabel={t("Cancel")}
-          onAction={() => setStep("instructions")}
-          onCancel={closeModal}
-        />
-      </Stack>,
+      <ImportIntroStep
+        cancelLabel={t("Cancel")}
+        continueLabel={t("Continue")}
+        descriptions={[t("IntroDescription1"), t("IntroDescription2"), t("IntroDescription3")]}
+        icon={IconDeviceMobile}
+        iconColor="green"
+        introTitle={t("IntroTitle")}
+        onCancel={closeModal}
+        onContinue={() => setStep("instructions")}
+      />,
     );
   }
 

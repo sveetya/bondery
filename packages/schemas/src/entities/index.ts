@@ -10,6 +10,7 @@ export * from "#entities/api-keys/index.js";
 export * from "#entities/channels/index.js";
 export * from "#entities/chat/index.js";
 export * from "#entities/contact/index.js";
+export * from "#entities/export/index.js";
 export * from "#entities/group/index.js";
 export * from "#entities/import/index.js";
 export * from "#entities/important-date/index.js";

@@ -1,13 +1,12 @@
 "use client";
 
-import { Checkbox, Chip, Stack, Text, ThemeIcon } from "@mantine/core";
+import { Box, Checkbox, Chip, Group, Stack, Text, ThemeIcon, Tooltip } from "@mantine/core";
 import type { Icon as TablerIconType } from "@tabler/icons-react";
 import { IconLink, IconLinkOff } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 interface IntegrationCardProps {
-  connectedDescription: string;
-  disabledDescription?: string;
+  badgeLabel?: string;
   displayName: string;
   icon?: TablerIconType;
   iconColor?: string;
@@ -17,7 +16,7 @@ interface IntegrationCardProps {
   isLinkable?: boolean;
   onClick: () => void;
   provider: string;
-  unconnectedDescription: string;
+  tooltip?: string;
 }
 
 export function IntegrationCard({
@@ -27,74 +26,103 @@ export function IntegrationCard({
   iconColor,
   isConnected,
   isDisabled,
-  connectedDescription,
-  unconnectedDescription,
-  disabledDescription,
+  badgeLabel,
   onClick,
   isLinkable = true,
+  tooltip,
 }: IntegrationCardProps) {
-  const description = isDisabled
-    ? (disabledDescription ?? connectedDescription)
-    : isConnected
-      ? connectedDescription
-      : unconnectedDescription;
-
-  const isChecked = isLinkable ? isConnected : false;
+  const isChecked = isConnected && (isLinkable || Boolean(badgeLabel));
+  const showBadge = Boolean(badgeLabel) || isLinkable;
 
   return (
-    <Checkbox.Card
-      checked={isChecked}
-      className="button-scale-effect"
-      disabled={isDisabled}
-      mod={{
-        checked: isChecked,
-        unchecked: !isChecked,
-      }}
-      onClick={onClick}
-      p={"md"}
-      style={{
-        borderColor: isChecked ? "var(--mantine-color-green-filled)" : undefined,
-        cursor: isDisabled ? "not-allowed" : "pointer",
-        height: 160,
-        opacity: isDisabled ? 0.6 : 1,
-        position: "relative",
-        width: 200,
-      }}
-    >
-      {isLinkable ? (
-        <Chip
-          checked={isConnected}
-          color={isConnected ? "green" : "red"}
-          size="xs"
+    <Tooltip disabled={!tooltip} label={tooltip} withArrow>
+      <Box display="inline-block">
+        <Checkbox.Card
+          checked={isChecked}
+          className="button-scale-effect"
+          disabled={isDisabled}
+          mod={{
+            checked: isChecked,
+            unchecked: !isChecked,
+          }}
+          onClick={onClick}
+          pb="sm"
+          pl="md"
+          pr="md"
+          pt={showBadge ? 36 : "md"}
           style={{
-            pointerEvents: "none",
-            position: "absolute",
-            right: 8,
-            top: 8,
+            borderColor: isChecked ? "var(--mantine-color-green-filled)" : undefined,
+            cursor: isDisabled ? "not-allowed" : "pointer",
+            display: "flex",
+            flexDirection: "column",
+            height: 160,
+            justifyContent: showBadge ? "flex-start" : "center",
+            opacity: isDisabled ? 0.6 : 1,
+            position: "relative",
+            width: 200,
           }}
-          styles={{
-            label: {
-              paddingLeft: 8,
-              paddingRight: 8,
-            },
-          }}
-          variant="light"
         >
-          {isConnected ? <IconLink size={12} /> : <IconLinkOff size={12} />}
-        </Chip>
-      ) : null}
+          {showBadge ? (
+            <Chip
+              checked={isConnected}
+              color={isConnected ? "green" : "red"}
+              size="xs"
+              style={{
+                maxWidth: "calc(100% - 16px)",
+                pointerEvents: "none",
+                position: "absolute",
+                right: 8,
+                top: 8,
+                zIndex: 1,
+              }}
+              styles={{
+                label: {
+                  paddingLeft: badgeLabel ? 6 : 8,
+                  paddingRight: badgeLabel ? 6 : 8,
+                },
+              }}
+              variant="light"
+            >
+              {badgeLabel ? (
+                <Group gap={4} wrap="nowrap">
+                  {isLinkable ? (
+                    isConnected ? (
+                      <IconLink size={12} />
+                    ) : (
+                      <IconLinkOff size={12} />
+                    )
+                  ) : null}
+                  <Text component="span" inherit lineClamp={1} size="xs">
+                    {badgeLabel}
+                  </Text>
+                </Group>
+              ) : isConnected ? (
+                <IconLink size={12} />
+              ) : (
+                <IconLinkOff size={12} />
+              )}
+            </Chip>
+          ) : null}
 
-      <Stack align="center" gap="xs" h={"full"} justify="start" pt={"xs"}>
-        <ThemeIcon color={iconColor} size={48} variant="filled">
-          {iconNode ?? (Icon ? <Icon size={28} stroke={1.5} /> : null)}
-        </ThemeIcon>
-        <Text fw={600} size="sm">
-          {displayName}
-        </Text>
-        <Text c="dimmed" size="xs" ta="center">
-          {description}
-        </Text>
-      </Stack>
-    </Checkbox.Card>
+          <Stack align="center" gap="sm" w="100%">
+            <ThemeIcon color={iconColor} size="3rem" variant="filled">
+              {iconNode ??
+                (Icon ? <Icon stroke={1.5} style={{ height: "70%", width: "70%" }} /> : null)}
+            </ThemeIcon>
+            <Text
+              className="h-[2.5em]"
+              fw={600}
+              lh={1.25}
+              lineClamp={2}
+              size="sm"
+              ta="center"
+              w="100%"
+            >
+              {displayName}
+            </Text>
+          </Stack>
+        </Checkbox.Card>
+      </Box>
+    </Tooltip>
   );
 }

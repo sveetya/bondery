@@ -1,0 +1,4033 @@
+{
+  "bonderyVersion": "1.8.3",
+  "records": [
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:43.466Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "id": "31f0b654-ace0-4d96-9e2e-7a8ac64fcf06",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.708Z",
+          "value": "ada.lovelace@example.com"
+        }
+      ],
+      "firstName": "Ada",
+      "hasAvatar": true,
+      "headline": "Mathematician",
+      "id": "01a03e59-202a-71ec-bf4b-8b611c9e64eb",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "date": "1815-12-10",
+          "id": "1c2038c1-a76c-4df1-ba81-d987386fe0ee",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:27.708Z"
+        }
+      ],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-14T13:54:27.669Z",
+      "lastInteractionActivityId": "01a03e59-ccef-7277-abff-ef6da201469c",
+      "lastName": "Lovelace",
+      "latitude": 51.50745,
+      "linkedin": null,
+      "location": "London, state England, GB",
+      "longitude": -0.12777,
+      "middleName": null,
+      "notes": "Wrote the first algorithm intended for a machine.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "id": "9ae4826d-d11e-415d-8344-7d585fa5b202",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:27.708Z",
+          "value": "5550100000"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "handle": "https://www.linkedin.com/in/ada-lovelace",
+          "id": "3499550e-6db5-422d-b06a-f5b0d8578610",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.708Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "handle": "ada.lovelace",
+          "id": "307c1fb1-b1f2-4c66-b7c3-c870fd07f9fd",
+          "platform": "instagram",
+          "updatedAt": "2026-08-26T13:54:27.708Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:43.466Z",
+          "handle": "https://example.com/ada.lovelace",
+          "id": "a6142f85-17f5-4b5c-a68c-6ed64f589093",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.708Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:27.708Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:43.968Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:43.968Z",
+          "id": "a1a47ae2-5a62-4913-9e5e-fd305c2a7027",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.764Z",
+          "value": "alan.turing@example.com"
+        }
+      ],
+      "firstName": "Alan",
+      "hasAvatar": true,
+      "headline": "Computer scientist",
+      "id": "01a03e59-2220-758f-94fb-4e1a73f30d58",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:43.968Z",
+          "date": "1912-06-23",
+          "id": "ad8e3233-d393-4762-a70a-c1b66ea52337",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:27.764Z"
+        }
+      ],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-03T13:54:27.729Z",
+      "lastInteractionActivityId": "01a03e59-cd2b-73f1-b93d-b290cebf773a",
+      "lastName": "Turing",
+      "latitude": 53.47949,
+      "linkedin": null,
+      "location": "Manchester, state England, GB",
+      "longitude": -2.24511,
+      "middleName": null,
+      "notes": "Broke Enigma and defined the Turing machine.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:43.968Z",
+          "id": "774a7bdc-2f58-4c4f-ae11-85e415c99c2f",
+          "preferred": true,
+          "prefix": "+44",
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.764Z",
+          "value": "7700900123"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:43.968Z",
+          "handle": "https://www.linkedin.com/in/alan-turing",
+          "id": "ae8d78fc-440d-4668-98f4-c095cd87729f",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.764Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:43.968Z",
+          "handle": "https://example.com/alan.turing",
+          "id": "d7823eac-4f20-4fae-950d-9873989604b7",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.764Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:27.764Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:44.369Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:44.369Z",
+          "id": "3bbcce38-05bf-4cc5-bf2d-f52b1d7702cc",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.798Z",
+          "value": "steve.jobs@example.com"
+        }
+      ],
+      "firstName": "Steve",
+      "hasAvatar": true,
+      "headline": "Co-founder, Apple",
+      "id": "01a03e59-23b1-727e-bd0b-e30edda99894",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:44.369Z",
+          "date": "1955-02-24",
+          "id": "3b0943ef-8e88-4b64-ab32-ea8750bfe5b3",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:27.798Z"
+        }
+      ],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-07-23T13:54:27.774Z",
+      "lastInteractionActivityId": "01a03e59-cd49-7574-80ed-829cac5772bf",
+      "lastName": "Jobs",
+      "latitude": 37.44433,
+      "linkedin": null,
+      "location": "Palo Alto, state California, US",
+      "longitude": -122.15985,
+      "middleName": null,
+      "notes": "Product taste and the original Mac launch.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:44.369Z",
+          "handle": "https://www.linkedin.com/in/steve-jobs",
+          "id": "5d666f36-8e1e-45c8-9783-8b79e21733b8",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.798Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:44.369Z",
+          "handle": "https://example.com/steve.jobs",
+          "id": "2181fd03-0706-4168-a479-54a162031829",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.798Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:27.798Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:44.737Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:44.737Z",
+          "id": "8136a465-14d6-4d65-b205-2d753194f23d",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.833Z",
+          "value": "grace.hopper@example.com"
+        }
+      ],
+      "firstName": "Grace",
+      "hasAvatar": true,
+      "headline": "Rear Admiral, US Navy",
+      "id": "01a03e59-2521-766e-ab8d-085f2dd423aa",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:44.737Z",
+          "date": "1906-12-09",
+          "id": "32df9861-2f1f-4fea-9772-bad5f0e9f6d7",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:27.833Z"
+        }
+      ],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-07-12T13:54:27.808Z",
+      "lastInteractionActivityId": "01a03e59-cd6f-771e-a394-e6f5754a5faf",
+      "lastName": "Hopper",
+      "latitude": 32.73558,
+      "linkedin": null,
+      "location": "Arlington, state Texas, US",
+      "longitude": -97.10712,
+      "middleName": null,
+      "notes": "COBOL pioneer. Ask about compilers over coffee.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:44.737Z",
+          "id": "35b432f4-a625-4438-b2d9-c46193cb8e17",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:27.833Z",
+          "value": "5550100003"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:44.737Z",
+          "handle": "https://www.linkedin.com/in/grace-hopper",
+          "id": "98d0a63b-8a25-4b01-ab9d-59ef7e009a9c",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.833Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:44.737Z",
+          "handle": "https://example.com/grace.hopper",
+          "id": "e1cb9ebe-54ad-4eb0-b6ef-9efa60e5f607",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.833Z"
+        }
+      ],
+      "timezone": "America/Chicago",
+      "updatedAt": "2026-08-26T13:54:27.833Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:45.142Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:45.142Z",
+          "id": "aabfb931-9886-4b10-bf7e-8658575574c6",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.871Z",
+          "value": "margaret.hamilton@example.com"
+        }
+      ],
+      "firstName": "Margaret",
+      "hasAvatar": true,
+      "headline": "Software engineer, Apollo",
+      "id": "01a03e59-26b6-71df-97bc-79150869a6c0",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:45.142Z",
+          "date": "1936-08-17",
+          "id": "cbcb4327-f755-4529-91e9-16401df28b9f",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:27.871Z"
+        }
+      ],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-07-01T13:54:27.842Z",
+      "lastInteractionActivityId": "01a03e59-cd95-733a-8073-f907ffae0eb0",
+      "lastName": "Hamilton",
+      "latitude": 42.36563,
+      "linkedin": null,
+      "location": "Cambridge, state Massachusetts, US",
+      "longitude": -71.104,
+      "middleName": null,
+      "notes": "Led the onboard flight software for Apollo 11.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:45.142Z",
+          "handle": "https://www.linkedin.com/in/margaret-hamilton",
+          "id": "0ed44ce2-fa3c-4b84-9193-7e7250b5df26",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.871Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:45.142Z",
+          "handle": "https://example.com/margaret.hamilton",
+          "id": "3bef1d83-337e-490c-9080-f5ca52c5bb3e",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.871Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:27.871Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:46.096Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:46.096Z",
+          "id": "a08ee1ec-6b72-4e2c-88f5-69ff0706e08a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.920Z",
+          "value": "bill.gates@example.com"
+        }
+      ],
+      "firstName": "Bill",
+      "hasAvatar": true,
+      "headline": "Co-founder, Microsoft",
+      "id": "01a03e59-2a6f-747f-9971-8d05fb465777",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-06-20T13:54:27.880Z",
+      "lastInteractionActivityId": "01a03e59-cdc4-72b7-84d7-5cfb4f7a37bb",
+      "lastName": "Gates",
+      "latitude": 28.57436,
+      "linkedin": null,
+      "location": "Big Wells, state Texas, US",
+      "longitude": -99.57072,
+      "middleName": null,
+      "notes": "Philanthropy follow-up after the climate briefing.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:46.096Z",
+          "handle": "https://www.linkedin.com/in/bill-gates",
+          "id": "def9d0b6-f90f-4128-9003-58c3b1548430",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.920Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:46.096Z",
+          "handle": "https://example.com/bill.gates",
+          "id": "8ccc7895-2224-4bf0-8def-69b1835211a7",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.920Z"
+        }
+      ],
+      "timezone": "America/Chicago",
+      "updatedAt": "2026-08-26T13:54:27.920Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:46.815Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:46.815Z",
+          "id": "328b1931-52a5-45f0-ace7-41bcbbf51c6e",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:27.968Z",
+          "value": "linus.torvalds@example.com"
+        }
+      ],
+      "firstName": "Linus",
+      "hasAvatar": true,
+      "headline": "Creator of Linux",
+      "id": "01a03e59-2d3e-75f1-82cd-d1dca6163386",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-06-09T13:54:27.929Z",
+      "lastInteractionActivityId": "01a03e59-cdf7-71d9-a396-002df136aa2b",
+      "lastName": "Torvalds",
+      "latitude": 45.52025,
+      "linkedin": null,
+      "location": "Portland, state Oregon, US",
+      "longitude": -122.67419,
+      "middleName": null,
+      "notes": "Kernel maintainer. Prefers email over calls.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:46.815Z",
+          "id": "db16b240-91d0-4838-870f-2b8f033bbbda",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:27.968Z",
+          "value": "5550100006"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:46.815Z",
+          "handle": "https://www.linkedin.com/in/linus-torvalds",
+          "id": "d2ec6095-9838-4600-a723-f88a92dba43a",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:27.968Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:46.815Z",
+          "handle": "https://example.com/linus.torvalds",
+          "id": "1548b4a6-db5c-418b-a58d-004bf8126de2",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:27.968Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:27.968Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:47.465Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:47.465Z",
+          "id": "dd1c6782-8ff4-4077-9a48-b1486f0545ab",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.014Z",
+          "value": "tim.berners.lee@example.com"
+        }
+      ],
+      "firstName": "Tim",
+      "hasAvatar": true,
+      "headline": "Inventor of the World Wide Web",
+      "id": "01a03e59-2fc8-728b-a417-0e171d3a4529",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-05-29T13:54:27.981Z",
+      "lastInteractionActivityId": "01a03e59-ce23-737c-8d33-3429074f05d3",
+      "lastName": "Berners-Lee",
+      "latitude": 51.75201,
+      "linkedin": null,
+      "location": "Oxford, state England, GB",
+      "longitude": -1.25785,
+      "middleName": null,
+      "notes": "Solid project and open web advocacy.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:47.465Z",
+          "handle": "https://www.linkedin.com/in/tim-berners-lee",
+          "id": "d202c2fb-97ae-4e36-b365-6e9e2caeeff0",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.014Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:47.465Z",
+          "handle": "https://example.com/tim.berners.lee",
+          "id": "3e397e21-c06f-4991-aec5-6a9ae643a4ab",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.014Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:28.014Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:48.397Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:48.397Z",
+          "id": "5e45e44e-fb49-4897-8685-e7c68957b831",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.057Z",
+          "value": "vint.cerf@example.com"
+        }
+      ],
+      "firstName": "Vint",
+      "hasAvatar": true,
+      "headline": "Internet pioneer",
+      "id": "01a03e59-336d-74fd-bbc2-2d62b9698ed4",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-05-18T13:54:28.022Z",
+      "lastInteractionActivityId": "01a03e59-ce50-7228-b940-a6663f95d9fa",
+      "lastName": "Cerf",
+      "latitude": 38.93429,
+      "linkedin": null,
+      "location": "McLean, state Virginia, US",
+      "longitude": -77.17763,
+      "middleName": null,
+      "notes": "TCP/IP co-designer. Google Chief Internet Evangelist.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:48.397Z",
+          "handle": "https://www.linkedin.com/in/vint-cerf",
+          "id": "9af0e7db-36c0-45b4-878b-8293fe734644",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.057Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:48.397Z",
+          "handle": "https://example.com/vint.cerf",
+          "id": "0f75b86c-205a-4319-a78e-045cd03df8d4",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.057Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.057Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:49.124Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:49.124Z",
+          "id": "be0024bf-6be7-40ca-bdf7-18866d0bb41c",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.102Z",
+          "value": "radia.perlman@example.com"
+        }
+      ],
+      "firstName": "Radia",
+      "hasAvatar": true,
+      "headline": "Network engineer",
+      "id": "01a03e59-3644-725b-b0ec-cc80e698509a",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-05-07T13:54:28.075Z",
+      "lastInteractionActivityId": "01a03e59-ce7c-7306-b4d7-cfe293d6496f",
+      "lastName": "Perlman",
+      "latitude": 47.66941,
+      "linkedin": null,
+      "location": "Redmond, state Washington, US",
+      "longitude": -122.12388,
+      "middleName": null,
+      "notes": "Spanning Tree Protocol. Call her the mother of the internet.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:49.124Z",
+          "id": "28cf57e9-d65e-4be2-9aab-ea1cfc452684",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.102Z",
+          "value": "5550100009"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:49.124Z",
+          "handle": "https://www.linkedin.com/in/radia-perlman",
+          "id": "eb529371-d7cf-4f97-b63b-3f191379f380",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.102Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:49.124Z",
+          "handle": "https://example.com/radia.perlman",
+          "id": "801700e7-82a5-4eb7-9649-85b97b76e65a",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.102Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.102Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:49.787Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:49.787Z",
+          "id": "da3f407a-5949-485a-8a38-2e2ca71b325e",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.147Z",
+          "value": "barbara.liskov@example.com"
+        }
+      ],
+      "firstName": "Barbara",
+      "hasAvatar": true,
+      "headline": "Programming language researcher",
+      "id": "01a03e59-38da-7321-b059-e1d75fa513e8",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-04-26T13:54:28.111Z",
+      "lastInteractionActivityId": "01a03e59-cea9-7028-9da4-b1e6ecb9eeaf",
+      "lastName": "Liskov",
+      "latitude": 42.36563,
+      "linkedin": null,
+      "location": "Cambridge, state Massachusetts, US",
+      "longitude": -71.104,
+      "middleName": null,
+      "notes": "Liskov substitution principle. MIT CSAIL.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:49.787Z",
+          "handle": "https://www.linkedin.com/in/barbara-liskov",
+          "id": "9953d1f9-5f0b-4f0d-a5b8-f29ffc888f0c",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.147Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:49.787Z",
+          "handle": "https://example.com/barbara.liskov",
+          "id": "4dedbff5-b8ff-4b66-b8c6-f2c6b88fad8b",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.147Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.147Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:50.125Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:50.125Z",
+          "id": "53a582e9-9483-4b51-a043-7ec429db3b0c",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.179Z",
+          "value": "frances.allen@example.com"
+        }
+      ],
+      "firstName": "Frances",
+      "hasAvatar": true,
+      "headline": "Compiler researcher",
+      "id": "01a03e59-3a2d-71bc-95f6-363a54610edb",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-04-15T13:54:28.155Z",
+      "lastInteractionActivityId": "01a03e59-cec9-713b-9f03-7c98b705eee4",
+      "lastName": "Allen",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "First woman to win the Turing Award.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:50.125Z",
+          "handle": "https://www.linkedin.com/in/frances-allen",
+          "id": "4446bf1a-1b03-4f87-ac05-ab333348082d",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.179Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:50.125Z",
+          "handle": "https://example.com/frances.allen",
+          "id": "6bccb447-319d-427f-94bd-beb5274f8c27",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.179Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.179Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:51.779Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:51.779Z",
+          "id": "7a7a7007-1d35-43ba-ba2e-d3069d9ca6ed",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.226Z",
+          "value": "katherine.johnson@example.com"
+        }
+      ],
+      "firstName": "Katherine",
+      "hasAvatar": true,
+      "headline": "Mathematician, NASA",
+      "id": "01a03e59-40a2-70c1-8820-fec892f6f28e",
+      "importantDates": [
+        {
+          "createdAt": "2026-08-26T13:53:51.779Z",
+          "date": "1918-08-26",
+          "id": "0167109f-34ea-4d41-b0d9-bd18482cd53f",
+          "note": null,
+          "notifyDaysBefore": 7,
+          "notifyOn": null,
+          "type": "birthday",
+          "updatedAt": "2026-08-26T13:54:28.226Z"
+        }
+      ],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-04-04T13:54:28.186Z",
+      "lastInteractionActivityId": "01a03e59-cef8-7509-b2d5-ddc55a4e6249",
+      "lastName": "Johnson",
+      "latitude": 37.02644,
+      "linkedin": null,
+      "location": "Hampton, state Virginia, US",
+      "longitude": -76.34428,
+      "middleName": null,
+      "notes": "Orbital mechanics for Mercury and Apollo.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:51.779Z",
+          "id": "9ab6cd26-f359-4b01-a23b-db8f763115fd",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.226Z",
+          "value": "5550100012"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:51.779Z",
+          "handle": "https://www.linkedin.com/in/katherine-johnson",
+          "id": "9f56e164-41a8-475f-8f73-316cbc23c328",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.226Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:51.779Z",
+          "handle": "https://example.com/katherine.johnson",
+          "id": "343f9005-a209-403b-92ad-eac181ee7914",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.226Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.226Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:52.573Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:52.573Z",
+          "id": "95055358-03a1-4f0f-bdc0-b3e91660a85c",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.270Z",
+          "value": "hedy.lamarr@example.com"
+        }
+      ],
+      "firstName": "Hedy",
+      "hasAvatar": true,
+      "headline": "Inventor and actor",
+      "id": "01a03e59-43bd-70bf-b678-1673878f566f",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-24T13:54:28.235Z",
+      "lastInteractionActivityId": "01a03e59-cf24-711b-9887-f7e880480ef6",
+      "lastName": "Lamarr",
+      "latitude": 48.20835,
+      "linkedin": null,
+      "location": "Vienna, federal state Vienna, AT",
+      "longitude": 16.3725,
+      "middleName": null,
+      "notes": "Frequency-hopping work that led toward Wi-Fi.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:52.573Z",
+          "handle": "https://www.linkedin.com/in/hedy-lamarr",
+          "id": "3bd43ff4-976f-4274-ab00-e3e7be0d3e39",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.270Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:52.573Z",
+          "handle": "https://example.com/hedy.lamarr",
+          "id": "97d8304d-3afb-4c37-b3ce-2b8da2eec8aa",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.270Z"
+        }
+      ],
+      "timezone": "Europe/Vienna",
+      "updatedAt": "2026-08-26T13:54:28.270Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:53.256Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:53.256Z",
+          "id": "e9cda0e2-a5b0-4c8d-9764-d361e6d6683a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.316Z",
+          "value": "john.von.neumann@example.com"
+        }
+      ],
+      "firstName": "John",
+      "hasAvatar": true,
+      "headline": "Mathematician",
+      "id": "01a03e59-4668-72c6-8ce8-9277c98119dd",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-13T13:54:28.279Z",
+      "lastInteractionActivityId": "01a03e59-cf52-7377-9cb1-0206fd760e81",
+      "lastName": "von Neumann",
+      "latitude": 40.3497,
+      "linkedin": null,
+      "location": "Princeton, state New Jersey, US",
+      "longitude": -74.65974,
+      "middleName": null,
+      "notes": "Architecture, game theory, and computing.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:53.256Z",
+          "handle": "https://www.linkedin.com/in/john-von-neumann",
+          "id": "620cc7d3-c7dc-4e39-80ff-14d6c62987ab",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.316Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:53.256Z",
+          "handle": "https://example.com/john.von.neumann",
+          "id": "ad4d6b12-0ae2-4f53-91d0-c90f3d9e00ca",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.316Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.316Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:53.943Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:53.943Z",
+          "id": "5045a58b-55ad-4396-9f6b-9c9d11b0e3f8",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.364Z",
+          "value": "claude.shannon@example.com"
+        }
+      ],
+      "firstName": "Claude",
+      "hasAvatar": true,
+      "headline": "Information theorist",
+      "id": "01a03e59-4917-757f-8b03-3bbdb1e2467a",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-02T13:54:28.324Z",
+      "lastInteractionActivityId": "01a03e59-cf82-76be-8269-2e70ea6f5931",
+      "lastName": "Shannon",
+      "latitude": 45.02751,
+      "linkedin": null,
+      "location": "Gaylord, state Michigan, US",
+      "longitude": -84.67475,
+      "middleName": null,
+      "notes": "A Mathematical Theory of Communication.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:53.943Z",
+          "id": "80030ada-7648-4988-93a9-14675ee56da7",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.364Z",
+          "value": "5550100015"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:53.943Z",
+          "handle": "https://www.linkedin.com/in/claude-shannon",
+          "id": "8d9374a6-f2aa-4db2-ac00-9aaa3400ba01",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.364Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:53.943Z",
+          "handle": "https://example.com/claude.shannon",
+          "id": "f0622b29-4ea7-4b70-981e-4fb62c116a6a",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.364Z"
+        }
+      ],
+      "timezone": "America/Detroit",
+      "updatedAt": "2026-08-26T13:54:28.364Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:54.634Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:54.634Z",
+          "id": "f00aa022-f93a-479f-a76b-02bd0a0aa37f",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.408Z",
+          "value": "dennis.ritchie@example.com"
+        }
+      ],
+      "firstName": "Dennis",
+      "hasAvatar": true,
+      "headline": "Creator of C",
+      "id": "01a03e59-4bc9-7144-abe2-d40997bdcd37",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-02-19T13:54:28.374Z",
+      "lastInteractionActivityId": "01a03e59-cfaf-73a0-868c-59769a9652ce",
+      "lastName": "Ritchie",
+      "latitude": null,
+      "linkedin": null,
+      "location": "Summit, USA",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Unix and C with Ken Thompson.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:54.634Z",
+          "handle": "https://www.linkedin.com/in/dennis-ritchie",
+          "id": "c81a4603-8e0e-4068-b644-d28b13fb61ac",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.408Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:54.634Z",
+          "handle": "https://example.com/dennis.ritchie",
+          "id": "45996d6e-0fe8-4bfb-82cd-160ac2b000f4",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.408Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:28.408Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:55.066Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:55.066Z",
+          "id": "3a2854e1-5552-4e95-a841-1fbd44a32107",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.458Z",
+          "value": "ken.thompson@example.com"
+        }
+      ],
+      "firstName": "Ken",
+      "hasAvatar": true,
+      "headline": "Unix co-creator",
+      "id": "01a03e59-4d7a-751a-a196-546078322e31",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-02-08T13:54:28.417Z",
+      "lastInteractionActivityId": "01a03e59-cfdf-7438-8c70-d32f6a2c80f6",
+      "lastName": "Thompson",
+      "latitude": 37.87084,
+      "linkedin": null,
+      "location": "Berkeley, state California, US",
+      "longitude": -122.27286,
+      "middleName": null,
+      "notes": "Go, Unix, and chess machines.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:55.066Z",
+          "handle": "https://www.linkedin.com/in/ken-thompson",
+          "id": "c832e7bb-0676-42ac-a26f-3625e38d8ca0",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.458Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:55.066Z",
+          "handle": "https://example.com/ken.thompson",
+          "id": "fe4bf001-7886-4f12-9469-e88a7f10e532",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.458Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.458Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:55.776Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:55.776Z",
+          "id": "196ba3f9-83e1-4498-8d9f-e68b658b66af",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.502Z",
+          "value": "bjarne.stroustrup@example.com"
+        }
+      ],
+      "firstName": "Bjarne",
+      "hasAvatar": true,
+      "headline": "Creator of C++",
+      "id": "01a03e59-5040-74c2-b626-dd7830ae34d8",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-01-28T13:54:28.470Z",
+      "lastInteractionActivityId": "01a03e59-d00b-704f-9302-221f9fba613a",
+      "lastName": "Stroustrup",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "Met after a language design talk.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:55.776Z",
+          "id": "17423c1e-03e2-4e79-82c1-f1c0d4d73b44",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.502Z",
+          "value": "5550100018"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:55.776Z",
+          "handle": "https://www.linkedin.com/in/bjarne-stroustrup",
+          "id": "edf7e023-c9e7-43c8-b14d-d5502f70ecc0",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.502Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:55.776Z",
+          "handle": "https://example.com/bjarne.stroustrup",
+          "id": "967877fd-886b-4b1e-bb2e-33276cd70b62",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.502Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:28.502Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:56.162Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:56.162Z",
+          "id": "07e6ef79-6f1d-4a5d-bf29-fb411588625f",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.552Z",
+          "value": "guido.van.rossum@example.com"
+        }
+      ],
+      "firstName": "Guido",
+      "hasAvatar": true,
+      "headline": "Creator of Python",
+      "id": "01a03e59-51c2-72dd-af1e-b2400ef8bb68",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-01-17T13:54:28.511Z",
+      "lastInteractionActivityId": "01a03e59-d03e-757b-9110-f1922ec54bb5",
+      "lastName": "van Rossum",
+      "latitude": null,
+      "linkedin": null,
+      "location": "San Francisco, USA",
+      "longitude": null,
+      "middleName": null,
+      "notes": "BDFL emeritus. Prefers async catch-ups.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:56.162Z",
+          "handle": "https://www.linkedin.com/in/guido-van-rossum",
+          "id": "09292975-9a5c-43fe-8780-de6db7b2273b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.552Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:56.162Z",
+          "handle": "https://example.com/guido.van.rossum",
+          "id": "6c293ed9-147d-46b4-b822-b14b2d5e71e8",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.552Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:28.552Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:57.021Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:57.021Z",
+          "id": "50a68abb-ebd8-468f-8aa8-6ee55dc38e12",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.270Z",
+          "value": "larry.page@example.com"
+        }
+      ],
+      "firstName": "Larry",
+      "hasAvatar": true,
+      "headline": "Co-founder, Google",
+      "id": "01a03e59-551d-700c-91aa-1087d4d77e3a",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-24T13:54:28.235Z",
+      "lastInteractionActivityId": "01a03e59-cf24-711b-9887-f7e880480ef6",
+      "lastName": "Page",
+      "latitude": 37.44433,
+      "linkedin": null,
+      "location": "Palo Alto, state California, US",
+      "longitude": -122.15985,
+      "middleName": null,
+      "notes": "PageRank origin story still comes up.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:57.021Z",
+          "handle": "https://www.linkedin.com/in/larry-page",
+          "id": "acc55fac-ecbd-4621-93bc-f7f57db912e2",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.270Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:57.021Z",
+          "handle": "https://example.com/larry.page",
+          "id": "ac9a82a9-dd72-48a0-bf2a-ecd97b97cb43",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.270Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.270Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:57.366Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:57.366Z",
+          "id": "e076c7c5-4864-41ff-8fa1-4f8a936bd98a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.316Z",
+          "value": "sergey.brin@example.com"
+        }
+      ],
+      "firstName": "Sergey",
+      "hasAvatar": true,
+      "headline": "Co-founder, Google",
+      "id": "01a03e59-5676-705d-9579-85b5c52fdcec",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-13T13:54:28.279Z",
+      "lastInteractionActivityId": "01a03e59-cf52-7377-9cb1-0206fd760e81",
+      "lastName": "Brin",
+      "latitude": 33.565,
+      "linkedin": null,
+      "location": "Mission Viejo, state California, US",
+      "longitude": -117.66571,
+      "middleName": null,
+      "notes": "Moonshot conversations at X.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:57.366Z",
+          "id": "a7d5b2d5-6c62-4e75-9271-4ee2adb7bb17",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.316Z",
+          "value": "5550100021"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:57.366Z",
+          "handle": "https://www.linkedin.com/in/sergey-brin",
+          "id": "1b9059aa-5bc2-47bd-91e0-a3619201a711",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.316Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:57.366Z",
+          "handle": "https://example.com/sergey.brin",
+          "id": "0d64d848-4fef-45ed-a0c9-65d84ce40377",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.316Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.316Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:58.004Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:58.004Z",
+          "id": "fc67d136-35ea-4d18-acf6-9175ed086676",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.364Z",
+          "value": "jeff.bezos@example.com"
+        }
+      ],
+      "firstName": "Jeff",
+      "hasAvatar": true,
+      "headline": "Founder, Amazon",
+      "id": "01a03e59-58f4-7567-afbb-3c1869e200a6",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-03-02T13:54:28.324Z",
+      "lastInteractionActivityId": "01a03e59-cf82-76be-8269-2e70ea6f5931",
+      "lastName": "Bezos",
+      "latitude": 47.60383,
+      "linkedin": null,
+      "location": "Seattle, state Washington, US",
+      "longitude": -122.33006,
+      "middleName": null,
+      "notes": "Customer obsession as an operating system.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:58.004Z",
+          "handle": "https://www.linkedin.com/in/jeff-bezos",
+          "id": "c3735ecb-ee79-445e-ba9a-023a3afb092b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.364Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:58.004Z",
+          "handle": "https://example.com/jeff.bezos",
+          "id": "b7486953-8b02-4b48-9a46-e7b4f3f98a32",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.364Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.364Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:58.611Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:58.611Z",
+          "id": "5ca0f16f-f7fa-484e-9d7b-cff44095e31a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.408Z",
+          "value": "satoshi.nakamoto@example.com"
+        }
+      ],
+      "firstName": "Satoshi",
+      "hasAvatar": true,
+      "headline": "Bitcoin author",
+      "id": "01a03e59-5b53-760b-a32c-604182d1fa09",
+      "importantDates": [],
+      "keepFrequencyDays": null,
+      "language": "en",
+      "lastInteraction": "2026-02-19T13:54:28.374Z",
+      "lastInteractionActivityId": "01a03e59-cfaf-73a0-868c-59769a9652ce",
+      "lastName": "Nakamoto",
+      "latitude": 40.61911,
+      "linkedin": null,
+      "location": "Thessaloniki Municipal Unit, Central Macedonia Region, GR",
+      "longitude": 22.95305,
+      "middleName": null,
+      "notes": "Pseudonymous. Keep the sample notes fictional.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:58.611Z",
+          "handle": "https://www.linkedin.com/in/satoshi-nakamoto",
+          "id": "647654b5-092f-4109-ba2c-759ad50c6fc8",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.408Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:58.611Z",
+          "handle": "https://example.com/satoshi.nakamoto",
+          "id": "3da9beee-4024-479b-adbd-bc3b3affa04d",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.408Z"
+        }
+      ],
+      "timezone": "Europe/Athens",
+      "updatedAt": "2026-08-26T13:54:28.408Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:59.227Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:59.227Z",
+          "id": "3b3f945a-e86f-427d-8441-e76ab8eb91d7",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.458Z",
+          "value": "brendan.eich@example.com"
+        }
+      ],
+      "firstName": "Brendan",
+      "hasAvatar": true,
+      "headline": "Creator of JavaScript",
+      "id": "01a03e59-5dbb-743e-a044-e013b93b0e70",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-02-08T13:54:28.417Z",
+      "lastInteractionActivityId": "01a03e59-cfdf-7438-8c70-d32f6a2c80f6",
+      "lastName": "Eich",
+      "latitude": null,
+      "linkedin": null,
+      "location": "San Francisco, USA",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Ten days in May 1995.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:53:59.227Z",
+          "id": "3c32de62-7063-49de-b6e8-388a64aa152c",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:28.458Z",
+          "value": "5550100024"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.227Z",
+          "handle": "https://www.linkedin.com/in/brendan-eich",
+          "id": "9df1f8d9-f6b9-4249-bdc4-7286b6b0146c",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.458Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.227Z",
+          "handle": "https://example.com/brendan.eich",
+          "id": "031d4599-7246-49a4-a672-80dd7455c799",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.458Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:28.458Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:59.582Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:59.582Z",
+          "id": "5ecb25a7-bcc5-4381-a643-7fe387d84ca6",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.502Z",
+          "value": "anders.hejlsberg@example.com"
+        }
+      ],
+      "firstName": "Anders",
+      "hasAvatar": true,
+      "headline": "Creator of TypeScript",
+      "id": "01a03e59-5f1d-747b-8116-c54fa6de323c",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-01-28T13:54:28.470Z",
+      "lastInteractionActivityId": "01a03e59-d00b-704f-9302-221f9fba613a",
+      "lastName": "Hejlsberg",
+      "latitude": 47.66941,
+      "linkedin": null,
+      "location": "Redmond, state Washington, US",
+      "longitude": -122.12388,
+      "middleName": null,
+      "notes": "Turbo Pascal, C#, TypeScript lineage.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.582Z",
+          "handle": "https://www.linkedin.com/in/anders-hejlsberg",
+          "id": "b7849bcf-0887-446e-b6cc-aa84fb0bbd9c",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.502Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.582Z",
+          "handle": "https://example.com/anders.hejlsberg",
+          "id": "a13b5a1b-70c5-4513-9877-44ab1a91fb86",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.502Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:28.502Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:53:59.950Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:53:59.950Z",
+          "id": "05045c0d-1145-460b-84ee-e3654aeea47e",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:28.552Z",
+          "value": "james.gosling@example.com"
+        }
+      ],
+      "firstName": "James",
+      "hasAvatar": true,
+      "headline": "Creator of Java",
+      "id": "01a03e59-608e-703e-b52d-23ed4e42ef40",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-01-17T13:54:28.511Z",
+      "lastInteractionActivityId": "01a03e59-d03e-757b-9110-f1922ec54bb5",
+      "lastName": "Gosling",
+      "latitude": 51.04561,
+      "linkedin": null,
+      "location": "Calgary, province Alberta, CA",
+      "longitude": -114.05754,
+      "middleName": null,
+      "notes": "Oak became Java. Friendly at Q&A.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.950Z",
+          "handle": "https://www.linkedin.com/in/james-gosling",
+          "id": "d28878c4-3238-4ea5-bb7e-208b1ef6119b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:28.552Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:53:59.950Z",
+          "handle": "https://example.com/james.gosling",
+          "id": "64e3099c-a2d1-4494-b313-dabfe33faf93",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:28.552Z"
+        }
+      ],
+      "timezone": "America/Edmonton",
+      "updatedAt": "2026-08-26T13:54:28.552Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:00.557Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:00.557Z",
+          "id": "d254dbf9-a526-436d-a547-a62394814ae1",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:00.946Z",
+          "value": "yukihiro.matsumoto@example.com"
+        }
+      ],
+      "firstName": "Yukihiro",
+      "hasAvatar": true,
+      "headline": "Creator of Ruby",
+      "id": "01a03e59-62ed-774e-8638-50601c1003d6",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "ja",
+      "lastInteraction": "2026-08-26T13:54:00.557Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Matsumoto",
+      "latitude": null,
+      "linkedin": null,
+      "location": "Matsue, Japan",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Matz. Developer happiness as a design goal.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:00.557Z",
+          "id": "c32a16f8-e3b6-4767-b49d-8314718a6eef",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:00.946Z",
+          "value": "5550100027"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:00.557Z",
+          "handle": "https://www.linkedin.com/in/yukihiro-matsumoto",
+          "id": "c4a4fbe6-08eb-40fb-847b-7da576ea4f40",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:00.946Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:00.557Z",
+          "handle": "https://example.com/yukihiro.matsumoto",
+          "id": "4dd063d3-f581-4ae0-ac17-e3b681f41bff",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:00.946Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:00.946Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:01.032Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:01.032Z",
+          "id": "00b80848-9dda-44a8-8482-f36cf18acc33",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:01.729Z",
+          "value": "donald.knuth@example.com"
+        }
+      ],
+      "firstName": "Donald",
+      "hasAvatar": true,
+      "headline": "Author of The Art of Computer Programming",
+      "id": "01a03e59-64c7-7698-b0fd-3c500c8b1abd",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:01.031Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Knuth",
+      "latitude": 41.88389,
+      "linkedin": null,
+      "location": "Stanford, state New York, US",
+      "longitude": -73.70333,
+      "middleName": null,
+      "notes": "TeX, literate programming, and reward checks.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:01.032Z",
+          "handle": "https://www.linkedin.com/in/donald-knuth",
+          "id": "c2a7bfd3-5292-42cb-9e14-50a41cc1e2a8",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:01.729Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:01.032Z",
+          "handle": "https://example.com/donald.knuth",
+          "id": "2ba4efdb-16de-4bef-b9c5-00e8ba05c117",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:01.729Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:01.729Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:01.798Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:01.798Z",
+          "id": "8032fee0-213c-4ab5-8d16-cdbc492a5bdd",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:02.389Z",
+          "value": "edsger.dijkstra@example.com"
+        }
+      ],
+      "firstName": "Edsger",
+      "hasAvatar": true,
+      "headline": "Computer scientist",
+      "id": "01a03e59-67c6-726e-9237-ba03c2ce743b",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:01.798Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Dijkstra",
+      "latitude": 51.4743,
+      "linkedin": null,
+      "location": "Nuenen, constituent state Netherlands, NL",
+      "longitude": 5.54904,
+      "middleName": null,
+      "notes": "Goto considered harmful. Shortest paths.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:01.798Z",
+          "handle": "https://www.linkedin.com/in/edsger-dijkstra",
+          "id": "426a3a57-dc2e-4fb5-a1f8-ba0f6d24a45d",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:02.389Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:01.798Z",
+          "handle": "https://example.com/edsger.dijkstra",
+          "id": "84fa1226-8358-4b8d-8b06-cd3a049e9b3d",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:02.389Z"
+        }
+      ],
+      "timezone": "Europe/Amsterdam",
+      "updatedAt": "2026-08-26T13:54:02.389Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:02.461Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:02.461Z",
+          "id": "f5e5b1e2-2194-4eba-aeae-6d2fd75f767d",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:03.068Z",
+          "value": "tony.hoare@example.com"
+        }
+      ],
+      "firstName": "Tony",
+      "hasAvatar": true,
+      "headline": "Computer scientist",
+      "id": "01a03e59-6a5d-77b1-8cdd-c662ea324e54",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:02.461Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Hoare",
+      "latitude": 52.20553,
+      "linkedin": null,
+      "location": "Cambridge, state England, GB",
+      "longitude": 0.11866,
+      "middleName": null,
+      "notes": "Quicksort and CSP. Null as a billion-dollar mistake.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:02.461Z",
+          "id": "d631abd0-306d-457e-9253-729291e09404",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:03.068Z",
+          "value": "5550100030"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:02.461Z",
+          "handle": "https://www.linkedin.com/in/tony-hoare",
+          "id": "48fdfcf2-d4b6-49b5-9a97-e8e249b24091",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:03.068Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:02.461Z",
+          "handle": "https://example.com/tony.hoare",
+          "id": "a649c30b-c839-4fb6-b47c-6649b1de103e",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:03.068Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:03.068Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:03.148Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:03.148Z",
+          "id": "46e43c11-5a00-4eb5-a790-9b51ddc3d635",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:03.447Z",
+          "value": "john.mccarthy@example.com"
+        }
+      ],
+      "firstName": "John",
+      "hasAvatar": true,
+      "headline": "Creator of Lisp",
+      "id": "01a03e59-6d0b-758a-bf34-5804f2fa8c3c",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:03.147Z",
+      "lastInteractionActivityId": null,
+      "lastName": "McCarthy",
+      "latitude": 41.88389,
+      "linkedin": null,
+      "location": "Stanford, state New York, US",
+      "longitude": -73.70333,
+      "middleName": null,
+      "notes": "Coined artificial intelligence.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:03.148Z",
+          "handle": "https://www.linkedin.com/in/john-mccarthy",
+          "id": "8d177b49-c6b4-4542-ba88-40dc72cfa43b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:03.447Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:03.148Z",
+          "handle": "https://example.com/john.mccarthy",
+          "id": "bfb5aa79-60c0-4dc3-a692-79ad77af4738",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:03.447Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:03.447Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:03.528Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:03.528Z",
+          "id": "8f526d22-56bf-4f89-9808-8e76f6ff759d",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:04.156Z",
+          "value": "marvin.minsky@example.com"
+        }
+      ],
+      "firstName": "Marvin",
+      "hasAvatar": true,
+      "headline": "AI researcher",
+      "id": "01a03e59-6e88-714b-940b-9ee62617c98b",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:03.528Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Minsky",
+      "latitude": 42.35883,
+      "linkedin": null,
+      "location": "Boston, state Massachusetts, US",
+      "longitude": -71.05783,
+      "middleName": null,
+      "notes": "MIT AI Lab. Society of Mind.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:03.528Z",
+          "handle": "https://www.linkedin.com/in/marvin-minsky",
+          "id": "780f09ab-ae93-4313-a358-7f09390dae80",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:04.156Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:03.528Z",
+          "handle": "https://example.com/marvin.minsky",
+          "id": "cfa098f3-ec64-4671-baba-793cb5918de7",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:04.156Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:04.156Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:04.226Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:04.226Z",
+          "id": "7a9cf617-d346-495a-8e4f-b68ea53b6c88",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:04.909Z",
+          "value": "geoffrey.hinton@example.com"
+        }
+      ],
+      "firstName": "Geoffrey",
+      "hasAvatar": true,
+      "headline": "Deep learning researcher",
+      "id": "01a03e59-7142-71b9-9752-b7a3d3aa4cf4",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:04.226Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Hinton",
+      "latitude": 43.65348,
+      "linkedin": null,
+      "location": "Toronto, province Ontario, CA",
+      "longitude": -79.38393,
+      "middleName": null,
+      "notes": "Backprop, Boltzmann machines, Nobel-era work.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:04.226Z",
+          "id": "baed8c2d-2ca9-4a04-b100-98ec1aa82311",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:04.909Z",
+          "value": "5550100033"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:04.226Z",
+          "handle": "https://www.linkedin.com/in/geoffrey-hinton",
+          "id": "a8e6476b-eea1-4e1c-8950-0896f1daf4c3",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:04.909Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:04.226Z",
+          "handle": "https://example.com/geoffrey.hinton",
+          "id": "40e19ec2-cdf1-4f18-9b00-199e5803fe03",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:04.909Z"
+        }
+      ],
+      "timezone": "America/Toronto",
+      "updatedAt": "2026-08-26T13:54:04.909Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:04.989Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:04.989Z",
+          "id": "19ffbc7d-0dee-4273-9cc3-480cf88e4980",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:05.286Z",
+          "value": "yann.lecun@example.com"
+        }
+      ],
+      "firstName": "Yann",
+      "hasAvatar": true,
+      "headline": "Chief AI Scientist, Meta",
+      "id": "01a03e59-743d-75dd-a573-84b6e685c990",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:04.989Z",
+      "lastInteractionActivityId": null,
+      "lastName": "LeCun",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "CNNs and energy-based models.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:04.989Z",
+          "handle": "https://www.linkedin.com/in/yann-lecun",
+          "id": "d8a9c0b9-8ca7-46c8-91fb-1ee672c7a31a",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:05.286Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:04.989Z",
+          "handle": "https://example.com/yann.lecun",
+          "id": "478cdeef-f1eb-4c0d-9885-2a1106857324",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:05.286Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:05.286Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:05.348Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:05.348Z",
+          "id": "ecb6948b-3cca-47d7-8445-42fd91a820d1",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:05.652Z",
+          "value": "fei.fei.li@example.com"
+        }
+      ],
+      "firstName": "Fei-Fei",
+      "hasAvatar": true,
+      "headline": "AI researcher",
+      "id": "01a03e59-75a4-76ff-b75b-53a7b874cbf6",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:05.348Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Li",
+      "latitude": 41.88389,
+      "linkedin": null,
+      "location": "Stanford, state New York, US",
+      "longitude": -73.70333,
+      "middleName": null,
+      "notes": "ImageNet. Human-centered AI.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:05.348Z",
+          "handle": "https://www.linkedin.com/in/fei-fei-li",
+          "id": "eba5589f-2e2d-4f01-8c65-e0ef94f65bab",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:05.652Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:05.348Z",
+          "handle": "https://example.com/fei.fei.li",
+          "id": "6c254c31-2573-4409-ae15-1c5874e5bddf",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:05.652Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:05.652Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:05.725Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:05.725Z",
+          "id": "7bd4e944-90b6-4a26-8c9d-133e3d198f09",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:06.017Z",
+          "value": "andrew.ng@example.com"
+        }
+      ],
+      "firstName": "Andrew",
+      "hasAvatar": true,
+      "headline": "AI educator",
+      "id": "01a03e59-771d-71ae-9929-5ea8b7e47d29",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:05.725Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Ng",
+      "latitude": 37.44433,
+      "linkedin": null,
+      "location": "Palo Alto, state California, US",
+      "longitude": -122.15985,
+      "middleName": null,
+      "notes": "Coursera and Landing AI. Great at teaching.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:05.725Z",
+          "id": "cc3fc644-acb6-4e5f-9ff7-3aa9d339a14f",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:06.017Z",
+          "value": "5550100036"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:05.725Z",
+          "handle": "https://www.linkedin.com/in/andrew-ng",
+          "id": "7c98dca1-7b06-4a47-8b65-1310e7ff04a9",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:06.017Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:05.725Z",
+          "handle": "https://example.com/andrew.ng",
+          "id": "69d51cc6-1900-46db-a84c-8b63bd719f47",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:06.017Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:06.017Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:06.080Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:06.080Z",
+          "id": "cdd1c600-7a1f-41a6-85e3-44fd5b20e7b7",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:06.365Z",
+          "value": "demis.hassabis@example.com"
+        }
+      ],
+      "firstName": "Demis",
+      "hasAvatar": true,
+      "headline": "CEO, Google DeepMind",
+      "id": "01a03e59-7880-7151-9e40-e7fdd277144b",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:06.080Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Hassabis",
+      "latitude": 51.50745,
+      "linkedin": null,
+      "location": "London, state England, GB",
+      "longitude": -0.12777,
+      "middleName": null,
+      "notes": "AlphaFold and the games-to-science path.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.080Z",
+          "handle": "https://www.linkedin.com/in/demis-hassabis",
+          "id": "8461a8ce-dd84-43f8-90e0-ba43a4e9c13c",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:06.365Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.080Z",
+          "handle": "https://example.com/demis.hassabis",
+          "id": "ac85f6ef-b7e8-46f0-9482-42fc732971ed",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:06.365Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:06.365Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:06.434Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:06.434Z",
+          "id": "22778319-5daa-4478-a18f-85b54cae4787",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:06.739Z",
+          "value": "ilya.sutskever@example.com"
+        }
+      ],
+      "firstName": "Ilya",
+      "hasAvatar": true,
+      "headline": "AI researcher",
+      "id": "01a03e59-79e1-761f-93e1-e56cf6c46527",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:06.433Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Sutskever",
+      "latitude": null,
+      "linkedin": null,
+      "location": "San Francisco, USA",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Scaling, SSI, and research taste.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.434Z",
+          "handle": "https://www.linkedin.com/in/ilya-sutskever",
+          "id": "2befbdff-9965-4146-a7f4-c6b943f43b60",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:06.739Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.434Z",
+          "handle": "https://example.com/ilya.sutskever",
+          "id": "6ad948c8-5baa-4151-9f13-e558ec410b4e",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:06.739Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:06.739Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:06.819Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:06.819Z",
+          "id": "d0ef3ae6-e4d4-479c-aee3-ce704ebf338c",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:07.650Z",
+          "value": "sheryl.sandberg@example.com"
+        }
+      ],
+      "firstName": "Sheryl",
+      "hasAvatar": true,
+      "headline": "Operator and author",
+      "id": "01a03e59-7b63-704d-8811-aa2f59c295af",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:06.819Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Sandberg",
+      "latitude": 37.45197,
+      "linkedin": null,
+      "location": "Menlo Park, state California, US",
+      "longitude": -122.17799,
+      "middleName": null,
+      "notes": "Lean In. Ops-heavy conversations.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:06.819Z",
+          "id": "206c1ed6-c343-4e2a-a02c-508aeb4d7abe",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:07.650Z",
+          "value": "5550100039"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.819Z",
+          "handle": "https://www.linkedin.com/in/sheryl-sandberg",
+          "id": "9f62c89a-21fc-470a-a683-e08bd1ed9a68",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:07.650Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:06.819Z",
+          "handle": "https://example.com/sheryl.sandberg",
+          "id": "93653d0f-8bec-44ae-8ce4-50dc93857254",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:07.650Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:07.650Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:07.768Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:07.768Z",
+          "id": "9e2fbfe8-bcc9-41d2-93db-d4baa30b9530",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:08.345Z",
+          "value": "meg.whitman@example.com"
+        }
+      ],
+      "firstName": "Meg",
+      "hasAvatar": true,
+      "headline": "Former CEO, eBay and HP",
+      "id": "01a03e59-7f17-7021-8448-0ddd0cbe0042",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:07.767Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Whitman",
+      "latitude": 35.96311,
+      "linkedin": null,
+      "location": "state Tennessee, US",
+      "longitude": -84.12046,
+      "middleName": null,
+      "notes": "Marketplace scaling stories.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:07.768Z",
+          "handle": "https://www.linkedin.com/in/meg-whitman",
+          "id": "a8dbe693-ac00-4ae8-ad8b-8e5f2f2f1ab6",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:08.345Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:07.768Z",
+          "handle": "https://example.com/meg.whitman",
+          "id": "f8777bca-5108-410c-9da4-d274da042f33",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:08.345Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:08.345Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:08.431Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:08.431Z",
+          "id": "a397cd97-53d5-4bdd-a291-3f8615e5464a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:08.729Z",
+          "value": "ginni.rometty@example.com"
+        }
+      ],
+      "firstName": "Ginni",
+      "hasAvatar": true,
+      "headline": "Former CEO, IBM",
+      "id": "01a03e59-81ae-76eb-9afc-c3561eeb04e9",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:08.430Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Rometty",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "Enterprise transformation notes.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:08.431Z",
+          "handle": "https://www.linkedin.com/in/ginni-rometty",
+          "id": "2e81fa3f-48d7-4ccb-a9a4-3029fb6137b9",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:08.729Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:08.431Z",
+          "handle": "https://example.com/ginni.rometty",
+          "id": "7382d3a8-7cef-4ffd-b10f-fd7ccc09f0eb",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:08.729Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:08.729Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:08.785Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:08.785Z",
+          "id": "8175ce08-40b5-4e9d-991c-caac5432bc7f",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:09.054Z",
+          "value": "padmasree.warrior@example.com"
+        }
+      ],
+      "firstName": "Padmasree",
+      "hasAvatar": true,
+      "headline": "Technology executive",
+      "id": "01a03e59-8311-7200-8a1f-60ceef7bef2a",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:08.785Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Warrior",
+      "latitude": 37.44433,
+      "linkedin": null,
+      "location": "Palo Alto, state California, US",
+      "longitude": -122.15985,
+      "middleName": null,
+      "notes": "Cisco / Motorola era networking.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:08.785Z",
+          "id": "f16ce711-4b55-4728-a95c-9dadd8e86cad",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:09.054Z",
+          "value": "5550100042"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:08.785Z",
+          "handle": "https://www.linkedin.com/in/padmasree-warrior",
+          "id": "352f48c0-389f-42b6-9e67-11ac3b4398c3",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:09.054Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:08.785Z",
+          "handle": "https://example.com/padmasree.warrior",
+          "id": "93cdc5d7-2b06-4910-ab5a-db03c059bf56",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:09.054Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:09.054Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:09.122Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:09.122Z",
+          "id": "a4634fe2-b66f-46fd-b5d5-84c4774a997b",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:09.392Z",
+          "value": "reshma.saujani@example.com"
+        }
+      ],
+      "firstName": "Reshma",
+      "hasAvatar": true,
+      "headline": "Founder, Girls Who Code",
+      "id": "01a03e59-8462-734d-b091-973badd33e49",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:09.122Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Saujani",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "Invite to the next chapter event.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.122Z",
+          "handle": "https://www.linkedin.com/in/reshma-saujani",
+          "id": "e37453a7-001a-4c0c-bc15-4d77cb238211",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:09.392Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.122Z",
+          "handle": "https://example.com/reshma.saujani",
+          "id": "b4f87ffb-c0bf-4903-87f6-338d70072df1",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:09.392Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:09.392Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:09.459Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:09.459Z",
+          "id": "1a471913-091b-4148-bcab-a19c09f92ca7",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:09.732Z",
+          "value": "tracy.chou@example.com"
+        }
+      ],
+      "firstName": "Tracy",
+      "hasAvatar": false,
+      "headline": "Engineer and advocate",
+      "id": "01a03e59-85b3-7088-b07d-dc32a942edf4",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:09.459Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Chou",
+      "latitude": null,
+      "linkedin": null,
+      "location": "San Francisco, USA",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Diversity numbers in tech. Project Include.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.459Z",
+          "handle": "https://www.linkedin.com/in/tracy-chou",
+          "id": "99f1c4b9-5b90-4d3e-a739-c825e4d49f95",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:09.732Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.459Z",
+          "handle": "https://example.com/tracy.chou",
+          "id": "53fd42f0-b60e-4ab8-9394-a538ec17e94c",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:09.732Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:09.732Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:09.797Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:09.797Z",
+          "id": "30af7beb-7969-4f91-9411-a9ef57fb6676",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:10.073Z",
+          "value": "limor.fried@example.com"
+        }
+      ],
+      "firstName": "Limor",
+      "hasAvatar": true,
+      "headline": "Founder, Adafruit",
+      "id": "01a03e59-8705-72d4-af68-f58bcca40b93",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:09.797Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Fried",
+      "latitude": 40.71273,
+      "linkedin": null,
+      "location": "New York City, state New York, US",
+      "longitude": -74.00602,
+      "middleName": null,
+      "notes": "Open hardware. ladyada.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:09.797Z",
+          "id": "d8142605-81cf-4b9a-b403-13c6b94a8393",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:10.073Z",
+          "value": "5550100045"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.797Z",
+          "handle": "https://www.linkedin.com/in/limor-fried",
+          "id": "bc2e6f6e-5b28-497a-8d5c-5d2e638bd167",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:10.073Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.797Z",
+          "handle": "adafruit",
+          "id": "443f94e4-22dc-4969-8570-1ee038e5393f",
+          "platform": "instagram",
+          "updatedAt": "2026-08-26T13:54:10.073Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:09.797Z",
+          "handle": "https://example.com/limor.fried",
+          "id": "43300b03-b74c-42aa-a00a-6f8327fe6e04",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:10.073Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:10.073Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:10.151Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:10.151Z",
+          "id": "18d2c808-2a08-4bde-97d4-64b359f936a2",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:11.032Z",
+          "value": "mitchell.baker@example.com"
+        }
+      ],
+      "firstName": "Mitchell",
+      "hasAvatar": true,
+      "headline": "Executive Chair, Mozilla",
+      "id": "01a03e59-8867-70fa-83e5-42fc275b39e9",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:10.151Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Baker",
+      "latitude": 32.16601,
+      "linkedin": null,
+      "location": "Tucson, state Arizona, US",
+      "longitude": -110.78143,
+      "middleName": null,
+      "notes": "Open source governance.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:10.151Z",
+          "handle": "https://www.linkedin.com/in/mitchell-baker",
+          "id": "889da313-b9ed-46a0-a793-b970f84bba82",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:11.032Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:10.151Z",
+          "handle": "https://example.com/mitchell.baker",
+          "id": "96ccfa64-d3f7-4610-a9e1-7f29b8ac97d7",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:11.032Z"
+        }
+      ],
+      "timezone": "America/Phoenix",
+      "updatedAt": "2026-08-26T13:54:11.032Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:11.100Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:11.100Z",
+          "id": "64c41270-ba22-4c5d-ba1e-720933447161",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:11.388Z",
+          "value": "marissa.mayer@example.com"
+        }
+      ],
+      "firstName": "Marissa",
+      "hasAvatar": true,
+      "headline": "Former CEO, Yahoo",
+      "id": "01a03e59-8c1b-77f9-8ec3-38e76e84e6ba",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:11.099Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Mayer",
+      "latitude": 37.44433,
+      "linkedin": null,
+      "location": "Palo Alto, state California, US",
+      "longitude": -122.15985,
+      "middleName": null,
+      "notes": "Early Google PM. Design-minded.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.100Z",
+          "handle": "https://www.linkedin.com/in/marissa-mayer",
+          "id": "0d663f90-7942-4adb-bf35-fbddce5b873d",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:11.388Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.100Z",
+          "handle": "https://example.com/marissa.mayer",
+          "id": "7629aa1b-b024-42de-82e1-5983d776137e",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:11.388Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:11.388Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:11.468Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:11.468Z",
+          "id": "d2bc9ff2-44bc-4f18-aade-95e08a7ae5a7",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:11.793Z",
+          "value": "susan.wojcicki@example.com"
+        }
+      ],
+      "firstName": "Susan",
+      "hasAvatar": true,
+      "headline": "Former CEO, YouTube",
+      "id": "01a03e59-8d8c-72ee-8573-da2ed0d5682a",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:11.467Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Wojcicki",
+      "latitude": 33.565,
+      "linkedin": null,
+      "location": "Mission Viejo, state California, US",
+      "longitude": -117.66571,
+      "middleName": null,
+      "notes": "Garage Google lore.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:11.468Z",
+          "id": "74e65d47-9c1a-4161-bc1a-e74301e9d3fe",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:11.793Z",
+          "value": "5550100048"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.468Z",
+          "handle": "https://www.linkedin.com/in/susan-wojcicki",
+          "id": "7ac8acf7-c047-4e93-a52c-a6de5b423f77",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:11.793Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.468Z",
+          "handle": "https://example.com/susan.wojcicki",
+          "id": "de64144f-35c6-43e8-b5b2-9841ea527319",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:11.793Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:11.793Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:11.868Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:11.868Z",
+          "id": "b32fe14c-cc37-4cd4-84be-b5ed7ab3d4d4",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:12.509Z",
+          "value": "whitney.wolfe.herd@example.com"
+        }
+      ],
+      "firstName": "Whitney",
+      "hasAvatar": true,
+      "headline": "Founder, Bumble",
+      "id": "01a03e59-8f1c-752d-8729-5d21a7f12c6e",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:11.867Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Wolfe Herd",
+      "latitude": 30.27113,
+      "linkedin": null,
+      "location": "Austin, state Texas, US",
+      "longitude": -97.7437,
+      "middleName": null,
+      "notes": "Consumer social products.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.868Z",
+          "handle": "https://www.linkedin.com/in/whitney-wolfe-herd",
+          "id": "94836289-1cbf-4e17-8a98-c5235d361b46",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:12.509Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:11.868Z",
+          "handle": "https://example.com/whitney.wolfe.herd",
+          "id": "5db8ac75-d9cb-4aee-bcd6-77810ca67922",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:12.509Z"
+        }
+      ],
+      "timezone": "America/Chicago",
+      "updatedAt": "2026-08-26T13:54:12.509Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:12.577Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:12.577Z",
+          "id": "9b6ec1ac-882d-467e-b123-e0f2851301d1",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:13.284Z",
+          "value": "jane.doe@example.com"
+        }
+      ],
+      "firstName": "Jane",
+      "hasAvatar": false,
+      "headline": "Product manager",
+      "id": "01a03e59-91e1-7372-9a7f-a5b753dbc423",
+      "importantDates": [],
+      "keepFrequencyDays": 14,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:12.577Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Doe",
+      "latitude": 52.51739,
+      "linkedin": null,
+      "location": "Berlin, DE",
+      "longitude": 13.39513,
+      "middleName": null,
+      "notes": "Dummy contact for search and empty-state tests.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:12.577Z",
+          "handle": "https://www.linkedin.com/in/jane-doe",
+          "id": "4a92926b-87fe-46c2-ba4b-6a1593a4cf5f",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:13.284Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:12.577Z",
+          "handle": "https://example.com/jane.doe",
+          "id": "e97e42c5-6d6e-47e8-b30e-ebfbdd11f3c2",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:13.284Z"
+        }
+      ],
+      "timezone": "Europe/Berlin",
+      "updatedAt": "2026-08-26T13:54:13.284Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:13.335Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:13.335Z",
+          "id": "14dbe1ca-1efe-4e84-b172-34602e6dcd50",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:13.970Z",
+          "value": "john.smith@example.com"
+        }
+      ],
+      "firstName": "John",
+      "hasAvatar": false,
+      "headline": "Account executive",
+      "id": "01a03e59-94d7-76cc-8b6b-b1a154c35dce",
+      "importantDates": [],
+      "keepFrequencyDays": 14,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:13.335Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Smith",
+      "latitude": 41.87556,
+      "linkedin": null,
+      "location": "Chicago, state Illinois, US",
+      "longitude": -87.62442,
+      "middleName": null,
+      "notes": "Dummy contact. Generic name collision tests.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:13.335Z",
+          "id": "bc4bb937-4477-42fd-a36e-69bc7a18147c",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:13.970Z",
+          "value": "5550100051"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:13.335Z",
+          "handle": "https://www.linkedin.com/in/john-smith",
+          "id": "a778e07b-f7d0-44ab-9dc0-feda3605b435",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:13.970Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:13.335Z",
+          "handle": "https://example.com/john.smith",
+          "id": "52cc482c-eba3-46ee-a969-60941bb3cf73",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:13.970Z"
+        }
+      ],
+      "timezone": "America/Chicago",
+      "updatedAt": "2026-08-26T13:54:13.970Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:14.046Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:14.046Z",
+          "id": "3079bb51-47f7-4241-b28d-792e914fff9b",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:15.065Z",
+          "value": "alex.rivera@example.com"
+        }
+      ],
+      "firstName": "Alex",
+      "hasAvatar": false,
+      "headline": "Designer",
+      "id": "01a03e59-979e-761f-803b-aae7f4010fbc",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "es",
+      "lastInteraction": "2026-08-26T13:54:14.046Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Rivera",
+      "latitude": 19.43263,
+      "linkedin": null,
+      "location": "Mexico City, state Mexico City, MX",
+      "longitude": -99.13318,
+      "middleName": null,
+      "notes": "Met at a design systems meetup.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:14.046Z",
+          "handle": "https://www.linkedin.com/in/alex-rivera",
+          "id": "06836db0-8157-40a2-9f77-e5b785391118",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:15.065Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:14.046Z",
+          "handle": "https://example.com/alex.rivera",
+          "id": "aa7e97c2-f006-4bed-8e38-013aa0f21fe5",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:15.065Z"
+        }
+      ],
+      "timezone": "America/Mexico_City",
+      "updatedAt": "2026-08-26T13:54:15.065Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:15.133Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:15.133Z",
+          "id": "799c7a88-73da-4cf0-be0f-811b19925c68",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:15.718Z",
+          "value": "sam.patel@example.com"
+        }
+      ],
+      "firstName": "Sam",
+      "hasAvatar": false,
+      "headline": "Founder",
+      "id": "01a03e59-9bdd-7337-b000-75ce0186c5f8",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:15.132Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Patel",
+      "latitude": 12.97679,
+      "linkedin": null,
+      "location": "Bengaluru, state Karnataka, IN",
+      "longitude": 77.59008,
+      "middleName": null,
+      "notes": "Climate-tech intro from a demo day.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:15.133Z",
+          "handle": "https://www.linkedin.com/in/sam-patel",
+          "id": "6b9e3776-f014-4986-b90c-c91aa77b9372",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:15.718Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:15.133Z",
+          "handle": "https://example.com/sam.patel",
+          "id": "7ba736c3-9457-4355-bc43-fdce3acf9bd9",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:15.718Z"
+        }
+      ],
+      "timezone": "Asia/Kolkata",
+      "updatedAt": "2026-08-26T13:54:15.718Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:15.774Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:15.774Z",
+          "id": "9c56e8e8-9f33-41df-8b0c-536976d9829f",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:16.072Z",
+          "value": "jordan.lee@example.com"
+        }
+      ],
+      "firstName": "Jordan",
+      "hasAvatar": false,
+      "headline": "Recruiter",
+      "id": "01a03e59-9e5d-71a5-8c62-1fea67b1e9af",
+      "importantDates": [],
+      "keepFrequencyDays": 21,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:15.773Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Lee",
+      "latitude": 43.65348,
+      "linkedin": null,
+      "location": "Toronto, province Ontario, CA",
+      "longitude": -79.38393,
+      "middleName": null,
+      "notes": "Sends thoughtful candidate notes.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:15.774Z",
+          "id": "5a60fbdf-e6eb-4436-a5f0-76d3c1972642",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:16.072Z",
+          "value": "5550100054"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:15.774Z",
+          "handle": "https://www.linkedin.com/in/jordan-lee",
+          "id": "59cda264-10cc-4200-be67-85d765daa7d9",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:16.072Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:15.774Z",
+          "handle": "https://example.com/jordan.lee",
+          "id": "9674e2a7-9413-4b30-a3c5-37a9caa3dbc2",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:16.072Z"
+        }
+      ],
+      "timezone": "America/Toronto",
+      "updatedAt": "2026-08-26T13:54:16.072Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:16.137Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:16.137Z",
+          "id": "5f0b55e0-79db-4525-a372-dbad06420b41",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:16.550Z",
+          "value": "casey.nguyen@example.com"
+        }
+      ],
+      "firstName": "Casey",
+      "hasAvatar": false,
+      "headline": "Staff engineer",
+      "id": "01a03e59-9fc9-762a-91f4-57e830467823",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:16.136Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Nguyen",
+      "latitude": null,
+      "linkedin": null,
+      "location": "Ho Chi Minh City, Vietnam",
+      "longitude": null,
+      "middleName": null,
+      "notes": "Distributed systems. Great RFC reviews.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:16.137Z",
+          "handle": "https://www.linkedin.com/in/casey-nguyen",
+          "id": "b24dde5b-11b5-4b93-b91d-a58b8e118f0a",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:16.550Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:16.137Z",
+          "handle": "https://example.com/casey.nguyen",
+          "id": "973a062f-dae8-47e7-9233-55d5cdf63874",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:16.550Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:16.550Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:16.616Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:16.616Z",
+          "id": "e7d05040-e6b6-4616-9ca2-b356c255840c",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:17.113Z",
+          "value": "riley.okonkwo@example.com"
+        }
+      ],
+      "firstName": "Riley",
+      "hasAvatar": false,
+      "headline": "Community lead",
+      "id": "01a03e59-a1a8-77fd-b901-e37d784ec704",
+      "importantDates": [],
+      "keepFrequencyDays": 21,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:16.616Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Okonkwo",
+      "latitude": 6.45506,
+      "linkedin": null,
+      "location": "Lagos, Lagos State, NG",
+      "longitude": 3.39418,
+      "middleName": null,
+      "notes": "Runs a local founder circle.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:16.616Z",
+          "handle": "https://www.linkedin.com/in/riley-okonkwo",
+          "id": "d1736047-626b-4132-90e3-260df0a81dfb",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:17.113Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:16.616Z",
+          "handle": "https://example.com/riley.okonkwo",
+          "id": "84462aab-bf12-4a9b-8366-f19f74cabdad",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:17.113Z"
+        }
+      ],
+      "timezone": "Africa/Lagos",
+      "updatedAt": "2026-08-26T13:54:17.113Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:17.199Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:17.199Z",
+          "id": "b36992d7-4c7e-4768-9765-69f8e564f630",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:18.043Z",
+          "value": "morgan.chen@example.com"
+        }
+      ],
+      "firstName": "Morgan",
+      "hasAvatar": false,
+      "headline": "Data scientist",
+      "id": "01a03e59-a3ef-768e-9773-0a7d1d9e9cab",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "zh",
+      "lastInteraction": "2026-08-26T13:54:17.198Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Chen",
+      "latitude": 25.03752,
+      "linkedin": null,
+      "location": "Taipei, province Taipei, TW",
+      "longitude": 121.56368,
+      "middleName": null,
+      "notes": "Causal inference hobbyist.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:17.199Z",
+          "id": "910b50c8-12be-44d2-b8a6-a917f8bc5b26",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:18.043Z",
+          "value": "5550100057"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:17.199Z",
+          "handle": "https://www.linkedin.com/in/morgan-chen",
+          "id": "de3258a4-d2f3-48b4-8736-254f424e995b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:18.043Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:17.199Z",
+          "handle": "https://example.com/morgan.chen",
+          "id": "2dabe28f-dd36-4901-9a8b-dd7c5b2cbb86",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:18.043Z"
+        }
+      ],
+      "timezone": "Asia/Taipei",
+      "updatedAt": "2026-08-26T13:54:18.043Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:18.100Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:18.100Z",
+          "id": "fc533fd9-4540-4c69-aebb-cd6f9f1b949d",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:18.688Z",
+          "value": "avery.schmidt@example.com"
+        }
+      ],
+      "firstName": "Avery",
+      "hasAvatar": false,
+      "headline": "Venture associate",
+      "id": "01a03e59-a774-72bd-8837-444745e373ae",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "de",
+      "lastInteraction": "2026-08-26T13:54:18.100Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Schmidt",
+      "latitude": 48.13711,
+      "linkedin": null,
+      "location": "Munich, federal state Bavaria, DE",
+      "longitude": 11.57538,
+      "middleName": null,
+      "notes": "Seed-stage software. Asks crisp questions.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:18.100Z",
+          "handle": "https://www.linkedin.com/in/avery-schmidt",
+          "id": "d22f90db-ecd1-476a-aa7c-3a3166086c13",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:18.688Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:18.100Z",
+          "handle": "https://example.com/avery.schmidt",
+          "id": "0fb4a8dd-3b82-4c7f-ae51-a15b80b56b01",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:18.688Z"
+        }
+      ],
+      "timezone": "Europe/Berlin",
+      "updatedAt": "2026-08-26T13:54:18.688Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:18.756Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:18.756Z",
+          "id": "69455881-3c08-481f-86c1-7537803946d7",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:19.109Z",
+          "value": "quinn.nakamura@example.com"
+        }
+      ],
+      "firstName": "Quinn",
+      "hasAvatar": false,
+      "headline": "Researcher",
+      "id": "01a03e59-aa04-70b9-9ed7-b2470bfe8b8e",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "ja",
+      "lastInteraction": "2026-08-26T13:54:18.756Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Nakamura",
+      "latitude": null,
+      "linkedin": null,
+      "location": "Kyoto, Japan",
+      "longitude": null,
+      "middleName": null,
+      "notes": "HCI lab. Visiting next spring.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:18.756Z",
+          "handle": "https://www.linkedin.com/in/quinn-nakamura",
+          "id": "4b063d5e-c684-4092-a42d-5a33303f61fa",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:19.109Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:18.756Z",
+          "handle": "https://example.com/quinn.nakamura",
+          "id": "0155f434-80d9-460e-9c57-5bfcb6519a24",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:19.109Z"
+        }
+      ],
+      "timezone": null,
+      "updatedAt": "2026-08-26T13:54:19.109Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:19.192Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:19.192Z",
+          "id": "4b68b4c2-ea32-4f98-9ed1-f865aeb901c4",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:19.808Z",
+          "value": "taylor.brooks@example.com"
+        }
+      ],
+      "firstName": "Taylor",
+      "hasAvatar": false,
+      "headline": "Customer success",
+      "id": "01a03e59-abb8-734e-8791-662cc45a4751",
+      "importantDates": [],
+      "keepFrequencyDays": 14,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:19.191Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Brooks",
+      "latitude": 39.73924,
+      "linkedin": null,
+      "location": "Denver, state Colorado, US",
+      "longitude": -104.98486,
+      "middleName": null,
+      "notes": "Dummy CS contact for keep-in-touch.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:19.192Z",
+          "id": "40a1093c-c7c6-41fb-a66e-a72211da5f72",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:19.808Z",
+          "value": "5550100060"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:19.192Z",
+          "handle": "https://www.linkedin.com/in/taylor-brooks",
+          "id": "844250b5-5a21-423f-b62a-c80a44cb0103",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:19.808Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:19.192Z",
+          "handle": "https://example.com/taylor.brooks",
+          "id": "de811108-3e4f-446a-ac23-03755348fe18",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:19.808Z"
+        }
+      ],
+      "timezone": "America/Denver",
+      "updatedAt": "2026-08-26T13:54:19.808Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:19.855Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:19.855Z",
+          "id": "a0ab06ed-7335-4757-be0a-f1e28980742a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:20.464Z",
+          "value": "jamie.ortega@example.com"
+        }
+      ],
+      "firstName": "Jamie",
+      "hasAvatar": false,
+      "headline": "Photographer",
+      "id": "01a03e59-ae4f-7615-b8bf-e6d8e35751a0",
+      "importantDates": [],
+      "keepFrequencyDays": 45,
+      "language": "es",
+      "lastInteraction": "2026-08-26T13:54:19.855Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Ortega",
+      "latitude": 41.38258,
+      "linkedin": null,
+      "location": "Barcelona, autonomous region Catalonia, ES",
+      "longitude": 2.17707,
+      "middleName": null,
+      "notes": "Shot the last offsite. Send the gallery.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:19.855Z",
+          "handle": "https://www.linkedin.com/in/jamie-ortega",
+          "id": "11cc1f32-bd06-4b3c-92bd-07df55efa2ca",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:20.464Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:19.855Z",
+          "handle": "https://example.com/jamie.ortega",
+          "id": "21ea6a98-776e-4ba0-b6a8-21f97b5313e9",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:20.464Z"
+        }
+      ],
+      "timezone": "Europe/Madrid",
+      "updatedAt": "2026-08-26T13:54:20.464Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:20.535Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:20.535Z",
+          "id": "a53136e1-2dec-4ac5-a8ff-81d76594f23b",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:20.780Z",
+          "value": "robin.singh@example.com"
+        }
+      ],
+      "firstName": "Robin",
+      "hasAvatar": false,
+      "headline": "DevRel",
+      "id": "01a03e59-b0f7-70c4-b290-06a5db05e65e",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:20.535Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Singh",
+      "latitude": 51.50745,
+      "linkedin": null,
+      "location": "London, state England, GB",
+      "longitude": -0.12777,
+      "middleName": null,
+      "notes": "Conference circuit. Always has a sticker pack.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:20.535Z",
+          "handle": "https://www.linkedin.com/in/robin-singh",
+          "id": "0ede578e-490f-4ee3-9299-407b2f18816b",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:20.780Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:20.535Z",
+          "handle": "https://example.com/robin.singh",
+          "id": "db2c318a-076f-4d53-85a0-1d1e57cef8bb",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:20.780Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:20.780Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:20.846Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:20.846Z",
+          "id": "ac83a461-1bc1-4f74-b37a-7adb9f834081",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:21.408Z",
+          "value": "drew.kim@example.com"
+        }
+      ],
+      "firstName": "Drew",
+      "hasAvatar": false,
+      "headline": "Operations",
+      "id": "01a03e59-b22e-745c-8fe2-8f0b83016b70",
+      "importantDates": [],
+      "keepFrequencyDays": 21,
+      "language": "ko",
+      "lastInteraction": "2026-08-26T13:54:20.846Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Kim",
+      "latitude": 37.56668,
+      "linkedin": null,
+      "location": "Seoul, KR",
+      "longitude": 126.97829,
+      "middleName": null,
+      "notes": "Dummy ops contact for timezone tests.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:20.846Z",
+          "id": "f278560a-8ce7-4c28-8f75-8292006648b2",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:21.408Z",
+          "value": "5550100063"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:20.846Z",
+          "handle": "https://www.linkedin.com/in/drew-kim",
+          "id": "2ab4af7a-2d75-40a0-b65e-f45602e3ef8a",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:21.408Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:20.846Z",
+          "handle": "https://example.com/drew.kim",
+          "id": "5930f462-e768-41d4-a4c9-0ebdcfac6654",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:21.408Z"
+        }
+      ],
+      "timezone": "Asia/Seoul",
+      "updatedAt": "2026-08-26T13:54:21.408Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:21.477Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:21.477Z",
+          "id": "a142b54a-4c2b-4c77-8cdc-2a5960dd3cc9",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:22.169Z",
+          "value": "cameron.diaz@example.com"
+        }
+      ],
+      "firstName": "Cameron",
+      "hasAvatar": true,
+      "headline": "Actor",
+      "id": "01a03e59-b4a5-7089-a148-c8d2e0fafe81",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:21.477Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Diaz",
+      "latitude": 34.05369,
+      "linkedin": null,
+      "location": "Los Angeles, state California, US",
+      "longitude": -118.24277,
+      "middleName": null,
+      "notes": "Famous-name filler so search is not only tech history.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:21.477Z",
+          "handle": "https://www.linkedin.com/in/cameron-diaz",
+          "id": "cb2e4d2a-35ca-4c0a-9562-ff8bd125316e",
+          "platform": "linkedin",
+          "updatedAt": "2026-08-26T13:54:22.169Z"
+        },
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:21.477Z",
+          "handle": "https://example.com/cameron.diaz",
+          "id": "92e16f42-c2b9-494f-ad8e-3d41dc48945e",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:22.169Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:22.169Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:22.236Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:22.236Z",
+          "id": "f9d91655-c1ab-495a-b211-19081efd8c72",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:22.956Z",
+          "value": "ada.lovelace@example.com"
+        }
+      ],
+      "firstName": "Ada",
+      "hasAvatar": true,
+      "headline": "Analyst, Analytical Engine",
+      "id": "01a03e59-b79c-735d-8eff-0acba55ea96d",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:22.236Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Lovelace",
+      "latitude": 51.50745,
+      "linkedin": null,
+      "location": "London, state England, GB",
+      "longitude": -0.12777,
+      "middleName": null,
+      "notes": "Second Ada card from a CSV import. Same work email — should flag a merge.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:22.236Z",
+          "handle": "https://example.com/ada.lovelace",
+          "id": "4738fdd7-2cd7-4dc3-a806-10cb8ee9dfe9",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:22.956Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:22.956Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:23.020Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:23.020Z",
+          "id": "9ba97018-3240-42d4-b758-e2e854355feb",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:23.659Z",
+          "value": "alan.turing@example.com"
+        }
+      ],
+      "firstName": "Alan",
+      "hasAvatar": true,
+      "headline": "Reader in mathematics",
+      "id": "01a03e59-baab-74fa-bd26-ce729843dddd",
+      "importantDates": [],
+      "keepFrequencyDays": 30,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:23.019Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Turing",
+      "latitude": 53.47949,
+      "linkedin": null,
+      "location": "Manchester, state England, GB",
+      "longitude": -2.24511,
+      "middleName": null,
+      "notes": "Second Alan card. Same mobile number — should flag a merge.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:23.020Z",
+          "id": "b6e18108-3cc0-4529-a914-630fac5436eb",
+          "preferred": true,
+          "prefix": "+44",
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:23.659Z",
+          "value": "7700900123"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:23.020Z",
+          "handle": "https://example.com/alan.turing",
+          "id": "ed4096a4-2e38-4d7d-beea-42c6987d4f85",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:23.659Z"
+        }
+      ],
+      "timezone": "Europe/London",
+      "updatedAt": "2026-08-26T13:54:23.659Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:23.717Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:23.717Z",
+          "id": "7768eb02-9c9d-472e-8464-683fea92636d",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:24.244Z",
+          "value": "steve.jobs.apple@example.com"
+        }
+      ],
+      "firstName": "Steve",
+      "hasAvatar": true,
+      "headline": "CEO, Apple",
+      "id": "01a03e59-bd65-70be-a98f-aed9219cdf2c",
+      "importantDates": [],
+      "keepFrequencyDays": 90,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:23.716Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Jobs",
+      "latitude": 37.32289,
+      "linkedin": null,
+      "location": "Cupertino, state California, US",
+      "longitude": -122.03229,
+      "middleName": null,
+      "notes": "Second Steve card with the same full name and a different email.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:23.717Z",
+          "handle": "https://example.com/steve.jobs",
+          "id": "11d6c4ea-305f-484f-b155-309710ea9180",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:24.244Z"
+        }
+      ],
+      "timezone": "America/Los_Angeles",
+      "updatedAt": "2026-08-26T13:54:24.244Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:24.313Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:24.313Z",
+          "id": "4c031730-c84c-4556-a71d-49ee646841c9",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:24.909Z",
+          "value": "grace.hopper@example.com"
+        }
+      ],
+      "firstName": "Grace",
+      "hasAvatar": true,
+      "headline": "Computer scientist",
+      "id": "01a03e59-bfb8-7021-9ad7-168cc8692ee7",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:24.312Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Hopper",
+      "latitude": 32.73558,
+      "linkedin": null,
+      "location": "Arlington, state Texas, US",
+      "longitude": -97.10712,
+      "middleName": "Murray",
+      "notes": "Second Grace card. Same name, extra middle name, overlapping email.",
+      "notesUpdatedAt": null,
+      "phones": [],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:24.313Z",
+          "handle": "https://example.com/grace.hopper",
+          "id": "4ddd5c1c-1c16-493f-a176-08bd9f547eb9",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:24.909Z"
+        }
+      ],
+      "timezone": "America/Chicago",
+      "updatedAt": "2026-08-26T13:54:24.909Z"
+    },
+    {
+      "addresses": [],
+      "createdAt": "2026-08-26T13:54:24.978Z",
+      "emails": [
+        {
+          "createdAt": "2026-08-26T13:54:24.978Z",
+          "id": "cb2e48e0-fef2-4677-b7cf-1a95d3a70d1a",
+          "preferred": true,
+          "sortOrder": 0,
+          "type": "work",
+          "updatedAt": "2026-08-26T13:54:25.615Z",
+          "value": "margaret.hamilton.hti@example.com"
+        }
+      ],
+      "firstName": "Margaret",
+      "hasAvatar": true,
+      "headline": "CEO, Hamilton Technologies",
+      "id": "01a03e59-c252-7058-938b-5133ee585f1e",
+      "importantDates": [],
+      "keepFrequencyDays": 60,
+      "language": "en",
+      "lastInteraction": "2026-08-26T13:54:24.978Z",
+      "lastInteractionActivityId": null,
+      "lastName": "Hamilton",
+      "latitude": 42.36563,
+      "linkedin": null,
+      "location": "Cambridge, state Massachusetts, US",
+      "longitude": -71.104,
+      "middleName": null,
+      "notes": "Second Margaret card with the same full name for the merge inbox.",
+      "notesUpdatedAt": null,
+      "phones": [
+        {
+          "createdAt": "2026-08-26T13:54:24.978Z",
+          "id": "000bc4d0-2e0a-466d-b20c-5ddc27f36a2d",
+          "preferred": true,
+          "prefix": "+1",
+          "sortOrder": 0,
+          "type": "home",
+          "updatedAt": "2026-08-26T13:54:25.615Z",
+          "value": "5550100069"
+        }
+      ],
+      "socials": [
+        {
+          "connectedAt": null,
+          "createdAt": "2026-08-26T13:54:24.978Z",
+          "handle": "https://example.com/margaret.hamilton",
+          "id": "4c5461ae-ec93-488a-87da-24298afba373",
+          "platform": "website",
+          "updatedAt": "2026-08-26T13:54:25.615Z"
+        }
+      ],
+      "timezone": "America/New_York",
+      "updatedAt": "2026-08-26T13:54:25.615Z"
+    }
+  ],
+  "schemaType": "People"
+}

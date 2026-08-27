@@ -96,8 +96,13 @@ export async function endSession({ reason, redirectTo }: EndSessionOptions): Pro
       if (reason === "user_initiated") {
         await authClient.signOut();
       }
+      // Cookie is meant to survive logout so login can show "Last used".
+      // Account deletion is the teardown that should expire it.
+      if (reason === "account_deleted") {
+        authClient.clearLastUsedLoginMethod();
+      }
     } catch {
-      // Still redirect if sign-out fails.
+      // Continue teardown if Better Auth client cleanup fails.
     }
 
     window.location.replace(destination);

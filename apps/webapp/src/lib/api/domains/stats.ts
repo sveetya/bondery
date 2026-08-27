@@ -1,4 +1,4 @@
-import { clientApiJsonOrNull } from "@/lib/api/client";
+import { clientApiJson, clientApiJsonOrNull } from "@/lib/api/client";
 import {
   type ActiveUsersData,
   type AdminStatsDashboard,
@@ -18,10 +18,10 @@ export type { AdminStatsDashboard };
 
 export async function getAdminStatsDashboard(): Promise<AdminStatsDashboard> {
   const [activeUsers, funnel, nps, totalUsers, githubStars] = await Promise.all([
-    clientApiJsonOrNull<ActiveUsersData>(buildActiveUsersStatsPath()),
-    clientApiJsonOrNull<{ periods: FunnelPeriod[] }>(buildFunnelStatsPath()),
-    clientApiJsonOrNull<NpsData>(buildNpsStatsPath()),
-    clientApiJsonOrNull<TotalUsersData>(buildTotalUsersStatsPath()),
+    clientApiJson<ActiveUsersData>(buildActiveUsersStatsPath()),
+    clientApiJson<{ periods: FunnelPeriod[] }>(buildFunnelStatsPath()),
+    clientApiJson<NpsData>(buildNpsStatsPath()),
+    clientApiJson<TotalUsersData>(buildTotalUsersStatsPath()),
     clientApiJsonOrNull<GithubStarsData>(buildGithubStarsStatsPath()),
   ]);
 

@@ -1,28 +1,24 @@
 "use client";
 
-import { isApiUnavailableError, isApiUnavailableResponseStatus } from "@/lib/api/availability";
-import { handleApiUnavailable } from "@/lib/auth/handleApiUnavailable";
 import { handleUnauthorizedSession } from "@/lib/auth/handleUnauthorizedSession";
 import { isUnauthorizedApiError, isUnauthorizedResponseStatus } from "@/lib/auth/unauthorized";
 
-/** Apply global session/outage policy for thrown transport errors. */
+/**
+ * Apply global session policy for thrown transport errors.
+ * Hop-down (502/503/504 / network) stays silent here — product queries own skeleton/error UI.
+ */
 export function applyTransportErrorPolicy(error: unknown): void {
   if (isUnauthorizedApiError(error)) {
     void handleUnauthorizedSession();
-    return;
-  }
-  if (isApiUnavailableError(error)) {
-    handleApiUnavailable();
   }
 }
 
-/** Apply global session/outage policy for raw fetch Response objects. */
+/**
+ * Apply global session policy for raw fetch Response objects.
+ * Hop-down statuses do not change the URL or show app-wide chrome.
+ */
 export function applyTransportResponsePolicy(response: Response): void {
   if (isUnauthorizedResponseStatus(response.status)) {
     void handleUnauthorizedSession();
-    return;
-  }
-  if (isApiUnavailableResponseStatus(response.status)) {
-    handleApiUnavailable();
   }
 }

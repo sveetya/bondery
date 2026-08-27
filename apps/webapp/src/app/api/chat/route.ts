@@ -17,14 +17,20 @@ export async function POST(request: Request) {
     method: "POST",
   });
 
+  const headers = new Headers();
+  const contentType = apiResponse.headers.get("Content-Type");
+  if (contentType) {
+    headers.set("Content-Type", contentType);
+  }
+  for (const name of ["Cache-Control", "Connection", "x-vercel-ai-ui-message-stream"]) {
+    const value = apiResponse.headers.get(name);
+    if (value) {
+      headers.set(name, value);
+    }
+  }
+
   return new Response(apiResponse.body, {
-    headers: {
-      "Cache-Control": "no-cache",
-      Connection: "keep-alive",
-      "Content-Type": apiResponse.headers.get("Content-Type") ?? "text/event-stream",
-      "x-vercel-ai-ui-message-stream":
-        apiResponse.headers.get("x-vercel-ai-ui-message-stream") ?? "v1",
-    },
+    headers,
     status: apiResponse.status,
   });
 }

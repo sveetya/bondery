@@ -44,7 +44,8 @@ Also see [mobile/forms.md](./mobile/forms.md) (technical RHF patterns for mobile
 |------|--------|
 | [global-find.md](./desktop/global-find.md) | Command palette, people spotlight, `HOTKEYS` |
 | [keyboard-shortcuts.md](./desktop/keyboard-shortcuts.md) | `Kbd` display, `parseShortcutKeys` |
-| [modals.md](./desktop/modals.md) | Web modals, `ModalFooter`, blocking dismiss |
+| [modals.md](./desktop/modals.md) | Web modals, loading jobs, `ModalFooter`, blocking dismiss |
+| [create-more.md](./desktop/create-more.md) | Repeatable create modals, Create more switch |
 
 ## Product
 

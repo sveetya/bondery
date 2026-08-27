@@ -32,21 +32,36 @@ export default defineConfig({
   },
   entrypointsDir: "entrypoints",
 
-  // Build hooks for pre-build tasks (icon generation, env check)
+  // Fail production builds that would inline empty BONDERY_PUBLIC_* (WXT bake time).
   hooks: {
-    "build:before": async (wxt) => {
-      console.log("[wxt] Running pre-build checks...");
-
-      // Validate required environment variables
+    "build:before": (wxt) => {
       const requiredEnvVars = [
-        "BONDERY_PUBLIC_WEBAPP_URL",
         "BONDERY_PUBLIC_API_URL",
         "BONDERY_PUBLIC_OAUTH_CLIENT_ID",
-      ];
-      const missing = requiredEnvVars.filter((key) => !process.env[key]);
+        "BONDERY_PUBLIC_WEBAPP_URL",
+      ] as const;
+      const missing = requiredEnvVars.filter((key) => !process.env[key]?.trim());
 
-      if (missing.length > 0 && wxt.config.mode === "production") {
-        console.warn(`[wxt] Warning: Missing environment variables: ${missing.join(", ")}`);
+      if (missing.length > 0) {
+        const message = `[wxt] Missing required environment variables: ${missing.join(", ")}`;
+        if (wxt.config.mode === "production") {
+          throw new Error(message);
+        }
+        console.warn(message);
+        return;
+      }
+
+      const isCi = process.env.GITHUB_ACTIONS === "true" || process.env.CI === "true";
+      if (wxt.config.mode === "production" && isCi) {
+        const bakedUrls = [
+          process.env.BONDERY_PUBLIC_API_URL,
+          process.env.BONDERY_PUBLIC_WEBAPP_URL,
+        ];
+        if (bakedUrls.some((url) => url && /localhost|127\.0\.0\.1/i.test(url))) {
+          throw new Error(
+            "[wxt] Production CI build cannot bake localhost BONDERY_PUBLIC_API_URL or BONDERY_PUBLIC_WEBAPP_URL",
+          );
+        }
       }
     },
   },

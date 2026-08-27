@@ -9,13 +9,16 @@ import { IconBrandInstagram } from "@tabler/icons-react";
 import type { JSX } from "react";
 import { useEffect } from "react";
 import { useInstagramImportModal } from "../../hooks/useInstagramImportModal";
-import type { InstagramImportStep } from "../../utils/instagram-import-helpers";
+import {
+  INSTAGRAM_MAX_FILE_SIZE_BYTES,
+  type InstagramImportStep,
+} from "../../utils/instagram-import-helpers";
+import { ImportIntroStep } from "../import/ImportIntroStep";
 import { ImportProcessingStep, ImportProgressStep } from "../import/ImportModalProcessingSteps";
+import { IMPORT_ZIP_ACCEPT, ImportZipUploadStep } from "../import/ImportZipUploadStep";
 import { InstagramImportInstructionsStep } from "../import/InstagramImportInstructionsStep";
-import { InstagramImportIntroStep } from "../import/InstagramImportIntroStep";
 import { InstagramImportPreviewStep } from "../import/InstagramImportPreviewStep";
 import { InstagramImportStrategyStep } from "../import/InstagramImportStrategyStep";
-import { InstagramImportUploadStep } from "../import/InstagramImportUploadStep";
 
 export type { InstagramImportStep };
 
@@ -82,10 +85,12 @@ export function InstagramImportModal({
 
   if (step === "intro") {
     return renderWithNavigationProgress(
-      <InstagramImportIntroStep
+      <ImportIntroStep
         cancelLabel={t("Cancel")}
         continueLabel={t("Continue")}
         descriptions={[t("IntroDescription1"), t("IntroDescription2"), t("IntroDescription3")]}
+        icon={IconBrandInstagram}
+        iconColor="pink"
         introTitle={t("IntroTitle")}
         onCancel={closeModal}
         onContinue={() => setStep("instructions")}
@@ -146,12 +151,14 @@ export function InstagramImportModal({
 
   if (step === "upload") {
     return renderWithNavigationProgress(
-      <InstagramImportUploadStep
+      <ImportZipUploadStep
+        accept={IMPORT_ZIP_ACCEPT}
         backLabel={t("Back")}
         cancelLabel={t("Cancel")}
         dropzoneDescription={t("DropzoneDescription")}
         dropzoneTitle={t("DropzoneTitle")}
-        isParsing={isParsing}
+        loading={isParsing}
+        maxSize={INSTAGRAM_MAX_FILE_SIZE_BYTES}
         onBack={() => setStep("instructions")}
         onCancel={closeModal}
         onDrop={handleZipDrop}

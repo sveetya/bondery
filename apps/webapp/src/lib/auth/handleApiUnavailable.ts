@@ -1,28 +1,8 @@
-"use client";
-
-import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
-import { buildUnavailableUrl, captureClientReturnPath } from "@/lib/auth/returnIntent";
-
-let isNavigatingToUnavailable = false;
-
 /**
- * Navigates to the API unavailable page when the BFF or upstream API is down.
- * Idempotent — does not sign out or clear caches.
+ * Hop-down stays on the current URL. Product data owns skeleton / stale / inline error.
+ * Kept as a no-op so leftover call sites cannot resurrect global outage chrome.
  */
-export function handleApiUnavailable(): void {
-  if (typeof window === "undefined" || isNavigatingToUnavailable) {
-    return;
-  }
+export function handleApiUnavailable(): void {}
 
-  if (window.location.pathname.startsWith(WEBAPP_ROUTES.UNAVAILABLE)) {
-    return;
-  }
-
-  isNavigatingToUnavailable = true;
-  window.location.assign(buildUnavailableUrl(captureClientReturnPath()));
-}
-
-/** Clears the one-shot navigation guard after the user leaves the unavailable page. */
-export function resetApiUnavailableNavigation(): void {
-  isNavigatingToUnavailable = false;
-}
+/** No-op retained for stale unavailable bookmarks during rollout. */
+export function resetApiUnavailableNavigation(): void {}

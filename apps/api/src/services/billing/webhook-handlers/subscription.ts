@@ -5,7 +5,7 @@ import {
   captureSubscriptionCreate,
 } from "../../analytics/billing-events.js";
 import { mapStripeStatus } from "../map-status.js";
-import { getSubscriptionPeriod } from "../stripe-helpers.js";
+import { getSubscriptionPeriod, isScheduledToCancel } from "../stripe-helpers.js";
 import {
   findUserIdByEmail,
   type SubscriptionMirrorFields,
@@ -72,7 +72,8 @@ export async function upsertSubscriptionFromStripe(
   }
 
   const stripeCustomerId = customerId(subscription.customer);
-  const status = mapStripeStatus(subscription.status, subscription.cancel_at_period_end);
+  const cancelAtPeriodEnd = isScheduledToCancel(subscription);
+  const status = mapStripeStatus(subscription.status, cancelAtPeriodEnd);
   const { currentPeriodEnd, currentPeriodStart } = getSubscriptionPeriod(subscription);
   const mirror = extractMirrorFromStripeSubscription(subscription);
 
@@ -91,7 +92,7 @@ export async function upsertSubscriptionFromStripe(
       subscription.id,
       status,
       currentPeriodEnd,
-      subscription.cancel_at_period_end,
+      cancelAtPeriodEnd,
     );
     log?.info(
       { email, stripeSubscriptionId: subscription.id },
@@ -107,7 +108,7 @@ export async function upsertSubscriptionFromStripe(
     status,
     currentPeriodStart,
     currentPeriodEnd,
-    subscription.cancel_at_period_end,
+    cancelAtPeriodEnd,
     mirror,
   );
 

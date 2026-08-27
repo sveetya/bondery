@@ -3,3 +3,5 @@ src/app/favicon.ico
 src/app/icons/apple-icon.png
 src/app/icons/icon.png
 public/logo.svg
+public/icons/pwa-192.png
+public/icons/pwa-512.png

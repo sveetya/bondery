@@ -716,13 +716,13 @@ export type ReminderDispatchLogScalarFieldEnum = (typeof ReminderDispatchLogScal
 
 
 export const SyncChangeLogScalarFieldEnum = {
-  serverSequence: 'serverSequence',
   userId: 'userId',
+  serverSequence: 'serverSequence',
+  changeIndex: 'changeIndex',
   tableName: 'tableName',
   entityId: 'entityId',
   operation: 'operation',
   rowData: 'rowData',
-  changeIndex: 'changeIndex',
   createdAt: 'createdAt'
 } as const
 

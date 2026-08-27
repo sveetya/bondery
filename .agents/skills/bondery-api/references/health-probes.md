@@ -88,9 +88,11 @@ Boot validation: `src/instrumentation.ts` → `validateWebsiteStartup.node.ts`.
 | Docker / K8s (api) | `GET /health/live` on api host |
 | Docker / K8s (webapp) | `GET /health/live` on webapp host |
 | Docker / K8s (website) | `GET /health/live` on website host |
-| Unavailable page | `clientApiFetch("/api/health/ready")` |
+| Ops / debugging (BFF) | `GET /api/health/live`, `GET /api/health/ready` |
 | Chrome extension version check | `${apiUrl}/extension/manifest` |
 | Mobile connectivity probe | `${API_URL}/health/live` |
+
+Do **not** use `/health/ready` from product chrome, Settings, or layout routing. Recovery probes `/api/me/session`.
 
 ## Security
 

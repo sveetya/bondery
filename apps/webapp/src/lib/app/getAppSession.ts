@@ -1,6 +1,6 @@
 import { cache } from "react";
-import { probeMeSessionServer } from "@/lib/api/domains/server/meSession";
 import type { MeSessionData } from "@/lib/api/resources/meSession";
+import { getRequestSession } from "@/lib/auth/getRequestSession";
 
 export type { MeSessionData };
 
@@ -10,17 +10,24 @@ export type AppSessionResult =
   | { status: "unavailable" };
 
 /**
- * Server routing probe: session fetch + tri-state outcome for app layout guards.
+ * Shell read model derived from {@link getRequestSession}.
  *
  * Wrapped in React cache() so it executes at most once per server render.
+ * Not a route gate — layouts use getRequestSession() directly.
  */
 export const getAppSession = cache(async (): Promise<AppSessionResult> => {
-  const result = await probeMeSessionServer();
-  if (result.status !== "ok") {
-    return result;
+  const session = await getRequestSession();
+
+  if (session.kind === "anonymous") {
+    return { status: "unauthorized" };
   }
+
+  if (session.api !== "ok" || !session.shell) {
+    return { status: "unavailable" };
+  }
+
   return {
-    session: result.session,
+    session: session.shell,
     status: "ok",
   };
 });

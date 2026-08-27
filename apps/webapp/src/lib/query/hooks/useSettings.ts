@@ -2,6 +2,8 @@
 
 import type { ImportFollowupPlatform } from "@bondery/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { applyUserLocaleFromRef } from "@/components/shell/UserLocaleProvider";
+import { applyUserSessionFromRef } from "@/components/shell/UserSessionProvider";
 import type { UpdateSettingsPatch } from "@/lib/api/domains/settings";
 import {
   completeOnboarding,
@@ -19,29 +21,22 @@ import { settingsKeys } from "@/lib/query/keys";
 
 const SETTINGS_STALE_TIME_MS = 15 * 60_000;
 
-const SESSION_AFFECTING_KEYS = [
-  "colorScheme",
-  "name",
-  "middlename",
-  "surname",
-  "language",
-  "timezone",
-  "timeFormat",
-] as const;
+function applySettingsPatchToShell(patch: UpdateSettingsPatch): void {
+  const timezone = "timezone" in patch ? patch.timezone : undefined;
+  const timeFormat = "timeFormat" in patch ? patch.timeFormat : undefined;
+  const language = "language" in patch ? patch.language : undefined;
+  const colorScheme = "colorScheme" in patch ? patch.colorScheme : undefined;
 
-function settingsPatchAffectsSession(patch: UpdateSettingsPatch): boolean {
-  return SESSION_AFFECTING_KEYS.some(
-    (key) => key in patch && patch[key as keyof UpdateSettingsPatch] !== undefined,
-  );
-}
-
-function sessionPatchFromSettingsUpdate(
-  patch: UpdateSettingsPatch,
-): Parameters<typeof refreshAppShell>[0] | undefined {
-  if ("colorScheme" in patch && patch.colorScheme !== undefined) {
-    return { colorScheme: patch.colorScheme };
+  if (timezone !== undefined || timeFormat !== undefined || language !== undefined) {
+    applyUserLocaleFromRef({
+      ...(timezone !== undefined ? { timezone } : {}),
+      ...(timeFormat !== undefined ? { timeFormat } : {}),
+      ...(language !== undefined ? { locale: language } : {}),
+    });
   }
-  return undefined;
+  if (colorScheme !== undefined) {
+    applyUserSessionFromRef({ colorScheme });
+  }
 }
 
 export function useSettingsQuery(enabled = true) {
@@ -60,9 +55,7 @@ export function useUpdateSettingsMutation() {
     mutationFn: (patch: UpdateSettingsPatch) => updateSettings(patch),
     onSuccess: async (_data, patch) => {
       await invalidateSettings(queryClient);
-      if (settingsPatchAffectsSession(patch)) {
-        refreshAppShell(sessionPatchFromSettingsUpdate(patch));
-      }
+      applySettingsPatchToShell(patch);
     },
   });
 }
@@ -71,9 +64,11 @@ export function useUploadMePhotoMutation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: uploadMePhoto,
-    onSuccess: async () => {
+    onSuccess: async ({ avatarUrl }) => {
       await invalidateSettings(queryClient);
-      refreshAppShell();
+      if (avatarUrl) {
+        applyUserSessionFromRef({ avatarUrl });
+      }
     },
   });
 }

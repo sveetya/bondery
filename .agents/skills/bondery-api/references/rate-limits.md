@@ -28,6 +28,7 @@ Requests are keyed in priority order:
 | `AI_TIER` | 20 | 60s | `POST /chat` |
 | `ENRICH_TIER` | 100 | 10 min | Contact enrich, LinkedIn data |
 | `GEOCODE_TIER` | 120 | 60s | `GET /geocode/suggest`, `/geocode/timezone` |
+| `EXPORT_TIER` | 5 | 10 min | `GET /me/export`, `GET /me/export/summary`, `POST /me/import` |
 | `IMPORT_TIER` | 80 | 10 min | Import commit (`ceil(2000/25)` from `@bondery/schemas/constants`) |
 | `HEALTH_TIER` | 5 | 1 min | `GET /health/ready` |
 | `NOT_FOUND_TIER` | 60 | 60s | 404 handler only |

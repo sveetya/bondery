@@ -12,12 +12,14 @@ import {
 } from "@/lib/api/domains/mergeRecommendations";
 import { invalidateContactsAttention } from "@/lib/query/invalidation";
 import { mergeRecommendationKeys } from "@/lib/query/keys";
+import { throwIfPageCannotRender } from "@/lib/query/pageLoadFailure";
 import { PERSON_MERGE_RECOMMENDATIONS } from "@/lib/query/personPageQueryParams";
 
 export function useMergeRecommendationsQuery(declined = false) {
   return useQuery({
     queryFn: () => getMergeRecommendations({ declined }),
     queryKey: mergeRecommendationKeys.list({ declined }),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 

@@ -367,7 +367,20 @@ pnpm run dev:extension
 pnpm run dev:mobile
 ```
 
-These scripts are defined in the root `package.json` and orchestrated by Turborepo (`turbo watch`).
+These scripts are defined in the root `package.json` and orchestrated by Turborepo (`turbo run`). Persistent app processes (`next dev`, `tsx watch`) stay up; package `tsc --watch` runs beside them. Do not wrap those servers in `turbo watch` — that kills Next on any tracked file write.
+
+### Stripe billing (optional)
+
+Inbound Stripe events (portal cancel, payment failure, trial-ending email) do not reach `127.0.0.1`. After [Stripe CLI](https://docs.stripe.com/stripe-cli) is installed:
+
+```bash
+stripe login                 # once per machine — not run by our scripts
+pnpm run setup:stripe        # write CLI webhook secret → .env.local → pnpm run env
+# restart the API
+pnpm run dev:stripe          # second terminal: forward to http://127.0.0.1:26631/webhooks/stripe
+```
+
+See [Environment configuration](environment.mdx#stripe-cli-local-webhooks).
 
 ### Production builds
 
@@ -383,7 +396,7 @@ Shortcuts: `pnpm run build`, `pnpm run build:api`, `build:webapp`, `build:websit
 ### Local dev watch
 
 ```bash
-pnpm run dev                    # turbo watch dev — all apps with a dev script
+pnpm run dev                    # turbo run dev — all apps with a dev script
 pnpm run dev:webapp-api         # webapp + api (usual local stack)
 pnpm run dev:api                # api only
 pnpm run dev:webapp             # webapp only

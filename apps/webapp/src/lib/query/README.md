@@ -9,14 +9,14 @@ Client cache on top of [`lib/api`](../api/README.md). Components use **hooks** a
 | **Resources** | `lib/api/resources/*` | Path builders + response parsers (no transport, no React) |
 | **Client domain** | `lib/api/domains/*` | `clientApiJson` reads and all writes |
 | **Server domain** | `lib/api/domains/server/*` | `serverApiJson` reads + `next.tags` (import `server-only`) |
-| **Prefetch** | `lib/query/prefetch/*` | Thin RSC helpers wrapping `prefetchQuery` + server domains |
+| **Prefetch** | `lib/query/prefetch/*` | Thin RSC helpers: `prefetchQuery` for sibling widgets; `fetchQuery` / `fetchInfiniteQuery` for the page-defining read |
 | **Hooks** | `lib/query/hooks/*` | `useQuery` / `useMutation`, query keys, cache invalidation |
 
 **Reads:** hooks call `lib/api/domains/*`; loaders call `lib/api/domains/server/*` or `lib/query/prefetch/*`.
 
 **New reads:** add `resources/` + client domain + server domain — not `createXQueryFn` factories.
 
-Layout loads **session** via `getAppSession()` → `GET /api/me/session` (shell identity + routing). **Settings** (`useSettingsQuery`) are for Home and Settings only — prefetch in those loaders, never for shell identity. After identity-changing mutations, call `refreshAppShell()`. Theme: see [`lib/theme/README.md`](../theme/README.md).
+Layout loads **session** via `getAppSession()` → `GET /api/me/session` (shell identity + routing). **Settings** (`useSettingsQuery`) are for Home and Settings only — never for shell identity. The Settings **page** uses `fetchSettings()` (`fetchQuery` + `getSettingsServer`) so hop-down hits `(shell)/error.tsx`. Home still `prefetchSettings()` via `probeSettingsServer()` and `setQueryData` only on `status === "ok"` — do not dehydrate fake-empty success. Call `refreshAppShell()` for onboarding / last-resort identity, not preference field saves. Theme: see [`lib/theme/README.md`](../theme/README.md).
 
 ## Invalidate-first policy
 
@@ -40,12 +40,16 @@ Keep **local state** while typing. On save: show loader → domain mutation → 
 
 ## Auth and API outages
 
-401 and API-unavailable redirects are handled in **`lib/api/client.ts`** (transport), not in this query layer.
+401 is handled in **`lib/api/client.ts`** (transport), not in this query layer. Hop-down stays on the URL.
 
-- `clientApiJson` → `applyTransportErrorPolicy` → `endSession` (401) or `/app/unavailable` (502/503/504/network)
+- `clientApiJson` → `applyTransportErrorPolicy` → `endSession` (401). Hop-down (502/503/504/network) is silent at transport
+- Page-defining RSC loaders use `fetchQuery` / `fetchInfiniteQuery` (not `prefetchQuery`) so failures throw into `(shell)/error.tsx`
+- Page-defining client hooks set `throwOnError: throwIfPageCannotRender` — throw only when there is no cache (`query.state.data === undefined`) and the error is a page-load failure (hop-down / network / other 5xx). Do **not** set `throwOnError` on `makeQueryClient` defaults. Shared hooks used in layout or modals (`useSettingsQuery`, `useGroupsListQuery`) must not throw — the page that owns them throws in render (Settings, Groups). Chat session messages are page-defining: `fetchChatSessionMessages` + hook `throwOnError`; 404 → `notFound()`, hop-down → `(shell)/error.tsx`.
+- `QueryProvider` wraps the tree in `QueryErrorResetBoundary`. `(shell)/error.tsx` renders `QueryLoadError`; Retry calls `useQueryErrorResetBoundary().reset()` then Next `reset()`
+- Mutations stay toasts (`getUserFacingError`). Missing contact stays `PersonMissingState`, not `QueryLoadError`
 - This module only configures cache defaults and skips retries for classified transport errors
 
-See bondery-specific `references/api/api-usage.md` § Session teardown and § API unavailable handling.
+See bondery-api `references/api-usage.md` § Failure handling and § Hop-down handling.
 
 ## Adding a resource
 
@@ -54,8 +58,8 @@ See bondery-specific `references/api/api-usage.md` § Session teardown and § AP
 3. `lib/api/domains/server/<name>.ts` — server read functions with cache tags
 4. `lib/query/keys.ts` — key factory
 5. `lib/query/hooks/use<Name>.ts` — `queryFn: () => getX(...)` with invalidation on mutations
-6. `lib/query/prefetch/<name>.ts` — optional loader helper (import via `@/lib/query/prefetch` barrel)
-7. RSC page: `prefetchQuery` + `HydrationBoundary`
+6. `lib/query/prefetch/<name>.ts` — optional loader helper (import via `@/lib/query/prefetch` barrel). Page-defining reads use `fetch*` (throws); sibling widgets stay `prefetch*`
+7. RSC page: page-defining `fetchQuery` / `fetchInfiniteQuery` + `HydrationBoundary`. `prefetchQuery` swallows errors and dehydrates only successes — do not use it as the defining read
 
 `lib/query/contactsListParams.ts` parses URL search/sort into canonical contacts list filter params.
 

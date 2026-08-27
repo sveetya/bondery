@@ -20,10 +20,20 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 | `enrichment:batch_end` | `total_enriched` | client | Batch complete |
 | `enrichment:contact_update` | `source: "linkedin"` | client | Single LinkedIn enrich |
 | `feedback:nps_submit` | `score`, `has_general_feedback`, `has_reason` | client | After API success |
-| `signup_flow:user_create` | `signup_method`: `oauth_github` \| `oauth_linkedin` \| `email` \| `unknown` | **server** | First OAuth account on signup (`account.create` hook) |
+| `signup_flow:user_create` | `signup_method`: `github` \| `linkedin` \| `email` \| `unknown` | **server** | First OAuth account on signup (`account.create` hook) |
 | `signup_flow:onboarding_complete` | — | **server** | First onboarding completion |
 | `signup_flow:activation_complete` | `activation_type` | **server** | One-shot per milestone |
 | `account_settings:account_delete` | — | **server** | Before account teardown |
+| `account_settings:export_view` | `entry_point`: `settings` \| `command_palette` | client | Export modal opened |
+| `account_settings:export_start` | — | client | User starts ZIP generation |
+| `account_settings:export_generate` | `people_count`, `groups_count`, `tags_count`, `interactions_count`, `is_empty` | **server** | ZIP generated (counts only, no PII) |
+| `account_settings:export_fail` | `error_code` | client | Generation or download failed |
+| `account_settings:export_cancel` | — | client | User cancelled while generating |
+| `account_settings:import_view` | `entry_point`: `settings` \| `command_palette` | client | Bondery ZIP import modal opened |
+| `account_settings:import_start` | — | client | User starts applying a Bondery export ZIP |
+| `account_settings:import_generate` | `people_count`, `groups_count`, `tags_count`, `interactions_count`, `is_empty` | **server** | ZIP applied (counts only, no PII) |
+| `account_settings:import_fail` | `error_code` | client | Peek, apply, or timeout failed |
+| `account_settings:import_cancel` | — | client | User cancelled while checking or importing |
 | `auth:session_create` | — | client | Once per browser tab session |
 | `auth:session_end` | — | client | On logout / session end |
 | `imports:import_complete` | `import_source`, `item_count`, `is_first_import` | client | Import modal success |
@@ -36,7 +46,7 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 
 ### `import_source` values
 
-`linkedin` | `instagram` | `vcard`
+`linkedin` | `instagram` | `vcard` | `bondery_export`
 
 ## Plausible (website)
 

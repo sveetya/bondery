@@ -3,16 +3,22 @@
 import { Center, Loader, Progress, Stack, Text } from "@mantine/core";
 
 interface ImportProcessingStepProps {
+  description?: string;
   message: string;
 }
 
-export function ImportProcessingStep({ message }: ImportProcessingStepProps) {
+export function ImportProcessingStep({ description, message }: ImportProcessingStepProps) {
   return (
     <Stack gap="lg" py="md">
       <Center>
         <Stack align="center" gap="sm">
           <Loader size="md" />
           <Text>{message}</Text>
+          {description ? (
+            <Text c="dimmed" size="sm" ta="center">
+              {description}
+            </Text>
+          ) : null}
         </Stack>
       </Center>
     </Stack>

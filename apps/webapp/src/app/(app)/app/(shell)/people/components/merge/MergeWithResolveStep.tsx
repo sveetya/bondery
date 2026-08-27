@@ -104,10 +104,10 @@ export function MergeWithResolveStep({
         </Text>
         <SimpleGrid cols={2} mb="xs" mt="md" spacing="sm">
           <Center>
-            <PersonChip isClickable person={toPersonPreview(leftContact)} />
+            <PersonChip isClickable person={toPersonPreview(leftContact)} prefetch={false} />
           </Center>
           <Center>
-            <PersonChip isClickable person={toPersonPreview(rightContact)} />
+            <PersonChip isClickable person={toPersonPreview(rightContact)} prefetch={false} />
           </Center>
         </SimpleGrid>
         {leftContact && rightContact ? (

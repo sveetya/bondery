@@ -4,13 +4,14 @@
  *
  * Usage: tsx --env-file=.env.development.local scripts/provision-platform-admins.ts
  */
+import { pathToFileURL } from "node:url";
 import { provisionPlatformAdmins } from "../src/lib/bootstrap/provision-platform-admins.js";
 
 async function main(): Promise<void> {
   await provisionPlatformAdmins();
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main()
     .then(() => process.exit(0))
     .catch((error) => {

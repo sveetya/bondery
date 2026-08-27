@@ -1,6 +1,7 @@
 "use client";
 
 import { getUserFacingError } from "@bondery/helpers/api";
+import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import {
   errorNotificationTemplate,
   PersonChip,
@@ -15,13 +16,20 @@ import type {
 import { Button, Group, Paper, Text, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconUsers, IconX } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { openMergeWithModal } from "@/app/(app)/app/(shell)/people/components/modals/MergeWithModal";
+import {
+  getAutoLastInteractionChoice,
+  listMergeFieldConflicts,
+} from "@/app/(app)/app/(shell)/people/utils/merge-conflict-helpers";
 import {
   useCommonTranslations,
   useFixContactsPageTranslations,
   useMergeWithModalTranslations,
 } from "@/lib/i18n/generated/hooks";
+import { orientMergePair } from "@/lib/merge/orientMergePair";
+import { useMergeContactsMutation } from "@/lib/query/hooks/useContacts";
 import { useDeclineMergeRecommendationMutation } from "@/lib/query/hooks/useMergeRecommendations";
 
 interface MergeRecommendationCardProps {
@@ -30,6 +38,8 @@ interface MergeRecommendationCardProps {
   onDeclined?: () => void;
   recommendation: MergeRecommendation;
   redirectAfterMerge?: boolean;
+  /** When set, this contact is kept as the merge survivor (left). */
+  survivorPersonId?: string;
 }
 
 /**
@@ -94,28 +104,88 @@ export function MergeRecommendationCard({
   onAccepted,
   onDeclined,
   redirectAfterMerge = false,
+  survivorPersonId,
 }: MergeRecommendationCardProps) {
   const tCommon = useCommonTranslations();
   const t = useFixContactsPageTranslations();
   const tMerge = useMergeWithModalTranslations();
+  const router = useRouter();
   const [isDeclining, setIsDeclining] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
   const declineMutation = useDeclineMergeRecommendationMutation();
+  const mergeContactsMutation = useMergeContactsMutation();
 
-  const handleAccept = () => {
-    const initialConflictChoices = computeNameConflictChoices(
-      recommendation.leftPerson,
-      recommendation.rightPerson,
-    );
-    openMergeWithModal({
-      contacts,
-      disableLeftPicker: true,
-      disableRightPicker: true,
-      initialConflictChoices,
+  const handleAccept = async () => {
+    const oriented = orientMergePair({
+      conflictChoices: computeNameConflictChoices(
+        recommendation.leftPerson,
+        recommendation.rightPerson,
+      ),
       leftPersonId: recommendation.leftPerson.id,
-      onSuccess: onAccepted,
-      redirectToMergedPerson: redirectAfterMerge,
       rightPersonId: recommendation.rightPerson.id,
+      survivorPersonId,
     });
+    const leftContact =
+      contacts.find((contact) => contact.id === oriented.leftPersonId) ?? recommendation.leftPerson;
+    const rightContact =
+      contacts.find((contact) => contact.id === oriented.rightPersonId) ??
+      recommendation.rightPerson;
+    const hasConflicts = listMergeFieldConflicts(leftContact, rightContact).length > 0;
+
+    if (hasConflicts) {
+      openMergeWithModal({
+        contacts,
+        disableLeftPicker: true,
+        disableRightPicker: true,
+        initialConflictChoices: oriented.conflictChoices,
+        leftPersonId: oriented.leftPersonId,
+        onSuccess: onAccepted,
+        redirectToMergedPerson: redirectAfterMerge,
+        rightPersonId: oriented.rightPersonId,
+      });
+      return;
+    }
+
+    const autoLastInteractionChoice = getAutoLastInteractionChoice(
+      leftContact.lastInteraction,
+      rightContact.lastInteraction,
+    );
+
+    setIsAccepting(true);
+    try {
+      const result = await mergeContactsMutation.mutateAsync({
+        conflictResolutions: {
+          ...oriented.conflictChoices,
+          ...(autoLastInteractionChoice ? { lastInteraction: autoLastInteractionChoice } : {}),
+        },
+        leftPersonId: oriented.leftPersonId,
+        rightPersonId: oriented.rightPersonId,
+      });
+
+      if (!("personId" in result)) {
+        throw new Error(tMerge("MergeFailed"));
+      }
+
+      notifications.show(
+        successNotificationTemplate({
+          description: tMerge("MergeSuccess"),
+          title: t("SuccessTitle"),
+        }),
+      );
+      onAccepted?.();
+      if (redirectAfterMerge) {
+        router.push(`${WEBAPP_ROUTES.PERSON}/${result.personId}`);
+      }
+    } catch (error) {
+      notifications.show(
+        errorNotificationTemplate({
+          description: getUserFacingError(error, tCommon),
+          title: t("ErrorTitle"),
+        }),
+      );
+    } finally {
+      setIsAccepting(false);
+    }
   };
 
   const handleDecline = async () => {
@@ -158,14 +228,15 @@ export function MergeRecommendationCard({
               </Text>
             </Group>
           </Tooltip>
-          <PersonChip isClickable person={recommendation.leftPerson} />
+          <PersonChip isClickable person={recommendation.leftPerson} prefetch={false} />
           <Text c="dimmed" fw={500} size="sm">
             {tMerge("MergeWithLabel")}
           </Text>
-          <PersonChip isClickable person={recommendation.rightPerson} />
+          <PersonChip isClickable person={recommendation.rightPerson} prefetch={false} />
         </Group>
         <Group>
           <Button
+            disabled={isAccepting}
             leftSection={<IconX size={16} />}
             loading={isDeclining}
             onClick={handleDecline}
@@ -173,7 +244,12 @@ export function MergeRecommendationCard({
           >
             {t("DeclineMerge")}
           </Button>
-          <Button leftSection={<IconCheck size={16} />} onClick={handleAccept}>
+          <Button
+            disabled={isDeclining}
+            leftSection={<IconCheck size={16} />}
+            loading={isAccepting}
+            onClick={() => void handleAccept()}
+          >
             {t("AcceptMerge")}
           </Button>
         </Group>

@@ -130,11 +130,15 @@ export function PeopleMultiPickerInput({
     }
   }, searchDebounceMs);
 
-  // Derived from knownContacts so chips for async-found contacts resolve.
-  const contactsById = useMemo(
-    () => new Map(knownContacts.map((contact) => [contact.id, contact])),
-    [knownContacts],
-  );
+  // Include the `contacts` prop immediately so a parent can add a newly created
+  // person without waiting for the merge effect.
+  const contactsById = useMemo(() => {
+    const merged = new Map(knownContacts.map((contact) => [contact.id, contact]));
+    for (const contact of contacts) {
+      merged.set(contact.id, contact);
+    }
+    return merged;
+  }, [contacts, knownContacts]);
 
   const selectedContacts = useMemo(
     () =>

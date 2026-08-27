@@ -3,15 +3,15 @@ description: Sync Infisical dokploySync keys to Dokploy compose environment (exp
 
 inputs:
   dry_run:
-    description: Log upload keys without calling Dokploy API
+    description: Dry run: Log env names to runner console instead of uploading to Dokploy API
     required: false
     default: "true"
   redeploy:
-    description: Trigger deploy webhook after save (requires webhook in Infisical for the selected target)
+    description: Trigger redeploy webhook
     required: false
     default: "false"
   target:
-    description: Sync target (website, services, or plausible Dokploy compose app)
+    description: Sync target (website, services, services-beta, or plausible Dokploy compose app)
     required: false
     default: website
 

@@ -27,6 +27,7 @@ Do not add success notifications (toasts, banners, snackbars, modals) when the u
 | **Success is invisible** | Background sync, **copy to clipboard**, email sent, export downloaded |
 | **Success is easy to miss** | Subtle off-screen change, no navigation |
 | **Destructive or irreversible** | Optional brief confirmation before; error if it fails |
+| **Create more is on** | Success toast required even if the off path navigates. See [create-more.md](../desktop/create-more.md) |
 
 **Copy buttons:** Clipboard has no visible UI change — always show brief success toast. Error toast if copy fails.
 
@@ -37,15 +38,16 @@ Do not add success notifications (toasts, banners, snackbars, modals) when the u
 - **Mobile:** `useAppToast` for errors and invisible successes only.
 - **Webapp:** Mantine `notifications` — same rule.
 - **Settings:** Changing a select/toggle is self-confirming. Revert control + error on API failure.
-- **Avoid double confirmation:** Do not combine "navigate to result" **and** "success toast".
+- **Avoid double confirmation:** Do not combine "navigate to result" **and** "success toast". Create more **on** is not double confirmation (no navigate; an empty form is not proof). Create more **off** keeps skip-toast-when-navigate. Do not add toasts to an off path that already navigates just because the on path needs one.
 
 ### Quick check before adding a success toast
 
 1. Does the screen or control already show the outcome?
 2. Did we navigate the user to the result?
 3. Would the toast only repeat what they already know?
+4. Is Create more on? If yes, always show a success notification.
 
-If yes to any — skip the success notification.
+If yes to any of 1–3 — skip the success notification. Step 4 overrides that skip.
 
 ---
 

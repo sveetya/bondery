@@ -4,7 +4,6 @@
   "tasks": {
     "dev": {
       "dependsOn": ["^compile"],
-      "interruptible": true,
       "persistent": true,
       "with": [
         "@bondery/schemas#dev",

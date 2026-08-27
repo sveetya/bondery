@@ -23,7 +23,9 @@ Tier 2 is the default "am I ready for PR?" target when risk is standard or high.
 pnpm install --frozen-lockfile
 pnpm exec biome ci .
 pnpm run check:package-imports
-pnpm run check:env
+pnpm run env:check
+# Local `pnpm run check` also runs `pnpm run check:env` (per-app required vars).
+# Do not add that to GitHub Actions — it needs .env.*.local / secrets.
 pnpm run check:docs
 pnpm run check:openapi
 # Docker required:

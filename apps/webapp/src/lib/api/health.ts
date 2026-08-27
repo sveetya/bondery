@@ -72,6 +72,10 @@ export function deriveUserHealthStatus(
     return "checking";
   }
 
+  if (result.reachable && result.status === 429) {
+    return "checking";
+  }
+
   if (!result.reachable || result.status >= 500 || !result.report) {
     return "offline";
   }

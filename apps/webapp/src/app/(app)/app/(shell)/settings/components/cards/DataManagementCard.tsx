@@ -3,6 +3,8 @@
 import { CardSection, Divider, Group, Text } from "@mantine/core";
 import { IconDatabase } from "@tabler/icons-react";
 import { useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
+import { BonderyExportSection } from "./BonderyExportSection";
+import { BonderyImportSection } from "./BonderyImportSection";
 import { DeleteAccountSection } from "./DeleteAccountSection";
 import { InstagramImportSection } from "./InstagramImportSection";
 import { LinkedInImportSection } from "./LinkedInImportSection";
@@ -22,7 +24,21 @@ export function DataManagementCard() {
     >
       <CardSection inheritPadding py="md">
         <Text fw={500} mb={4} size="sm">
-          {t("LinkedInImport.SectionTitle")}
+          {t("Export.SectionTitle")}
+        </Text>
+        <Text c="dimmed" mb="md" size="xs">
+          {t("Export.Description")}
+        </Text>
+        <Group align="flex-start" gap="md" wrap="wrap">
+          <BonderyExportSection />
+        </Group>
+      </CardSection>
+
+      <Divider />
+
+      <CardSection inheritPadding py="md">
+        <Text fw={500} mb={4} size="sm">
+          {t("ImportSectionTitle")}
         </Text>
         <Text c="dimmed" mb="md" size="xs">
           {t("ImportContactsDescription")}
@@ -31,6 +47,7 @@ export function DataManagementCard() {
           <LinkedInImportSection />
           <InstagramImportSection />
           <VCardImportSection />
+          <BonderyImportSection />
         </Group>
       </CardSection>
 

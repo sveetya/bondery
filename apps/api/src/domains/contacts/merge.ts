@@ -12,6 +12,7 @@ import {
   MERGEABLE_SCALAR_FIELDS,
   resolveConflictChoice,
 } from "../../lib/contacts/merge-helpers.js";
+import { lookupMergePeople } from "../../lib/contacts/merge-people-lookup.js";
 import { internal } from "../../lib/platform/errors/http-errors.js";
 import {
   buildContactSnapshotChanges,
@@ -70,16 +71,30 @@ export async function mergeContacts(
     where: { id: { in: [leftPersonId, rightPersonId] }, userId: user.id },
   });
 
-  if (peopleRows.length !== 2) {
+  const mergePeople = lookupMergePeople(peopleRows, leftPersonId, rightPersonId);
+
+  if (mergePeople.status === "not_found") {
     throw new DomainError("One or both contacts were not found", 404, "contact_not_found");
   }
 
-  const leftPerson = peopleRows.find((person) => person.id === leftPersonId);
-  const rightPerson = peopleRows.find((person) => person.id === rightPersonId);
-
-  if (!leftPerson || !rightPerson) {
-    throw new DomainError("One or both contacts were not found", 404, "contact_not_found");
+  if (mergePeople.status === "already_merged") {
+    const survivorId = mergePeople.survivor.id;
+    const contact = await loadEnrichedContact(db, user.id, survivorId, undefined, log);
+    const txid = await captureCurrentSyncTxid();
+    return {
+      data: {
+        contact,
+        mergedFromPersonId: mergePeople.mergedFromPersonId,
+        mergedIntoPersonId: survivorId,
+        personId: survivorId,
+        userId: user.id,
+      },
+      serverSequence: 0,
+      txid,
+    };
   }
+
+  const { leftPerson, rightPerson } = mergePeople;
 
   const leftPersonSync = toSyncRow(leftPerson as unknown as Record<string, unknown>);
   const rightPersonSync = toSyncRow(rightPerson as unknown as Record<string, unknown>);
@@ -190,11 +205,16 @@ export async function mergeContacts(
     userId: user.id,
   };
 
-  const snapshotChanges = await buildContactSnapshotChanges(user.id, leftPersonId, db);
-  const changes = [...snapshotChanges, buildPeopleDeleteChange(rightPersonId)];
   const txid = await captureCurrentSyncTxid();
-  const serverSequence =
-    (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
+  let serverSequence = 0;
+  try {
+    const snapshotChanges = await buildContactSnapshotChanges(user.id, leftPersonId, db);
+    const changes = [...snapshotChanges, buildPeopleDeleteChange(rightPersonId)];
+    serverSequence =
+      (await persistSyncChanges(user.id, changes, syncEmitMetaFromContext(ctx))) ?? 0;
+  } catch (error) {
+    log?.error({ err: error }, "Failed to persist sync changes after contact merge");
+  }
 
   scheduleMergeRecommendationsRefresh(ctx);
 

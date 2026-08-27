@@ -114,7 +114,7 @@ class ApiError extends Error {
 
 1. **One parser** — nested `{ error: { … } }` JSON is normalized in `@bondery/helpers/api`, not copied per client.
 2. **Structured handling** — UI can branch on `error.status === 401` or `error.code === "auth_required"` instead of string-matching `"Unauthorized"`.
-3. **Global policy** — `applyTransportErrorPolicy` in `clientApiJson` handles 401 and API-unavailable redirects in one place.
+3. **Global policy** — `applyTransportErrorPolicy` in `clientApiJson` handles 401 in one place. Hop-down is classified for retries and stays silent (no URL change, no global chrome).
 
 **Per-app transport** (not in helpers):
 
@@ -131,25 +131,27 @@ Mobile `apiRequest` throws typed `ApiError` (same as webapp). UI shows `getUserF
 
 | Layer | Location | Responsibility |
 |-------|----------|----------------|
-| **1 — Server bootstrap** | `lib/app/getAppSession.ts`, `app/(app)/app/layout.tsx` | Session probe + layout guards: unauthorized → login, unavailable → `/app/unavailable` |
-| **2 — Classification** | `lib/api/availability.ts`, `lib/auth/unauthorized.ts` | `isApiUnavailableError`, `isUnauthorizedApiError` (no side effects) |
-| **3 — Transport policy** | `applyTransportErrorPolicy.ts` + `client.ts`; `applyServerTransportPolicy.ts` + `server.ts` | Apply 401 / unavailable side effects per runtime |
+| **Identity** | `lib/auth/getRequestSession.ts`, `app/(app)/app/layout.tsx` | Better Auth identity only: anonymous → login; hop-down stays on URL |
+| **Shell chrome** | `UserSessionProvider`, locale, sidebar | Session-backed chrome. No outage banner, no `/health/ready` polling, no app-wide offline pill |
+| **Product data** | React Query + page / route `error.tsx` | Skeleton, stale cache, or inline error — never fake `?? {}` defaults, never app-wide chrome |
+
+**Classification** (`lib/api/availability.ts`, `lib/auth/unauthorized.ts`) has no side effects. **Transport policy** (`applyTransportErrorPolicy` / `applyServerTransportPolicy`) handles 401 → login; hop-down is silent on the client and rethrown on the server.
 
 **React Query** (`lib/query/client.ts`) owns cache config and retry rules only — not session or outage redirects.
 
 ### Session vs settings (webapp)
 
-Layout loads **session** (who you are, shell + locale inputs, onboarding guard). Home and Settings load the full **settings** blob on demand via `useSettingsQuery()`. Never use `useSettingsQuery` for shell identity — use `useUserSession()` from `UserSessionProvider`. After identity-changing mutations, call `refreshAppShell()` so the layout re-probes session and guards stay aligned.
+Layout loads **session** (who you are, shell + locale inputs, onboarding guard). Home and Settings load the full **settings** blob on demand via `useSettingsQuery()`. Never use `useSettingsQuery` for shell identity — use `useUserSession()` from `UserSessionProvider`. Call `refreshAppShell()` for **route gates** (onboarding) or last-resort identity — not preference field saves (patch `applyUserLocaleFromRef` / `applyUserSessionFromRef` instead).
 
 | Signal | Client action | Server action (RSC, `transportPolicy: true`) | Sign out? |
 |--------|---------------|--------------------------------------------|-----------|
 | 401 / `auth_required` | `endSession` → `/login?redirect=…` (`session_expired` only) | `handleServerUnauthorizedSession` → login with `redirect` | Yes |
-| 502 / 503 / 504 / network `TypeError` | `handleApiUnavailable` → `/app/unavailable?redirect=…` | `redirect(/app/unavailable?redirect=…)` if session valid; else login | No |
+| 502 / 503 / 504 / network `TypeError` | Silent at transport; query/page shows skeleton, stale, or inline error | Rethrow → route `error.tsx` | No |
 | `*JsonOrNull` outage | Return `null` | Return `null` | No |
 | `*JsonOrNull` 401 | Ends session | Signs out + redirects | Yes |
 | BFF `app/api/**` | N/A | `bffProxyFetch` — passthrough status or nested 503 `service_unavailable` | Per status |
 
-**Health probe:** `GET /api/health/ready` (BFF → Fastify `/health/ready`) for the unavailable page status panel. Critical dependencies: Postgres (`SELECT 1`), object storage (SeaweedFS `GET /status` + required bucket `HeadBucket`), Redis (`PING` on shared clients), SMTP (live verify). Returns HTTP 503 when any critical dependency is unhealthy. Extension min version: `GET /api/extension/manifest`.
+**Health probe:** `GET /health/live` and `GET /health/ready` on each container are for orchestration only — not product chrome. Manual recovery uses `GET /api/me/session` (BFF). `/health/ready` checks Postgres, storage, Redis, SMTP; returns HTTP 503 when critical dependencies are unhealthy.
 
 **Boot verify:** On `onReady`, the API runs the same live checks for Postgres, storage, Redis, and SMTP before pg-boss jobs start. Development and production fail fast on missing env or probe failure; `NODE_ENV=test` skips live probes.
 
@@ -222,18 +224,19 @@ The **transport layer** detects expired sessions and delegates to session teardo
 
 Do not handle 401 in feature components or React Query global handlers.
 
-### API unavailable handling
+### Hop-down handling
 
-When the BFF or upstream API is down (502/503/504 or fetch network failure):
+When the BFF or upstream API is unreachable (502/503/504 or fetch network failure):
 
-- `clientApiJson` → `handleApiUnavailable()` → `/app/unavailable?redirect=…` (session stays active)
-- `serverApiFetch` / `serverApiJson` (default) → `redirect(/app/unavailable?redirect=…)` when session valid; login when not
-- `getAppSession()` with `transportPolicy: false` → layout redirects (probe, not sole gate)
-- BFF routes → `bffProxyFetch` returns 503 JSON on network failure; browser client policy handles redirect
-- `*JsonOrNull` does **not** redirect on unavailable — optional fetches degrade to `null`
-- Recovery: unavailable page auto-navigates to `redirect` after health OK + `OUTAGE_RESUME_DELAY_MS` (see [page-navigation-resume.md](../../bondery-ux/references/product/page-navigation-resume.md))
+- `clientApiJson` → `applyTransportErrorPolicy` is silent on hop-down (401 still ends the session). React Query retries classified unavailable errors; the page shows skeleton, stale, or inline error
+- `serverApiFetch` / `serverApiJson` (default) → rethrow into route `error.tsx` — **no URL change**
+- `getRequestSession()` with `transportPolicy: false` → layout identity only; hop-down renders fail-open shell
+- BFF routes → `bffProxyFetch` returns 503 JSON on network failure; client policy stays silent on hop-down
+- `*JsonOrNull` degrades to `null` (optional fetches)
+- Recovery: page Retry / `refetch()`, or TanStack Query `refetchOnWindowFocus` (see [page-navigation-resume.md](../../bondery-ux/references/product/page-navigation-resume.md))
+- Stale `/app/unavailable` bookmarks: `retryApiConnection()` probes `GET /api/me/session`
 
-Do not call `endSession()` for outage responses.
+Do not call `endSession()` for hop-down responses.
 
 ### What is not session teardown
 
@@ -268,8 +271,8 @@ pnpm run check-api-fetch          # non-strict variant (webapp package.json)
 | Webapp transport policy | `apps/webapp/src/lib/api/applyTransportErrorPolicy.ts` |
 | Webapp server transport policy | `apps/webapp/src/lib/api/applyServerTransportPolicy.ts` |
 | Webapp BFF proxy | `apps/webapp/src/lib/api/bffProxy.ts` |
-| Webapp server bootstrap | `apps/webapp/src/lib/app/getAppSession.ts` |
-| Webapp API unavailable redirect | `apps/webapp/src/lib/auth/handleApiUnavailable.ts` |
+| Webapp server bootstrap | `apps/webapp/src/lib/auth/getRequestSession.ts` |
+| Webapp hop-down bookmark probe | `apps/webapp/src/lib/api/availabilityStore.ts` (`retryApiConnection`) |
 | Webapp return intent | `apps/webapp/src/lib/auth/returnIntent.ts` |
 | Webapp server transport | `apps/webapp/src/lib/api/server.ts` |
 | Webapp session teardown | `apps/webapp/src/lib/auth/endSession.ts` |

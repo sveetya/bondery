@@ -25,9 +25,7 @@ import { useModalDismiss } from "@/lib/modals";
 
 function MyFeatureModalBody({ modalId }: { modalId: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isLoading } = useSomeQuery();
-
-  const isBlocking = isSubmitting || isLoading;
+  const isBlocking = isSubmitting;
   const { closeModal, closeModalSync } = useModalDismiss(modalId, isBlocking);
 
   // On success, close with closeModal() or closeModalSync() when parent
@@ -47,7 +45,7 @@ closes while async loading can still complete (rare).
 - Never call `modals.updateModal` for dismiss flags in feature code — use `useModalBlocking` / `useModalDismiss`.
 - Never call `modals.close(modalId)` directly in modal bodies that use blocking state — use `closeModal` / `closeModalSync` from `useModalDismiss`.
 - Do not use `<Modal>` in feature code; onboarding shell is the only exception.
-- Derive `isBlocking` from submit **and** load/parse/import states.
+- Derive `isBlocking` from in-flight **writes** and long-running jobs (ZIP generate, import parse/commit) — not from preview/list prefetch. See bondery-ux `desktop/modals.md` § Loading.
 - Pass `disabled={isBlocking}` to every editable control in the modal body (inputs, pickers, toggles).
 - Web `isBlocking` matches mobile `ActionSheetPopup` `isBusy`.
 
@@ -58,3 +56,7 @@ When a modal can scroll (tables, long card grids, merge conflicts), use **`Modal
 When filters, search, summary chips, or badges should stay visible while a list or table scrolls, pass them in `header`. Only `children` scrolls; `header` and `footer` stay pinned (same layout split as mobile `ActionSheetPopup`).
 
 Short forms and confirm dialogs keep `Stack` + inline `ModalFooter` — no layout wrapper needed.
+
+## Create more
+
+Repetitive **create** modals can stay open after a successful save. Own the switch with `useCreateMore` and pass `createMoreLabel` / `onCreateMoreChange` into `ModalFooter`. Nested pickers that need one entity back must pass `repeatable: false`. When the parent overlay can remount as the nested modal closes, persist the created entity with `rememberCreatedContactForModal` (`parentModalId`) instead of relying on `onCreated` alone. See bondery-ux `desktop/create-more.md`.

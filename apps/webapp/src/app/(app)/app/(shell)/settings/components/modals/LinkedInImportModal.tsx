@@ -9,6 +9,7 @@ import {
 } from "@bondery/mantine-next";
 import type { LinkedInPreparedContact } from "@bondery/schemas";
 import { SOCIAL_IMPORT_COMMIT_BATCH_SIZE } from "@bondery/schemas/constants";
+import { MIME_TYPES } from "@mantine/dropzone";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { NavigationProgress } from "@mantine/nprogress";
@@ -32,13 +33,26 @@ import {
   sortLinkedInContactsForPreview,
   toLinkedInPreviewContact,
 } from "../../utils/linkedin-import-helpers";
+import { ImportIntroStep } from "../import/ImportIntroStep";
 import { ImportProcessingStep, ImportProgressStep } from "../import/ImportModalProcessingSteps";
+import { ImportZipUploadStep } from "../import/ImportZipUploadStep";
 import { LinkedInImportInstructionsStep } from "../import/LinkedInImportInstructionsStep";
-import { LinkedInImportIntroStep } from "../import/LinkedInImportIntroStep";
 import { LinkedInImportPreviewStep } from "../import/LinkedInImportPreviewStep";
-import { LinkedInImportUploadStep } from "../import/LinkedInImportUploadStep";
 
 export type { LinkedInImportStep };
+
+const LINKEDIN_MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
+const LINKEDIN_UPLOAD_ACCEPT = {
+  [MIME_TYPES.csv]: [".csv"],
+  [MIME_TYPES.zip]: [".zip"],
+  "application/csv": [".csv"],
+  "application/octet-stream": [".zip", ".csv"],
+  "application/vnd.ms-excel": [".csv"],
+  "application/x-zip": [".zip"],
+  "application/x-zip-compressed": [".zip"],
+  "multipart/x-zip": [".zip"],
+  "text/plain": [".csv"],
+};
 
 export function LinkedInImportModal({
   modalId,
@@ -279,10 +293,12 @@ export function LinkedInImportModal({
 
   if (step === "intro") {
     return renderWithNavigationProgress(
-      <LinkedInImportIntroStep
+      <ImportIntroStep
         cancelLabel={t("Cancel")}
         continueLabel={t("Continue")}
         descriptions={[t("IntroDescription1"), t("IntroDescription2"), t("IntroDescription3")]}
+        icon={IconBrandLinkedin}
+        iconColor="blue"
         introTitle={t("IntroTitle")}
         onCancel={closeModal}
         onContinue={() => setStep("instructions")}
@@ -325,12 +341,14 @@ export function LinkedInImportModal({
 
   if (step === "upload") {
     return renderWithNavigationProgress(
-      <LinkedInImportUploadStep
+      <ImportZipUploadStep
+        accept={LINKEDIN_UPLOAD_ACCEPT}
         backLabel={t("Back")}
         cancelLabel={t("Cancel")}
         dropzoneDescription={t("DropzoneDescription")}
         dropzoneTitle={t("DropzoneTitle")}
-        isParsing={isParsing}
+        loading={isParsing}
+        maxSize={LINKEDIN_MAX_UPLOAD_BYTES}
         onBack={() => setStep("instructions")}
         onCancel={closeModal}
         onDrop={(files) => {

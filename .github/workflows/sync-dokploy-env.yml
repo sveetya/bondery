@@ -1,10 +1,18 @@
 name: Sync Dokploy env
 
-# Manual Infisical production → Dokploy compose env sync (website, services, or plausible stack).
+# Manual Infisical → Dokploy compose env sync (website, services, or plausible stack).
+# Beta product stack: deployment=beta fetches staging app secrets + production ops keys.
 
 on:
   workflow_dispatch:
     inputs:
+      deployment:
+        description: Infisical source for app secrets (ops keys always from production)
+        type: choice
+        options:
+          - production
+          - beta
+        default: production
       target:
         description: Dokploy compose stack to sync
         type: choice
@@ -14,11 +22,11 @@ on:
           - plausible
         default: website
       dry_run:
-        description: Log upload keys without calling Dokploy API
+        description: Dry run: Log env names to runner console instead of uploading to Dokploy API
         type: boolean
         default: true
       redeploy:
-        description: Trigger ops deploy webhook after save
+        description: Trigger redeploy webhook
         type: boolean
         default: false
 
@@ -39,12 +47,44 @@ jobs:
       - name: Build helpers (env manifest exports)
         run: pnpm --filter @bondery/helpers run build
 
+      - name: Validate deployment and target
+        run: |
+          if [ "${{ inputs.deployment }}" = "beta" ] && [ "${{ inputs.target }}" != "services" ]; then
+            echo "sync-dokploy-env: deployment=beta only supports target=services (product stack)"
+            exit 1
+          fi
+
       - uses: ./.github/actions/shared/infisical-fetch-secrets
         with:
           env-slug: production
+
+      - name: Snapshot production Dokploy ops keys
+        if: inputs.deployment == 'beta'
+        run: env | grep '^BONDERY_OPS_DOKPLOY_' > "$RUNNER_TEMP/dokploy-ops.env"
+
+      - uses: ./.github/actions/shared/infisical-fetch-secrets
+        if: inputs.deployment == 'beta'
+        with:
+          env-slug: staging
+
+      - name: Restore production Dokploy ops keys after staging fetch
+        if: inputs.deployment == 'beta'
+        run: |
+          while IFS= read -r line; do
+            echo "$line" >> "$GITHUB_ENV"
+          done < "$RUNNER_TEMP/dokploy-ops.env"
+
+      - name: Resolve Dokploy sync target
+        id: sync-target
+        run: |
+          if [ "${{ inputs.deployment }}" = "beta" ]; then
+            echo "target=services-beta" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=${{ inputs.target }}" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: ./.github/actions/shared/dokploy-save-compose-env
         with:
           dry_run: ${{ inputs.dry_run }}
           redeploy: ${{ inputs.redeploy }}
-          target: ${{ inputs.target }}
+          target: ${{ steps.sync-target.outputs.target }}

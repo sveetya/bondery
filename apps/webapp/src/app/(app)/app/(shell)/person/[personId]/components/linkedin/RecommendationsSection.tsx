@@ -33,6 +33,7 @@ export function RecommendationsSection({
           contacts={[mergeRecommendation.leftPerson, mergeRecommendation.rightPerson]}
           recommendation={mergeRecommendation}
           redirectAfterMerge
+          survivorPersonId={personId}
         />
       )}
 

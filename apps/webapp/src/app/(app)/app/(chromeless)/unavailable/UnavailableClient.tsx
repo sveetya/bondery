@@ -1,63 +1,27 @@
 "use client";
 
-import { API_ROUTES, toBffApiPath, WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
-import { Box, Button, Collapse, Group, Loader, Stack, Text, Title } from "@mantine/core";
+import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
+import { Box, Button, Group, Loader, Stack, Text, Title } from "@mantine/core";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { clientApiFetch } from "@/lib/api/client";
-import {
-  deriveUserHealthStatus,
-  fetchApiHealthReport,
-  type HealthCheckResult,
-  type UserHealthStatus,
-} from "@/lib/api/health";
+import { retryApiConnection } from "@/lib/api/availabilityStore";
 import { OUTAGE_RESUME_DELAY_MS } from "@/lib/auth/constants";
-import { resetApiUnavailableNavigation } from "@/lib/auth/handleApiUnavailable";
+import { handleUnauthorizedSession } from "@/lib/auth/handleUnauthorizedSession";
 import { parseReturnIntent } from "@/lib/auth/returnIntent";
 import { useUnavailablePageTranslations } from "@/lib/i18n/generated/hooks";
 import { STATUS_URL } from "@/lib/platform/config";
 
-const POLL_INTERVAL_FAST_MS = 5_000;
-const POLL_INTERVAL_SLOW_MS = 30_000;
-const FAILURES_BEFORE_BACKOFF = 5;
-
-async function canResumeAppSession(): Promise<boolean> {
-  try {
-    const response = await clientApiFetch(toBffApiPath(API_ROUTES.ME_SESSION));
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
+const POLL_INTERVAL_MS = 5_000;
 
 export function UnavailableClient() {
   const t = useUnavailablePageTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isRetrying, setIsRetrying] = useState(false);
-  const [isPolling, setIsPolling] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [healthLoading, setHealthLoading] = useState(true);
-  const [healthResult, setHealthResult] = useState<HealthCheckResult | null>(null);
-  const [technicalOpen, setTechnicalOpen] = useState(false);
-  const [pollIntervalMs, setPollIntervalMs] = useState(POLL_INTERVAL_FAST_MS);
-  const [secondsUntilPoll, setSecondsUntilPoll] = useState(POLL_INTERVAL_FAST_MS / 1000);
-  const consecutiveFailuresRef = useRef(0);
+  const [sessionReachable, setSessionReachable] = useState<boolean | null>(null);
+  const [secondsUntilPoll, setSecondsUntilPoll] = useState(POLL_INTERVAL_MS / 1000);
   const isNavigatingRef = useRef(false);
-  const isPollingRef = useRef(false);
-  const initialLoadDoneRef = useRef(false);
-
-  const userStatus = deriveUserHealthStatus(healthLoading, healthResult);
-  const isChecking = healthLoading || isPolling || isRetrying || isNavigating;
-  const showPollCountdown = userStatus !== "online" && !isChecking;
-  const statusLabel =
-    userStatus === "online"
-      ? t("StatusOnline")
-      : userStatus === "degraded"
-        ? t("StatusDegraded")
-        : userStatus === "offline"
-          ? t("StatusOffline")
-          : t("StatusChecking");
 
   const navigateBack = useCallback(async () => {
     if (isNavigatingRef.current) {
@@ -70,96 +34,56 @@ export function UnavailableClient() {
       setTimeout(resolve, OUTAGE_RESUME_DELAY_MS);
     });
 
-    resetApiUnavailableNavigation();
     const returnTo = parseReturnIntent(searchParams) ?? WEBAPP_ROUTES.HOME;
     router.replace(returnTo);
     router.refresh();
   }, [router, searchParams]);
 
-  const loadHealth = useCallback(
-    async (options?: { initial?: boolean }): Promise<UserHealthStatus> => {
-      if (isNavigatingRef.current || isPollingRef.current) {
-        return "checking";
-      }
-
-      const initial = options?.initial === true;
-      isPollingRef.current = true;
-      if (initial) {
-        setHealthLoading(true);
-      } else {
-        setIsPolling(true);
-      }
-
-      try {
-        const result = await fetchApiHealthReport();
-        setHealthResult(result);
-
-        const status = deriveUserHealthStatus(false, result);
-        if (status === "online" && !initial && (await canResumeAppSession())) {
-          void navigateBack();
-        } else if (status === "online") {
-          consecutiveFailuresRef.current += 1;
-        } else {
-          consecutiveFailuresRef.current += 1;
-          if (consecutiveFailuresRef.current >= FAILURES_BEFORE_BACKOFF) {
-            setPollIntervalMs(POLL_INTERVAL_SLOW_MS);
-          }
-        }
-
-        setSecondsUntilPoll(Math.ceil(pollIntervalMs / 1000));
-        return status;
-      } finally {
-        if (!isNavigatingRef.current) {
-          isPollingRef.current = false;
-          if (initial) {
-            setHealthLoading(false);
-          } else {
-            setIsPolling(false);
-          }
-        }
-      }
-    },
-    [navigateBack, pollIntervalMs],
-  );
-
-  useEffect(() => {
-    if (initialLoadDoneRef.current || isNavigatingRef.current) {
-      return;
+  const probeSession = useCallback(async (): Promise<boolean> => {
+    const result = await retryApiConnection();
+    if (result === "unauthorized") {
+      void handleUnauthorizedSession();
+      return false;
     }
-    initialLoadDoneRef.current = true;
-    void loadHealth({ initial: true });
-  }, [loadHealth]);
+    if (result === "ok") {
+      setSessionReachable(true);
+      void navigateBack();
+      return true;
+    }
+    setSessionReachable(false);
+    return false;
+  }, [navigateBack]);
 
   useEffect(() => {
-    setSecondsUntilPoll(Math.ceil(pollIntervalMs / 1000));
-  }, [pollIntervalMs]);
+    void probeSession();
+  }, [probeSession]);
 
   useEffect(() => {
-    if (isNavigatingRef.current || isChecking) {
+    if (isNavigating || sessionReachable) {
       return;
     }
 
-    if (secondsUntilPoll > 0) {
-      const countdown = setInterval(() => {
-        setSecondsUntilPoll((seconds) => Math.max(0, seconds - 1));
-      }, 1_000);
+    const countdown = setInterval(() => {
+      setSecondsUntilPoll((seconds) => {
+        if (seconds <= 1) {
+          void probeSession();
+          return POLL_INTERVAL_MS / 1000;
+        }
+        return seconds - 1;
+      });
+    }, 1_000);
 
-      return () => clearInterval(countdown);
-    }
-
-    void loadHealth();
-  }, [isChecking, loadHealth, secondsUntilPoll]);
+    return () => clearInterval(countdown);
+  }, [isNavigating, probeSession, sessionReachable]);
 
   const handleRetry = async () => {
     if (isNavigating) {
       return;
     }
     setIsRetrying(true);
-    consecutiveFailuresRef.current = 0;
-    setPollIntervalMs(POLL_INTERVAL_FAST_MS);
-    setSecondsUntilPoll(Math.ceil(POLL_INTERVAL_FAST_MS / 1000));
+    setSecondsUntilPoll(POLL_INTERVAL_MS / 1000);
     try {
-      await loadHealth();
+      await probeSession();
     } finally {
       if (!isNavigatingRef.current) {
         setIsRetrying(false);
@@ -167,7 +91,14 @@ export function UnavailableClient() {
     }
   };
 
-  const report = healthResult?.reachable ? healthResult.report : null;
+  const isChecking = sessionReachable === null || isRetrying || isNavigating;
+  const showPollCountdown = sessionReachable === false && !isChecking;
+  const statusLabel =
+    sessionReachable === true
+      ? t("StatusOnline")
+      : isChecking
+        ? t("StatusChecking")
+        : t("StatusOffline");
 
   const copyStack = (centered: boolean) => (
     <Stack align={centered ? "center" : "flex-start"} gap="sm">
@@ -182,7 +113,7 @@ export function UnavailableClient() {
 
   const actionStack = (centered: boolean) => (
     <Stack align={centered ? "center" : "flex-start"} gap={4}>
-      {healthLoading ? (
+      {isChecking ? (
         <Loader />
       ) : (
         <Group gap="sm" justify={centered ? "center" : "flex-start"} wrap="wrap">
@@ -190,7 +121,7 @@ export function UnavailableClient() {
             aria-describedby={showPollCountdown ? "unavailable-poll-description" : undefined}
             className="min-w-40"
             disabled={isNavigating}
-            loading={isPolling || isRetrying || isNavigating}
+            loading={isRetrying || isNavigating}
             onClick={() => void handleRetry()}
           >
             {t("Retry")}
@@ -271,52 +202,13 @@ export function UnavailableClient() {
 
       <Box pb="xl" px={{ base: "xl", lg: 80, sm: 48 }}>
         <Stack align="center" gap="xs">
-          {healthLoading ? (
-            <Loader />
+          {isChecking ? (
+            <Loader size="sm" />
           ) : (
             <Text c="dimmed" size="sm" ta="center">
               {statusLabel}
             </Text>
           )}
-          <Text
-            c="dimmed"
-            component="button"
-            onClick={() => setTechnicalOpen((open) => !open)}
-            size="sm"
-            style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
-            td={technicalOpen ? "underline" : undefined}
-            type="button"
-          >
-            {t("TechnicalDetails")}
-          </Text>
-          <Collapse expanded={technicalOpen}>
-            <Stack align="center" gap={4} maw={480} mx="auto" pt="sm">
-              {healthResult ? (
-                <>
-                  <Text c="dimmed" ff="monospace" size="sm" ta="center">
-                    {t("TechnicalHttpStatus", {
-                      status: healthResult.reachable
-                        ? String(healthResult.status)
-                        : t("TechnicalUnreachable"),
-                    })}
-                  </Text>
-                  {report ? (
-                    <Text c="dimmed" ff="monospace" size="sm" ta="center">
-                      {t("TechnicalBackendStatus", { status: report.status })}
-                    </Text>
-                  ) : healthResult.reachable && healthResult.status >= 500 ? (
-                    <Text c="dimmed" ff="monospace" size="sm" ta="center">
-                      {t("TechnicalBackendStatus", { status: t("TechnicalUnreachable") })}
-                    </Text>
-                  ) : null}
-                </>
-              ) : (
-                <Text c="dimmed" size="sm" ta="center">
-                  {t("StatusChecking")}
-                </Text>
-              )}
-            </Stack>
-          </Collapse>
         </Stack>
       </Box>
     </Box>

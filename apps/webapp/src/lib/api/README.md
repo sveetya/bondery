@@ -14,18 +14,20 @@ Import from `@/lib/api/client`. Always use same-origin paths from `API_ROUTES` (
 
 **Never** import `API_URL` in `"use client"` files.
 
-## Transport policy (401 + API unavailable)
+## Transport policy (401 + hop-down)
 
-| Runtime | Policy module | On 401 | On outage |
-|---------|---------------|--------|-----------|
-| Browser | `applyTransportErrorPolicy` | `endSession` → `/login?redirect=…` (session expired only) | `handleApiUnavailable` → `/app/unavailable?redirect=…` |
-| Server RSC | `applyServerTransportPolicy` | `signOutServerSession` → `/login?redirect=…` | `redirect(/app/unavailable?redirect=…)` if session valid, else login |
+| Runtime | Policy module | On 401 | On hop-down (502/503/504 / network) |
+|---------|---------------|--------|---------------------------------------|
+| Browser | `applyTransportErrorPolicy` | `endSession` → `/login?redirect=…` | Silent — query/page shows skeleton, stale, or inline error |
+| Server RSC | `applyServerTransportPolicy` | `handleServerUnauthorizedSession` → login | Rethrow into route `error.tsx` — **no URL change** |
 
 Return intent is captured as `pathname + search` in the `redirect` query param (see `lib/auth/returnIntent.ts`). Middleware forwards `x-pathname` and `x-search` for server-side capture. User-initiated sign-out does not set `redirect`.
 
-`clientApiJson` and `serverApiFetch` (default) apply policy automatically. Unavailable redirects on the server are **session-gated** — no valid session routes to login, not unavailable (matches BFF 401-before-upstream on the client).
+`clientApiJson` and `serverApiFetch` (default) apply policy automatically. Hop failures **never** navigate to `/app/unavailable`.
 
-`serverApiJsonOrNull` / `clientApiJsonOrNull`: 401 ends session; outage returns `null`.
+`serverApiJsonOrNull` / `clientApiJsonOrNull`: 401 ends session; hop-down returns `null`.
+
+Raw `clientApiFetch` callers must call `applyTransportResponsePolicy(response)` on non-2xx.
 
 Raw `clientApiFetch` callers must call `applyTransportResponsePolicy(response)` on non-2xx.
 
@@ -42,7 +44,7 @@ Import from `@/lib/api/server`. Used in RSC pages and loaders.
 
 Auth: `serverApiFetch` attaches `Authorization: Bearer …` via `resolveServerSession()`. Route guards and BFF 401 gates use the same function — do not duplicate `getUser()` in server code.
 
-`getAppSession()` delegates to `probeMeSessionServer()` for layout routing and shell identity. Full settings load via `useSettingsQuery` only on Home and Settings (prefetched in their loaders).
+`getRequestSession()` is the server session primitive for layouts, BFF, and transport. `/me/session` is a shell read model — not a route gate. `getAppSession()` remains a cache()-wrapped helper for locale/theme until callers migrate fully.
 
 ## Domain-first data access
 

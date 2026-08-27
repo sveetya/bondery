@@ -135,18 +135,20 @@ model ReminderDispatchLog {
 }
 
 model SyncChangeLog {
-  serverSequence BigInt   @id @map("server_sequence")
   userId         String   @map("user_id") @db.Uuid
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serverSequence BigInt   @map("server_sequence")
+  changeIndex    Int      @map("change_index")
   tableName      String   @map("table_name")
   entityId       String   @map("entity_id")
   operation      String
   rowData        Json?    @map("row_data")
-  changeIndex    Int      @map("change_index")
   createdAt      DateTime @default(now()) @map("created_at")
 
-  @@map("sync_change_log")
+  // One server_sequence per emit batch; change_index distinguishes rows in the batch.
+  @@id([userId, serverSequence, changeIndex])
   @@index([userId, serverSequence])
+  @@map("sync_change_log")
 }
 
 model SyncMutationReceipt {

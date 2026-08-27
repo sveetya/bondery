@@ -63,7 +63,7 @@ Maps checkable factual claims in published legal documents to implementation sta
 
 | Claim | Policy § | Status | Evidence |
 |-------|--------|--------|----------|
-| Right to access, rectify, delete, export | §12 | Partial | Delete: `DELETE /api/me` + UI. Export: **per-contact vCard only** — no full-account export |
+| Right to access, rectify, delete, export | §12 | Partial | Delete: `DELETE /api/me` + UI. Export: CRM ZIP (`GET /me/export`) includes contact avatars when present. Import of the user's own CRM ZIP: `POST /me/import`. Per-contact vCard. Still not chat, billing, or API keys; email path remains |
 | Exercise rights via `team@usebondery.com` | §12 | `policy-only` | Manual email process |
 
 ## Marketing / FAQ (not legal docs, but public claims)

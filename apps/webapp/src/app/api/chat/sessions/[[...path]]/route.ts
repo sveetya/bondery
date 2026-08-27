@@ -13,20 +13,33 @@ async function proxyRequest(request: NextRequest, subPath: string) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  const headers = new Headers();
+  const contentType = request.headers.get("Content-Type");
+  if (contentType) {
+    headers.set("Content-Type", contentType);
+  }
+
   const fetchOptions: RequestInit = {
-    headers: { "Content-Type": "application/json" },
+    headers,
     method: request.method,
   };
 
   if (request.method !== "GET" && request.method !== "HEAD") {
-    try {
-      fetchOptions.body = JSON.stringify(await request.json());
-    } catch {
-      // No body — that's fine for DELETE
+    const body = await request.arrayBuffer();
+    if (body.byteLength > 0) {
+      fetchOptions.body = body;
     }
   }
 
   const apiResponse = await bffProxyFetch(`${API_ROUTES.CHAT_SESSIONS}${subPath}`, fetchOptions);
+
+  // Fetch throws if a 204/205/304 Response is constructed with a body. Fastify may
+  // still emit `"null"` for `{ type: "null" }` schemas — drop it here.
+  if (apiResponse.status === 204) {
+    void apiResponse.body?.cancel();
+    return new Response(null, { status: 204 });
+  }
+
   const responseBody = await apiResponse.text();
 
   return new Response(responseBody, {

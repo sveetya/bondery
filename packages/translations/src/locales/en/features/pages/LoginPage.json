@@ -1,11 +1,16 @@
 {
   "And": "and",
-  "AuthenticationError": "Authentication Error",
+  "AuthenticationError": "Authentication error",
+  "Benefits": {
+    "FreeForever": "Free forever",
+    "ImportSocials": "Import data from socials",
+    "PlugInApps": "Plugin your own apps"
+  },
   "ContinueWith": "Continue with {provider}",
   "Description": "We'll log you in or create a new account if you don't have one yet.",
+  "FormTitle": "Welcome",
   "LastUsed": "Last used",
-  "MobileNotAvailable": "Mobile App Coming Soon",
-  "MobileNotAvailableMessage": "The Bondery app is not yet available on mobile devices. Please visit us on a desktop or laptop computer to get started.",
+  "LogoAriaLabel": "Bondery home",
   "PrivacyPolicy": "Privacy Policy",
   "Providers": {
     "GitHub": "GitHub",
@@ -14,8 +19,8 @@
   "SignIn": "Sign In",
   "TermsAgreement": "By continuing, you agree to our",
   "TermsOfService": "Terms of Service",
-  "TermsText": "By continuing, you agree to our <termsLink>Terms of Service</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
+  "TermsText": "By continuing, you agree to our <termsLink>Terms</termsLink> and <privacyLink>Privacy Policy</privacyLink>.",
   "Title": "Bondery",
-  "UnexpectedError": "Unexpected Error",
+  "UnexpectedError": "Unexpected error",
   "UnexpectedErrorMessage": "An unexpected error occurred"
 }

@@ -1,0 +1,46 @@
+{
+  "bonderyVersion": "1.8.3",
+  "counts": {
+    "groups": 4,
+    "interactions": 20,
+    "people": 70,
+    "relationships": 0,
+    "tags": 10
+  },
+  "exportedAt": "2026-08-26T13:54:30.654Z",
+  "files": [
+    {
+      "count": 0,
+      "name": "myself.json",
+      "schemaType": "Myself"
+    },
+    {
+      "count": 70,
+      "name": "people.json",
+      "schemaType": "People"
+    },
+    {
+      "count": 4,
+      "name": "groups.json",
+      "schemaType": "Groups"
+    },
+    {
+      "count": 10,
+      "name": "tags.json",
+      "schemaType": "Tags"
+    },
+    {
+      "count": 20,
+      "name": "interactions.json",
+      "schemaType": "Interactions"
+    },
+    {
+      "count": 0,
+      "name": "relationships.json",
+      "schemaType": "Relationships"
+    }
+  ],
+  "format": "bondery-export",
+  "includedTypes": ["Myself", "People", "Groups", "Tags", "Interactions", "Relationships"],
+  "schemaType": "Manifest"
+}

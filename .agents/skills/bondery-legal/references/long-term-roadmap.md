@@ -45,11 +45,11 @@ Ranked evolution for Bondery legal disclosure hygiene over 6–12 months. **Not 
 
 ## 5. Account-level GDPR export
 
-**Gap:** Per-contact vCard only; policy allows email-based rights exercise.
+**Gap:** In-app CRM data export shipped (`GET /me/export` ZIP from Settings → Data management), plus per-contact vCard. CRM ZIP includes contact avatars when present. Still not a complete account dump (no chat, billing, or API keys). Policy still allows email-based rights exercise.
 
-**Owner:** `bondery-api` — `GET /api/me/export` or similar.
+**Owner:** `bondery-api` — `GET /api/me/export`.
 
-**Legal:** Update claims inventory when shipped.
+**Legal:** Update claims inventory when a complete account dump ships.
 
 ## 6. Analytics opt-out + browser DNT
 

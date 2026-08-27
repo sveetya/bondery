@@ -1,0 +1,656 @@
+{
+  "bonderyVersion": "1.8.3",
+  "records": [
+    {
+      "color": "#6366f1",
+      "createdAt": "2026-08-26T13:54:25.689Z",
+      "id": "01a03e59-c518-763c-bacb-c83fac77bb6c",
+      "label": "Investors",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "dfe1baf3-2731-42a3-85a6-b958b30ff44e",
+          "personId": "01a03e59-551d-700c-91aa-1087d4d77e3a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "33de6007-4c56-4c5a-818a-e1bf9e014b8e",
+          "personId": "01a03e59-5676-705d-9579-85b5c52fdcec"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "5c3a011e-5cb7-44ae-83f7-4fb58efa57c8",
+          "personId": "01a03e59-58f4-7567-afbb-3c1869e200a6"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "7bdd46a4-1814-4a53-b7e0-c2027f7e8cd6",
+          "personId": "01a03e59-5b53-760b-a32c-604182d1fa09"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "0c633b7b-34c0-479b-9730-81544ec9a203",
+          "personId": "01a03e59-5dbb-743e-a044-e013b93b0e70"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "912c7e93-4dcb-426f-affb-8fe303b1a0a5",
+          "personId": "01a03e59-5f1d-747b-8116-c54fa6de323c"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "04f3f2ec-6db8-46f3-9ca7-75f79a4173d3",
+          "personId": "01a03e59-608e-703e-b52d-23ed4e42ef40"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.689Z",
+          "id": "5488f98e-c969-4352-95d9-08c7a1876ae3",
+          "personId": "01a03e59-62ed-774e-8638-50601c1003d6"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:25.732Z"
+    },
+    {
+      "color": "#0ea5e9",
+      "createdAt": "2026-08-26T13:54:25.803Z",
+      "id": "01a03e59-c58a-717b-9557-66630558be29",
+      "label": "Founders",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "5788918e-1f27-4516-ab55-52f774217d8d",
+          "personId": "01a03e59-202a-71ec-bf4b-8b611c9e64eb"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "77a65eb8-b2c0-4c5e-9e3c-ef4562110cc9",
+          "personId": "01a03e59-2220-758f-94fb-4e1a73f30d58"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "3365e745-ca5e-4ff8-9614-e3ec34d67718",
+          "personId": "01a03e59-23b1-727e-bd0b-e30edda99894"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "8cb59a4d-1177-4e44-a64f-0e0398c08130",
+          "personId": "01a03e59-2521-766e-ab8d-085f2dd423aa"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "43cf97cb-2084-42af-9636-800139c8f8eb",
+          "personId": "01a03e59-26b6-71df-97bc-79150869a6c0"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "c1c7a715-ea9c-4764-acdc-ed985ee2de17",
+          "personId": "01a03e59-2a6f-747f-9971-8d05fb465777"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "66988bea-9a1e-4a16-923f-a05e5e83b627",
+          "personId": "01a03e59-2d3e-75f1-82cd-d1dca6163386"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "28f7ef88-ab38-4b75-b498-510c491bc607",
+          "personId": "01a03e59-2fc8-728b-a417-0e171d3a4529"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "3b560e59-162d-4a09-8a1f-4f99b69c70bd",
+          "personId": "01a03e59-336d-74fd-bbc2-2d62b9698ed4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "06a4b971-5e76-4437-b298-a1b3fe174943",
+          "personId": "01a03e59-3644-725b-b0ec-cc80e698509a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "0192b209-e22a-4020-99a3-d0bdfd0a6abc",
+          "personId": "01a03e59-38da-7321-b059-e1d75fa513e8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.803Z",
+          "id": "ab58af86-8569-4e8f-99c1-ff96e4dd94c5",
+          "personId": "01a03e59-3a2d-71bc-95f6-363a54610edb"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:25.832Z"
+    },
+    {
+      "color": "#14b8a6",
+      "createdAt": "2026-08-26T13:54:25.896Z",
+      "id": "01a03e59-c5e8-76cb-a1d1-92e2d82ccd6f",
+      "label": "Mentors",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "2e3efd10-c6b1-4248-bdf4-154d38fd9d00",
+          "personId": "01a03e59-336d-74fd-bbc2-2d62b9698ed4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "8af1fdcc-7d53-4f37-821e-089d31ff8e0a",
+          "personId": "01a03e59-3644-725b-b0ec-cc80e698509a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "0129866b-ae5e-481d-a6b3-50c43aeb1d99",
+          "personId": "01a03e59-38da-7321-b059-e1d75fa513e8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "aface1e4-95e8-46d3-b875-31fe3262f657",
+          "personId": "01a03e59-3a2d-71bc-95f6-363a54610edb"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "aea3e068-945b-4df3-a1ba-48ead4833597",
+          "personId": "01a03e59-40a2-70c1-8820-fec892f6f28e"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "b433038d-e7b3-4911-bfb2-fba5a7a76b71",
+          "personId": "01a03e59-43bd-70bf-b678-1673878f566f"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "8fc1ebd4-5283-4622-a25b-447400b610ab",
+          "personId": "01a03e59-4668-72c6-8ce8-9277c98119dd"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "2ee3f22c-f3e8-4f0f-8e1d-ebec4775969d",
+          "personId": "01a03e59-4917-757f-8b03-3bbdb1e2467a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "e6a50450-48ff-4334-902d-a819e74de8d0",
+          "personId": "01a03e59-4bc9-7144-abe2-d40997bdcd37"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.896Z",
+          "id": "e1da9981-9509-451d-973e-10a5ee8723ea",
+          "personId": "01a03e59-4d7a-751a-a196-546078322e31"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:25.922Z"
+    },
+    {
+      "color": "#f59e0b",
+      "createdAt": "2026-08-26T13:54:25.972Z",
+      "id": "01a03e59-c634-777c-9e1f-31d08cb2a3ec",
+      "label": "Alumni",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "429afc26-4578-4328-8d3c-09d5d5416b84",
+          "personId": "01a03e59-91e1-7372-9a7f-a5b753dbc423"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "86a555f0-92fa-4352-b2ca-8df2a35de203",
+          "personId": "01a03e59-94d7-76cc-8b6b-b1a154c35dce"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "b19dc554-c4d3-455b-a851-281396eb2a72",
+          "personId": "01a03e59-979e-761f-803b-aae7f4010fbc"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "d5f0f37a-8ec0-41db-93d0-1c294d029303",
+          "personId": "01a03e59-9bdd-7337-b000-75ce0186c5f8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "8b0727ca-dd2e-41f8-bcd7-da6e7f73929a",
+          "personId": "01a03e59-9e5d-71a5-8c62-1fea67b1e9af"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "cf1215ed-bb32-4514-a714-c3f511448fb0",
+          "personId": "01a03e59-9fc9-762a-91f4-57e830467823"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "26aabb88-6728-4014-a124-6eba08aadb96",
+          "personId": "01a03e59-a1a8-77fd-b901-e37d784ec704"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "cbb8b64a-c2c7-49f7-9a4b-dbba31b56651",
+          "personId": "01a03e59-a3ef-768e-9773-0a7d1d9e9cab"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "b5802375-277a-4cb6-8e8f-23d760fa0276",
+          "personId": "01a03e59-a774-72bd-8837-444745e373ae"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:25.972Z",
+          "id": "fe6aa83c-4d6c-475a-95c8-6c96215eab41",
+          "personId": "01a03e59-aa04-70b9-9ed7-b2470bfe8b8e"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.004Z"
+    },
+    {
+      "color": "#ec4899",
+      "createdAt": "2026-08-26T13:54:26.067Z",
+      "id": "01a03e59-c693-76f9-a086-09eda6d212ae",
+      "label": "Speakers",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "49434537-9370-4bf0-812c-1ef33519e8cb",
+          "personId": "01a03e59-38da-7321-b059-e1d75fa513e8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "fbff4c49-0f30-4d4f-8407-74117d4a7d5e",
+          "personId": "01a03e59-3a2d-71bc-95f6-363a54610edb"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "79d3dfd0-f56a-4e0f-98b1-93a728c91062",
+          "personId": "01a03e59-40a2-70c1-8820-fec892f6f28e"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "01a4ac5d-fe88-41ba-b138-0b277cd2d6fc",
+          "personId": "01a03e59-43bd-70bf-b678-1673878f566f"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "f8c7c387-5232-4a8d-bfd1-e38e763799a3",
+          "personId": "01a03e59-4668-72c6-8ce8-9277c98119dd"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "5ac82641-456b-4f52-af7b-6a62014cdc4e",
+          "personId": "01a03e59-4917-757f-8b03-3bbdb1e2467a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "9ae3216c-ca83-4f46-af3c-5ffcae0eb116",
+          "personId": "01a03e59-4bc9-7144-abe2-d40997bdcd37"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "14415ab8-69f5-49dc-ac24-864eeaa8a5fe",
+          "personId": "01a03e59-4d7a-751a-a196-546078322e31"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "49f4b79a-1e66-4b52-ad90-69bf0d466b03",
+          "personId": "01a03e59-5040-74c2-b626-dd7830ae34d8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "d9c27ec7-9dee-412c-b616-a76f8298a44a",
+          "personId": "01a03e59-51c2-72dd-af1e-b2400ef8bb68"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "3a789a4e-6675-418b-bb45-3e8e9029168c",
+          "personId": "01a03e59-551d-700c-91aa-1087d4d77e3a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.067Z",
+          "id": "8acd3ab6-77bf-48de-bb71-f88e8ac0716a",
+          "personId": "01a03e59-5676-705d-9579-85b5c52fdcec"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.109Z"
+    },
+    {
+      "color": "#8b5cf6",
+      "createdAt": "2026-08-26T13:54:26.156Z",
+      "id": "01a03e59-c6ec-706d-9215-5b0cd549dc4c",
+      "label": "Press",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "b1c6d3cb-6fde-4273-8377-244f6386dc49",
+          "personId": "01a03e59-7f17-7021-8448-0ddd0cbe0042"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "89d7ada8-ebc5-45f3-83b2-51b6846fbe73",
+          "personId": "01a03e59-81ae-76eb-9afc-c3561eeb04e9"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "209ffa23-1783-430c-a811-5345d11c2928",
+          "personId": "01a03e59-8311-7200-8a1f-60ceef7bef2a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "3ed97d18-3d7a-4f96-b2fa-6e20f5c9aaa5",
+          "personId": "01a03e59-8462-734d-b091-973badd33e49"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "7f50af00-847b-462c-96cc-692a7e3e66f3",
+          "personId": "01a03e59-85b3-7088-b07d-dc32a942edf4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.156Z",
+          "id": "8ebac941-b171-4c3a-9153-d810f22c444c",
+          "personId": "01a03e59-8705-72d4-af68-f58bcca40b93"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.203Z"
+    },
+    {
+      "color": "#f43f5e",
+      "createdAt": "2026-08-26T13:54:26.284Z",
+      "id": "01a03e59-c76c-7498-9200-192ee53fbc13",
+      "label": "Design",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "45001da9-3913-4cc7-801f-9f53d54787f7",
+          "personId": "01a03e59-94d7-76cc-8b6b-b1a154c35dce"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "197fad70-b742-4f59-a4cb-a548401e8721",
+          "personId": "01a03e59-979e-761f-803b-aae7f4010fbc"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "4da85916-e5a1-421e-bc91-a42b604b8385",
+          "personId": "01a03e59-9bdd-7337-b000-75ce0186c5f8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "6a61c5e3-88e0-4a98-86ba-1ea964a26ca4",
+          "personId": "01a03e59-9e5d-71a5-8c62-1fea67b1e9af"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "3a50d564-9ebc-4cb4-be37-779ba0ebe115",
+          "personId": "01a03e59-9fc9-762a-91f4-57e830467823"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "3c00a496-fcff-4ebf-a5d7-abaca33f90ae",
+          "personId": "01a03e59-a1a8-77fd-b901-e37d784ec704"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "71d119fa-d14e-41cf-8c02-aae29ab3e85a",
+          "personId": "01a03e59-a3ef-768e-9773-0a7d1d9e9cab"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.284Z",
+          "id": "fefddd79-b633-46f3-b94d-d6a2236f00a2",
+          "personId": "01a03e59-a774-72bd-8837-444745e373ae"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.317Z"
+    },
+    {
+      "color": "#22c55e",
+      "createdAt": "2026-08-26T13:54:26.386Z",
+      "id": "01a03e59-c7d2-729a-b4de-335451b61526",
+      "label": "Engineering",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "be98d6a7-3027-4743-afa0-c85dfc7744b6",
+          "personId": "01a03e59-202a-71ec-bf4b-8b611c9e64eb"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "281a4ee5-0d8b-4bfd-ab36-eb32c84b38db",
+          "personId": "01a03e59-2220-758f-94fb-4e1a73f30d58"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "b0e44881-7cff-46f8-ab30-c05e5caec31a",
+          "personId": "01a03e59-23b1-727e-bd0b-e30edda99894"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "1caadf83-8956-4b85-b130-cb458d6de5e1",
+          "personId": "01a03e59-2521-766e-ab8d-085f2dd423aa"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "e9cd4ff9-0d3a-4c5f-a0e9-339aab98b5cd",
+          "personId": "01a03e59-26b6-71df-97bc-79150869a6c0"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "6adeba21-1400-450d-af74-dc8e97f43475",
+          "personId": "01a03e59-2a6f-747f-9971-8d05fb465777"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "73f76e2e-cc6b-46e1-a486-91df523663ac",
+          "personId": "01a03e59-2d3e-75f1-82cd-d1dca6163386"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "103651dd-17ea-4371-acdb-2c274e880269",
+          "personId": "01a03e59-2fc8-728b-a417-0e171d3a4529"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "5bda7daf-1100-40ef-9e7d-55e0410fe2fd",
+          "personId": "01a03e59-336d-74fd-bbc2-2d62b9698ed4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "ac345b2d-60be-426b-8f18-d4b522b64f21",
+          "personId": "01a03e59-3644-725b-b0ec-cc80e698509a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "0a8fab2c-f3e9-478d-8f27-bb1b28b174a7",
+          "personId": "01a03e59-38da-7321-b059-e1d75fa513e8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "00971367-090d-4546-9539-0ed3c2cfaee3",
+          "personId": "01a03e59-3a2d-71bc-95f6-363a54610edb"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "a446f060-0696-47c6-9957-c39b8b4cd5ad",
+          "personId": "01a03e59-40a2-70c1-8820-fec892f6f28e"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "c3108caa-3730-4fa1-a5d4-cfe934ee4d4f",
+          "personId": "01a03e59-43bd-70bf-b678-1673878f566f"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "a9922f3f-a47f-4b26-980b-a71abd02da90",
+          "personId": "01a03e59-4668-72c6-8ce8-9277c98119dd"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "20e68843-541b-4dd9-8b92-74efa9fdfa60",
+          "personId": "01a03e59-4917-757f-8b03-3bbdb1e2467a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "606fa064-0426-428b-9e94-b267a2d62890",
+          "personId": "01a03e59-4bc9-7144-abe2-d40997bdcd37"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.386Z",
+          "id": "65356a84-b366-493a-902d-515f69ddf77c",
+          "personId": "01a03e59-4d7a-751a-a196-546078322e31"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.415Z"
+    },
+    {
+      "color": "#64748b",
+      "createdAt": "2026-08-26T13:54:26.504Z",
+      "id": "01a03e59-c848-73d3-bc49-1c034661c295",
+      "label": "Research",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "946536c0-c9c9-4db0-a8f2-a23667dedadd",
+          "personId": "01a03e59-64c7-7698-b0fd-3c500c8b1abd"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "90df0b02-ad58-44a7-a243-1045785a28de",
+          "personId": "01a03e59-67c6-726e-9237-ba03c2ce743b"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "f7079a05-675e-4ab1-8039-80dad312c452",
+          "personId": "01a03e59-6a5d-77b1-8cdd-c662ea324e54"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "2f8b0c1b-5392-4af6-9321-d631280c6834",
+          "personId": "01a03e59-6d0b-758a-bf34-5804f2fa8c3c"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "b88c5d94-db8f-425d-967f-cd279c719d61",
+          "personId": "01a03e59-6e88-714b-940b-9ee62617c98b"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "11c7d5ec-6b46-4008-815e-e2698c97ae75",
+          "personId": "01a03e59-7142-71b9-9752-b7a3d3aa4cf4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "2bbd5e2e-ccd0-4ccc-92dd-73328fb48083",
+          "personId": "01a03e59-743d-75dd-a573-84b6e685c990"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "d26e77f4-bf4b-45b8-ab44-10aa1c4be124",
+          "personId": "01a03e59-75a4-76ff-b75b-53a7b874cbf6"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "ca997060-d26a-4cc7-86ac-c096511ab3e3",
+          "personId": "01a03e59-771d-71ae-9929-5ea8b7e47d29"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "1ab2f548-9b00-4214-875b-faccbbf80e01",
+          "personId": "01a03e59-7880-7151-9e40-e7fdd277144b"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "85d4ab53-8f74-4206-9c60-589d27abc6c6",
+          "personId": "01a03e59-79e1-761f-93e1-e56cf6c46527"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.504Z",
+          "id": "a259c281-eacf-4ccb-ab20-464a463050c9",
+          "personId": "01a03e59-7b63-704d-8811-aa2f59c295af"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.539Z"
+    },
+    {
+      "color": "#eab308",
+      "createdAt": "2026-08-26T13:54:26.616Z",
+      "id": "01a03e59-c8b8-767b-876f-d5b3c6695241",
+      "label": "Community",
+      "members": [
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "893451e4-ff59-4b4e-a494-098b02d96242",
+          "personId": "01a03e59-85b3-7088-b07d-dc32a942edf4"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "45304492-3ccf-4f7b-b1b3-7a449226baf9",
+          "personId": "01a03e59-8705-72d4-af68-f58bcca40b93"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "ea6ed48f-ad73-475b-b58e-04e3936646f1",
+          "personId": "01a03e59-8867-70fa-83e5-42fc275b39e9"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "f43b8eee-396c-4a6a-ae58-4de23bd0302c",
+          "personId": "01a03e59-8c1b-77f9-8ec3-38e76e84e6ba"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "d0bffda5-c2cc-4658-95ef-3db5692a83c1",
+          "personId": "01a03e59-8d8c-72ee-8573-da2ed0d5682a"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "a8aab79c-0a43-4968-8cd8-46f3dbecdeb0",
+          "personId": "01a03e59-8f1c-752d-8729-5d21a7f12c6e"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "70b0a722-9d21-494e-97ab-3993fed72867",
+          "personId": "01a03e59-91e1-7372-9a7f-a5b753dbc423"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "6679c4b0-f47c-4552-90db-35b6b68fdb4f",
+          "personId": "01a03e59-94d7-76cc-8b6b-b1a154c35dce"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "83a3c638-a6ea-43de-9310-2ad040c4bb49",
+          "personId": "01a03e59-979e-761f-803b-aae7f4010fbc"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "c2b889e3-eeac-414b-bb8a-5fca0e072b86",
+          "personId": "01a03e59-9bdd-7337-b000-75ce0186c5f8"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "67aaf73c-35de-4fc7-ac00-ba599c4d5026",
+          "personId": "01a03e59-9e5d-71a5-8c62-1fea67b1e9af"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "5000ee32-8b1d-4331-8eca-8b5898c268ef",
+          "personId": "01a03e59-9fc9-762a-91f4-57e830467823"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "1f756a99-838c-4588-950c-eb0b2c17c19f",
+          "personId": "01a03e59-a1a8-77fd-b901-e37d784ec704"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "3e265763-40a9-4eb4-b43d-c15a7f9ec2e3",
+          "personId": "01a03e59-a3ef-768e-9773-0a7d1d9e9cab"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "0fe9a7f0-380f-48ec-8c90-2338d4b9c06c",
+          "personId": "01a03e59-a774-72bd-8837-444745e373ae"
+        },
+        {
+          "createdAt": "2026-08-26T13:54:26.616Z",
+          "id": "d0690fc1-85d3-4eae-92bd-8fcb6d493dac",
+          "personId": "01a03e59-aa04-70b9-9ed7-b2470bfe8b8e"
+        }
+      ],
+      "updatedAt": "2026-08-26T13:54:26.647Z"
+    }
+  ],
+  "schemaType": "Tags"
+}

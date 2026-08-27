@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getLastUsedLoginMethodCookie } from "@/lib/auth/getLastUsedLoginMethodCookie";
 import { OAuthLoginClient } from "./OAuthLoginClient";
 
 /**
@@ -14,10 +15,12 @@ import { OAuthLoginClient } from "./OAuthLoginClient";
  * authorization-server session this page exists to (re)establish, and
  * gating on it previously caused a redirect loop with `/oauth/consent`.
  */
-export default function OAuthLoginPage() {
+export default async function OAuthLoginPage() {
+  const lastUsedLoginMethod = await getLastUsedLoginMethodCookie();
+
   return (
     <Suspense fallback={null}>
-      <OAuthLoginClient />
+      <OAuthLoginClient lastUsedLoginMethod={lastUsedLoginMethod} />
     </Suspense>
   );
 }

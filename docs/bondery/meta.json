@@ -1,5 +1,5 @@
 {
   "icon": "ListChecks",
-  "pages": ["import"],
+  "pages": ["import", "export"],
   "title": "How-to guides"
 }

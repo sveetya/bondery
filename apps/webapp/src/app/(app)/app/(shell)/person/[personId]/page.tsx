@@ -1,14 +1,11 @@
 import { formatContactName } from "@bondery/helpers/contact";
-import { API_ROUTES } from "@bondery/helpers/globals/paths";
-import { Stack, Text } from "@mantine/core";
 import type { Metadata } from "next";
 import { cache } from "react";
-import { ErrorPageHeader } from "@/components/shell/ErrorPageHeader";
-import { PageWrapper } from "@/components/shell/PageWrapper";
 import { getContactDetailServer } from "@/lib/api/domains/server/contacts";
 import { getSingleContactPageTranslations } from "@/lib/i18n/generated/hooks.server";
 import { entityPageTitle } from "@/lib/metadata/pageTitles";
 import { PersonLoader } from "./PersonLoader";
+import { PersonMissingState } from "./PersonMissingState";
 
 const getContactForPage = cache((id: string) => getContactDetailServer(id, "large"));
 
@@ -39,18 +36,7 @@ export default async function PersonPage({
   const t = await getSingleContactPageTranslations();
 
   if (!personId) {
-    return (
-      <PageWrapper>
-        <ErrorPageHeader
-          backHref={API_ROUTES.CONTACTS}
-          iconType="user"
-          title={t("PersonNotFound")}
-        />
-        <Stack gap="xl">
-          <Text c="dimmed">{t("PersonNotSelected")}</Text>
-        </Stack>
-      </PageWrapper>
-    );
+    return <PersonMissingState description={t("PersonNotSelected")} />;
   }
 
   return (

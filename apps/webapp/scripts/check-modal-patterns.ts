@@ -28,6 +28,7 @@ const ALLOWED_UPDATE_MODAL_FILES = new Set([
   "app/(app)/app/(shell)/settings/components/modals/LinkedInImportModal.tsx",
   "app/(app)/app/(shell)/settings/components/modals/InstagramImportModal.tsx",
   "app/(app)/app/(shell)/settings/components/modals/VCardImportModal.tsx",
+  "app/(app)/app/(shell)/settings/components/modals/BonderyImportModal.tsx",
   "components/photo/openPhotoUploadModal.tsx",
 ]);
 

@@ -3,7 +3,7 @@ import type Stripe from "stripe";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { mapStripeStatus } from "./map-status.js";
 import { getStripeClient } from "./stripe.js";
-import { getSubscriptionPeriod } from "./stripe-helpers.js";
+import { getSubscriptionPeriod, isScheduledToCancel } from "./stripe-helpers.js";
 import { deletePendingSubscription, upsertSubscription } from "./subscription.js";
 
 export type SubscriptionSyncResult =
@@ -35,16 +35,6 @@ export async function syncSubscriptionFromStripe(
 ): Promise<SubscriptionSyncResult> {
   const { user, log } = ctx;
   const email = user.email;
-
-  const existing = await prisma.subscription.findFirst({
-    select: { status: true },
-    where: { userId: user.id },
-  });
-
-  if (existing?.status === "active" || existing?.status === "canceling") {
-    log?.info({ userId: user.id }, "subscription-sync: already active, skipping");
-    return { reason: "already_active", synced: false };
-  }
 
   if (email) {
     const pending = await prisma.pendingSubscription.findUnique({
@@ -113,7 +103,7 @@ export async function syncSubscriptionFromStripe(
       (s) =>
         s.status === "active" ||
         s.status === "trialing" ||
-        (s.status === "canceled" && s.cancel_at_period_end),
+        (s.status === "canceled" && isScheduledToCancel(s)),
     ) ?? subscriptions.data[0];
 
   if (!activeSub) {
@@ -124,7 +114,8 @@ export async function syncSubscriptionFromStripe(
     return { reason: "no_active_subscription", synced: false };
   }
 
-  const status = mapStripeStatus(activeSub.status, activeSub.cancel_at_period_end);
+  const cancelAtPeriodEnd = isScheduledToCancel(activeSub);
+  const status = mapStripeStatus(activeSub.status, cancelAtPeriodEnd);
   const { currentPeriodEnd, currentPeriodStart } = getSubscriptionPeriod(activeSub);
   const mirror = extractMirrorFromStripeSubscription(activeSub);
 
@@ -135,7 +126,7 @@ export async function syncSubscriptionFromStripe(
     status,
     currentPeriodStart,
     currentPeriodEnd,
-    activeSub.cancel_at_period_end,
+    cancelAtPeriodEnd,
     mirror,
   );
 

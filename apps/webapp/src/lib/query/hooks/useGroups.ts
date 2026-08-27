@@ -27,6 +27,7 @@ import type { ContactsListFilterParams } from "@/lib/query/contactsListParams";
 import { GROUP_MEMBERS_PAGE_SIZE } from "@/lib/query/groupDetailQueryParams";
 import { invalidateContactDomain, invalidateGroupDomain } from "@/lib/query/invalidation";
 import { groupKeys } from "@/lib/query/keys";
+import { throwIfPageCannotRender } from "@/lib/query/pageLoadFailure";
 import { nextPaginatedOffset } from "@/lib/query/paginatedInfiniteQuery";
 
 export function useGroupsListQuery(params?: GroupsListParams) {
@@ -44,6 +45,7 @@ export function useGroupDetailQuery(id: string, enabled = true) {
 
     queryFn: () => getGroupDetail(id),
     queryKey: groupKeys.detail(id),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 

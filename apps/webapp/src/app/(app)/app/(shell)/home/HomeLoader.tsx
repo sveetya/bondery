@@ -4,6 +4,7 @@ import { getQueryClient } from "@/lib/query/client";
 import { settingsKeys } from "@/lib/query/keys";
 
 import {
+  fetchContactsList,
   prefetchContactsList,
   prefetchContactsSelectableList,
   prefetchInteractionsList,
@@ -31,7 +32,7 @@ export async function HomeLoader() {
 
   await Promise.all([
     prefetchSettings(queryClient),
-    prefetchContactsList(queryClient, STATS_PARAMS),
+    fetchContactsList(queryClient, STATS_PARAMS),
     prefetchInteractionsList(queryClient, HAS_INTERACTION_PARAMS),
     prefetchUpcomingReminders(queryClient),
     prefetchContactsSelectableList(queryClient, TIMELINE_CONTACTS),

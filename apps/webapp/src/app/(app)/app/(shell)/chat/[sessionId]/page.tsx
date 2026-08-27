@@ -1,13 +1,8 @@
-import { ChatSessionLoader } from "../ChatSessionLoader";
-
 /**
- * Dynamic chat session page — loads existing messages and renders the chat view.
+ * Chat session URL segment. ChatClient lives in the layout so switching
+ * sessions is client navigation, not a page remount. Messages load in
+ * ChatClient via TanStack Query.
  */
-export default async function ChatSessionPage({
-  params,
-}: {
-  params: Promise<{ sessionId: string }>;
-}) {
-  const { sessionId } = await params;
-  return <ChatSessionLoader sessionId={sessionId} />;
+export default function ChatSessionPage() {
+  return null;
 }

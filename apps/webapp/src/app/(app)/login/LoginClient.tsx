@@ -12,7 +12,11 @@ import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/gene
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 import { SocialLoginCard } from "./components/SocialLoginCard";
 
-export function LoginClient() {
+type LoginClientProps = {
+  lastUsedLoginMethod: string | null;
+};
+
+export function LoginClient({ lastUsedLoginMethod }: LoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
   const [loading, setLoading] = useState(false);
@@ -22,7 +26,6 @@ export function LoginClient() {
   const { websiteUrl } = runtimeConfig;
 
   const redirectParam = searchParams.get(RETURN_INTENT_PARAM);
-  const shouldForceDesktopLoginLayout = redirectParam?.startsWith("/oauth/consent") ?? false;
 
   const handleOAuthLogin = async (provider: "github" | "linkedin") => {
     try {
@@ -71,11 +74,10 @@ export function LoginClient() {
 
   return (
     <SocialLoginCard
-      authClient={authClient}
       getProviderTestId={(providerKey) =>
         providerKey === "github" ? "login-github" : `login-${providerKey}`
       }
-      hideOnMobile={!shouldForceDesktopLoginLayout}
+      lastUsedLoginMethod={lastUsedLoginMethod}
       loading={loading}
       onProviderClick={handleOAuthLogin}
       websiteUrl={websiteUrl}

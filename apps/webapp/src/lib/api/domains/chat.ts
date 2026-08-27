@@ -18,6 +18,8 @@ export type { ChatMessageRow };
 
 export async function createChatSession(): Promise<string> {
   const { session } = await clientApiJson<{ session: ChatSession }>(API_ROUTES.CHAT_SESSIONS, {
+    body: JSON.stringify({}),
+    headers: { "Content-Type": "application/json" },
     method: "POST",
   });
 

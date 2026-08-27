@@ -6,6 +6,12 @@ test.describe("unauthenticated login", () => {
     await expect(page.getByTestId("login-github")).toBeVisible();
   });
 
+  test("renders GitHub login on a small viewport", async ({ page }) => {
+    await page.setViewportSize({ height: 667, width: 375 });
+    await page.goto("/login");
+    await expect(page.getByTestId("login-github")).toBeVisible();
+  });
+
   test("blocks /app without session", async ({ page }) => {
     await page.goto("/app/home");
     await expect(page).toHaveURL(/\/login/);

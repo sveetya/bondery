@@ -37,33 +37,33 @@ export type SyncChangeLogSumAggregateOutputType = {
 }
 
 export type SyncChangeLogMinAggregateOutputType = {
-  serverSequence: bigint | null
   userId: string | null
+  serverSequence: bigint | null
+  changeIndex: number | null
   tableName: string | null
   entityId: string | null
   operation: string | null
-  changeIndex: number | null
   createdAt: Date | null
 }
 
 export type SyncChangeLogMaxAggregateOutputType = {
-  serverSequence: bigint | null
   userId: string | null
+  serverSequence: bigint | null
+  changeIndex: number | null
   tableName: string | null
   entityId: string | null
   operation: string | null
-  changeIndex: number | null
   createdAt: Date | null
 }
 
 export type SyncChangeLogCountAggregateOutputType = {
-  serverSequence: number
   userId: number
+  serverSequence: number
+  changeIndex: number
   tableName: number
   entityId: number
   operation: number
   rowData: number
-  changeIndex: number
   createdAt: number
   _all: number
 }
@@ -80,33 +80,33 @@ export type SyncChangeLogSumAggregateInputType = {
 }
 
 export type SyncChangeLogMinAggregateInputType = {
-  serverSequence?: true
   userId?: true
+  serverSequence?: true
+  changeIndex?: true
   tableName?: true
   entityId?: true
   operation?: true
-  changeIndex?: true
   createdAt?: true
 }
 
 export type SyncChangeLogMaxAggregateInputType = {
-  serverSequence?: true
   userId?: true
+  serverSequence?: true
+  changeIndex?: true
   tableName?: true
   entityId?: true
   operation?: true
-  changeIndex?: true
   createdAt?: true
 }
 
 export type SyncChangeLogCountAggregateInputType = {
-  serverSequence?: true
   userId?: true
+  serverSequence?: true
+  changeIndex?: true
   tableName?: true
   entityId?: true
   operation?: true
   rowData?: true
-  changeIndex?: true
   createdAt?: true
   _all?: true
 }
@@ -198,13 +198,13 @@ export type SyncChangeLogGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 export type SyncChangeLogGroupByOutputType = {
-  serverSequence: bigint
   userId: string
+  serverSequence: bigint
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData: runtime.JsonValue | null
-  changeIndex: number
   createdAt: Date
   _count: SyncChangeLogCountAggregateOutputType | null
   _avg: SyncChangeLogAvgAggregateOutputType | null
@@ -232,52 +232,53 @@ export type SyncChangeLogWhereInput = {
   AND?: Prisma.SyncChangeLogWhereInput | Prisma.SyncChangeLogWhereInput[]
   OR?: Prisma.SyncChangeLogWhereInput[]
   NOT?: Prisma.SyncChangeLogWhereInput | Prisma.SyncChangeLogWhereInput[]
-  serverSequence?: Prisma.BigIntFilter<"SyncChangeLog"> | bigint | number
   userId?: Prisma.UuidFilter<"SyncChangeLog"> | string
+  serverSequence?: Prisma.BigIntFilter<"SyncChangeLog"> | bigint | number
+  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   tableName?: Prisma.StringFilter<"SyncChangeLog"> | string
   entityId?: Prisma.StringFilter<"SyncChangeLog"> | string
   operation?: Prisma.StringFilter<"SyncChangeLog"> | string
   rowData?: Prisma.JsonNullableFilter<"SyncChangeLog">
-  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   createdAt?: Prisma.DateTimeFilter<"SyncChangeLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type SyncChangeLogOrderByWithRelationInput = {
-  serverSequence?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  serverSequence?: Prisma.SortOrder
+  changeIndex?: Prisma.SortOrder
   tableName?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrderInput | Prisma.SortOrder
-  changeIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type SyncChangeLogWhereUniqueInput = Prisma.AtLeast<{
-  serverSequence?: bigint | number
+  userId_serverSequence_changeIndex?: Prisma.SyncChangeLogUserIdServerSequenceChangeIndexCompoundUniqueInput
   AND?: Prisma.SyncChangeLogWhereInput | Prisma.SyncChangeLogWhereInput[]
   OR?: Prisma.SyncChangeLogWhereInput[]
   NOT?: Prisma.SyncChangeLogWhereInput | Prisma.SyncChangeLogWhereInput[]
   userId?: Prisma.UuidFilter<"SyncChangeLog"> | string
+  serverSequence?: Prisma.BigIntFilter<"SyncChangeLog"> | bigint | number
+  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   tableName?: Prisma.StringFilter<"SyncChangeLog"> | string
   entityId?: Prisma.StringFilter<"SyncChangeLog"> | string
   operation?: Prisma.StringFilter<"SyncChangeLog"> | string
   rowData?: Prisma.JsonNullableFilter<"SyncChangeLog">
-  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   createdAt?: Prisma.DateTimeFilter<"SyncChangeLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "serverSequence">
+}, "userId_serverSequence_changeIndex">
 
 export type SyncChangeLogOrderByWithAggregationInput = {
-  serverSequence?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  serverSequence?: Prisma.SortOrder
+  changeIndex?: Prisma.SortOrder
   tableName?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrderInput | Prisma.SortOrder
-  changeIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SyncChangeLogCountOrderByAggregateInput
   _avg?: Prisma.SyncChangeLogAvgOrderByAggregateInput
@@ -290,89 +291,89 @@ export type SyncChangeLogScalarWhereWithAggregatesInput = {
   AND?: Prisma.SyncChangeLogScalarWhereWithAggregatesInput | Prisma.SyncChangeLogScalarWhereWithAggregatesInput[]
   OR?: Prisma.SyncChangeLogScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SyncChangeLogScalarWhereWithAggregatesInput | Prisma.SyncChangeLogScalarWhereWithAggregatesInput[]
-  serverSequence?: Prisma.BigIntWithAggregatesFilter<"SyncChangeLog"> | bigint | number
   userId?: Prisma.UuidWithAggregatesFilter<"SyncChangeLog"> | string
+  serverSequence?: Prisma.BigIntWithAggregatesFilter<"SyncChangeLog"> | bigint | number
+  changeIndex?: Prisma.IntWithAggregatesFilter<"SyncChangeLog"> | number
   tableName?: Prisma.StringWithAggregatesFilter<"SyncChangeLog"> | string
   entityId?: Prisma.StringWithAggregatesFilter<"SyncChangeLog"> | string
   operation?: Prisma.StringWithAggregatesFilter<"SyncChangeLog"> | string
   rowData?: Prisma.JsonNullableWithAggregatesFilter<"SyncChangeLog">
-  changeIndex?: Prisma.IntWithAggregatesFilter<"SyncChangeLog"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SyncChangeLog"> | Date | string
 }
 
 export type SyncChangeLogCreateInput = {
   serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSyncChangeLogsInput
 }
 
 export type SyncChangeLogUncheckedCreateInput = {
-  serverSequence: bigint | number
   userId: string
+  serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
 }
 
 export type SyncChangeLogUpdateInput = {
   serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSyncChangeLogsNestedInput
 }
 
 export type SyncChangeLogUncheckedUpdateInput = {
-  serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SyncChangeLogCreateManyInput = {
-  serverSequence: bigint | number
   userId: string
+  serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
 }
 
 export type SyncChangeLogUpdateManyMutationInput = {
   serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SyncChangeLogUncheckedUpdateManyInput = {
-  serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -386,14 +387,20 @@ export type SyncChangeLogOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type SyncChangeLogUserIdServerSequenceChangeIndexCompoundUniqueInput = {
+  userId: string
+  serverSequence: bigint | number
+  changeIndex: number
+}
+
 export type SyncChangeLogCountOrderByAggregateInput = {
-  serverSequence?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  serverSequence?: Prisma.SortOrder
+  changeIndex?: Prisma.SortOrder
   tableName?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   rowData?: Prisma.SortOrder
-  changeIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -403,22 +410,22 @@ export type SyncChangeLogAvgOrderByAggregateInput = {
 }
 
 export type SyncChangeLogMaxOrderByAggregateInput = {
-  serverSequence?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  serverSequence?: Prisma.SortOrder
+  changeIndex?: Prisma.SortOrder
   tableName?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
-  changeIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type SyncChangeLogMinOrderByAggregateInput = {
-  serverSequence?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  serverSequence?: Prisma.SortOrder
+  changeIndex?: Prisma.SortOrder
   tableName?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
-  changeIndex?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -479,21 +486,21 @@ export type BigIntFieldUpdateOperationsInput = {
 
 export type SyncChangeLogCreateWithoutUserInput = {
   serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
 }
 
 export type SyncChangeLogUncheckedCreateWithoutUserInput = {
   serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
 }
 
@@ -527,106 +534,106 @@ export type SyncChangeLogScalarWhereInput = {
   AND?: Prisma.SyncChangeLogScalarWhereInput | Prisma.SyncChangeLogScalarWhereInput[]
   OR?: Prisma.SyncChangeLogScalarWhereInput[]
   NOT?: Prisma.SyncChangeLogScalarWhereInput | Prisma.SyncChangeLogScalarWhereInput[]
-  serverSequence?: Prisma.BigIntFilter<"SyncChangeLog"> | bigint | number
   userId?: Prisma.UuidFilter<"SyncChangeLog"> | string
+  serverSequence?: Prisma.BigIntFilter<"SyncChangeLog"> | bigint | number
+  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   tableName?: Prisma.StringFilter<"SyncChangeLog"> | string
   entityId?: Prisma.StringFilter<"SyncChangeLog"> | string
   operation?: Prisma.StringFilter<"SyncChangeLog"> | string
   rowData?: Prisma.JsonNullableFilter<"SyncChangeLog">
-  changeIndex?: Prisma.IntFilter<"SyncChangeLog"> | number
   createdAt?: Prisma.DateTimeFilter<"SyncChangeLog"> | Date | string
 }
 
 export type SyncChangeLogCreateManyUserInput = {
   serverSequence: bigint | number
+  changeIndex: number
   tableName: string
   entityId: string
   operation: string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex: number
   createdAt?: Date | string
 }
 
 export type SyncChangeLogUpdateWithoutUserInput = {
   serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SyncChangeLogUncheckedUpdateWithoutUserInput = {
   serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SyncChangeLogUncheckedUpdateManyWithoutUserInput = {
   serverSequence?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   tableName?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.StringFieldUpdateOperationsInput | string
   rowData?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  changeIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type SyncChangeLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  serverSequence?: boolean
   userId?: boolean
+  serverSequence?: boolean
+  changeIndex?: boolean
   tableName?: boolean
   entityId?: boolean
   operation?: boolean
   rowData?: boolean
-  changeIndex?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["syncChangeLog"]>
 
 export type SyncChangeLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  serverSequence?: boolean
   userId?: boolean
+  serverSequence?: boolean
+  changeIndex?: boolean
   tableName?: boolean
   entityId?: boolean
   operation?: boolean
   rowData?: boolean
-  changeIndex?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["syncChangeLog"]>
 
 export type SyncChangeLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  serverSequence?: boolean
   userId?: boolean
+  serverSequence?: boolean
+  changeIndex?: boolean
   tableName?: boolean
   entityId?: boolean
   operation?: boolean
   rowData?: boolean
-  changeIndex?: boolean
   createdAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["syncChangeLog"]>
 
 export type SyncChangeLogSelectScalar = {
-  serverSequence?: boolean
   userId?: boolean
+  serverSequence?: boolean
+  changeIndex?: boolean
   tableName?: boolean
   entityId?: boolean
   operation?: boolean
   rowData?: boolean
-  changeIndex?: boolean
   createdAt?: boolean
 }
 
-export type SyncChangeLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"serverSequence" | "userId" | "tableName" | "entityId" | "operation" | "rowData" | "changeIndex" | "createdAt", ExtArgs["result"]["syncChangeLog"]>
+export type SyncChangeLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"userId" | "serverSequence" | "changeIndex" | "tableName" | "entityId" | "operation" | "rowData" | "createdAt", ExtArgs["result"]["syncChangeLog"]>
 export type SyncChangeLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -643,13 +650,13 @@ export type $SyncChangeLogPayload<ExtArgs extends runtime.Types.Extensions.Inter
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
-    serverSequence: bigint
     userId: string
+    serverSequence: bigint
+    changeIndex: number
     tableName: string
     entityId: string
     operation: string
     rowData: runtime.JsonValue | null
-    changeIndex: number
     createdAt: Date
   }, ExtArgs["result"]["syncChangeLog"]>
   composites: {}
@@ -734,8 +741,8 @@ export interface SyncChangeLogDelegate<ExtArgs extends runtime.Types.Extensions.
    * // Get first 10 SyncChangeLogs
    * const syncChangeLogs = await prisma.syncChangeLog.findMany({ take: 10 })
    * 
-   * // Only select the `serverSequence`
-   * const syncChangeLogWithServerSequenceOnly = await prisma.syncChangeLog.findMany({ select: { serverSequence: true } })
+   * // Only select the `userId`
+   * const syncChangeLogWithUserIdOnly = await prisma.syncChangeLog.findMany({ select: { userId: true } })
    * 
    */
   findMany<T extends SyncChangeLogFindManyArgs>(args?: Prisma.SelectSubset<T, SyncChangeLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SyncChangeLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -779,9 +786,9 @@ export interface SyncChangeLogDelegate<ExtArgs extends runtime.Types.Extensions.
    *   ]
    * })
    * 
-   * // Create many SyncChangeLogs and only return the `serverSequence`
-   * const syncChangeLogWithServerSequenceOnly = await prisma.syncChangeLog.createManyAndReturn({
-   *   select: { serverSequence: true },
+   * // Create many SyncChangeLogs and only return the `userId`
+   * const syncChangeLogWithUserIdOnly = await prisma.syncChangeLog.createManyAndReturn({
+   *   select: { userId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -870,9 +877,9 @@ export interface SyncChangeLogDelegate<ExtArgs extends runtime.Types.Extensions.
    *   ]
    * })
    * 
-   * // Update zero or more SyncChangeLogs and only return the `serverSequence`
-   * const syncChangeLogWithServerSequenceOnly = await prisma.syncChangeLog.updateManyAndReturn({
-   *   select: { serverSequence: true },
+   * // Update zero or more SyncChangeLogs and only return the `userId`
+   * const syncChangeLogWithUserIdOnly = await prisma.syncChangeLog.updateManyAndReturn({
+   *   select: { userId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1075,13 +1082,13 @@ export interface Prisma__SyncChangeLogClient<T, Null = never, ExtArgs extends ru
  * Fields of the SyncChangeLog model
  */
 export interface SyncChangeLogFieldRefs {
-  readonly serverSequence: Prisma.FieldRef<"SyncChangeLog", 'BigInt'>
   readonly userId: Prisma.FieldRef<"SyncChangeLog", 'String'>
+  readonly serverSequence: Prisma.FieldRef<"SyncChangeLog", 'BigInt'>
+  readonly changeIndex: Prisma.FieldRef<"SyncChangeLog", 'Int'>
   readonly tableName: Prisma.FieldRef<"SyncChangeLog", 'String'>
   readonly entityId: Prisma.FieldRef<"SyncChangeLog", 'String'>
   readonly operation: Prisma.FieldRef<"SyncChangeLog", 'String'>
   readonly rowData: Prisma.FieldRef<"SyncChangeLog", 'Json'>
-  readonly changeIndex: Prisma.FieldRef<"SyncChangeLog", 'Int'>
   readonly createdAt: Prisma.FieldRef<"SyncChangeLog", 'DateTime'>
 }
     

@@ -1,6 +1,8 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { isMissingContactError } from "@/lib/api/isMissingContactError";
 import { getQueryClient } from "@/lib/query/client";
 import { PersonClient } from "./PersonClient";
+import { PersonMissingState } from "./PersonMissingState";
 import { prefetchPersonPageQueries } from "./prefetchPersonPageQueries";
 
 interface PersonLoaderProps {
@@ -12,7 +14,14 @@ interface PersonLoaderProps {
 export async function PersonLoader({ personId, initialTab, myselfMode }: PersonLoaderProps) {
   const queryClient = getQueryClient();
 
-  await prefetchPersonPageQueries(queryClient, personId);
+  try {
+    await prefetchPersonPageQueries(queryClient, personId);
+  } catch (error) {
+    if (isMissingContactError(error)) {
+      return <PersonMissingState />;
+    }
+    throw error;
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

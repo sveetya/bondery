@@ -60,13 +60,47 @@ export function toTagDto(row: {
   };
 }
 
+function isPlainObject(value: object): value is Record<string, unknown> {
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+/** Drop Prisma Unsupported / Buffer values that cannot be stored in JSONB. */
+export function toJsonSafe(value: unknown): unknown {
+  if (value === null || value === undefined) {
+    return null;
+  }
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+  if (typeof value === "bigint") {
+    return value.toString();
+  }
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : null;
+  }
+  if (typeof value === "string" || typeof value === "boolean") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(toJsonSafe);
+  }
+  if (typeof value === "object" && isPlainObject(value)) {
+    const out: Record<string, unknown> = {};
+    for (const [key, nested] of Object.entries(value)) {
+      out[key] = toJsonSafe(nested);
+    }
+    return out;
+  }
+  return null;
+}
+
 /** Prisma model row → snake_case sync payload. */
 export function toSyncRow(row: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(row)) {
     const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-    out[snakeKey] =
-      value instanceof Date ? value.toISOString() : value === undefined ? null : value;
+    out[snakeKey] = toJsonSafe(value);
   }
   return out;
 }

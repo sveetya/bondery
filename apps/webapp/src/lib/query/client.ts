@@ -9,8 +9,11 @@ export function makeQueryClient(): QueryClient {
         gcTime: 5 * 60_000,
         refetchOnWindowFocus: true,
         retry: (failureCount, error) => {
-          if (isUnauthorizedApiError(error) || isApiUnavailableError(error)) {
+          if (isUnauthorizedApiError(error)) {
             return false;
+          }
+          if (isApiUnavailableError(error)) {
+            return failureCount < 2;
           }
           return failureCount < 2;
         },
