@@ -130,6 +130,20 @@
       }
     },
     {
+      "includes": ["packages/tests/sample-data/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noExcessiveLinesPerFile": "off"
+          },
+          "suspicious": {
+            "noConsole": "off",
+            "noUndeclaredEnvVars": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["packages/helpers/src/env/manifest.ts"],
       "linter": {
         "rules": {
