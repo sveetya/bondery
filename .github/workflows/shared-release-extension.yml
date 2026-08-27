@@ -141,58 +141,38 @@ jobs:
 
 
       - name: Create signed CRX and zip
-
         env:
-
           ASSET_SUFFIX: ${{ inputs.version }}
-
         run: |
-
+          set -euo pipefail
           PRIVATE_KEY_PATH="apps/chrome-extension/private-key.pem"
-
+          PKCS8_PATH="apps/chrome-extension/private-key.pkcs8.pem"
           PUBLIC_KEY_PATH="apps/chrome-extension/public-key.pem"
-
           CRX_PATH="apps/chrome-extension/bondery-extension-${ASSET_SUFFIX}.crx"
-
           PUBLIC_KEY_ASSET_PATH="./bondery-extension-${ASSET_SUFFIX}.public-key.pem"
 
+          if [ -z "${PRIVATE_CHROME_PRIVATE_SIGNING_KEY:-}" ]; then
+            echo "PRIVATE_CHROME_PRIVATE_SIGNING_KEY is empty"
+            exit 1
+          fi
 
+          node scripts/write-chrome-signing-key.mjs "$PRIVATE_KEY_PATH"
+          openssl pkcs8 -topk8 -nocrypt -in "$PRIVATE_KEY_PATH" -out "$PKCS8_PATH"
+          openssl pkey -in "$PKCS8_PATH" -pubout -out "$PUBLIC_KEY_PATH"
+          node -e "const fs=require('fs'); const {createPrivateKey}=require('crypto'); createPrivateKey(fs.readFileSync(process.argv[1]));" "$PKCS8_PATH"
 
-          printf "%b" "$PRIVATE_CHROME_PRIVATE_SIGNING_KEY" > "$PRIVATE_KEY_PATH"
-
-          openssl pkey -in "$PRIVATE_KEY_PATH" -pubout -out "$PUBLIC_KEY_PATH"
-
-
-
-          pnx crx3@2 \
-
-            -p "$PRIVATE_KEY_PATH" \
-
+          pnx crx3@2.0.0 \
+            -p "$PKCS8_PATH" \
             -o "$CRX_PATH" \
-
             apps/chrome-extension/dist/chrome-mv3
 
-
-
           cp "$PUBLIC_KEY_PATH" "$PUBLIC_KEY_ASSET_PATH"
-
-
-
           node -e "const fs=require('fs'); const crx=fs.readFileSync(process.argv[1]); if(crx.subarray(0,4).toString()!=='Cr24'){ console.error('Invalid CRX header'); process.exit(1);} " "$CRX_PATH"
-
-
-
-          rm -f "$PRIVATE_KEY_PATH" "$PUBLIC_KEY_PATH"
-
-
+          rm -f "$PRIVATE_KEY_PATH" "$PKCS8_PATH" "$PUBLIC_KEY_PATH"
 
           cd apps/chrome-extension/dist/chrome-mv3
-
           zip -r "../../../../bondery-extension-${ASSET_SUFFIX}.zip" .
-
           cd ../../..
-
-
 
       - name: Authenticate to Google Cloud
 

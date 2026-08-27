@@ -1,20 +1,20 @@
 name: Sync Dokploy env
 
-# Manual Infisical → Dokploy compose env sync (website, services, or plausible stack).
+# Manual Infisical -> Dokploy compose env sync (website, services, or plausible stack).
 # Beta product stack: deployment=beta fetches staging app secrets + production ops keys.
 
 on:
   workflow_dispatch:
     inputs:
       deployment:
-        description: Infisical source for app secrets (ops keys always from production)
+        description: "Infisical source for app secrets (ops keys always from production)"
         type: choice
         options:
           - production
           - beta
         default: production
       target:
-        description: Dokploy compose stack to sync
+        description: "Dokploy compose stack to sync"
         type: choice
         options:
           - website
@@ -22,11 +22,11 @@ on:
           - plausible
         default: website
       dry_run:
-        description: Dry run: Log env names to runner console instead of uploading to Dokploy API
+        description: "Dry run: log env names instead of uploading to Dokploy"
         type: boolean
         default: true
       redeploy:
-        description: Trigger redeploy webhook
+        description: "Trigger redeploy webhook"
         type: boolean
         default: false
 
