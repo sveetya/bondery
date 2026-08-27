@@ -1,7 +1,9 @@
+"use client";
+
 import type { MantineSpacing } from "@mantine/core";
-import { Button, Group, Stack } from "@mantine/core";
+import { Button, Group, Stack, Switch, VisuallyHidden } from "@mantine/core";
 import { IconCheck, IconTrash } from "@tabler/icons-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 
 export interface ModalFooterProps {
   actionColor?: string;
@@ -17,6 +19,10 @@ export interface ModalFooterProps {
   backLeftSection?: ReactNode;
   cancelDisabled?: boolean;
   cancelLabel?: string;
+  createMoreAriaDescription?: string;
+  createMoreChecked?: boolean;
+  createMoreDisabled?: boolean;
+  createMoreLabel?: string;
   dangerDisabled?: boolean;
   dangerLabel?: string;
   dangerLeftSection?: ReactNode;
@@ -24,6 +30,7 @@ export interface ModalFooterProps {
   onAction?: () => void;
   onBack?: () => void;
   onCancel?: () => void;
+  onCreateMoreChange?: (checked: boolean) => void;
   onDanger?: () => void;
 }
 
@@ -40,6 +47,11 @@ export function ModalFooter({
   cancelLabel,
   onCancel,
   cancelDisabled,
+  createMoreAriaDescription,
+  createMoreChecked = false,
+  createMoreDisabled,
+  createMoreLabel,
+  onCreateMoreChange,
   actionLabel,
   onAction,
   actionType = "button",
@@ -50,12 +62,14 @@ export function ModalFooter({
   actionLoading = false,
   actionDisabled,
 }: ModalFooterProps) {
+  const createMoreDescriptionId = useId();
   const showDanger = Boolean(dangerLabel && onDanger);
   const showBack = Boolean(backLabel && onBack);
   const showCancel = Boolean(cancelLabel && onCancel);
   const showAction = Boolean(actionLabel);
   const showRightCluster = showCancel || showAction;
   const singleAction = showAction && !showCancel && !showBack && !showDanger;
+  const showCreateMore = !showDanger && !showBack && Boolean(createMoreLabel && onCreateMoreChange);
   const resolvedActionLeftSection = singleAction
     ? actionLeftSection
     : actionLeftSection ||
@@ -108,14 +122,35 @@ export function ModalFooter({
           </Button>
         ) : null}
       </Group>
+    ) : showCreateMore && onCreateMoreChange ? (
+      <Group gap="sm" style={{ flexShrink: 0 }} wrap="nowrap">
+        <Switch
+          aria-describedby={createMoreAriaDescription ? createMoreDescriptionId : undefined}
+          checked={createMoreChecked}
+          disabled={createMoreDisabled}
+          label={createMoreLabel}
+          onChange={(event) => onCreateMoreChange(event.currentTarget.checked)}
+          size="sm"
+          styles={{ label: { whiteSpace: "nowrap" } }}
+        />
+        {createMoreAriaDescription ? (
+          <VisuallyHidden id={createMoreDescriptionId}>{createMoreAriaDescription}</VisuallyHidden>
+        ) : null}
+      </Group>
     ) : null;
 
   return (
-    <Group align="center" justify={showDanger || showBack ? "space-between" : "flex-end"} mt={mt}>
+    <Group
+      align="center"
+      gap="sm"
+      justify={showDanger || showBack || showCreateMore ? "space-between" : "flex-end"}
+      mt={mt}
+      wrap="nowrap"
+    >
       {leftSlot}
 
       {showRightCluster ? (
-        <Group>
+        <Group gap="sm" justify="flex-end" ml={showCreateMore ? "auto" : undefined} wrap="nowrap">
           {showCancel ? (
             <Button disabled={cancelDisabled} onClick={onCancel} variant="default">
               {cancelLabel}

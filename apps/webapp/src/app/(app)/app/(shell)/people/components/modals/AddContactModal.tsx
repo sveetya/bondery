@@ -15,6 +15,7 @@ import {
 import {
   CONTACT_FIELD_MAX_LENGTHS,
   type Contact,
+  type ContactSelectable,
   createContactInputSchema,
   firstZodErrorMessage,
 } from "@bondery/schemas";
@@ -23,13 +24,18 @@ import { schemaResolver, useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconBrandLinkedin, IconUserPlus } from "@tabler/icons-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { captureEvent } from "@/lib/analytics/client";
 import { useCommonTranslations, usePeoplePageTranslations } from "@/lib/i18n/generated/hooks";
 import { optimisticPersonDocumentTitle } from "@/lib/metadata/optimisticTitles";
 import { useNavigateWithTitle } from "@/lib/metadata/useNavigateWithTitle";
-import { createModalId, useModalDismiss } from "@/lib/modals";
+import {
+  createModalId,
+  rememberCreatedContactForModal,
+  useCreateMore,
+  useModalDismiss,
+} from "@/lib/modals";
 import { useCreateContactMutation } from "@/lib/query/hooks/useContacts";
 
 const addContactFormSchema = z
@@ -53,7 +59,23 @@ const addContactFormSchema = z
 interface OpenAddContactModalOptions {
   initialFullName?: string;
   initialLinkedin?: string;
+  onClose?: () => void;
   onCreated?: (contact: Contact) => void;
+  parentModalId?: string;
+  repeatable?: boolean;
+}
+
+function toContactSelectable(contact: Contact): ContactSelectable {
+  return {
+    avatar: contact.avatar,
+    firstName: contact.firstName,
+    headline: contact.headline,
+    id: contact.id,
+    lastName: contact.lastName,
+    location: contact.location,
+    middleName: contact.middleName,
+    myself: contact.myself,
+  };
 }
 
 interface AddContactFormProps extends OpenAddContactModalOptions {
@@ -67,10 +89,13 @@ function AddContactModalTitle() {
 
 export function openAddContactModal(options: OpenAddContactModalOptions = {}) {
   const modalId = createModalId("add-contact");
+  const { onClose, ...formOptions } = options;
 
   modals.open({
-    children: <AddContactForm modalId={modalId} {...options} />,
+    children: <AddContactForm modalId={modalId} {...formOptions} />,
     modalId,
+    onClose,
+    size: "md",
     title: <AddContactModalTitle />,
     trapFocus: true,
   });
@@ -79,8 +104,10 @@ export function openAddContactModal(options: OpenAddContactModalOptions = {}) {
 export function AddContactForm({
   modalId,
   onCreated,
+  parentModalId,
   initialFullName = "",
   initialLinkedin = "",
+  repeatable = true,
 }: AddContactFormProps) {
   const { navigateWithTitle } = useNavigateWithTitle();
   const t = usePeoplePageTranslations();
@@ -89,6 +116,8 @@ export function AddContactForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isBlocking = isSubmitting;
   const createContactMutation = useCreateContactMutation();
+  const { createMore, setCreateMore } = useCreateMore({ enabled: repeatable });
+  const fullNameInputRef = useRef<HTMLInputElement>(null);
 
   const { closeModal } = useModalDismiss(modalId, isBlocking);
 
@@ -138,13 +167,25 @@ export function AddContactForm({
 
       captureEvent("contacts:contact_create");
 
-      closeModal();
-
-      if (onCreated) {
-        onCreated(createdContact);
+      if (repeatable && createMore) {
+        form.setValues({ fullName: "", linkedin: "" });
+        form.clearErrors();
+        setIsSubmitting(false);
+        queueMicrotask(() => fullNameInputRef.current?.focus());
         return;
       }
 
+      if (parentModalId) {
+        rememberCreatedContactForModal(parentModalId, toContactSelectable(createdContact));
+      }
+
+      if (onCreated || parentModalId) {
+        onCreated?.(createdContact);
+        closeModal();
+        return;
+      }
+
+      closeModal();
       navigateWithTitle(
         `${WEBAPP_ROUTES.PERSON}/${createdContact.id}`,
         optimisticPersonDocumentTitle(createdContact),
@@ -182,6 +223,7 @@ export function AddContactForm({
           disabled={isBlocking}
           onBlur={() => setFocusedField(null)}
           onFocus={() => setFocusedField("fullName")}
+          ref={fullNameInputRef}
           rightSection={
             focusedField === "fullName" ? (
               <Text c="dimmed" size="10px">
@@ -219,6 +261,15 @@ export function AddContactForm({
           cancelDisabled={isSubmitting}
           cancelLabel={t("AddContactModal.Cancel")}
           onCancel={closeModal}
+          {...(repeatable
+            ? {
+                createMoreAriaDescription: tCommon("a11y.createMore"),
+                createMoreChecked: createMore,
+                createMoreDisabled: isBlocking,
+                createMoreLabel: tCommon("actions.createMore"),
+                onCreateMoreChange: setCreateMore,
+              }
+            : {})}
         />
       </Stack>
     </form>

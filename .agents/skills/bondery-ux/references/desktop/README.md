@@ -5,6 +5,7 @@ Patterns for **webapp on laptop/PC** — keyboard shortcuts, modals, spotlight. 
 | File | Topic |
 |------|--------|
 | [global-find.md](./global-find.md) | Command palette, people spotlight, `HOTKEYS` |
-| [modals.md](./modals.md) | `ModalFooter`, blocking dismiss, scroll layout |
+| [modals.md](./modals.md) | `ModalFooter`, loading jobs, blocking dismiss, scroll layout |
+| [create-more.md](./create-more.md) | Repeatable create modals, Create more switch |
 
 Shared list/search/empty/loading rules: `../common/`.

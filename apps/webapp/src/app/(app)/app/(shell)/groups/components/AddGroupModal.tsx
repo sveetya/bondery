@@ -28,11 +28,11 @@ import { schemaResolver, useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconUsersGroup } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { captureEvent } from "@/lib/analytics/client";
 import { searchContacts } from "@/lib/contacts/searchContacts";
 import { useCommonTranslations, useGroupsPageTranslations } from "@/lib/i18n/generated/hooks";
-import { createModalId, useModalDismiss } from "@/lib/modals";
+import { createModalId, useCreateMore, useModalDismiss } from "@/lib/modals";
 import { DEBOUNCE_MS } from "@/lib/platform/config";
 import { useContactsSelectableListQuery } from "@/lib/query/hooks/useContacts";
 import {
@@ -65,6 +65,7 @@ interface OpenAddGroupModalOptions {
   initialLabel?: string;
   initialSelectedIds?: string[];
   onCreated?: (group: GroupWithCount) => void;
+  repeatable?: boolean;
 }
 
 function AddGroupModalTitle() {
@@ -82,6 +83,7 @@ export function openAddGroupModal(options: OpenAddGroupModalOptions = {}) {
         initialSelectedIds={options.initialSelectedIds}
         modalId={modalId}
         onCreated={options.onCreated}
+        repeatable={options.repeatable}
       />
     ),
     modalId,
@@ -96,6 +98,7 @@ interface AddGroupFormProps {
   initialSelectedIds?: string[];
   modalId: string;
   onCreated?: (group: GroupWithCount) => void;
+  repeatable?: boolean;
 }
 
 function AddGroupForm({
@@ -103,11 +106,14 @@ function AddGroupForm({
   initialSelectedIds = [],
   initialLabel = "",
   onCreated,
+  repeatable = true,
 }: AddGroupFormProps) {
   const tCommon = useCommonTranslations();
   const t = useGroupsPageTranslations();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>(initialSelectedIds);
+  const { createMore, setCreateMore } = useCreateMore({ enabled: repeatable });
+  const labelInputRef = useRef<HTMLInputElement>(null);
   const {
     data: contactsData,
     isLoading: isLoadingContacts,
@@ -178,6 +184,19 @@ function AddGroupForm({
         }),
       );
 
+      if (repeatable && createMore) {
+        form.setValues({
+          color: getRandomColor(),
+          emoji: getRandomEmoji(),
+          label: "",
+        });
+        form.clearErrors();
+        setSelectedIds([]);
+        setIsSubmitting(false);
+        queueMicrotask(() => labelInputRef.current?.focus());
+        return;
+      }
+
       if (onCreated) {
         const newGroup: GroupWithCount = {
           color: values.color.trim(),
@@ -231,6 +250,7 @@ function AddGroupForm({
               required
               withAsterisk
               {...form.getInputProps("label")}
+              ref={labelInputRef}
             />
           </Box>
         </Group>
@@ -283,6 +303,15 @@ function AddGroupForm({
           cancelDisabled={isSubmitting}
           cancelLabel={t("AddGroupModal.Cancel")}
           onCancel={closeModal}
+          {...(repeatable
+            ? {
+                createMoreAriaDescription: tCommon("a11y.createMore"),
+                createMoreChecked: createMore,
+                createMoreDisabled: isBlocking,
+                createMoreLabel: tCommon("actions.createMore"),
+                onCreateMoreChange: setCreateMore,
+              }
+            : {})}
         />
       </Stack>
     </form>
