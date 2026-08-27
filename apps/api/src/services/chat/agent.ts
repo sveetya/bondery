@@ -16,8 +16,9 @@ import { createTagTools } from "./tools/tags.js";
 export function runChatAgent(
   messages: ModelMessage[],
   ctx: DomainContext,
+  apiKey?: string,
 ): {
-  pipeUIMessageStreamToResponse: (response: ServerResponse) => void;
+  pipeUIMessageStreamToResponse: (response: ServerResponse) => Promise<void>;
   text: PromiseLike<string>;
 } {
   const contactTools = createContactTools(ctx);
@@ -31,7 +32,7 @@ export function runChatAgent(
   return streamText({
     instructions: `${SYSTEM_PROMPT}\n\nToday's date: ${today}`,
     messages,
-    model: getChatModel(),
+    model: getChatModel(apiKey),
     stopWhen: isStepCount(5),
     tools: {
       ...contactTools,

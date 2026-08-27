@@ -12,14 +12,17 @@ import { getChatModel } from "./provider.js";
  * @param userMessage - The text of the user's first message
  * @returns A short title string, or null if generation fails
  */
-export async function generateSessionTitle(userMessage: string): Promise<string | null> {
+export async function generateSessionTitle(
+  userMessage: string,
+  apiKey?: string,
+): Promise<string | null> {
   const { text } = await generateText({
     instructions:
       "Generate a very short title (3-6 words) for a chat conversation based on the user's first message. " +
       "The title should capture the main topic. Do not use quotes or punctuation at the end. " +
       "Reply with only the title, nothing else.",
     maxOutputTokens: 30,
-    model: getChatModel(),
+    model: getChatModel(apiKey),
     prompt: userMessage,
   });
 

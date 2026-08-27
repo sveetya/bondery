@@ -11,6 +11,7 @@ import { staticPageTitle } from "@/lib/metadata/pageTitles";
 import { getQueryClient } from "@/lib/query/client";
 import { settingsKeys } from "@/lib/query/keys";
 import { prefetchChatSessions, prefetchSubscription } from "@/lib/query/prefetch";
+import { ChatClient } from "./ChatClient";
 import { ChatSessionSidebar } from "./components/chrome/ChatSessionSidebar";
 import { ChatSessionsProvider } from "./hooks/ChatSessionsContext";
 
@@ -44,21 +45,27 @@ export default async function ChatLayout({ children }: { children: React.ReactNo
         <Box
           style={{
             display: "flex",
-
-            height: "100dvh",
-
-            marginBottom: "calc(-1 * var(--mantine-spacing-md))",
-
+            height: "calc(100dvh - 2 * var(--mantine-spacing-md))",
             marginLeft: "calc(-1 * var(--mantine-spacing-md))",
-
-            marginTop: "calc(-1 * var(--mantine-spacing-md))",
-
+            marginRight: "calc(-1 * var(--mantine-spacing-md))",
             overflow: "hidden",
+            width: "calc(100% + 2 * var(--mantine-spacing-md))",
           }}
         >
           <ChatSessionSidebar />
-
-          <Box style={{ flex: 1, minWidth: 0, overflowY: "auto" }}>{children}</Box>
+          <Box
+            style={{
+              display: "flex",
+              flex: 1,
+              flexDirection: "column",
+              minHeight: 0,
+              minWidth: 0,
+              overflow: "hidden",
+            }}
+          >
+            {children}
+            <ChatClient />
+          </Box>
         </Box>
       </ChatSessionsProvider>
     </HydrationBoundary>

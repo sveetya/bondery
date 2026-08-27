@@ -133,7 +133,7 @@ export const chatSessionRoutes: AppRoutePlugin = async (fastify) => {
     },
     withDomainRoute({ params: chatSessionIdParamSchema }, async (ctx, { params }, reply) => {
       await deleteChatSession(ctx, params.sessionId);
-      return reply.status(204).send(null);
+      return reply.status(204).send();
     }),
   );
 

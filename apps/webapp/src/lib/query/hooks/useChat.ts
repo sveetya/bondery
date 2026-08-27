@@ -1,5 +1,6 @@
 "use client";
 
+import type { ChatSession } from "@bondery/schemas";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 
@@ -14,8 +15,11 @@ import { getContactDetail } from "@/lib/api/domains/contacts";
 import { getGroupDetail } from "@/lib/api/domains/groups";
 import { getInteractionDetail } from "@/lib/api/domains/interactions";
 import { getTagDetail } from "@/lib/api/domains/tags";
-import { invalidateChatSessionMessages, invalidateChatSessions } from "@/lib/query/invalidation";
+import { invalidateChatSessions } from "@/lib/query/invalidation";
 import { chatKeys, contactKeys, groupKeys, interactionKeys, tagKeys } from "@/lib/query/keys";
+import { throwIfPageCannotRender } from "@/lib/query/pageLoadFailure";
+
+const TITLE_REFRESH_DELAY_MS = 3000;
 
 export function useChatSessionsQuery() {
   return useQuery({
@@ -35,6 +39,7 @@ export function useChatSessionMessagesQuery(sessionId: string | undefined, enabl
       return getChatSessionMessagesUI(sessionId);
     },
     queryKey: chatKeys.messages(sessionId ?? ""),
+    throwOnError: throwIfPageCannotRender,
   });
 }
 
@@ -57,11 +62,14 @@ export function useDeleteChatSessionMutation() {
     mutationFn: deleteChatSession,
 
     onSuccess: async (_data, sessionId) => {
-      await Promise.all([
-        invalidateChatSessions(queryClient),
-
-        invalidateChatSessionMessages(queryClient, sessionId),
-      ]);
+      queryClient.setQueryData<ChatSession[]>(chatKeys.sessions(), (current) =>
+        current?.filter((session) => session.id !== sessionId),
+      );
+      queryClient.removeQueries({ queryKey: chatKeys.messages(sessionId) });
+      await queryClient.invalidateQueries(
+        { exact: true, queryKey: chatKeys.sessions() },
+        { throwOnError: false },
+      );
     },
   });
 }
@@ -112,22 +120,40 @@ export function useChatSessionsRefreshOnStreamEnd(
   onStreamComplete?: () => void,
 ) {
   const queryClient = useQueryClient();
-
-  const prevStatusRef = useRef(status);
+  const wasInFlightRef = useRef(false);
+  const titleRefreshTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const onStreamCompleteRef = useRef(onStreamComplete);
+  onStreamCompleteRef.current = onStreamComplete;
 
   useEffect(() => {
-    const wasStreaming = prevStatusRef.current === "streaming";
+    return () => {
+      if (titleRefreshTimerRef.current) {
+        clearTimeout(titleRefreshTimerRef.current);
+      }
+    };
+  }, []);
 
-    prevStatusRef.current = status;
-
-    if (wasStreaming && status === "ready" && getSessionId()) {
-      onStreamComplete?.();
-
-      const timer = setTimeout(() => {
-        void invalidateChatSessions(queryClient);
-      }, 3000);
-
-      return () => clearTimeout(timer);
+  useEffect(() => {
+    const inFlight = status === "submitted" || status === "streaming";
+    if (inFlight) {
+      wasInFlightRef.current = true;
+      return;
     }
-  }, [status, queryClient, getSessionId, onStreamComplete]);
+
+    if (status !== "ready" || !wasInFlightRef.current || !getSessionId()) {
+      return;
+    }
+
+    wasInFlightRef.current = false;
+    onStreamCompleteRef.current?.();
+    void invalidateChatSessions(queryClient);
+
+    if (titleRefreshTimerRef.current) {
+      clearTimeout(titleRefreshTimerRef.current);
+    }
+    titleRefreshTimerRef.current = setTimeout(() => {
+      titleRefreshTimerRef.current = undefined;
+      void invalidateChatSessions(queryClient);
+    }, TITLE_REFRESH_DELAY_MS);
+  }, [status, queryClient, getSessionId]);
 }
