@@ -34,5 +34,9 @@ ${mapEntries.join("\n")}
 `;
 
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, content, "utf8");
-console.log(`Wrote ${outPath} (${importIndex} locale files)`);
+if (fs.existsSync(outPath) && fs.readFileSync(outPath, "utf8") === content) {
+  console.log(`Unchanged ${outPath} (${importIndex} locale files)`);
+} else {
+  fs.writeFileSync(outPath, content, "utf8");
+  console.log(`Wrote ${outPath} (${importIndex} locale files)`);
+}

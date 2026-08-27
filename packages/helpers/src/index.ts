@@ -57,7 +57,9 @@ export {
   WEBAPP_ROUTES,
   WEBSITE_ROUTES,
 } from "#globals/index.js";
-export { generateId, isUuidV7, isValidUuid } from "#ids/index.js";
+export type { ImportRemapTable, RemapImportIdInput } from "#ids/index.js";
+export { generateId, isUuidV7, isValidUuid, remapImportId } from "#ids/index.js";
+
 export { INTERACTION_TYPES } from "#interactions/index.js";
 export {
   cleanPersonName,

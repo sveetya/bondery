@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, readdirSync, watch } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, utimesSync, watch } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +8,7 @@ const repoRoot = resolve(packageRoot, "../..");
 
 const srcLocales = join("src", "locales");
 const distLocales = join("dist", "locales");
+const distResourceMap = join("dist", "generated", "resources.js");
 
 function copyRecursive(src, dest) {
   if (!existsSync(src)) {
@@ -31,15 +32,29 @@ function syncArtifacts() {
     mkdirSync("dist", { recursive: true });
     copyFileSync("manifest.json", join("dist", "manifest.json"));
   }
+  // Next caches JSON imports from this module; bump mtime so locale edits reload.
+  if (existsSync(distResourceMap)) {
+    const now = new Date();
+    utimesSync(distResourceMap, now, now);
+  }
 }
 
 syncArtifacts();
 
+let syncTimer;
+function scheduleLocaleSync(reason) {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    syncArtifacts();
+    console.log(`[translations] copied locale JSON → dist (${reason})`);
+  }, 50);
+}
+
 if (existsSync(srcLocales)) {
-  watch(srcLocales, { recursive: true }, (eventType) => {
-    if (eventType === "change") {
-      syncArtifacts();
-    }
+  // Windows often emits `rename` for atomic saves; do not filter to `change`.
+  watch(srcLocales, { recursive: true }, (eventType, filename) => {
+    const file = typeof filename === "string" ? filename : "";
+    scheduleLocaleSync(file ? `${eventType}: ${file}` : eventType);
   });
 }
 

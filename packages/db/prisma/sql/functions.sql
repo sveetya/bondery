@@ -245,9 +245,12 @@ begin
     where user_id = p_user_id
     returning * into v_row;
 
-    return query select true, v_row.ai_messages_this_month, v_row.ai_messages_month_reset_at;
+    -- user_settings.ai_messages_month_reset_at is TIMESTAMP (no time zone).
+    -- RETURNS TABLE declares timestamptz; uncast RETURN QUERY fails with
+    -- "structure of query does not match function result type".
+    return query select true, v_row.ai_messages_this_month, v_row.ai_messages_month_reset_at::timestamptz;
   else
-    return query select false, v_row.ai_messages_this_month, v_row.ai_messages_month_reset_at;
+    return query select false, v_row.ai_messages_this_month, v_row.ai_messages_month_reset_at::timestamptz;
   end if;
 end;
 $$;

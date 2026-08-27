@@ -1,12 +1,15 @@
 {
   "a11y": {
     "back": "Zurück",
-    "info": "Info"
+    "createMore": "Nach dem Erstellen im Dialog bleiben, um einen weiteren Eintrag hinzuzufügen",
+    "info": "Info",
+    "loading": "Wird geladen"
   },
   "actions": {
     "back": "Zurück",
     "call": "Anrufen",
     "cancel": "Abbrechen",
+    "createMore": "Weitere erstellen",
     "delete": "Löschen",
     "deselect": "Abwählen",
     "done": "Fertig",
@@ -87,6 +90,7 @@
       "contact_update_failed": "Contact update failed.",
       "email": "Email service not configured.",
       "email_service_not_configured": "Email service not configured.",
+      "export_failed_to_generate": "Dein Export wurde nicht erstellt. Versuche es erneut.",
       "extension": "Extension username required.",
       "extension_outdated": "Extension outdated.",
       "extension_username_required": "Extension username required.",
@@ -108,6 +112,8 @@
       "group_not_found": "Group not found.",
       "group_remove_members_invalid_body": "Group remove members invalid body.",
       "import": "Import vcard failed.",
+      "import_bondery_failed": "Dein Import wurde nicht abgeschlossen. Versuche es erneut.",
+      "import_bondery_invalid": "Das ist kein gültiger Bondery-Export. Lade ihn in den Einstellungen herunter und versuche es erneut.",
       "import_failed": "Import failed.",
       "import_instagram_failed": "Import instagram failed.",
       "import_linkedin_failed": "Import linkedin failed.",

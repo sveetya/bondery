@@ -1,6 +1,6 @@
 # Import flow (product)
 
-LinkedIn, Instagram, and vCard imports — shared between **onboarding step 3** and **Settings → Data management**.
+LinkedIn, Instagram, vCard, and Bondery JSON imports — shared between **onboarding step 3** (LinkedIn/Instagram) and **Settings → Data management**.
 
 ---
 
@@ -12,7 +12,9 @@ LinkedIn, Instagram, and vCard imports — shared between **onboarding step 3** 
 | Settings | Data management cards | Same modals; default navigation progress in modal |
 | Getting Started rail | Import task → Settings `#data-management` | User finishes import outside onboarding |
 
-vCard: `openVCardImportModal` — Settings only (not onboarding cards).
+vCard: `openVCardImportModal` — Settings **Import** only (not onboarding cards).
+
+Bondery JSON: `openBonderyImportModal` — Settings **Import → Bondery JSON** and command palette only (not onboarding). Archive-level restore (no row picker).
 
 ---
 
@@ -21,7 +23,7 @@ vCard: `openVCardImportModal` — Settings only (not onboarding cards).
 Imperative openers in `settings/components/modals/open*ImportModal.tsx`. Body components:
 
 - `LinkedInImportModal.tsx` / `InstagramImportModal.tsx`
-- Shared steps: `ImportModalProcessingSteps`, preview + selection hooks
+- Shared steps: `ImportIntroStep`, `ImportZipUploadStep`, `ImportModalProcessingSteps`, preview + selection hooks
 
 **Typical LinkedIn steps:** intro → instructions → upload → parse preview (select rows) → commit → success.
 
@@ -32,6 +34,20 @@ Imperative openers in `settings/components/modals/open*ImportModal.tsx`. Body co
 **Commit:** Batched via `SOCIAL_IMPORT_COMMIT_BATCH_SIZE`; progress step during commit.
 
 **Success:** Stats `{ imported, updated, skipped }` — onboarding shows inline success; Settings may toast + navigate.
+
+---
+
+## Bondery JSON modal
+
+Imperative opener: `openBonderyImportModal({ entryPoint })`. Size `lg` (same as Instagram/vCard).
+
+**Steps:** intro (“How Bondery JSON import works”) → upload ZIP → client peek (`fflate`) → review file counts → `POST /me/import` → finished in the modal.
+
+**Not used:** row picker, type checkboxes, `useImportContactSelection`, `ContactsTable` preview, LinkedIn/Instagram instructions, success toast, navigate to People.
+
+**Blocking:** While checking or importing — `useModalBlocking`. Cancel remains available during check/import (abort).
+
+**Copy:** additive only; contact avatars included when present; keep the current profile (profile photo is not replaced). Upload up to 100 MB; client abort 180s. Review/finished people chips exclude the exporter profile and do not show a separate avatar count.
 
 ---
 
@@ -75,6 +91,7 @@ Platforms: `linkedin` | `instagram` (`ImportFollowupPlatform` in `@bondery/schem
 | Instagram modal | `apps/webapp/src/app/(app)/app/(shell)/settings/components/modals/InstagramImportModal.tsx` |
 | Getting Started state | `apps/webapp/src/lib/home/gettingStartedItems.ts` |
 | Query hooks | `lib/query/hooks/useImports.ts`, `useSettings.ts` |
+| Bondery JSON modal | `apps/webapp/src/app/(app)/app/(shell)/settings/components/modals/BonderyImportModal.tsx` |
 
 ---
 

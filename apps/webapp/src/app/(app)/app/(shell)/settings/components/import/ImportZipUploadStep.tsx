@@ -4,54 +4,62 @@ import { DropzoneContent, ModalFooter } from "@bondery/mantine-next";
 import { Stack } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { IconArrowLeft, IconFileZip } from "@tabler/icons-react";
-import type { RefObject } from "react";
+import type { ComponentProps, ReactNode, RefObject } from "react";
 
-interface LinkedInImportUploadStepProps {
+type DropzoneAccept = NonNullable<ComponentProps<typeof Dropzone>["accept"]>;
+type DropzoneRejectHandler = NonNullable<ComponentProps<typeof Dropzone>["onReject"]>;
+
+export const IMPORT_ZIP_ACCEPT: DropzoneAccept = {
+  [MIME_TYPES.zip]: [".zip"],
+  "application/octet-stream": [".zip"],
+  "application/x-zip": [".zip"],
+  "application/x-zip-compressed": [".zip"],
+  "multipart/x-zip": [".zip"],
+};
+
+interface ImportZipUploadStepProps {
+  accept: DropzoneAccept;
   backLabel: string;
   cancelLabel: string;
   dropzoneDescription: string;
   dropzoneTitle: string;
-  isParsing: boolean;
+  header?: ReactNode;
+  loading?: boolean;
+  maxSize: number;
   onBack: () => void;
   onCancel: () => void;
   onDrop: (files: File[]) => void;
-  onReject: () => void;
+  onReject: DropzoneRejectHandler;
   onSelectFile: () => void;
   openRef: RefObject<(() => void) | null>;
   selectZipFileLabel: string;
 }
 
-export function LinkedInImportUploadStep({
-  dropzoneTitle,
-  dropzoneDescription,
-  isParsing,
-  onDrop,
-  onReject,
-  openRef,
-  selectZipFileLabel,
+export function ImportZipUploadStep({
+  accept,
   backLabel,
   cancelLabel,
-  onSelectFile,
+  dropzoneDescription,
+  dropzoneTitle,
+  header,
+  loading = false,
+  maxSize,
   onBack,
   onCancel,
-}: LinkedInImportUploadStepProps) {
+  onDrop,
+  onReject,
+  onSelectFile,
+  openRef,
+  selectZipFileLabel,
+}: ImportZipUploadStepProps) {
   return (
     <Stack gap="md">
+      {header}
       <Dropzone
-        accept={{
-          [MIME_TYPES.zip]: [".zip"],
-          "application/octet-stream": [".zip", ".csv"],
-          "application/x-zip": [".zip"],
-          "application/x-zip-compressed": [".zip"],
-          "multipart/x-zip": [".zip"],
-          [MIME_TYPES.csv]: [".csv"],
-          "application/csv": [".csv"],
-          "application/vnd.ms-excel": [".csv"],
-          "text/plain": [".csv"],
-        }}
-        loading={isParsing}
+        accept={accept}
+        loading={loading}
         maxFiles={1}
-        maxSize={30 * 1024 * 1024}
+        maxSize={maxSize}
         onDrop={onDrop}
         onReject={onReject}
         openRef={openRef}

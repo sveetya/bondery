@@ -10,7 +10,6 @@ export function VCardImportSection() {
 
   return (
     <IntegrationCard
-      connectedDescription={t("CardDescription")}
       displayName={t("MobileContacts")}
       icon={IconAddressBook}
       iconColor="green"
@@ -19,7 +18,6 @@ export function VCardImportSection() {
       isLinkable={false}
       onClick={() => openVCardImportModal()}
       provider="vcard_import"
-      unconnectedDescription={t("CardDescription")}
     />
   );
 }

@@ -4,6 +4,6 @@
     "rootDir": "./src"
   },
   "exclude": ["node_modules", "dist", "src/contracts.assertions.ts"],
-  "extends": "@bondery/typescript-config/base.json",
+  "extends": "../typescript-config/base.json",
   "include": ["src/**/*"]
 }

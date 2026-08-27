@@ -10,7 +10,6 @@ export function LinkedInImportSection() {
 
   return (
     <IntegrationCard
-      connectedDescription={t("CardDescription")}
       displayName={t("LinkedIn")}
       icon={IconBrandLinkedin}
       iconColor="blue"
@@ -19,7 +18,6 @@ export function LinkedInImportSection() {
       isLinkable={false}
       onClick={() => openLinkedInImportModal()}
       provider="linkedin_import"
-      unconnectedDescription={t("CardDescription")}
     />
   );
 }

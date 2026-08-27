@@ -68,7 +68,7 @@ export type LanguagesPrefix = never;
 
 export type LinkedInDataPrefix = never;
 
-export type LoginPagePrefix = "Providers";
+export type LoginPagePrefix = "Benefits" | "Providers";
 
 export type MapCommonPrefix = never;
 
@@ -122,7 +122,7 @@ export type PersonTabsPrefix = never;
 
 export type ReminderDigestEmailPrefix = "dateTypes";
 
-export type SettingsPagePrefix = "ApiKeys" | "DataManagement" | "DataManagement.ProductAnalytics" | "DataManagement.InstagramImport" | "DataManagement.LinkedInImport" | "DataManagement.VCardImport" | "Integration" | "Integration.ChromeExtensionModal" | "Preferences" | "Profile" | "Subscription" | "Support";
+export type SettingsPagePrefix = "ApiKeys" | "DataManagement" | "DataManagement.BonderyImport" | "DataManagement.Export" | "DataManagement.InstagramImport" | "DataManagement.LinkedInImport" | "DataManagement.ProductAnalytics" | "DataManagement.VCardImport" | "Integration" | "Integration.ChromeExtensionModal" | "Integration.PwaInstallModal" | "Preferences" | "Profile" | "Subscription" | "Support";
 
 export type ShareContactEmailBodyPrefix = "labels";
 

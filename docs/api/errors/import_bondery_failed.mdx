@@ -1,0 +1,31 @@
+---
+title: import_bondery_failed
+description: Import Bondery Failed
+---
+
+## When this happens
+
+Applying a valid Bondery export ZIP failed unexpectedly (database write, sync emit, or an internal error). The archive parsed successfully; some rows may already have been inserted. Retrying the same ZIP is additive and skips primary keys that already exist.
+
+## What your integration should do
+
+Log the response `request_id` if present and retry once. Escalate if the error persists — likely a server-side bug or dependency outage. Honor `Retry-After` if you also hit the export/import rate limit.
+
+## What end users should see
+
+Show `common.errors.api.import_bondery_failed` (or the Settings import error copy). Never show the API `message` field.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `api_error` |
+| **HTTP status** | 500 |
+| **code** | `import_bondery_failed` |
+| **doc_url** | `/docs/api/errors/import_bondery_failed` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/me/import.ts`

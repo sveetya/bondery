@@ -1,6 +1,6 @@
 import { captureEvent } from "./client";
 
-export type ImportSource = "linkedin" | "instagram" | "vcard";
+export type ImportSource = "bondery_export" | "instagram" | "linkedin" | "vcard";
 
 export function captureImportComplete(
   importSource: ImportSource,

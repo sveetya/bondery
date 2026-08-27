@@ -2,30 +2,34 @@
 
 import { ModalFooter } from "@bondery/mantine-next";
 import { Group, Paper, Stack, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconArrowRight, IconBrandLinkedin, IconCircleCheck } from "@tabler/icons-react";
+import { IconArrowRight, IconCircleCheck, type Icon as TablerIconType } from "@tabler/icons-react";
 
-interface LinkedInImportIntroStepProps {
+interface ImportIntroStepProps {
   cancelLabel: string;
   continueLabel: string;
   descriptions: [string, string, string];
+  icon: TablerIconType;
+  iconColor: string;
   introTitle: string;
   onCancel: () => void;
   onContinue: () => void;
 }
 
-export function LinkedInImportIntroStep({
-  introTitle,
-  descriptions,
-  continueLabel,
+export function ImportIntroStep({
   cancelLabel,
-  onContinue,
+  continueLabel,
+  descriptions,
+  icon: Icon,
+  iconColor,
+  introTitle,
   onCancel,
-}: LinkedInImportIntroStepProps) {
+  onContinue,
+}: ImportIntroStepProps) {
   return (
     <Stack gap="xl">
       <Stack align="center" gap="md" pt="sm">
-        <ThemeIcon color="blue" radius="xl" size={110} variant="light">
-          <IconBrandLinkedin size={64} />
+        <ThemeIcon color={iconColor} radius="xl" size={110} variant="light">
+          <Icon size={64} />
         </ThemeIcon>
         <Title order={4} ta="center">
           {introTitle}
@@ -39,7 +43,7 @@ export function LinkedInImportIntroStep({
               <IconCircleCheck
                 size={18}
                 style={{
-                  color: "var(--mantine-color-blue-6)",
+                  color: `var(--mantine-color-${iconColor}-6)`,
                   flexShrink: 0,
                   marginTop: 1,
                 }}

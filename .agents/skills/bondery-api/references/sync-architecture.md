@@ -118,7 +118,7 @@ Cross-device freshness uses a **thin wake channel** — not a second sync protoc
 **Web:** WS connects via same-origin `/api/sync/ws`. Ticket is fetched via `/api/sync/ws-ticket` BFF route.
 
 - **Production (Compose + Traefik):** a Traefik router on the API service matches `Host(webapp domain) && PathPrefix(/api/sync/ws)`, strips the `/api` prefix, and upgrades the connection straight through to the API's `/sync/ws` — Traefik handles the WS upgrade natively, no app-level proxy needed.
-- **Local bare dev (no Traefik):** the WS request to `/api/sync/ws` has nowhere to go and fails silently. This is expected — sync-wake is a doorbell, not a source of truth (see `sync-wake-client.ts`, which caps reconnect attempts and gives up quietly after repeated failures). Data still stays fresh via TanStack Query `staleTime` + `refetchOnWindowFocus` and `SessionResyncOnFocus`.
+- **Local bare dev (no Traefik):** the WS request to `/api/sync/ws` has nowhere to go and fails silently. This is expected — sync-wake is a doorbell, not a source of truth (see `sync-wake-client.ts`, which caps reconnect attempts and gives up quietly after repeated failures). Data still stays fresh via TanStack Query `staleTime` + `refetchOnWindowFocus`.
 
 ## Guardrails
 

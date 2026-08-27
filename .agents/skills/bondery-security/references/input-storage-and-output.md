@@ -19,16 +19,17 @@ Schemas live in `@bondery/schemas`. Error catalog codes only (snake_case).
 |-------|------|------------|
 | `POST /contacts/:id/photo` | Session | MIME whitelist + magic bytes |
 | `POST /contacts/import/vcard/parse` | Integration (API key OK) | vCard parser |
-| Global multipart | — | 50MB limit (`build-app.ts`) |
+| `POST /me/import` | Session | ZIP magic, archive-root allowlist, entry/uncompressed caps, Zod export schemas |
+| Global multipart | — | 100MB limit (`build-app.ts`) |
 
 **Image validation** (`lib/platform/config.ts`):
 - Allowed MIME: jpeg, png, gif, webp, avif, heic/heif
 - Magic-byte check after read
 - Intended max: 5MB (`AVATAR_UPLOAD.maxFileSizeBytes` in `@bondery/schemas`)
 
-**Known gap (review trigger):** photo route calls `validateImageUpload({ size: 0, type: data.mimetype })` — file size is not enforced post-read. Only the 50MB global multipart limit applies. Fix: add post-buffer size check ≤ 5MB.
+**Known gap (review trigger):** photo route calls `validateImageUpload({ size: 0, type: data.mimetype })` — file size is not enforced post-read. Only the 100MB global multipart limit applies. Fix: add post-buffer size check ≤ 5MB.
 
-**vCard import:** no explicit size cap below 50MB global limit.
+**vCard import:** no explicit size cap below 100MB global limit.
 
 **Client-side:** webapp Instagram ZIP validates extension + MIME + 100MB cap (`instagram-import-helpers.ts`). Server-side zip bomb / path traversal not separately validated.
 

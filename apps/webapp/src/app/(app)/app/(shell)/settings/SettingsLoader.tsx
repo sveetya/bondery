@@ -1,13 +1,9 @@
-import { API_ROUTES } from "@bondery/helpers/globals/paths";
-import type { SubscriptionStatus } from "@bondery/schemas";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { serverApiFetch } from "@/lib/api/server";
 import { getQueryClient } from "@/lib/query/client";
-import { settingsKeys } from "@/lib/query/keys";
 import {
+  fetchSettings,
   prefetchApiKeys,
   prefetchMePerson,
-  prefetchSettings,
   prefetchSubscription,
   prefetchTagsList,
 } from "@/lib/query/prefetch";
@@ -18,23 +14,12 @@ export async function SettingsLoader() {
   const queryClient = getQueryClient();
 
   await Promise.all([
-    prefetchSettings(queryClient),
+    fetchSettings(queryClient),
     prefetchTagsList(queryClient, SETTINGS_TAGS_PREVIEW),
-
     prefetchMePerson(queryClient, "small"),
-
-    prefetchSubscription(queryClient),
-
     prefetchApiKeys(queryClient),
+    prefetchSubscription(queryClient),
   ]);
-
-  const subscriptionStatus = queryClient.getQueryData<SubscriptionStatus | null>(
-    settingsKeys.subscription(),
-  );
-
-  if (subscriptionStatus?.plan !== "premium") {
-    serverApiFetch(API_ROUTES.SUBSCRIPTIONS_SYNC, { method: "POST" }).catch(() => {});
-  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

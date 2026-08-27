@@ -44,6 +44,7 @@
     "better-auth": "^1.7.0-rc.2",
     "d3": "^7.9.0",
     "dayjs": "^1.11.21",
+    "fflate": "^0.8.3",
     "flag-icons": "^7.5.0",
     "highlight.js": "^11.11.1",
     "i18next": "^26.3.6",
@@ -105,6 +106,8 @@
     "predev": "cross-env NODE_ENV=development pnpm run generate-icons",
     "smoke-ssr": "node scripts/smoke-ssr-boot.mjs",
     "start": "next start",
+    "test:availability": "tsx --test src/lib/api/availabilityStore.test.ts src/lib/api/applyTransportErrorPolicy.test.ts src/lib/api/health.test.ts src/lib/api/resolveServerApiUrl.test.ts",
+    "test:merge": "tsx --test src/lib/merge/orientMergePair.test.ts",
     "test:runtime-config": "tsx --test src/lib/platform/runtimeConfig.server.test.ts",
     "test:sync": "tsx --test src/lib/sync/sync-wake-client.test.ts",
     "test:theme": "tsx --test src/lib/theme/theme.test.ts"

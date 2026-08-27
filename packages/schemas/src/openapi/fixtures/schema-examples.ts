@@ -130,6 +130,30 @@ export const EXAMPLE_MERGE_RECOMMENDATIONS_COUNT_RESPONSE = { activeCount: 3 };
 
 export const EXAMPLE_KEEP_IN_TOUCH_COUNT_RESPONSE = { overdueCount: 2 };
 
+export const EXAMPLE_EXPORT_SUMMARY_RESPONSE = {
+  exportSummary: {
+    bonderyVersion: "1.8.3",
+    groups: 0,
+    interactions: 0,
+    people: 0,
+    relationships: 0,
+    tags: 0,
+  },
+};
+
+export const EXAMPLE_IMPORT_RESULT_RESPONSE = {
+  importResult: {
+    groupMemberships: { inserted: 0, skipped: 0 },
+    groups: { inserted: 0, skipped: 0 },
+    interactions: { inserted: 0, skipped: 0 },
+    people: { inserted: 0, skipped: 0 },
+    photos: { inserted: 0, skipped: 0 },
+    relationships: { inserted: 0, skipped: 0 },
+    tagMemberships: { inserted: 0, skipped: 0 },
+    tags: { inserted: 0, skipped: 0 },
+  },
+};
+
 export const EXAMPLE_ENRICH_QUEUE_STATUS_COUNTS_RESPONSE = {
   completed: 12,
   failed: 1,

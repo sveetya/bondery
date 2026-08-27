@@ -103,10 +103,14 @@ export type CommandPaletteCatalog = {
   ContactUsDescription: string;
   Documentation: string;
   DocumentationDescription: string;
+  ExportData: string;
+  ExportDataDescription: string;
   FindPerson: string;
   FindPersonDescription: string;
   GoToDescription: string;
   HelpGroup: string;
+  ImportData: string;
+  ImportDataDescription: string;
   LogInteraction: string;
   LogInteractionDescription: string;
   NavigateGroup: string;
@@ -117,12 +121,15 @@ export type CommandPaletteCatalog = {
 export type CommonCatalog = {
   a11y: {
     back: string;
+    createMore: string;
     info: string;
+    loading: string;
   };
   actions: {
     back: string;
     call: string;
     cancel: string;
+    createMore: string;
     delete: string;
     deselect: string;
     done: string;
@@ -203,6 +210,7 @@ export type CommonCatalog = {
       contact_update_failed: string;
       email: string;
       email_service_not_configured: string;
+      export_failed_to_generate: string;
       extension: string;
       extension_outdated: string;
       extension_username_required: string;
@@ -286,6 +294,8 @@ export type CommonCatalog = {
       validation_error: string;
       webhook: string;
       webhook_not_configured: string;
+      import_bondery_failed: string;
+      import_bondery_invalid: string;
     };
     apiTemporarilyUnavailable: string;
     apiUnreachable: string;
@@ -1182,11 +1192,16 @@ export type LinkedInDataCatalog = {
 export type LoginPageCatalog = {
   And: string;
   AuthenticationError: string;
+  Benefits: {
+    FreeForever: string;
+    ImportSocials: string;
+    PlugInApps: string;
+  };
   ContinueWith: string;
   Description: string;
+  FormTitle: string;
   LastUsed: string;
-  MobileNotAvailable: string;
-  MobileNotAvailableMessage: string;
+  LogoAriaLabel: string;
   PrivacyPolicy: string;
   Providers: {
     GitHub: string;
@@ -1948,6 +1963,50 @@ export type SettingsPageCatalog = {
   };
   DataManagement: {
     AccountDeleted: string;
+    BonderyImport: {
+      CardTitle: string;
+      CheckingBody: string;
+      CheckingTitle: string;
+      Continue: string;
+      CountGroups: string;
+      CountGroups_one: string;
+      CountGroups_other: string;
+      CountInteractions: string;
+      CountInteractions_one: string;
+      CountInteractions_other: string;
+      CountPeople: string;
+      CountPeople_one: string;
+      CountPeople_other: string;
+      CountTags: string;
+      CountTags_one: string;
+      CountTags_other: string;
+      Done: string;
+      DropzoneDescription: string;
+      DropzoneTitle: string;
+      ErrorBody: string;
+      ErrorTitle: string;
+      FileTooLarge: string;
+      FinishedBody: string;
+      FinishedTitle: string;
+      FinishedUpToDate: string;
+      ImportAction: string;
+      ImportingBody: string;
+      ImportingTitle: string;
+      IntroDescription1: string;
+      IntroDescription2: string;
+      IntroDescription3: string;
+      IntroTitle: string;
+      ModalTitle: string;
+      ReviewEmpty: string;
+      ReviewIntro: string;
+      SelectFile: string;
+      TimeoutBody: string;
+      TimeoutTitle: string;
+      WrongFileGeneric: string;
+      WrongFileInstagram: string;
+      WrongFileLinkedIn: string;
+      WrongFileVCard: string;
+    };
     DeleteAccount: string;
     DeleteAccountDescription: string;
     DeleteButton: string;
@@ -1958,17 +2017,43 @@ export type SettingsPageCatalog = {
     DeleteError: string;
     DeleteSuccess: string;
     DeletingAccount: string;
-    ImportContactsDescription: string;
-    ProductAnalytics: {
+    Export: {
+      BlockedBody: string;
+      BlockedTitle: string;
+      Button: string;
+      CountGroups: string;
+      CountGroups_one: string;
+      CountGroups_other: string;
+      CountInteractions: string;
+      CountInteractions_one: string;
+      CountInteractions_other: string;
+      CountPeople: string;
+      CountPeople_one: string;
+      CountPeople_other: string;
+      CountsError: string;
+      CountTags: string;
+      CountTags_one: string;
+      CountTags_other: string;
       Description: string;
-      SwitchLabel: string;
+      DownloadZip: string;
+      EmptyHelper: string;
+      ErrorBody: string;
+      ErrorTitle: string;
+      ModalBody: string;
+      ModalTitle: string;
+      PreparingBody: string;
+      PreparingTitle: string;
+      SectionTitle: string;
+      TimeoutBody: string;
+      TimeoutTitle: string;
       Title: string;
     };
+    ImportContactsDescription: string;
+    ImportSectionTitle: string;
     InstagramImport: {
       AlreadyExists: string;
       Back: string;
       Cancel: string;
-      CardDescription: string;
       ChooseContactsHint: string;
       ComeBackWhenReady: string;
       Continue: string;
@@ -2046,7 +2131,6 @@ export type SettingsPageCatalog = {
       AlreadyExists: string;
       Back: string;
       Cancel: string;
-      CardDescription: string;
       ChooseContactsHint: string;
       ComeBackWhenReady: string;
       Continue: string;
@@ -2093,6 +2177,11 @@ export type SettingsPageCatalog = {
       Valid: string;
     };
     PleaseWait: string;
+    ProductAnalytics: {
+      Description: string;
+      SwitchLabel: string;
+      Title: string;
+    };
     SigningOut: string;
     SignOut: string;
     SignOutButton: string;
@@ -2104,7 +2193,6 @@ export type SettingsPageCatalog = {
     VCardImport: {
       Back: string;
       Cancel: string;
-      CardDescription: string;
       ChooseContactsHint: string;
       Continue: string;
       DropzoneDescription: string;
@@ -2141,7 +2229,7 @@ export type SettingsPageCatalog = {
     };
   };
   Integration: {
-    BonderyChromeExtension: string;
+    BrowserExtension: string;
     Cancel: string;
     CannotUnlink: string;
     ChromeExtensionModal: {
@@ -2161,21 +2249,26 @@ export type SettingsPageCatalog = {
     Connected: string;
     Connecting: string;
     DesktopApp: string;
-    DesktopAppInstallDescription: string;
-    DesktopAppInstalledDescription: string;
-    DesktopAppMenuInstallDescription: string;
-    DesktopAppNotSupportedDescription: string;
-    ExtensionInstallDescription: string;
-    ExtensionLinkedDescription: string;
-    ExtensionLinkedDescriptionWithVersion: string;
     ExtensionModalTitle: string;
     GitHub: string;
+    Installed: string;
     LinkError: string;
     LinkedButCannotUnlink: string;
     LinkedIn: string;
     LinkingAccount: string;
     MustHaveOneMethod: string;
     NotConnected: string;
+    NotInstalled: string;
+    PwaInstallModal: {
+      Close: string;
+      InstallButton: string;
+      IntroDescription1: string;
+      IntroDescription2: string;
+      IntroDescription3: string;
+      IntroTitle: string;
+      MenuInstallHint: string;
+      NotSupportedHint: string;
+    };
     Unlink: string;
     UnlinkAccount: string;
     UnlinkConfirmation: string;

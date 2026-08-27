@@ -30,6 +30,11 @@ export function getStorage(): StorageAdapter {
   return storageAdapter;
 }
 
+/** Test hook — inject a storage adapter (pass `null` to clear). */
+export function setStorageForTests(adapter: StorageAdapter | null): void {
+  storageAdapter = adapter;
+}
+
 /** Test hook — reset cached adapter between tests. */
 export function resetStorageForTests(): void {
   storageAdapter = null;

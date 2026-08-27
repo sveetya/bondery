@@ -61,6 +61,7 @@ import {
   updateContactInputSchema,
   updateContactRelationshipInputSchema,
 } from "#entities/contact/index.js";
+import { exportSummaryResponseSchema, importResultResponseSchema } from "#entities/export/index.js";
 import {
   addContactsToGroupRequestSchema,
   addContactsToGroupResponseSchema,
@@ -163,6 +164,8 @@ export const RESPONSE_SCHEMA_EXAMPLES: OpenApiSchemaExampleEntry[] = [
   { name: "enrichEligibleCountResponseSchema", schema: enrichEligibleCountResponseSchema },
   { name: "enrichQueueCountResponseSchema", schema: enrichQueueCountResponseSchema },
   { name: "keepInTouchCountResponseSchema", schema: keepInTouchCountResponseSchema },
+  { name: "exportSummaryResponseSchema", schema: exportSummaryResponseSchema },
+  { name: "importResultResponseSchema", schema: importResultResponseSchema },
   { name: "enrichQueueStatusCountsSchema", schema: enrichQueueStatusCountsSchema },
   { name: "enrichQueueInitResponseSchema", schema: enrichQueueInitResponseSchema },
   { name: "enrichQueueNextBatchResponseSchema", schema: enrichQueueNextBatchResponseSchema },

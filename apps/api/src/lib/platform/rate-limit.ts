@@ -27,6 +27,12 @@ export const GEOCODE_TIER = {
   timeWindow: "60 seconds",
 } as const;
 
+/** CRM data ZIP export and Bondery ZIP import — expensive to generate or apply. */
+export const EXPORT_TIER = {
+  max: 5,
+  timeWindow: "10 minutes",
+} as const;
+
 export const NOT_FOUND_TIER = {
   max: 60,
   timeWindow: "60 seconds",

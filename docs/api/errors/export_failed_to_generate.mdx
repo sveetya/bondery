@@ -1,0 +1,31 @@
+---
+title: export_failed_to_generate
+description: Export Failed To Generate
+---
+
+## When this happens
+
+Creating the Bondery data export ZIP failed unexpectedly (database read, archive generation, or an internal error).
+
+## What your integration should do
+
+Log the response `request_id` if present and retry once. Escalate if the error persists — likely a server-side bug or dependency outage. Honor `Retry-After` if you also hit the export rate limit.
+
+## What end users should see
+
+Show `common.errors.api.export_failed_to_generate` (or the Settings export error copy). Never show the API `message` field.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `api_error` |
+| **HTTP status** | 500 |
+| **code** | `export_failed_to_generate` |
+| **doc_url** | `/docs/api/errors/export_failed_to_generate` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/domains/me/export.ts`

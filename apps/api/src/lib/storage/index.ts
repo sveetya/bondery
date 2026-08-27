@@ -5,4 +5,5 @@ export {
   getStorage,
   LINKEDIN_LOGOS_BUCKET,
   resetStorageForTests,
+  setStorageForTests,
 } from "./get-storage.js";

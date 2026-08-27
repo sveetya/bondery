@@ -100,6 +100,12 @@
       "node": "./dist/json-modules.d.js",
       "types": "./src/json-modules.d.ts"
     },
+    "./load-source": {
+      "default": "./dist/load-source.js",
+      "import": "./dist/load-source.js",
+      "node": "./dist/load-source.js",
+      "types": "./src/load-source.ts"
+    },
     "./loader": {
       "default": "./dist/loader.js",
       "import": "./dist/loader.js",

@@ -5,6 +5,38 @@ hidden: true
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Webapp: You can export people, groups, tags, interactions, and contact avatars as a Bondery ZIP from Settings → Data management.
+- Webapp: You can import a Bondery JSON ZIP (up to 100 MB) from Settings → Import → Bondery JSON, including contact avatars when they are present. Your profile photo is not replaced.
+- Webapp: Create person, group, and interaction dialogs include a Create more switch so you can add several in a row without reopening the dialog.
+- Webapp: Settings can prompt you to install Bondery as an app on this device.
+
+### Breaking
+
+- **Avatar-rich Bondery ZIPs:** API servers that still cap ZIP archives at 32 entries reject exports that include an `avatars/` folder. Upgrade the API before importing an avatar-rich ZIP. JSON-only ZIPs keep working.
+- **Bondery ZIP memberships:** Group and tag memberships live on `groups.json` and `tags.json` (`members`). `group-memberships.json` and `tag-memberships.json` are not used.
+- **Bondery ZIP myself:** The exporter profile is `myself.json` (at most one record), not `people.json`. This format is not in production yet; there is no compatibility with earlier ZIP layouts.
+- **Android application id:** The Android package is `com.usebondery.mobile`. Existing installs of `com.bondery.mobile` do not receive this as an in-place update.
+
+### 🐛 Fixed
+
+- Webapp: The AI assistant recovers more reliably from stream errors, missing sessions, and failed title updates.
+- Webapp: Failed page loads show a retryable error instead of a blank shell. Missing contacts get a dedicated empty state.
+- API: Stripe subscriptions that are set to cancel at period end in Customer Portal flexible billing now show as canceling.
+
+### 🔄 Changed
+
+- Contributors: Local Stripe webhooks use `pnpm run setup:stripe` and `pnpm run dev:stripe`. The CLI listen signing secret stays on the machine and is not Infisical-synced.
+
+### 🧪 Tests
+
+- Contributors: A sample Bondery JSON ZIP and seed script live under `packages/tests/sample-data/bondery/` for import testing.
+
+### 🤖 CI
+
+- Ops: `sync-dokploy-env` can sync the beta product stack (`deployment=beta`): staging app secrets with production Dokploy ops keys.
+
 ### 📝 Documentation
 
 - Website: Privacy Policy identifies Sveetech s.r.o. by EUID (`CZVROR.29902321`) and VAT ID. Contact is email-only; the registered office remains in the data controller section.

@@ -1,7 +1,7 @@
-import { type Prisma, prisma } from "@bondery/db";
+import { type Prisma, type PrismaClient, prisma } from "@bondery/db";
 import type { SyncChange, SyncEmitMeta, SyncTableKey, SyncWakeEvent } from "@bondery/schemas/sync";
 import { allocateServerSequences } from "./idempotency.js";
-import { notifySyncWake } from "./wake/index.js";
+import { getSyncWakeRuntime, notifySyncWake } from "./wake/index.js";
 
 export function syncWakeEventFromChanges(
   serverSequence: number,
@@ -21,14 +21,15 @@ export async function emitSyncBatch(
   userId: string,
   changes: SyncChange[],
   meta?: SyncEmitMeta,
+  db: PrismaClient = prisma,
 ): Promise<number | null> {
   if (changes.length === 0) {
     return null;
   }
 
-  const serverSequence = await allocateServerSequences(prisma, userId, 1);
+  const serverSequence = await allocateServerSequences(db, userId, 1);
 
-  await prisma.syncChangeLog.createMany({
+  await db.syncChangeLog.createMany({
     data: changes.map((change, changeIndex) => ({
       changeIndex,
       entityId: change.entityId,
@@ -40,7 +41,9 @@ export async function emitSyncBatch(
     })),
   });
 
-  void notifySyncWake(userId, syncWakeEventFromChanges(serverSequence, changes, meta));
+  if (getSyncWakeRuntime()) {
+    void notifySyncWake(userId, syncWakeEventFromChanges(serverSequence, changes, meta));
+  }
 
   return serverSequence;
 }

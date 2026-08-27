@@ -78,8 +78,11 @@ export class S3Storage implements StorageAdapter {
         }),
       );
       return await streamToBuffer(response.Body);
-    } catch {
-      return null;
+    } catch (error) {
+      if (isStorageObjectMissingError(error)) {
+        return null;
+      }
+      throw error;
     }
   }
 
@@ -107,21 +110,27 @@ export class S3Storage implements StorageAdapter {
   async listKeys(bucket: string, prefix: string): Promise<string[]> {
     const normalizedPrefix = prefix.replace(/^\/+|\/+$/g, "");
     const listPrefix = normalizedPrefix ? `${normalizedPrefix}/` : "";
-
-    const response = await this.client.send(
-      new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: listPrefix,
-      }),
-    );
-
     const keys: string[] = [];
-    for (const object of response.Contents ?? []) {
-      if (!object.Key) {
-        continue;
+    let continuationToken: string | undefined;
+
+    do {
+      const response = await this.client.send(
+        new ListObjectsV2Command({
+          Bucket: bucket,
+          ContinuationToken: continuationToken,
+          Prefix: listPrefix,
+        }),
+      );
+
+      for (const object of response.Contents ?? []) {
+        if (!object.Key) {
+          continue;
+        }
+        keys.push(object.Key);
       }
-      keys.push(object.Key);
-    }
+
+      continuationToken = response.IsTruncated ? response.NextContinuationToken : undefined;
+    } while (continuationToken);
 
     return keys;
   }
