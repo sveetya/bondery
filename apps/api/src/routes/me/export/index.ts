@@ -34,7 +34,10 @@ export const meExportRoutes: AppRoutePlugin = async (fastify) => {
       schema: {
         description: "Download a ZIP of the authenticated user's Bondery CRM data.",
         response: withOkResponse(
-          z.string().meta({ description: "ZIP archive of Bondery export files" }),
+          z.string().meta({
+            description: "ZIP archive of Bondery export files",
+            example: "PK\u0003\u0004",
+          }),
           "Bondery export ZIP",
         ),
       } satisfies FastifyZodOpenApiSchema,

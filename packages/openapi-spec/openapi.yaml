@@ -15612,9 +15612,11 @@ paths:
           description: Bondery export ZIP
           content:
             application/json:
+              example: "PK\x03\x04"
               schema:
                 type: string
                 description: ZIP archive of Bondery export files
+                example: "PK\x03\x04"
         "400":
           description: Invalid request
           content:
