@@ -47,6 +47,7 @@ Shared packages follow the [Turborepo compiled-package model](https://turborepo.
 - **Exports:** `types` → `src/`, `default` → `dist/`; run `pnpm run sync-exports` after adding public subpaths.
 - **Internal imports:** `#*` hash paths with `.js` suffix (not `tsconfig` paths).
 - **Build:** `rimraf dist && tsc` (+ rewrite hash imports); **compile:** incremental `tsc` for dev cold start; **dev:** `tsc --watch` run alongside apps via Turbo `with`.
+- **Persistent app `#dev`:** orchestrate with `turbo run`, not `turbo watch`. Watch re-executes the task and kills `next dev` / `tsx watch` on any tracked write. Package incremental rebuilds come from `with` `tsc --watch`.
 - **Apps:** consume `dist/` via exports — no `transpilePackages`, no `packages/*/src` aliases (mobile Metro resolves workspace packages from `src/` separately).
 
 ## Mobile local-first data

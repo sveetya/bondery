@@ -153,7 +153,7 @@ export const INTEGRATION_PROVIDERS = [
     icon: "linkedin",
     iconColor: "#0A66C2",
     provider: "linkedin",
-    providerKey: "linkedin_oidc",
+    providerKey: "linkedin",
   },
   {
     active: true,
