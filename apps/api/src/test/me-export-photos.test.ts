@@ -14,7 +14,7 @@ const USER_ID = "11111111-1111-4111-8111-111111111111";
 const PERSON_ID = "22222222-2222-4222-8222-222222222222";
 const ORPHAN_ID = "33333333-3333-4333-8333-333333333333";
 const NOW = new Date("2026-08-19T15:04:05.000Z");
-const BONDERY_VERSION = "1.8.3";
+const BONDERY_VERSION = "1.8.4";
 const CREATED_AT = new Date("2026-01-01T00:00:00.000Z");
 
 function createExportDb(people: Array<Record<string, unknown>>) {

@@ -6,5 +6,5 @@ export const TAG_ID = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
 export const INTERACTION_ID = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
 export const RELATIONSHIP_ID = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee";
 export const NOW = new Date("2026-08-19T15:04:05.000Z");
-export const BONDERY_VERSION = "1.8.3";
+export const BONDERY_VERSION = "1.8.4";
 export const CREATED_AT = new Date("2026-01-01T00:00:00.000Z");

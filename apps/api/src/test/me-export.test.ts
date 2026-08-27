@@ -25,7 +25,7 @@ const TAG_ID = "tag-1";
 const INTERACTION_ID = "interaction-1";
 const RELATIONSHIP_ID = "relationship-1";
 const NOW = new Date("2026-08-19T15:04:05.000Z");
-const BONDERY_VERSION = "1.8.3";
+const BONDERY_VERSION = "1.8.4";
 
 type QueryArgs = { where?: { NOT?: { myself?: boolean }; userId?: string } };
 

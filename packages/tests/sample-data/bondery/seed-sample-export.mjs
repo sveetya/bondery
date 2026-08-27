@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 
 const API_URL = (process.env.BONDERY_API_URL ?? "http://127.0.0.1:26631").replace(/\/+$/, "");
 const API_KEY = process.env.BONDERY_API_KEY;
-const BONDERY_VERSION = "1.8.3";
+const BONDERY_VERSION = "1.8.4";
 const CONCURRENCY = 1;
 
 if (!API_KEY) {
