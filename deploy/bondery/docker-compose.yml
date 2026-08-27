@@ -79,11 +79,11 @@ services:
     pull_policy: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bondery-api.rule=Host(`${BONDERY_INFRA_API_DOMAIN:?BONDERY_INFRA_API_DOMAIN must be set}`)
-      - traefik.http.routers.bondery-api.entrypoints=websecure
-      - traefik.http.routers.bondery-api.tls.certResolver=letsencrypt
-      - traefik.http.routers.bondery-api.service=bondery-api
-      - traefik.http.services.bondery-api.loadbalancer.server.port=26631
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api.rule=Host(`${BONDERY_INFRA_API_DOMAIN:?BONDERY_INFRA_API_DOMAIN must be set}`)"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api.entrypoints=websecure"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api.service=${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api"
+      - "traefik.http.services.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-api.loadbalancer.server.port=26631"
     networks:
       - dokploy-network
       - internal
@@ -121,11 +121,11 @@ services:
     pull_policy: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bondery-webapp.rule=Host(`${BONDERY_INFRA_WEBAPP_DOMAIN:?BONDERY_INFRA_WEBAPP_DOMAIN must be set}`)
-      - traefik.http.routers.bondery-webapp.entrypoints=websecure
-      - traefik.http.routers.bondery-webapp.tls.certResolver=letsencrypt
-      - traefik.http.routers.bondery-webapp.service=bondery-webapp
-      - traefik.http.services.bondery-webapp.loadbalancer.server.port=26632
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp.rule=Host(`${BONDERY_INFRA_WEBAPP_DOMAIN:?BONDERY_INFRA_WEBAPP_DOMAIN must be set}`)"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp.entrypoints=websecure"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp.service=${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp"
+      - "traefik.http.services.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-webapp.loadbalancer.server.port=26632"
     networks:
       - dokploy-network
     restart: unless-stopped

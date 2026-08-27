@@ -89,6 +89,13 @@ if (!/BONDERY_PRIVATE_S3_ACCESS_KEY_ID/.test(seaweedText)) {
   errors.push("seaweedfs-s3 must pass BONDERY_PRIVATE_S3_ACCESS_KEY_ID from compose env");
 }
 
+if (!seaweedText.includes("BONDERY_INFRA_TRAEFIK_PREFIX")) {
+  errors.push("seaweedfs-s3 Traefik router names must interpolate BONDERY_INFRA_TRAEFIK_PREFIX");
+}
+if (/traefik\.http\.routers\.bondery-storage/.test(seaweedText)) {
+  errors.push("seaweedfs-s3 Traefik router names must not be hardcoded as bondery-storage");
+}
+
 if (mainText.includes("docker-compose.supabase.yml")) {
   errors.push("docker-compose.yml must not include docker-compose.supabase.yml");
 }
@@ -138,6 +145,12 @@ if (webapp) {
   if (!/traefik\.enable=true/.test(webapp)) {
     errors.push("webapp must enable Traefik (traefik.enable=true)");
   }
+  if (!webapp.includes("BONDERY_INFRA_TRAEFIK_PREFIX")) {
+    errors.push("webapp Traefik router names must interpolate BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+  if (/traefik\.http\.routers\.bondery-webapp/.test(webapp)) {
+    errors.push("webapp Traefik router names must not be hardcoded as bondery-webapp");
+  }
   if (!webapp.includes("BONDERY_INFRA_INTERNAL_API_URL")) {
     errors.push("webapp must set BONDERY_INFRA_INTERNAL_API_URL for server-side API calls");
   }
@@ -163,6 +176,12 @@ if (api) {
   }
   if (!/traefik\.enable=true/.test(api)) {
     errors.push("api must enable Traefik (traefik.enable=true)");
+  }
+  if (!api.includes("BONDERY_INFRA_TRAEFIK_PREFIX")) {
+    errors.push("api Traefik router names must interpolate BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+  if (/traefik\.http\.routers\.bondery-api/.test(api)) {
+    errors.push("api Traefik router names must not be hardcoded as bondery-api");
   }
   if (!/dokploy-network/.test(api) || !/internal/.test(api)) {
     errors.push("api must join both dokploy-network and internal");

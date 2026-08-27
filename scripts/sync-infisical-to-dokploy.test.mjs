@@ -117,6 +117,7 @@ describe("sync-infisical-to-dokploy", () => {
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID"), false);
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_GIT_SHA"), false);
+    assert.equal(uploadKeys.includes("BONDERY_INFRA_TRAEFIK_PREFIX"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_VERSION"), false);
     assert.equal(uploadKeys.includes("BONDERY_PRIVATE_S3_ENDPOINT"), false);
     assert.equal(uploadKeys.includes("BONDERY_PUBLIC_STORAGE_URL"), false);
