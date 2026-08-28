@@ -17,7 +17,7 @@ const READINESS_DESCRIPTION =
   "Results are cached in memory for one minute. Rate limited to five requests per minute per client. " +
   "Returns HTTP 503 when critical dependencies are unavailable (`status: unhealthy`). " +
   "Returns HTTP 200 when all critical dependencies are healthy (`status: ok` or `status: degraded`). " +
-  "Postgres via Prisma `SELECT 1`; object storage via SeaweedFS S3 gateway `GET /status` and required bucket `HeadBucket` checks; " +
+  "Postgres via Prisma `SELECT 1`; object storage via required-bucket `HeadBucket` checks; " +
   "Redis via shared process clients `PING`; SMTP via live verify on the shared Nodemailer transporter pool. " +
   "API boot runs the same live checks for Postgres, storage, Redis, and SMTP before accepting traffic.";
 

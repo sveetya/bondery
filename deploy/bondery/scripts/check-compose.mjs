@@ -85,6 +85,14 @@ if (!seaweedText.includes("entrypoint.sh")) {
   errors.push("seaweedfs-s3 must mount seaweedfs/entrypoint.sh");
 }
 
+if (!seaweedText.includes("s3-ready.sh")) {
+  errors.push("seaweedfs-s3 must mount and healthcheck seaweedfs/s3-ready.sh");
+}
+
+if (/8333\/status/.test(seaweedText)) {
+  errors.push("seaweedfs-s3 healthcheck must not probe GET /status (empty 200 is not S3-ready)");
+}
+
 if (!/BONDERY_PRIVATE_S3_ACCESS_KEY_ID/.test(seaweedText)) {
   errors.push("seaweedfs-s3 must pass BONDERY_PRIVATE_S3_ACCESS_KEY_ID from compose env");
 }

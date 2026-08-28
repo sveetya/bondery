@@ -104,7 +104,9 @@ pnpm run start:seaweedfs          # S3 gateway on http://127.0.0.1:8333
 pnpm run setup:seaweedfs      # optional — API dev boot also ensures buckets
 ```
 
-Verify: `curl -s http://127.0.0.1:8333/status`
+Optional liveness smoke: `curl -s http://127.0.0.1:8333/status`
+
+S3-ready (unsigned ListBuckets): `curl -sS -D- http://127.0.0.1:8333/` — expect HTTP 403 and S3 `Error` XML. Empty 200 on `/status` is not sufficient.
 
 Stop with `pnpm run stop:seaweedfs`.
 

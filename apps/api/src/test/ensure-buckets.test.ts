@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 import type { S3Client } from "@aws-sdk/client-s3";
 import { ensureStorageBuckets } from "../lib/storage/ensure-buckets.js";
 
+const RETRY_OPTIONS = { maxAttempts: 5, retryDelayMs: 0 } as const;
+
 function createMockClient(handlers: {
   head?: (bucket: string) => Promise<void> | void;
   create?: (bucket: string) => Promise<void> | void;
@@ -35,6 +37,28 @@ function createMockClient(handlers: {
   } as unknown as S3Client;
 }
 
+function notFoundError(): Error {
+  const error = new Error("NotFound") as Error & { name: string };
+  error.name = "NotFound";
+  return error;
+}
+
+function unknownError(): Error {
+  const error = new Error("UnknownError") as Error & { name: string };
+  error.name = "UnknownError";
+  return error;
+}
+
+function accessDeniedError(): Error {
+  const error = new Error("AccessDenied") as Error & {
+    $metadata: { httpStatusCode: number };
+    name: string;
+  };
+  error.name = "AccessDenied";
+  error.$metadata = { httpStatusCode: 403 };
+  return error;
+}
+
 describe("ensureStorageBuckets", () => {
   it("creates buckets that are missing", async () => {
     const existing = new Set<string>();
@@ -48,9 +72,7 @@ describe("ensureStorageBuckets", () => {
       },
       head: (bucket) => {
         if (!existing.has(bucket)) {
-          const error = new Error("NotFound") as Error & { name: string };
-          error.name = "NotFound";
-          throw error;
+          throw notFoundError();
         }
       },
       putPolicy: (bucket) => {
@@ -84,6 +106,65 @@ describe("ensureStorageBuckets", () => {
     assert.deepEqual(policies, ["avatars"]);
   });
 
+  it("creates once after UnknownError then NotFound, without creating on the unknown attempt", async () => {
+    const created: string[] = [];
+    const headCalls: string[] = [];
+    let headAttempt = 0;
+
+    const client = createMockClient({
+      create: (bucket) => {
+        created.push(bucket);
+      },
+      head: () => {
+        headAttempt += 1;
+        headCalls.push(headAttempt === 1 ? "unknown" : "missing");
+        if (headAttempt === 1) {
+          throw unknownError();
+        }
+        throw notFoundError();
+      },
+      putPolicy: async () => {},
+    });
+
+    await ensureStorageBuckets({
+      buckets: ["avatars"],
+      client,
+      ...RETRY_OPTIONS,
+    });
+
+    assert.deepEqual(headCalls, ["unknown", "missing"]);
+    assert.deepEqual(created, ["avatars"]);
+  });
+
+  it("rejects 403 AccessDenied immediately without creating, even with retries available", async () => {
+    const created: string[] = [];
+    let headCalls = 0;
+
+    const client = createMockClient({
+      create: (bucket) => {
+        created.push(bucket);
+      },
+      head: () => {
+        headCalls += 1;
+        throw accessDeniedError();
+      },
+      putPolicy: async () => {},
+    });
+
+    await assert.rejects(
+      () =>
+        ensureStorageBuckets({
+          buckets: ["avatars"],
+          client,
+          ...RETRY_OPTIONS,
+        }),
+      /ensureStorageBuckets failed for: avatars/,
+    );
+
+    assert.equal(headCalls, 1);
+    assert.deepEqual(created, []);
+  });
+
   it("treats BucketAlreadyOwnedByYou as success", async () => {
     const client = createMockClient({
       create: () => {
@@ -92,13 +173,37 @@ describe("ensureStorageBuckets", () => {
         throw error;
       },
       head: () => {
-        const error = new Error("NotFound") as Error & { name: string };
-        error.name = "NotFound";
-        throw error;
+        throw notFoundError();
       },
       putPolicy: async () => {},
     });
 
     await ensureStorageBuckets({ buckets: ["avatars"], client });
+  });
+
+  it("rejects after exhausted UnknownError HeadBucket attempts without creating", async () => {
+    const created: string[] = [];
+
+    const client = createMockClient({
+      create: (bucket) => {
+        created.push(bucket);
+      },
+      head: () => {
+        throw unknownError();
+      },
+      putPolicy: async () => {},
+    });
+
+    await assert.rejects(
+      () =>
+        ensureStorageBuckets({
+          buckets: ["avatars"],
+          client,
+          ...RETRY_OPTIONS,
+        }),
+      /ensureStorageBuckets failed for: avatars/,
+    );
+
+    assert.deepEqual(created, []);
   });
 });
