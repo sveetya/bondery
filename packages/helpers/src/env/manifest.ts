@@ -93,6 +93,10 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
   ],
   "Chrome extension OAuth": ["Generate: openssl rand -hex 16   # BONDERY_PUBLIC_OAUTH_CLIENT_ID"],
   Email: ["SMTP settings (env_file → api only)."],
+  "Image pin": [
+    "Omit BONDERY_INFRA_VERSION on production to pull :production. Set beta on the staging stack to pull :beta from main.",
+    "BONDERY_INFRA_TRAEFIK_PREFIX defaults to bondery. Set bondery-beta on staging so Traefik routers do not overwrite production.",
+  ],
   "Image tags": [
     "Omit to pull the floating production channel. Pin to semver for reproducible deploys / rollback.",
   ],
@@ -1116,7 +1120,7 @@ export const ENV_MANIFEST: EnvVarDef[] = [
       include: true,
     },
     description:
-      "Product version: pins api and webapp container images to ghcr.io/usebondery/{api,webapp}:X.Y.Z when set; also surfaced in runtime config and health probes. Omit for floating :production channel.",
+      "Image tag for api and webapp: semver pin, `beta` for the staging stack (`:beta` from main), or omit for floating `:production`. Also surfaced in runtime config and health probes.",
     exampleValue: "",
     group: "Infra",
     opsExample: { group: "Build metadata", include: true, value: "" },
@@ -1124,6 +1128,22 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     secret: false,
     targets: [t("api"), t("webapp"), t("website")],
     turboAffectsCache: false,
+  },
+  {
+    canonical: "BONDERY_INFRA_TRAEFIK_PREFIX",
+    deployExample: {
+      commented: true,
+      group: "Image pin",
+      include: true,
+      value: "bondery",
+    },
+    description:
+      "Traefik router and service name prefix. Defaults to bondery in Compose. Set bondery-beta on the staging stack so a second compose app does not steal production HTTPS routes.",
+    exampleValue: "bondery",
+    group: "Infra",
+    requiredIn: [],
+    secret: false,
+    targets: [],
   },
   {
     canonical: "BONDERY_INFRA_GIT_SHA",
@@ -1228,6 +1248,7 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
 /** Keys never synced to deploy/bondery Dokploy compose (derived in compose or Dokploy UI). */
 export const SERVICES_DOKPLOY_SYNC_EXCLUDE = new Set<string>([
   "BONDERY_INFRA_GIT_SHA",
+  "BONDERY_INFRA_TRAEFIK_PREFIX",
   "BONDERY_INFRA_VERSION",
   "BONDERY_PRIVATE_S3_ENDPOINT",
   "BONDERY_PUBLIC_STORAGE_URL",

@@ -72,11 +72,11 @@ services:
     image: chrislusf/seaweedfs:4.40
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bondery-storage.rule=Host(`${BONDERY_INFRA_STORAGE_DOMAIN:-storage.localhost}`)
-      - traefik.http.routers.bondery-storage.entrypoints=websecure
-      - traefik.http.routers.bondery-storage.tls.certResolver=letsencrypt
-      - traefik.http.routers.bondery-storage.service=bondery-storage
-      - traefik.http.services.bondery-storage.loadbalancer.server.port=8333
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage.rule=Host(`${BONDERY_INFRA_STORAGE_DOMAIN:-storage.localhost}`)"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage.entrypoints=websecure"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage.service=${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage"
+      - "traefik.http.services.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-storage.loadbalancer.server.port=8333"
     networks:
       - dokploy-network
       - internal

@@ -80,7 +80,7 @@ Product stack secrets and hostnames can be synced via [`.github/workflows/sync-d
 
 See [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-dokploy-envyml).
 
-**Not synced** (keep in Dokploy UI or compose derives): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL`.
+**Not synced** (keep in Dokploy UI or compose derives): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_INFRA_TRAEFIK_PREFIX`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL`.
 
 ### Release smoke (local)
 
@@ -95,8 +95,11 @@ node deploy/bondery/scripts/smoke-release.mjs --service api --tag 1.7.5
 
 ### Image tags (api / webapp)
 
-- **`production` (default):** floating channel (`pull_policy: always`).
+- **`production` (default):** floating channel (`pull_policy: always`). Production only.
+- **`beta`:** set `BONDERY_INFRA_VERSION=beta` on the staging Dokploy app so it tracks `:beta` from `main`, not the production release.
 - **Semver:** pin for frozen rollback.
+
+A second stack on the same Traefik must set `BONDERY_INFRA_TRAEFIK_PREFIX=bondery-beta`. Hardcoded `bondery-api` / `bondery-webapp` / `bondery-storage` router names overwrite production HTTPS routes.
 
 ## Advanced: external Redis
 
