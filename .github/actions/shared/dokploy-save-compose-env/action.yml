@@ -3,7 +3,7 @@ description: Sync Infisical dokploySync keys to Dokploy compose environment (exp
 
 inputs:
   dry_run:
-    description: Dry run: Log env names to runner console instead of uploading to Dokploy API
+    description: "Dry run: log env names instead of uploading to Dokploy"
     required: false
     default: "true"
   redeploy:
