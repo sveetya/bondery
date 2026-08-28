@@ -65,7 +65,7 @@ Object storage uses **SeaweedFS** (S3-compatible gateway). The API uploads via p
 
 | Variable | Purpose |
 |---|---|
-| `BONDERY_PRIVATE_S3_ENDPOINT` | Internal S3 endpoint (e.g. `http://seaweedfs-s3:8333` in Compose) |
+| `BONDERY_PRIVATE_S3_ENDPOINT` | Internal S3 endpoint. Compose derives `http://${BONDERY_INFRA_TRAEFIK_PREFIX}-storage:8333` (do not use `http://seaweedfs-s3:8333` — that DNS name collides on shared `dokploy-network`). Local dev: `http://127.0.0.1:8333`. |
 | `BONDERY_PRIVATE_S3_REGION` | S3 region label (e.g. `eu-central-1`) |
 | `BONDERY_PRIVATE_S3_ACCESS_KEY_ID` / `BONDERY_PRIVATE_S3_SECRET_ACCESS_KEY` | S3 credentials (same pair seeds the `seaweedfs-s3` gateway config) |
 | `BONDERY_PUBLIC_STORAGE_URL` | Public base URL for avatar/logo reads (Traefik → storage domain in prod; `http://127.0.0.1:8333` locally) |

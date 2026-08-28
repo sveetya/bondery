@@ -6,6 +6,7 @@
  * - redis must not carry Traefik labels or join dokploy-network
  * - db (Postgres) must not carry Traefik labels or join dokploy-network
  * - api must wait for db healthy (not legacy kong)
+ * - shared dokploy-network lookups use BONDERY_INFRA_TRAEFIK_PREFIX aliases, not service names
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -124,6 +125,7 @@ const webapp = serviceBlock("webapp", mainText);
 const api = serviceBlock("api", mainText);
 const redis = serviceBlock("redis", mainText);
 const db = serviceBlock("db", postgresText);
+const s3 = serviceBlock("seaweedfs-s3", seaweedText);
 
 const WEBAPP_ALLOWED_PRIVATE = new Set([
   "BONDERY_PRIVATE_WEBAPP_OAUTH_CLIENT_SECRET",
@@ -162,6 +164,21 @@ if (webapp) {
   if (!webapp.includes("BONDERY_INFRA_INTERNAL_API_URL")) {
     errors.push("webapp must set BONDERY_INFRA_INTERNAL_API_URL for server-side API calls");
   }
+  if (webapp.includes("http://api:26631")) {
+    errors.push(
+      "webapp must not use http://api:26631 — that DNS name collides on shared dokploy-network",
+    );
+  }
+  if (!/BONDERY_INFRA_INTERNAL_API_URL:\s*http:\/\/\$\{BONDERY_INFRA_TRAEFIK_PREFIX/.test(webapp)) {
+    errors.push(
+      "webapp must derive BONDERY_INFRA_INTERNAL_API_URL from BONDERY_INFRA_TRAEFIK_PREFIX",
+    );
+  }
+  if (!/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-webapp/.test(webapp)) {
+    errors.push(
+      "webapp must publish a unique dokploy-network alias from BONDERY_INFRA_TRAEFIK_PREFIX",
+    );
+  }
   if (!/BONDERY_PUBLIC_API_URL:\s*https:\/\/\$\{BONDERY_INFRA_API_DOMAIN/.test(webapp)) {
     errors.push(
       "webapp must derive BONDERY_PUBLIC_API_URL from https:// + BONDERY_INFRA_API_DOMAIN",
@@ -194,6 +211,30 @@ if (api) {
   if (!/dokploy-network/.test(api) || !/internal/.test(api)) {
     errors.push("api must join both dokploy-network and internal");
   }
+  if (!/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-api/.test(api)) {
+    errors.push(
+      "api must publish a unique dokploy-network alias from BONDERY_INFRA_TRAEFIK_PREFIX",
+    );
+  }
+  if (api.includes("http://seaweedfs-s3:8333")) {
+    errors.push(
+      "api must not use http://seaweedfs-s3:8333 — that DNS name collides on shared dokploy-network",
+    );
+  }
+  if (!/BONDERY_PRIVATE_S3_ENDPOINT:\s*http:\/\/\$\{BONDERY_INFRA_TRAEFIK_PREFIX/.test(api)) {
+    errors.push("api must derive BONDERY_PRIVATE_S3_ENDPOINT from BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+  if (api.includes("@db:5432")) {
+    errors.push("api must not use DATABASE_URL host db — use BONDERY_INFRA_TRAEFIK_PREFIX-db");
+  }
+  if (!/DATABASE_URL:.*\$\{BONDERY_INFRA_TRAEFIK_PREFIX/.test(api)) {
+    errors.push("api must derive DATABASE_URL host from BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+  if (!/redis:\/\/\$\{BONDERY_INFRA_TRAEFIK_PREFIX/.test(api)) {
+    errors.push(
+      "api default BONDERY_PRIVATE_REDIS_URL must use BONDERY_INFRA_TRAEFIK_PREFIX-redis",
+    );
+  }
   if (!/db:\s*\n\s*condition:\s*service_healthy/.test(api)) {
     errors.push("api must depends_on db with condition: service_healthy");
   }
@@ -221,6 +262,9 @@ if (redis) {
   if (!/internal/.test(redis)) {
     errors.push("redis must join the private internal network");
   }
+  if (!/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-redis/.test(redis)) {
+    errors.push("redis must publish a unique internal alias from BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
 }
 
 if (db) {
@@ -235,6 +279,21 @@ if (db) {
   }
   if (!/healthcheck:/m.test(db)) {
     errors.push("db must define a healthcheck");
+  }
+  if (!/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-db/.test(db)) {
+    errors.push("db must publish a unique internal alias from BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+}
+
+if (s3 && !/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-storage/.test(s3)) {
+  errors.push(
+    "seaweedfs-s3 must publish a unique dokploy-network alias from BONDERY_INFRA_TRAEFIK_PREFIX",
+  );
+}
+
+for (const name of ["seaweedfs-master", "seaweedfs-volume", "seaweedfs-filer"]) {
+  if (!new RegExp(`BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\\}-${name}`).test(seaweedText)) {
+    errors.push(`${name} must publish a unique internal alias from BONDERY_INFRA_TRAEFIK_PREFIX`);
   }
 }
 

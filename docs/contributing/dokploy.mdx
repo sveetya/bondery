@@ -46,7 +46,7 @@ Plus Postgres password, Better Auth secrets, and OAuth vars from [`.env.example`
 - Set hostnames only (`BONDERY_INFRA_*_DOMAIN`). Compose derives `https://…` URLs and Traefik `Host()` rules.
 - `BONDERY_PRIVATE_BETTER_AUTH_SECRETS` must use format `version:secret` (e.g. `1:<≥32-char secret>`) in `.env`.
 - Webapp never receives raw `BONDERY_PRIVATE_*` secrets except its own session/OAuth client secrets — compose allowlists public vars for the webapp service.
-- Compose sets `BONDERY_INFRA_INTERNAL_API_URL=http://api:26631` for SSR.
+- Compose publishes unique Docker DNS aliases from `BONDERY_INFRA_TRAEFIK_PREFIX` (`bondery` vs `bondery-beta`) so production and beta can share `dokploy-network`. Lookups: webapp SSR → `${prefix}-api:26631`; API S3 → `${prefix}-storage:8333`. Do not use the Compose service names `api` or `seaweedfs-s3` on that network.
 
 ### Health checks
 
@@ -78,7 +78,7 @@ See [workflows README](../../.github/workflows/README.md#dokploy-env-sync-sync-d
 
 ### Isolated Deployments
 
-Leave Dokploy **Isolated Deployments** off for the default Bondery app (one stack per host). Optional for operators running multiple Bondery instances on one Dokploy host — see Dokploy docs.
+Leave Dokploy **Isolated Deployments** off. Production and beta share `dokploy-network`; unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` aliases keep Docker DNS from colliding. Optional Isolated Deployments are for operators running unrelated Compose apps, not for Bondery beta vs production.
 
 ## Ops Compose application (`deploy/ops` — marketing website)
 

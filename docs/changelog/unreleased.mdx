@@ -7,8 +7,14 @@ hidden: true
 
 ### 🐛 Fixed
 
+- Deploy: every Compose service publishes a unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` Docker DNS alias. Production and beta can share `dokploy-network` without colliding on `api`, `webapp`, or `seaweedfs-s3`. Webapp SSR uses `${prefix}-api`; the API uses `${prefix}-storage` for S3.
 - API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.
 
 ### 🤖 CI
 
 - Ops: Infisical → Dokploy env sync now uploads `BONDERY_INFRA_TRAEFIK_PREFIX`. Set `bondery-beta` in Infisical staging and `bondery` (or omit) in production.
+- CI: `website-docker-build`, `api-docker-build`, and `webapp-docker-build` in verify now time out after 30 minutes.
+
+### Breaking
+
+- **Shared-host Docker DNS:** Production and beta Compose apps on one VM must both run this compose before sharing `dokploy-network`. Internal lookups use `${BONDERY_INFRA_TRAEFIK_PREFIX}-api` and `${prefix}-storage`, not the service names `api` or `seaweedfs-s3`.
