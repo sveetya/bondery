@@ -95,7 +95,7 @@ export const DEPLOY_GROUP_GUIDES: Readonly<Record<string, readonly string[]>> = 
   Email: ["SMTP settings (env_file → api only)."],
   "Image pin": [
     "Omit BONDERY_INFRA_VERSION on production to pull :production. Set beta on the staging stack to pull :beta from main.",
-    "BONDERY_INFRA_TRAEFIK_PREFIX defaults to bondery. Set bondery-beta on staging so Traefik routers do not overwrite production.",
+    "BONDERY_INFRA_TRAEFIK_PREFIX defaults to bondery. Infisical staging: bondery-beta. Infisical production: bondery or omit.",
   ],
   "Image tags": [
     "Omit to pull the floating production channel. Pin to semver for reproducible deploys / rollback.",
@@ -1132,13 +1132,12 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   {
     canonical: "BONDERY_INFRA_TRAEFIK_PREFIX",
     deployExample: {
-      commented: true,
       group: "Image pin",
       include: true,
       value: "bondery",
     },
     description:
-      "Traefik router and service name prefix. Defaults to bondery in Compose. Set bondery-beta on the staging stack so a second compose app does not steal production HTTPS routes.",
+      "Traefik router and service name prefix. Defaults to bondery in Compose. Infisical staging: bondery-beta. Infisical production: bondery or omit. Same names on one Traefik steal production HTTPS routes.",
     exampleValue: "bondery",
     group: "Infra",
     requiredIn: [],
@@ -1248,7 +1247,6 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
 /** Keys never synced to deploy/bondery Dokploy compose (derived in compose or Dokploy UI). */
 export const SERVICES_DOKPLOY_SYNC_EXCLUDE = new Set<string>([
   "BONDERY_INFRA_GIT_SHA",
-  "BONDERY_INFRA_TRAEFIK_PREFIX",
   "BONDERY_INFRA_VERSION",
   "BONDERY_PRIVATE_S3_ENDPOINT",
   "BONDERY_PUBLIC_STORAGE_URL",
