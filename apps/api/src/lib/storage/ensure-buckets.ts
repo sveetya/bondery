@@ -9,8 +9,19 @@ import { AVATARS_BUCKET, LINKEDIN_LOGOS_BUCKET } from "./get-storage.js";
 
 export const STORAGE_BUCKETS = [AVATARS_BUCKET, LINKEDIN_LOGOS_BUCKET] as const;
 
-const MAX_ATTEMPTS = 3;
-const RETRY_DELAY_MS = 2_000;
+const DEFAULT_MAX_ATTEMPTS = 10;
+const DEFAULT_RETRY_DELAY_MS = 2_000;
+
+type S3ErrorShape = {
+  $metadata?: { httpStatusCode?: number };
+  Code?: string;
+  cause?: unknown;
+  code?: string;
+  message?: string;
+  name?: string;
+};
+
+type HeadBucketClass = "exists" | "forbidden" | "missing" | "notReady";
 
 function requireEnv(name: string): string {
   const value = process.env[name]?.trim();
@@ -20,24 +31,112 @@ function requireEnv(name: string): string {
   return value;
 }
 
-function isBucketAlreadyExistsError(error: unknown): boolean {
+function asS3Error(error: unknown): S3ErrorShape | null {
   if (!error || typeof error !== "object") {
+    return null;
+  }
+  return error as S3ErrorShape;
+}
+
+function getErrorCode(error: S3ErrorShape): string | undefined {
+  return error.Code ?? error.name ?? error.code;
+}
+
+function getHttpStatus(error: S3ErrorShape): number | undefined {
+  return error.$metadata?.httpStatusCode;
+}
+
+function isBucketAlreadyExistsError(error: unknown): boolean {
+  const record = asS3Error(error);
+  if (!record) {
     return false;
   }
 
-  const record = error as { Code?: string; name?: string };
-  const code = record.Code ?? record.name;
+  const code = getErrorCode(record);
   return code === "BucketAlreadyOwnedByYou" || code === "BucketAlreadyExists";
 }
 
 function isBucketMissingError(error: unknown): boolean {
-  if (!error || typeof error !== "object") {
+  const record = asS3Error(error);
+  if (!record) {
     return false;
   }
 
-  const record = error as { $metadata?: { httpStatusCode?: number }; Code?: string; name?: string };
-  const code = record.Code ?? record.name;
-  return code === "NotFound" || code === "NoSuchBucket" || record.$metadata?.httpStatusCode === 404;
+  const code = getErrorCode(record);
+  return code === "NotFound" || code === "NoSuchBucket" || getHttpStatus(record) === 404;
+}
+
+function isForbiddenError(error: unknown): boolean {
+  const record = asS3Error(error);
+  if (!record) {
+    return false;
+  }
+
+  const code = getErrorCode(record);
+  return getHttpStatus(record) === 403 || code === "AccessDenied" || code === "Forbidden";
+}
+
+const UNREACHABLE_CODES = new Set([
+  "EAI_AGAIN",
+  "ECONNREFUSED",
+  "ECONNRESET",
+  "ENOTFOUND",
+  "EPIPE",
+  "ETIMEDOUT",
+  "NetworkingError",
+]);
+
+function isNotReadyError(error: unknown): boolean {
+  const record = asS3Error(error);
+  if (!record) {
+    return false;
+  }
+
+  if (record.name === "UnknownError" || record.message === "UnknownError") {
+    return true;
+  }
+
+  const status = getHttpStatus(record);
+  if (typeof status === "number" && status >= 500) {
+    return true;
+  }
+
+  if (
+    record.name === "AbortError" ||
+    record.name === "TimeoutError" ||
+    record.name === "TimeoutErrorException"
+  ) {
+    return true;
+  }
+
+  const code = getErrorCode(record);
+  if (code && UNREACHABLE_CODES.has(code)) {
+    return true;
+  }
+
+  const message = record.message ?? "";
+  if (/timeout|ECONNREFUSED|ENOTFOUND|ECONNRESET|ETIMEDOUT|fetch failed/i.test(message)) {
+    return true;
+  }
+
+  if (record.cause) {
+    return isNotReadyError(record.cause);
+  }
+
+  return false;
+}
+
+function classifyHeadBucketError(error: unknown): Exclude<HeadBucketClass, "exists"> {
+  if (isBucketMissingError(error)) {
+    return "missing";
+  }
+  if (isForbiddenError(error)) {
+    return "forbidden";
+  }
+  if (isNotReadyError(error)) {
+    return "notReady";
+  }
+  throw error;
 }
 
 function sleep(ms: number): Promise<void> {
@@ -59,15 +158,57 @@ export function createStorageAdminClient(config?: S3ClientConfig): S3Client {
   });
 }
 
-async function ensureBucket(client: S3Client, bucket: string): Promise<void> {
-  try {
-    await client.send(new HeadBucketCommand({ Bucket: bucket }));
-    console.log(`Bucket exists: ${bucket}`);
-  } catch (error) {
-    if (!isBucketMissingError(error)) {
-      throw error;
-    }
+/**
+ * Poll HeadBucket until the outcome is classified. CreateBucket only after a
+ * missing (404) result — never on UnknownError / 5xx / timeout warmup noise.
+ */
+async function waitForHeadBucket(
+  client: S3Client,
+  bucket: string,
+  maxAttempts: number,
+  retryDelayMs: number,
+): Promise<"exists" | "missing"> {
+  let lastError: unknown;
 
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await client.send(new HeadBucketCommand({ Bucket: bucket }));
+      return "exists";
+    } catch (error) {
+      const classification = classifyHeadBucketError(error);
+      if (classification === "missing") {
+        return "missing";
+      }
+      if (classification === "forbidden") {
+        throw error;
+      }
+
+      lastError = error;
+      if (attempt < maxAttempts) {
+        console.warn(
+          `ensureStorageBuckets(${bucket}) HeadBucket attempt ${attempt} not ready, retrying…`,
+          error,
+        );
+        await sleep(retryDelayMs);
+      }
+    }
+  }
+
+  throw new Error(
+    `ensureStorageBuckets(${bucket}) HeadBucket not ready after ${maxAttempts} attempts`,
+    { cause: lastError },
+  );
+}
+
+async function ensureBucket(
+  client: S3Client,
+  bucket: string,
+  maxAttempts: number,
+  retryDelayMs: number,
+): Promise<void> {
+  const head = await waitForHeadBucket(client, bucket, maxAttempts, retryDelayMs);
+
+  if (head === "missing") {
     try {
       await client.send(new CreateBucketCommand({ Bucket: bucket }));
       console.log(`Created bucket: ${bucket}`);
@@ -77,6 +218,8 @@ async function ensureBucket(client: S3Client, bucket: string): Promise<void> {
       }
       console.log(`Bucket exists: ${bucket}`);
     }
+  } else {
+    console.log(`Bucket exists: ${bucket}`);
   }
 
   await ensureBucketPublicReadPolicy(client, bucket);
@@ -110,6 +253,8 @@ async function ensureBucketPublicReadPolicy(client: S3Client, bucket: string): P
 export type EnsureStorageBucketsOptions = {
   buckets?: readonly string[];
   client?: S3Client;
+  maxAttempts?: number;
+  retryDelayMs?: number;
 };
 
 export async function ensureStorageBuckets(
@@ -117,29 +262,15 @@ export async function ensureStorageBuckets(
 ): Promise<void> {
   const client = options.client ?? createStorageAdminClient();
   const buckets = options.buckets ?? STORAGE_BUCKETS;
+  const maxAttempts = options.maxAttempts ?? DEFAULT_MAX_ATTEMPTS;
+  const retryDelayMs = options.retryDelayMs ?? DEFAULT_RETRY_DELAY_MS;
   const failures: Array<{ bucket: string; error: unknown }> = [];
 
   for (const bucket of buckets) {
-    let lastError: unknown;
-    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-      try {
-        await ensureBucket(client, bucket);
-        lastError = undefined;
-        break;
-      } catch (error) {
-        lastError = error;
-        if (attempt < MAX_ATTEMPTS) {
-          console.warn(
-            `ensureStorageBuckets(${bucket}) attempt ${attempt} failed, retrying…`,
-            error,
-          );
-          await sleep(RETRY_DELAY_MS);
-        }
-      }
-    }
-
-    if (lastError) {
-      failures.push({ bucket, error: lastError });
+    try {
+      await ensureBucket(client, bucket, maxAttempts, retryDelayMs);
+    } catch (error) {
+      failures.push({ bucket, error });
     }
   }
 

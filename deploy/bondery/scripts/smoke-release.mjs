@@ -5,6 +5,7 @@
  * Usage (from repo root):
  *   node deploy/bondery/scripts/smoke-release.mjs --service webapp --tag 1.7.5
  *   node deploy/bondery/scripts/smoke-release.mjs --service api --tag 1.7.5
+ *   node deploy/bondery/scripts/smoke-release.mjs --service api --tag s3-local --skip-pull
  *
  * Prerequisites: docker compose v2.38+, dokploy-network, GHCR login when pulling private images.
  */
@@ -48,6 +49,7 @@ function parseArgs() {
   let service;
   let tag;
   let imageName;
+  let skipPull = false;
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--service") {
@@ -56,12 +58,14 @@ function parseArgs() {
       tag = args[++i];
     } else if (args[i] === "--image") {
       imageName = args[++i];
+    } else if (args[i] === "--skip-pull") {
+      skipPull = true;
     }
   }
 
   if (!service || !tag) {
     console.error(
-      "Usage: smoke-release.mjs --service webapp|api --tag X.Y.Z [--image ghcr.io/usebondery/...]",
+      "Usage: smoke-release.mjs --service webapp|api --tag X.Y.Z [--image ghcr.io/usebondery/...] [--skip-pull]",
     );
     process.exit(1);
   }
@@ -74,6 +78,7 @@ function parseArgs() {
   return {
     imageName: imageName ?? DEFAULT_IMAGES[service],
     service,
+    skipPull,
     tag,
   };
 }
@@ -280,16 +285,17 @@ function applySmokeVersion(tag) {
   copyFileSync(envPath, resolve(BONDERY_DIR, ".env"));
 }
 
-function writeOverride(service, imageName, tag) {
+function writeOverride(service, imageName, tag, skipPull) {
   const image = `${imageName}:${tag}`;
+  const pullPolicy = skipPull ? "    pull_policy: never\n" : "";
   let override = "services:\n";
 
   if (service === "webapp") {
-    override += `  webapp:\n    image: ${image}\n    ports:\n      - "26632:26632"\n`;
+    override += `  webapp:\n    image: ${image}\n${pullPolicy}    ports:\n      - "26632:26632"\n`;
     override += `  db:\n    ports:\n      - "54322:5432"\n`;
     override += `  seaweedfs-s3:\n    ports:\n      - "8333:8333"\n`;
   } else {
-    override += `  api:\n    image: ${image}\n    ports:\n      - "26631:26631"\n`;
+    override += `  api:\n    image: ${image}\n${pullPolicy}    ports:\n      - "26631:26631"\n`;
     override += `  db:\n    ports:\n      - "54322:5432"\n`;
     override += `  seaweedfs-s3:\n    ports:\n      - "8333:8333"\n`;
   }
@@ -297,8 +303,35 @@ function writeOverride(service, imageName, tag) {
   writeFileSync(resolve(BONDERY_DIR, "docker-compose.override.yml"), override);
 }
 
-function smokeWebapp() {
-  runCompose("pull api webapp");
+function assertS3GatewaySpeaksS3() {
+  const result = spawnSync("curl -sS -D- --max-time 5 http://127.0.0.1:8333/", {
+    encoding: "utf8",
+    shell: true,
+  });
+  const out = `${result.stdout ?? ""}${result.stderr ?? ""}`;
+  if (result.status !== 0) {
+    console.error("S3 ListBuckets probe failed");
+    process.exit(1);
+  }
+
+  const speaksS3 =
+    (/HTTP\/[\d.]+ 200/.test(out) && out.includes("ListAllMyBucketsResult")) ||
+    (/HTTP\/[\d.]+ 403/.test(out) && out.includes("<Error"));
+  if (!speaksS3) {
+    console.error(
+      "S3 gateway did not speak S3 XML (expected 200 ListAllMyBucketsResult or 403 Error):\n",
+      out,
+    );
+    process.exit(1);
+  }
+
+  console.log("S3 gateway ListBuckets returned protocol XML");
+}
+
+function smokeWebapp(skipPull) {
+  if (!skipPull) {
+    runCompose("pull api webapp");
+  }
   runCompose("up -d webapp");
 
   waitFor(
@@ -325,8 +358,10 @@ function smokeWebapp() {
   }
 }
 
-function smokeApi() {
-  runCompose("pull api");
+function smokeApi(skipPull) {
+  if (!skipPull) {
+    runCompose("pull api");
+  }
   runCompose("up -d api");
 
   waitFor(
@@ -334,25 +369,27 @@ function smokeApi() {
       curlOk("http://127.0.0.1:26631/health/live") && curlOk("http://127.0.0.1:26631/health/ready"),
     { attempts: 45, intervalSec: 3, label: "api" },
   );
+
+  assertS3GatewaySpeaksS3();
 }
 
 function tearDown() {
   run("docker compose --env-file .env.smoke down -v || true");
 }
 
-const { service, tag, imageName } = parseArgs();
+const { service, tag, imageName, skipPull } = parseArgs();
 
 try {
   prepareEnvSmoke();
   applySmokeVersion(tag);
-  writeOverride(service, imageName, tag);
+  writeOverride(service, imageName, tag, skipPull);
 
   run("node scripts/check-compose.mjs");
 
   if (service === "webapp") {
-    smokeWebapp();
+    smokeWebapp(skipPull);
   } else {
-    smokeApi();
+    smokeApi(skipPull);
   }
 
   console.log(`Release smoke passed for ${service}:${tag}`);

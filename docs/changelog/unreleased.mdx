@@ -5,6 +5,10 @@ hidden: true
 
 ## [Unreleased]
 
+### 🐛 Fixed
+
+- API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.
+
 ### 🤖 CI
 
 - Ops: Infisical → Dokploy env sync now uploads `BONDERY_INFRA_TRAEFIK_PREFIX`. Set `bondery-beta` in Infisical staging and `bondery` (or omit) in production.

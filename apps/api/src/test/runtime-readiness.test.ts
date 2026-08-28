@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import type { S3Client } from "@aws-sdk/client-s3";
 
 import { loadTestEnv } from "./load-test-env.js";
 
@@ -23,6 +24,24 @@ const storageConfig = {
   region: "eu-central-1",
   secretAccessKey: "secret",
 };
+
+function createMockHeadBucketClient(head: (bucket: string) => Promise<void> | void): S3Client {
+  return {
+    send: async (command: { constructor: { name: string }; input: { Bucket?: string } }) => {
+      if (command.constructor.name !== "HeadBucketCommand") {
+        throw new Error(`Unexpected command: ${command.constructor.name}`);
+      }
+
+      const bucket = command.input.Bucket;
+      if (!bucket) {
+        throw new Error("Missing bucket");
+      }
+
+      await head(bucket);
+      return {};
+    },
+  } as unknown as S3Client;
+}
 
 type EnvSnapshot = {
   databaseUrl?: string;
@@ -114,10 +133,8 @@ describe("postgres runtime readiness", () => {
 
 describe("object storage runtime readiness", () => {
   const snapshot = snapshotEnv();
-  const originalFetch = globalThis.fetch;
 
   afterEach(() => {
-    globalThis.fetch = originalFetch;
     resetStorageReadinessForTests();
     restoreEnv(snapshot);
   });
@@ -147,14 +164,36 @@ describe("object storage runtime readiness", () => {
     );
   });
 
-  it("initObjectStorage throws when gateway status check fails", async () => {
+  it("initObjectStorage throws when HeadBucket fails", async () => {
     process.env.NODE_ENV = "development";
-    globalThis.fetch = (async () => new Response("", { status: 503 })) as typeof fetch;
+    const client = createMockHeadBucketClient(() => {
+      throw new Error("NotFound");
+    });
 
     await assert.rejects(
-      () => initObjectStorage(undefined, storageConfig),
+      () => initObjectStorage(undefined, { ...storageConfig, client }),
       /Object storage verify failed/,
     );
+  });
+
+  it("initObjectStorage succeeds when HeadBucket succeeds without a /status server", async () => {
+    process.env.NODE_ENV = "development";
+    const client = createMockHeadBucketClient(async () => {});
+
+    const readiness = await initObjectStorage(undefined, { ...storageConfig, client });
+
+    assert.equal(readiness.configured, true);
+    assert.equal(readiness.ok, true);
+  });
+
+  it("verifyObjectStorage succeeds when HeadBucket succeeds without a /status server", async () => {
+    process.env.NODE_ENV = "development";
+    const client = createMockHeadBucketClient(async () => {});
+
+    const readiness = await verifyObjectStorage({ ...storageConfig, client });
+
+    assert.equal(readiness.configured, true);
+    assert.equal(readiness.ok, true);
   });
 
   it("verifyObjectStorage returns unhealthy when config is incomplete outside test", async () => {

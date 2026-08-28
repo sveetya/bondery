@@ -34,6 +34,25 @@ The production API image ships compiled `apps/api/dist` and `packages/` only —
 
 5. **`/health/ready` storage probe** (phase 2) adds `HeadBucket` on required buckets — probe only, never create buckets from health checks.
 
+## S3 readiness vs bootstrap vs boot verify
+
+Three layers, analogous to Postgres (`pg_isready` ≠ migrate ≠ `SELECT 1`):
+
+1. **Compose `seaweedfs-s3` healthcheck** — unsigned ListBuckets (`GET /` on port 8333). HTTP 200 with `ListAllMyBucketsResult` or HTTP 403 with S3 `Error` XML means the gateway speaks S3. Empty `GET /status` 200 is process liveness, not S3 readiness. `depends_on: seaweedfs-s3: service_healthy` is only valid with this S3-speaking probe.
+
+2. **`pre_start` `ensure-storage-buckets`** (and host-run `pnpm run dev`) — signed HeadBucket wait-then-act. CreateBucket only after HeadBucket classifies the bucket as missing (404 / NotFound / NoSuchBucket). Public-read PutBucketPolicy after the bucket exists.
+
+| HeadBucket | Action |
+|---|---|
+| 200 | exists; PutBucketPolicy |
+| 404 / NotFound / NoSuchBucket | CreateBucket (`BucketAlreadyOwnedByYou` / `BucketAlreadyExists` = success), then policy |
+| 403 (`httpStatusCode` or `AccessDenied`) | Fail immediately. Do not retry. Do not create. |
+| UnknownError, timeout, unreachable, 5xx | Retry HeadBucket only. Never create. Exhaust budget → fail. |
+
+3. **`initObjectStorage` and `GET /health/ready`** — one fail-fast signed HeadBucket pass on required buckets. No retries, no SeaweedFS `/status`, never create.
+
+Compose `pre_start` runs when the API service is created, not on ordinary container restarts. If `initObjectStorage` fails and Compose `restart: unless-stopped` brings the main process back, bootstrap does not re-run — recreate the API service rather than looping restarts. Do not change the restart policy to paper over that.
+
 ## Why JWKS stays in the main process
 
 `verifyAuthRuntime()` runs inside `buildServer()` after auth routes are mounted and **before** `listen()`. It calls `fastify.inject({ method: 'GET', url: '/auth/jwks' })` — same integration coverage as an HTTP probe, but in-process (no loopback socket, no Traefik/DNS hairpin to `BONDERY_PUBLIC_API_URL`). The public issuer URL is still logged for operators. Running this in `pre_start` is circular (no Fastify app yet); folding it into `initializeRuntime()` is the wrong seam (infra deps vs in-process auth wiring).

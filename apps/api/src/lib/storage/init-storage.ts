@@ -10,6 +10,7 @@ import { STORAGE_BUCKETS } from "./ensure-buckets.js";
 
 export type StorageInitConfig = {
   accessKeyId: string;
+  client?: S3Client;
   endpoint: string;
   region: string;
   secretAccessKey: string;
@@ -23,8 +24,6 @@ export type StorageReadiness = {
   verifiedAt: string;
 };
 
-const DEFAULT_PROBE_TIMEOUT_MS = 5_000;
-
 const UNCONFIGURED_READINESS: StorageReadiness = {
   configured: false,
   ok: true,
@@ -32,10 +31,6 @@ const UNCONFIGURED_READINESS: StorageReadiness = {
 };
 
 let storageReadiness: StorageReadiness | null = null;
-
-function normalizeBaseUrl(url: string): string {
-  return url.replace(/\/+$/, "");
-}
 
 function isStorageConfigured(config: StorageInitConfig): boolean {
   return Boolean(
@@ -61,43 +56,21 @@ function setMissingReadiness(): StorageReadiness {
   return storageReadiness;
 }
 
-async function probeGateway(
-  endpoint: string,
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  const baseUrl = normalizeBaseUrl(endpoint);
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), DEFAULT_PROBE_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(`${baseUrl}/status`, {
-      method: "GET",
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      return { error: `http_${response.status}`, ok: false };
-    }
-
-    return { ok: true };
-  } catch (error) {
-    return { error: classifyProbeError(error), ok: false };
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 async function probeBuckets(
   config: StorageInitConfig,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
-  const client = new S3Client({
-    credentials: {
-      accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
-    },
-    endpoint: config.endpoint,
-    forcePathStyle: true,
-    region: config.region,
-  });
+  const injectedClient = config.client;
+  const client =
+    injectedClient ??
+    new S3Client({
+      credentials: {
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+      },
+      endpoint: config.endpoint,
+      forcePathStyle: true,
+      region: config.region,
+    });
 
   try {
     for (const bucket of STORAGE_BUCKETS) {
@@ -108,25 +81,15 @@ async function probeBuckets(
   } catch (error) {
     return { error: classifyProbeError(error), ok: false };
   } finally {
-    client.destroy();
+    if (!injectedClient) {
+      client.destroy();
+    }
   }
 }
 
 async function runStorageVerify(config: StorageInitConfig): Promise<StorageReadiness> {
   const started = Date.now();
   const verifiedAt = new Date().toISOString();
-
-  const gateway = await probeGateway(config.endpoint);
-  if (!gateway.ok) {
-    storageReadiness = {
-      configured: true,
-      error: gateway.error,
-      latencyMs: Date.now() - started,
-      ok: false,
-      verifiedAt,
-    };
-    return storageReadiness;
-  }
 
   const buckets = await probeBuckets(config);
   if (!buckets.ok) {
@@ -154,7 +117,8 @@ export function getStorageReadiness(): StorageReadiness {
 }
 
 /**
- * Eager object storage verify on startup. Required in development and production; skipped in test.
+ * Fail-fast signed HeadBucket on required buckets. No retries, never create.
+ * Required in development and production; skipped in test.
  */
 export async function initObjectStorage(
   log: FastifyBaseLogger | undefined,
@@ -177,6 +141,7 @@ export async function initObjectStorage(
   }
 
   const readiness = await runStorageVerify(config);
+
   if (readiness.ok) {
     log?.info({ latencyMs: readiness.latencyMs }, "Object storage verified");
   } else {

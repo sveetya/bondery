@@ -54,7 +54,7 @@ Plus Postgres password, Better Auth secrets, and OAuth vars from [`.env.example`
 |---------|----------|-----------|--------|
 | `webapp` container | `GET /health/live` | `GET /health/ready` | Webapp process + runtime config only |
 | `webapp` BFF → API | `GET /api/health/live` | `GET /api/health/ready` | Proxies upstream Fastify health |
-| `api` | `GET /health/live` | `GET /health/ready` | Process up / Postgres, SeaweedFS gateway `/status`, required S3 buckets (`HeadBucket`), Redis, SMTP (critical — 503 when unhealthy); optional integrations degrade only |
+| `api` | `GET /health/live` | `GET /health/ready` | Process up / Postgres, required S3 bucket `HeadBucket`, Redis, SMTP (critical — 503 when unhealthy); optional integrations degrade only |
 | `api` boot | `onReady` eager verify | Same live checks as `/health/ready` for Postgres, storage, Redis, SMTP before accepting traffic (skipped in `NODE_ENV=test`) |
 | `api` bootstrap | `api` `pre_start` init containers | Before main API starts: `release-migrate` (schema + functions + OAuth + platform admins) then `ensure-storage-buckets` |
 | `db` | Compose healthcheck | `api` waits for `service_healthy` |

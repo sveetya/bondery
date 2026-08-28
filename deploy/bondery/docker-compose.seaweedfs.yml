@@ -67,7 +67,7 @@ services:
       interval: 10s
       retries: 5
       start_period: 15s
-      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8333/status"]
+      test: ["CMD", "/bin/sh", "/etc/seaweedfs/s3-ready.sh"]
       timeout: 5s
     image: chrislusf/seaweedfs:4.40
     labels:
@@ -83,6 +83,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./seaweedfs/entrypoint.sh:/etc/seaweedfs/entrypoint.sh:ro
+      - ./seaweedfs/s3-ready.sh:/etc/seaweedfs/s3-ready.sh:ro
 
 networks:
   internal:
