@@ -143,6 +143,7 @@ jobs:
 
   website-docker-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -192,6 +193,7 @@ jobs:
 
   api-docker-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -239,6 +241,7 @@ jobs:
 
   webapp-docker-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:

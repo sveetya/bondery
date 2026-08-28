@@ -17,7 +17,9 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - internal
+      internal:
+        aliases:
+          - ${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-db
 
 volumes:
   postgres-data:

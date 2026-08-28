@@ -50,10 +50,11 @@ Compose entrypoint: **`docker-compose.yml`** includes **`docker-compose.postgres
 
 ### Networking
 
-- `webapp` + `api` join external `dokploy-network` (Traefik).
-- Postgres, Redis, and SeaweedFS join private `internal` only.
+- `webapp`, `api`, and `seaweedfs-s3` join external `dokploy-network` (Traefik). Postgres, Redis, and the SeaweedFS cluster (master / volume / filer) stay on private `internal`.
+- Every service publishes `${BONDERY_INFRA_TRAEFIK_PREFIX}-{api|webapp|storage|db|redis|…}`. Look those names up — never the Compose service names `api`, `webapp`, or `seaweedfs-s3` (they collide when production and beta share `dokploy-network`).
 - Set hostnames (`BONDERY_INFRA_*_DOMAIN`); Compose derives `https://…` URLs.
-- Webapp SSR uses `BONDERY_INFRA_INTERNAL_API_URL=http://api:26631`.
+- Webapp SSR uses `BONDERY_INFRA_INTERNAL_API_URL=http://${BONDERY_INFRA_TRAEFIK_PREFIX}-api:26631`.
+- API storage uses `BONDERY_PRIVATE_S3_ENDPOINT=http://${BONDERY_INFRA_TRAEFIK_PREFIX}-storage:8333`.
 
 ### Upgrades / rollback
 
