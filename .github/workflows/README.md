@@ -197,7 +197,7 @@ Dokploy connection creds and compose ids live in Infisical **production** — in
 | Target | Keys |
 |--------|------|
 | `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
-| `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_INFRA_TRAEFIK_PREFIX`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`; Traefik prefix and image pin stay in the Dokploy UI) |
+| `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`; image pin stays in the Dokploy UI). `BONDERY_INFRA_TRAEFIK_PREFIX` syncs from Infisical (`bondery` in production, `bondery-beta` in staging). |
 | `services-beta` | Same upload keys as `services`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
 | `plausible` | `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE`, `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY`, `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD`, `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` (optional) |
 

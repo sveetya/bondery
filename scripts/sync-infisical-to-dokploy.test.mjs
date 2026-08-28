@@ -38,6 +38,7 @@ describe("sync-infisical-to-dokploy", () => {
     BONDERY_INFRA_CHROME_EXTENSION_ID: "lpcmokfekjjejnpobhbkgmjkodfhpmha",
     BONDERY_INFRA_GIT_SHA: "abc123",
     BONDERY_INFRA_STORAGE_DOMAIN: "storage.usebondery.com",
+    BONDERY_INFRA_TRAEFIK_PREFIX: "bondery-beta",
     BONDERY_INFRA_VERSION: "1.8.3",
     BONDERY_INFRA_WEBAPP_DOMAIN: "app.usebondery.com",
     BONDERY_INFRA_WEBSITE_DOMAIN: "usebondery.com",
@@ -117,7 +118,7 @@ describe("sync-infisical-to-dokploy", () => {
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID"), false);
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK"), false);
     assert.equal(uploadKeys.includes("BONDERY_INFRA_GIT_SHA"), false);
-    assert.equal(uploadKeys.includes("BONDERY_INFRA_TRAEFIK_PREFIX"), false);
+    assert.ok(uploadKeys.includes("BONDERY_INFRA_TRAEFIK_PREFIX"));
     assert.equal(uploadKeys.includes("BONDERY_INFRA_VERSION"), false);
     assert.equal(uploadKeys.includes("BONDERY_PRIVATE_S3_ENDPOINT"), false);
     assert.equal(uploadKeys.includes("BONDERY_PUBLIC_STORAGE_URL"), false);
