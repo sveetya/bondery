@@ -483,6 +483,30 @@
       "node": "./dist/platform/linkedin-utils.js",
       "types": "./src/platform/linkedin-utils.ts"
     },
+    "./security": {
+      "default": "./dist/security/index.js",
+      "import": "./dist/security/index.js",
+      "node": "./dist/security/index.js",
+      "types": "./src/security/index.ts"
+    },
+    "./security/pgp-public-key": {
+      "default": "./dist/security/pgp-public-key.js",
+      "import": "./dist/security/pgp-public-key.js",
+      "node": "./dist/security/pgp-public-key.js",
+      "types": "./src/security/pgp-public-key.ts"
+    },
+    "./security/security-txt": {
+      "default": "./dist/security/security-txt.js",
+      "import": "./dist/security/security-txt.js",
+      "node": "./dist/security/security-txt.js",
+      "types": "./src/security/security-txt.ts"
+    },
+    "./security/security-txt.test": {
+      "default": "./dist/security/security-txt.test.js",
+      "import": "./dist/security/security-txt.test.js",
+      "node": "./dist/security/security-txt.test.js",
+      "types": "./src/security/security-txt.test.ts"
+    },
     "./socials": {
       "default": "./dist/socials/index.js",
       "import": "./dist/socials/index.js",
@@ -575,7 +599,7 @@
   "name": "@bondery/helpers",
   "private": true,
   "scripts": {
-    "build": "node ../../scripts/generate-doc-links.mjs && rimraf dist tsconfig.tsbuildinfo && tsc && node ../../scripts/rewrite-package-hash-imports-in-dist.mjs helpers",
+    "build": "node ../../scripts/pkg/generate-doc-links.mjs && rimraf dist tsconfig.tsbuildinfo && tsc && node ../../scripts/pkg/rewrite-package-hash-imports-in-dist.mjs helpers",
     "check:types": "tsc --noEmit",
     "compile": "tsc",
     "dev": "tsc --watch --preserveWatchOutput",

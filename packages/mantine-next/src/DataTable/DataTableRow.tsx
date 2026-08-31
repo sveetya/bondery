@@ -115,13 +115,7 @@ function DataTableRowComponent<TRow>({
                 );
                 if (isDisabled && action.disabledTooltip) {
                   return (
-                    <Tooltip
-                      key={action.key}
-                      label={action.disabledTooltip}
-                      maw={220}
-                      multiline
-                      withArrow
-                    >
+                    <Tooltip key={action.key} label={action.disabledTooltip} maw={220} withArrow>
                       <div>{item}</div>
                     </Tooltip>
                   );

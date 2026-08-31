@@ -1,0 +1,108 @@
+---
+title: "ADR 0006: Passkeys"
+hidden: true
+---
+
+# ADR 0006: Passkeys
+
+**Status:** Accepted  
+**Date:** 2026-08-31
+
+## Context
+
+Bondery accounts are GitHub or LinkedIn identities. Passkeys are a **second authenticator** on an existing session, not a signup method. Users must keep at least one social account linked for recovery.
+
+Better Auth 1.7.1 (`@better-auth/passkey`) stores credentials in the existing Postgres `passkey` table (one table, Prisma + BA adapter). Registration options include an optional `name` query/body field. The plugin copies that field onto WebAuthn **`user.name`**, which password managers show as the username — not as the Settings label.
+
+A community JSON list ([passkey-authenticator-aaguids](https://github.com/passkeydeveloper/passkey-authenticator-aaguids)) maps AAGUIDs to provider names and optional `icon_dark` / `icon_light` SVG data URIs. It is **not an npm package**. The README warns that when the list is retired, `aaguid.json` and `combined_aaguid.json` become `{}`. It does not replace FIDO MDS for security metadata.
+
+Better Auth also ships `getAuthenticatorName` / `commonAuthenticatorNames` — a ~14-entry AAGUID map in the **server** plugin barrel (`@better-auth/passkey`). The webapp client must use `@better-auth/passkey/client` only.
+
+## Decision
+
+### Product
+
+1. Passkeys require an existing session (`registration.requireSession: true`). Cap at five per user (`passkeyLimit`).
+2. Settings **Add passkey** starts the WebAuthn ceremony immediately (no label modal). Users can rename inline afterward.
+3. Login offers passkey last, after GitHub/LinkedIn. Optimistic first paint shows the button; hide only if WebAuthn is missing.
+
+### Registration payload
+
+Call `addPasskey()` **with no `name`**. After verify, set the friendly label via `updatePasskey({ id, name })`.
+
+Do **not** send these optional client fields unless a future product requirement needs them:
+
+| Field | Why we omit it |
+|---|---|
+| `name` | BA 1.7.1 uses it as WebAuthn `user.name` (password-manager username). Session email is correct. GET `/passkey/generate-register-options` also strips `query.name`. |
+| `authenticatorAttachment` | Restricts to platform **or** security key. Default lets the OS offer both. |
+| `createSession` | Settings add is already authenticated. |
+| `useAutoRegister` | Conditional create is a login autofill path, not Settings Add. |
+| `context` | Passkey-first signup without a session. We require a session. |
+| `extensions` | No extra WebAuthn extensions required. |
+
+Server plugin stays at `attestation: "none"` (Better Auth default). Apple often reports the all-zero AAGUID in that mode; treat it as a catalog miss.
+
+### Stored label (after ceremony)
+
+1. Vendored community `aaguid.json` `name` for the returned AAGUID.
+2. Vendored Better Auth `commonAuthenticatorNames` snapshot (same keys/strings as the installed plugin).
+3. Client UA fallback (`resolveDefaultPasskeyName`: `{browser} on {os}` / translated “Passkey”).
+
+Misses: `null`, `""`, `00000000-0000-0000-0000-000000000000`. Brand names are not translated. Existing stored names are not backfilled.
+
+**Do not import `getAuthenticatorName` from Settings.** Importing `@better-auth/passkey` from the webapp client would pull the server plugin (`@simplewebauthn/server`) into the client graph. The refresh script copies `commonAuthenticatorNames` from the installed package into [`better-auth-authenticator-names.json`](../../apps/webapp/src/lib/auth/aaguid-catalog/better-auth-authenticator-names.json); Settings reads that JSON. Re-run the refresh after upgrading `@better-auth/passkey`.
+
+### Catalog snapshot
+
+Vendor **community `aaguid.json` only** (~55 entries with icons). Do not vendor `combined_aaguid.json` (~6.9MB, MDS-heavy, mostly icon-less). Do not fetch GitHub at runtime (CORS, rate limits, empty-`{}` outage, live SVG supply chain).
+
+Refresh from a maintainer machine or CI:
+
+```bash
+pnpm run update:aaguid-catalog
+```
+
+Script: [`scripts/updater/refresh-aaguid-catalog.ts`](../../scripts/updater/refresh-aaguid-catalog.ts). It:
+
+1. Copies `commonAuthenticatorNames` from the installed `@better-auth/passkey` package into [`better-auth-authenticator-names.json`](../../apps/webapp/src/lib/auth/aaguid-catalog/better-auth-authenticator-names.json) (aborts that write if the map sanitizes to zero entries).
+2. Fetches the GitHub raw community JSON, aborts **without writing** if the document is `{}` or sanitizes to zero entries (retirement alarm — last good snapshot stays in git), lowercases keys, and keeps `icon_*` only when the value starts with `data:image/svg+xml;base64,`.
+
+Writes:
+
+- [`apps/webapp/src/lib/auth/aaguid-catalog/aaguid.json`](../../apps/webapp/src/lib/auth/aaguid-catalog/aaguid.json)
+- [`apps/webapp/src/lib/auth/aaguid-catalog/better-auth-authenticator-names.json`](../../apps/webapp/src/lib/auth/aaguid-catalog/better-auth-authenticator-names.json)
+- [`apps/webapp/src/lib/auth/aaguid-catalog/source.json`](../../apps/webapp/src/lib/auth/aaguid-catalog/source.json) (community URL, fetch time, entry count, content SHA-256, Git blob SHA when available, Better Auth package version and entry count)
+
+Settings **dynamic-imports** the community catalog so login never pays for it. The Better Auth name snapshot is a tiny JSON import used only from Settings. Icons stay in the catalog, not on the `passkey` row. FIDO MDS is not used for naming, icons, or authz.
+
+### Icons
+
+At Settings render, look up `passkey.aaguid` in the catalog and always wrap the glyph in the same gray `ThemeIcon` as API keys (variant light). Render catalog icons as `<img src={dataUri}>` only — never inline decoded SVG. When both `icon_light` and `icon_dark` exist, mount both images and toggle with Mantine **`darkHidden` / `lightHidden`** (same SSR-safe pattern as the login logo). Do not pick the URI from JS color-scheme (`useComputedColorScheme` hydrates incorrectly on Next.js). If only one URI exists, show it in both schemes. Miss → fingerprint icon inside the same `ThemeIcon`.
+
+### Other persistence
+
+- `lastUsedAt` is Bondery-owned (`authentication.afterVerification` → `touchPasskeyLastUsed`). Better Auth 1.7.1 has no such field; inject it onto the plugin schema so `listUserPasskeys` keeps the column. Failures must not fail sign-in.
+- `aaguid`, `backedUp`, `deviceType`, `transports`, `counter` come from the ceremony; Settings currently displays name, last used, and catalog icon.
+
+## Consequences
+
+**Positive**
+
+- Password managers store the account email, not a device nickname.
+- Settings labels and logos match common passkey providers without a GitHub runtime dependency.
+- Catalog retirement cannot wipe production: refresh fails closed.
+
+**Negative**
+
+- Catalog goes stale until someone reruns the refresh script (AAGUIDs change slowly).
+- Apple / privacy AAGUIDs show fingerprint + UA label.
+- The Better Auth name snapshot can drift until someone reruns the refresh after a plugin upgrade.
+- `addPasskey` then `updatePasskey` can leave a default name if the second call fails (toast; user can rename).
+
+## Refresh checklist
+
+1. Run `pnpm run update:aaguid-catalog` (after a `@better-auth/passkey` upgrade, and when refreshing the community catalog).
+2. If the script exits 1 with “empty”, do **not** commit a wipe — the list was retired or the fetch was bad.
+3. Review the diff (entry count in `source.json`, unexpected icon drops).
+4. Commit the JSON + `source.json` with the passkey/auth change or a dedicated chore.

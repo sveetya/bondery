@@ -31,8 +31,11 @@ import {
 } from "@bondery/helpers/globals/paths";
 import { getRequest, setResponse } from "better-call/node";
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { badRequest } from "../platform/errors/http-errors.js";
 import { resolveRuntimeTrustedOrigins, withCorsHeaders } from "../platform/trusted-origins.js";
 import { auth, resolveBetterAuthIssuerUrl } from "./index.js";
+import { oauthProviders } from "./oauth-provider-config.js";
+import { resolveUnconfiguredSocialOAuthProvider } from "./oauth-social-request.js";
 
 const AUTH_ALLOWED_ORIGINS = resolveRuntimeTrustedOrigins();
 
@@ -156,6 +159,20 @@ export async function registerAuthRoutes(fastify: FastifyInstance): Promise<void
 
   fastify.route({
     async handler(request, reply) {
+      if (
+        resolveUnconfiguredSocialOAuthProvider(
+          request.method,
+          request.url,
+          request.body,
+          oauthProviders,
+        )
+      ) {
+        throw badRequest(
+          "OAuth provider is not configured on this instance",
+          "oauth_provider_not_configured",
+        );
+      }
+
       const response = await auth.handler(toFetchRequest(request));
       await sendFetchResponse(request, reply, response);
     },

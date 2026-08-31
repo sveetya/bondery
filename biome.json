@@ -36,7 +36,9 @@
       "!packages/translations/.i18next-cli-mirror",
       "!**/.dockerignore*",
       "!**/.cursor",
-      "!**/.source"
+      "!**/.source",
+      "!apps/webapp/src/lib/auth/aaguid-catalog/aaguid.json",
+      "!apps/webapp/src/lib/auth/aaguid-catalog/better-auth-authenticator-names.json"
     ]
   },
   "formatter": {

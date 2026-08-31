@@ -14,6 +14,7 @@ export type AuxiliaryFirstSegment = (typeof AUXILIARY_FIRST_SEGMENTS)[number];
 /** Canonical sidebar tag order in published API docs. */
 export const OPENAPI_TAG_ORDER = [
   "Health",
+  "Auth",
   "Contacts",
   "Groups",
   "Tags",

@@ -80,7 +80,7 @@
     "audit:forms": "tsx scripts/audit-mobile-forms.ts",
     "check:env": "tsx scripts/check-env.ts",
     "check:sync-patterns": "tsx scripts/check-sync-patterns.ts",
-    "check:types": "node ../../scripts/tsc-native.mjs --noEmit",
+    "check:types": "node ../../scripts/dev/tsc-native.mjs --noEmit",
     "dev": "cross-env EXPO_UNSTABLE_MCP_SERVER=1 expo start --port 26634",
     "dev:prebuild": "pnpm exec expo prebuild --clean",
     "ios": "expo run:ios",

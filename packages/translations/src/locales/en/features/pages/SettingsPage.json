@@ -41,6 +41,10 @@
     "TestSnippetWindows": "Windows",
     "Title": "API keys"
   },
+  "Apps": {
+    "Description": "Manage Bondery apps connected to your account.",
+    "Title": "Apps"
+  },
   "DataManagement": {
     "AccountDeleted": "Account deleted",
     "BonderyImport": {
@@ -336,9 +340,10 @@
     "LinkedButCannotUnlink": "Linked, but cannot unlink as it's the only provider",
     "LinkedIn": "LinkedIn",
     "LinkingAccount": "Linking account...",
-    "MustHaveOneMethod": "You must have at least one authentication method",
+    "MustHaveOneMethod": "Keep at least one connected account (GitHub or LinkedIn) so you can get back in if you lose your passkeys.",
     "NotConnected": "Not connected",
     "NotInstalled": "Not installed",
+    "ProviderUnavailable": "{provider} was not configured properly as an OAuth provider. Provide proper OAuth credentials and restart the API server.",
     "PwaInstallModal": {
       "Close": "Close",
       "InstallButton": "Install desktop app",
@@ -402,8 +407,6 @@
   },
   "Profile": {
     "AttachProfilePhoto": "Only image files are allowed, and the file must not exceed 5MB",
-    "BonderyApplications": "Bondery applications",
-    "BonderyApplicationsDescription": "Manage Bondery apps connected to your account.",
     "Cancel": "Cancel",
     "ConfirmPhoto": "Yes, change profile photo",
     "ConnectedAccounts": "Connected accounts",
@@ -423,6 +426,25 @@
     "MiddleNames": "Middle names",
     "NameUpdateError": "Failed to update name",
     "NameUpdateSuccess": "Name updated successfully",
+    "Passkeys": {
+      "Add": "Add passkey",
+      "CreateErrorDescription": "Please try again.",
+      "CreateErrorTitle": "Could not add passkey",
+      "DeleteAriaLabel": "Delete {name}",
+      "DeleteMessage": "You won’t be able to sign in with this passkey. You can add a new one anytime.",
+      "DeleteTitle": "Delete {name}?",
+      "Description": "Sign in with passkeys (like this device’s fingerprint, face, or a security key).",
+      "EmptyTitle": "No passkeys yet",
+      "FallbackName": "Passkey",
+      "LastUsed": "Last used {time}",
+      "LessThanMinuteAgo": "Less than a minute ago",
+      "LimitReached": "You have reached the maximum number of passkeys. Delete an unused passkey to add a new one.",
+      "NameField": "Passkey name",
+      "NameTemplate": "{browser} on {os}",
+      "NeverUsed": "Never used",
+      "Title": "Passkeys",
+      "UnsupportedTooltip": "Passkeys aren’t available in this browser."
+    },
     "PhotoUpdateError": "Failed to upload photo",
     "PhotoUpdateSuccess": "Profile photo updated successfully",
     "PleaseWait": "Please wait",

@@ -6,7 +6,9 @@ import { CardSection, Divider, Group, Text, TextInput } from "@mantine/core";
 import { IconChevronRight, IconMail, IconUserCircle } from "@tabler/icons-react";
 import { useSettingsPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useMePersonQuery } from "@/lib/query/hooks/useMePerson";
+import { useOAuthProvidersQuery } from "@/lib/query/hooks/useOAuthProviders";
 import { useSettingsQuery } from "@/lib/query/hooks/useSettings";
+import { PasskeysBlock } from "./PasskeysBlock";
 import { ProviderIntegrations } from "./ProviderIntegrations";
 import { SettingsSection } from "./SettingsSection";
 
@@ -14,6 +16,7 @@ export function ProfileCard() {
   const t = useSettingsPageTranslations("Profile");
   const { data: settingsResult } = useSettingsQuery();
   const { data: myselfPerson = null } = useMePersonQuery("small");
+  const { data: oauthProviders = null } = useOAuthProvidersQuery();
 
   const settings = settingsResult?.data;
   if (!settings) {
@@ -32,7 +35,11 @@ export function ProfileCard() {
     : [];
 
   return (
-    <SettingsSection icon={<IconUserCircle size={20} stroke={1.5} />} title={t("Title")}>
+    <SettingsSection
+      icon={<IconUserCircle size={20} stroke={1.5} />}
+      id="profile"
+      title={t("Title")}
+    >
       <CardSection inheritPadding py="md">
         <div>
           <Text fw={500} mb={4} size="sm">
@@ -80,6 +87,7 @@ export function ProfileCard() {
 
       <CardSection inheritPadding py="md">
         <ProviderIntegrations
+          oauthProviders={oauthProviders}
           providers={providers}
           showExtensionProvider={false}
           showPWAProvider={false}
@@ -90,13 +98,7 @@ export function ProfileCard() {
       <Divider />
 
       <CardSection inheritPadding py="md">
-        <ProviderIntegrations
-          description={t("BonderyApplicationsDescription")}
-          providers={providers}
-          showOAuthProviders={false}
-          title={t("BonderyApplications")}
-          userIdentities={userIdentities}
-        />
+        <PasskeysBlock />
       </CardSection>
     </SettingsSection>
   );

@@ -34,8 +34,15 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 | `account_settings:import_generate` | `people_count`, `groups_count`, `tags_count`, `interactions_count`, `is_empty` | **server** | ZIP applied (counts only, no PII) |
 | `account_settings:import_fail` | `error_code` | client | Peek, apply, or timeout failed |
 | `account_settings:import_cancel` | — | client | User cancelled while checking or importing |
-| `auth:session_create` | — | client | Once per browser tab session |
+| `account_settings:passkey_add` | — | client | Settings: passkey registered |
+| `account_settings:passkey_fail` | — | client | Settings: add/update ceremony failed (not cancel) |
+| `account_settings:passkey_cancel` | — | client | Settings: OS sheet dismissed |
+| `account_settings:passkey_update` | — | client | Settings: passkey renamed |
+| `account_settings:passkey_delete` | — | client | Settings: passkey removed |
+| `auth:session_create` | `login_method`: `passkey` \| `oauth_github` \| `oauth_linkedin` (optional) | client | Once per browser tab session |
 | `auth:session_end` | — | client | On logout / session end |
+| `auth:passkey_fail` | — | client | Login passkey ceremony failed (not cancel) |
+| `auth:passkey_cancel` | — | client | Login OS sheet dismissed |
 | `imports:import_complete` | `import_source`, `item_count`, `is_first_import` | client | Import modal success |
 | `billing:subscription_create` | `plan_interval`, `plan_tier`, `cancel_at_period_end` | **server** | Stripe webhook |
 | `billing:subscription_cancel` | `plan_interval`, `plan_tier`, `cancel_at_period_end` | **server** | Stripe webhook |

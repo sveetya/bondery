@@ -217,4 +217,15 @@ describe("getAuthUserFacingError", () => {
 
     assert.equal(message, "Session expired.");
   });
+
+  it("maps catalog codes from Better Auth client wrappers", () => {
+    const message = getAuthUserFacingError(
+      { code: "bad_request" },
+      mockT({
+        "errors.api.bad_request": "Bad request.",
+      }),
+    );
+
+    assert.equal(message, "Bad request.");
+  });
 });

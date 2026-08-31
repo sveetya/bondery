@@ -111,6 +111,10 @@ export async function invalidateApiKeys(queryClient: QueryClient): Promise<void>
   await queryClient.invalidateQueries({ queryKey: settingsKeys.apiKeys() });
 }
 
+export async function invalidatePasskeys(queryClient: QueryClient): Promise<void> {
+  await queryClient.invalidateQueries({ queryKey: settingsKeys.passkeys() });
+}
+
 export async function invalidateSubscription(queryClient: QueryClient): Promise<void> {
   await queryClient.invalidateQueries({ queryKey: settingsKeys.subscription() });
 }

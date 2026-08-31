@@ -2,11 +2,13 @@
 
 import { getAuthUserFacingError } from "@bondery/helpers/api";
 import { errorNotificationTemplate } from "@bondery/mantine-next";
+import type { OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
+import { notifyPasskeyLoginError } from "@/lib/auth/notify-passkey-login-error";
 import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
@@ -14,9 +16,10 @@ import { SocialLoginCard } from "./components/SocialLoginCard";
 
 type LoginClientProps = {
   lastUsedLoginMethod: string | null;
+  oauthProviders: OAuthProvidersBitmap | null;
 };
 
-export function LoginClient({ lastUsedLoginMethod }: LoginClientProps) {
+export function LoginClient({ lastUsedLoginMethod, oauthProviders }: LoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
   const [loading, setLoading] = useState(false);
@@ -72,13 +75,47 @@ export function LoginClient({ lastUsedLoginMethod }: LoginClientProps) {
     }
   };
 
+  const handlePasskeyLogin = async () => {
+    try {
+      setLoading(true);
+      await setLocalePreferencesCookie();
+
+      const callbackURL =
+        redirectParam?.startsWith("/oauth/consent") === true
+          ? new URL(redirectParam, window.location.origin).toString()
+          : (() => {
+              const startUrl = new URL("/auth/start", window.location.origin);
+              if (redirectParam) {
+                startUrl.searchParams.set(RETURN_INTENT_PARAM, redirectParam);
+              }
+              return startUrl.toString();
+            })();
+
+      const { error } = await authClient.signIn.passkey();
+
+      if (error) {
+        notifyPasskeyLoginError(error, t);
+        return;
+      }
+
+      window.location.assign(callbackURL);
+    } catch (err) {
+      notifyPasskeyLoginError(err, t);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SocialLoginCard
+      getPasskeyTestId="login-passkey"
       getProviderTestId={(providerKey) =>
         providerKey === "github" ? "login-github" : `login-${providerKey}`
       }
       lastUsedLoginMethod={lastUsedLoginMethod}
       loading={loading}
+      oauthProviders={oauthProviders}
+      onPasskeyClick={() => void handlePasskeyLogin()}
       onProviderClick={handleOAuthLogin}
       websiteUrl={websiteUrl}
     />

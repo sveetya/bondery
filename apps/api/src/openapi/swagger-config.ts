@@ -58,6 +58,11 @@ export const swaggerOpenApiConfig = {
         "Liveness and readiness probes. `GET /health/live` returns 200 when the process is running (no dependency checks). `GET /health/ready` probes Postgres, object storage, Redis, and integration config; cached for one minute, rate limited to five requests per minute per client; returns 503 when critical dependencies are unavailable.",
       name: "Health",
     },
+    {
+      description:
+        "Public authentication metadata. `GET /oauth-providers` reports which social identity providers are configured on this API process (booleans only). Social sign-in and account linking still go through Better Auth at `/auth/*`.",
+      name: "Auth",
+    },
     { description: "Contact management operations", name: "Contacts" },
     { description: "Group management operations", name: "Groups" },
     { description: "Tag management operations", name: "Tags" },

@@ -22,8 +22,6 @@ export interface HelpButtonProps
   label: string;
   /** Max width of the tooltip popover. Defaults to 320. */
   tooltipMaxWidth?: TooltipProps["maw"];
-  /** Whether the tooltip supports multiple lines. Defaults to true. */
-  tooltipMultiline?: boolean;
   /** Whether the tooltip shows an arrow. Defaults to true. */
   withArrow?: boolean;
 }
@@ -40,7 +38,6 @@ export function HelpButton({
   href,
   ariaLabel,
   tooltipMaxWidth = 320,
-  tooltipMultiline = true,
   withArrow = true,
   iconSize = 14,
   icon,
@@ -83,7 +80,7 @@ export function HelpButton({
   );
 
   return (
-    <Tooltip label={label} maw={tooltipMaxWidth} multiline={tooltipMultiline} withArrow={withArrow}>
+    <Tooltip label={label} maw={tooltipMaxWidth} withArrow={withArrow}>
       {button}
     </Tooltip>
   );

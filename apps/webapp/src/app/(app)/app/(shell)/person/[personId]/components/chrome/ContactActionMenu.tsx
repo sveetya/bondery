@@ -115,7 +115,6 @@ export function ContactActionMenu({
             disabled={!contact.myself}
             label={tActions("CannotMergeMyself")}
             maw={220}
-            multiline
             withArrow
           >
             <div>
@@ -134,7 +133,6 @@ export function ContactActionMenu({
             disabled={!contact.myself}
             label={tActions("CannotDeleteMyself")}
             maw={220}
-            multiline
             withArrow
           >
             <div>

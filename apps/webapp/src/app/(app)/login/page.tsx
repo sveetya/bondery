@@ -1,6 +1,7 @@
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
+import { getOAuthProvidersServer } from "@/lib/api/domains/server/oauth-providers";
 import { getLastUsedLoginMethodCookie } from "@/lib/auth/getLastUsedLoginMethodCookie";
 import { resolveServerSession, signOutStaleServerSession } from "@/lib/auth/resolveServerSession";
 import { parseReturnIntent, RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
@@ -15,6 +16,7 @@ type LoginPageProps = {
  * renders. Stale or missing sessions clear auth cookies and show the login form.
  */
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const oauthProvidersPromise = getOAuthProvidersServer();
   const [session, lastUsedLoginMethod, params] = await Promise.all([
     resolveServerSession(),
     getLastUsedLoginMethodCookie(),
@@ -33,9 +35,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   // Drop stale BFF session cookies so they are not retried forever.
   await signOutStaleServerSession();
 
+  const oauthProviders = await oauthProvidersPromise;
+
   return (
     <Suspense fallback={null}>
-      <LoginClient lastUsedLoginMethod={lastUsedLoginMethod} />
+      <LoginClient lastUsedLoginMethod={lastUsedLoginMethod} oauthProviders={oauthProviders} />
     </Suspense>
   );
 }

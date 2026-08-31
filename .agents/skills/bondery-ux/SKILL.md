@@ -2,7 +2,7 @@
 name: bondery-ux
 description: >
   Bondery UX patterns — empty states, loading, lists, forms, modals, i18n, keyboard shortcuts,
-  avatars, product flows (onboarding, import, navigation resume). Use when building or reviewing
+  tooltips, avatars, product flows (onboarding, import, navigation resume). Use when building or reviewing
   UI in webapp or mobile, writing user-facing copy, or choosing interaction patterns, including
   create more, repeatable create, or stay open after create.
 metadata:
@@ -17,7 +17,7 @@ metadata:
 - Building or reviewing UI components and flows (webapp or mobile)
 - Choosing empty states, loading patterns, lists, modals, or forms
 - Writing user-facing copy or adding translations
-- Displaying keyboard shortcuts, avatars, or API error messages
+- Displaying keyboard shortcuts, tooltips, avatars, or API error messages
 - Product flows: onboarding, imports, outage/session recovery
 
 ## Reading order
@@ -52,6 +52,7 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 | Web modals / command palette | [references/desktop/modals.md](references/desktop/modals.md), [global-find.md](references/desktop/global-find.md) |
 | Create more / stay-open after create | [references/desktop/create-more.md](references/desktop/create-more.md) |
 | Keyboard shortcut chips | [references/desktop/keyboard-shortcuts.md](references/desktop/keyboard-shortcuts.md) |
+| Tooltips (Mantine, web) | [references/desktop/tooltips.md](references/desktop/tooltips.md) |
 | Mobile forms / sheets | [references/mobile/forms.md](references/mobile/forms.md) |
 | Onboarding / import | [references/product/onboarding.md](references/product/onboarding.md), [import-flow.md](references/product/import-flow.md) |
 | Outage / session recovery | [references/product/page-navigation-resume.md](references/product/page-navigation-resume.md) |
@@ -65,6 +66,7 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 - [ ] Platform-appropriate pattern (mobile sheet vs desktop modal)
 - [ ] Paginated tables use server `hasMore` for load-more — not client-derived pagination
 - [ ] Keyboard shortcuts use `Kbd` + `parseShortcutKeys` from `@bondery/mantine-next`
+- [ ] Mantine Tooltip (webapp/website): do not pass `multiline`; always set `maw` so longer locales wrap — see [tooltips.md](references/desktop/tooltips.md)
 - [ ] Destructive actions have confirmation per [destructive-actions.md](references/common/destructive-actions.md)
 - [ ] Repetitive create modals: Create more switch per create-more.md (or explicit `repeatable: false`)
 - [ ] Create more ON shows a success toast even when the OFF path navigates and skips one

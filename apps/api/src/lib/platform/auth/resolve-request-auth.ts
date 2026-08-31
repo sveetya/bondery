@@ -73,7 +73,7 @@ export async function resolveOAuthBearerUser(token: string): Promise<ResolvedAut
   let payload: JWTPayload;
   try {
     payload = await oauthResourceActions.verifyBearerToken(token, {
-      scopes: ["api:access"],
+      requiredScopes: ["api:access"],
       verifyOptions: {
         audience: resolveApiResourceIdentifier(),
         issuer: resolveOAuthIssuerIdentifier(),

@@ -1,0 +1,23 @@
+/**
+ * Copied from Downloads key
+ * `publickey.team@usebondery.com-2878b5bbde8862c2f255895e6a9a632ad62bac44.asc`.
+ * Replace on rotation.
+ */
+export const BONDERY_PGP_PUBLIC_KEY = `-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEaWkxLxYJKwYBBAHaRw8BAQdATH4/thXt/8eEUezcl7XgPYajmxe/K/Br
+ijjK2y8DkovNKXRlYW1AdXNlYm9uZGVyeS5jb20gPHRlYW1AdXNlYm9uZGVy
+eS5jb20+wsARBBMWCgCDBYJpaTEvAwsJBwkQappjKtYrrERFFAAAAAAAHAAg
+c2FsdEBub3RhdGlvbnMub3BlbnBncGpzLm9yZ81HjB0PhjCFTk7u/m4CnSjF
+p1Nw+sJFhD4dG/9EI126AxUKCAQWAAIBAhkBApsDAh4BFiEEKHi1u96IYsLy
+VYleappjKtYrrEQAALGXAQCgitvfuuSoJw7ps8piZxYbgF4Lj4lce4QOsyw7
+NzTcbwD+KAVNn5/SYMWg9Rc07DYFsSwfpAlWw/YW3hIkYv9Q3gvOOARpaTEv
+EgorBgEEAZdVAQUBAQdAchkWM+suBqrPmRpl5N24fDtCzYSFyyv9FRzr+iis
+H04DAQgHwr4EGBYKAHAFgmlpMS8JEGqaYyrWK6xERRQAAAAAABwAIHNhbHRA
+bm90YXRpb25zLm9wZW5wZ3Bqcy5vcmcp54Vu4HnIvgH+NP3/nyPfyihJ9q2B
+mgDOKH4rQXmo9gKbDBYhBCh4tbveiGLC8lWJXmqaYyrWK6xEAABWCAEAgDr0
+7F30cc1KKETCiBr4MMdO7MtCKVHElyzr0kBVmx0A/iEARhzSrU2zydgAR4bI
+4HxquMzuvQXHx1dyafPnfN4H
+=wy24
+-----END PGP PUBLIC KEY BLOCK-----
+`;

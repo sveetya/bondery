@@ -220,7 +220,7 @@ export function MergeRecommendationCard({
     >
       <Group align="center" justify="space-between" wrap="nowrap">
         <Group align="center" wrap="nowrap">
-          <Tooltip label={t("PossibleDuplicateTooltip")} maw={280} multiline withArrow>
+          <Tooltip label={t("PossibleDuplicateTooltip")} maw={280} withArrow>
             <Group align="center" gap={4} style={{ cursor: "default" }} wrap="nowrap">
               <IconUsers color="var(--mantine-color-yellow-6)" size={14} />
               <Text c="yellow.6" fw={600} size="sm">

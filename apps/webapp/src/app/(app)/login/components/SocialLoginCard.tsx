@@ -2,30 +2,45 @@
 
 import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
 import { AnchorLink } from "@bondery/mantine-next";
+import type { OAuthProviderId, OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { Stack, Text, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { isWebAuthnSupported } from "@/lib/auth/passkey-support";
 import { useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { TypedTrans } from "@/lib/i18n/TypedTrans";
 import { LoginBrandShell } from "./LoginBrandShell";
 import { LoginProviderButtons } from "./LoginProviderButtons";
 
-type OAuthProvider = "github" | "linkedin";
-
 type SocialLoginCardProps = {
+  getPasskeyTestId?: string;
   getProviderTestId?: (providerKey: string) => string | undefined;
   lastUsedLoginMethod: string | null;
   loading: boolean;
-  onProviderClick: (provider: OAuthProvider) => void;
+  oauthProviders: OAuthProvidersBitmap | null;
+  onPasskeyClick: () => void;
+  onProviderClick: (provider: OAuthProviderId) => void;
   websiteUrl: string;
 };
 
 export function SocialLoginCard({
+  getPasskeyTestId,
   getProviderTestId,
   lastUsedLoginMethod,
   loading,
+  oauthProviders,
+  onPasskeyClick,
   onProviderClick,
   websiteUrl,
 }: SocialLoginCardProps) {
   const t = useLoginPageTranslations();
+  // Optimistic so SSR and the first client paint include the passkey button.
+  // `useState(() => isWebAuthnSupported())` hydrates `false` (no `window` on
+  // the server) and flashes OAuth-only until the effect runs.
+  const [passkeySupported, setPasskeySupported] = useState(true);
+
+  useEffect(() => {
+    setPasskeySupported(isWebAuthnSupported());
+  }, []);
 
   return (
     <LoginBrandShell websiteUrl={websiteUrl}>
@@ -40,10 +55,15 @@ export function SocialLoginCard({
         </Stack>
 
         <LoginProviderButtons
+          getPasskeyTestId={getPasskeyTestId}
           getProviderTestId={getProviderTestId}
           lastUsedLoginMethod={lastUsedLoginMethod}
           loading={loading}
+          oauthProviders={oauthProviders}
+          onPasskeyClick={onPasskeyClick}
           onProviderClick={onProviderClick}
+          showOAuth
+          showPasskey={passkeySupported}
         />
         <Text c="dimmed" size="xs">
           <TypedTrans

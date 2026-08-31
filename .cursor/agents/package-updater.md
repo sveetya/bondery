@@ -84,6 +84,7 @@ Repo-specific triggers:
 | Prisma / `@bondery/db` bump | `pnpm run generate-types` |
 | Env renames | `.env.*.example` per app |
 | Extension API break | `packages/helpers/src/globals/paths.ts` (`MIN_EXTENSION_VERSION`) |
+| Vendored snapshots / catalogs | Run every script in `scripts/updater/` (see below) |
 
 ### 3. Update packages
 
@@ -111,6 +112,15 @@ Per ecosystem: edit ranges → `pnpm install` → refactor → verify → hand o
 3. Lint: `pnpm run lint` (from repo root)
 4. Regenerate artifacts if needed (OpenAPI, Prisma client)
 5. Update `packages/translations` when UI copy changes
+6. **Run catalog updaters** — after any dependency bump, execute every script in `scripts/updater/`. That folder is the home for snapshot/catalog refreshers that drift when packages or upstream lists change.
+
+   Today:
+
+   | Script | When it matters | Command |
+   |--------|-----------------|---------|
+   | `scripts/updater/refresh-aaguid-catalog.ts` | Always after `@better-auth/passkey`; also when refreshing the community AAGUID list | `pnpm run update:aaguid-catalog` |
+
+   Convention: new refreshers go in `scripts/updater/` plus a root `update:*` script. If you add a file there, run it during this step (do not skip because the table above is stale). Review the JSON diff; abort/commit rules live in the script and `docs/adr/0006-passkeys.mdx`.
 
 One ecosystem per commit:
 
@@ -156,6 +166,7 @@ End every upgrade with the summary templates in [`.agents/workflows/chores/UPGRA
 - [ ] Packages updated per workflow (one ecosystem per PR for majors)
 - [ ] Code refactored per official guides and codemods
 - [ ] Every touched workspace builds (or check:types + expo-doctor for mobile)
+- [ ] `scripts/updater/` scripts ran after the bump (today: `pnpm run update:aaguid-catalog`); snapshot diffs reviewed
 - [ ] Summary template (6a) filled in
 - [ ] Manual / UX testing table (6b) filled when UI-facing
 - [ ] CTO brief (6c) filled with new capabilities and migrated code summary

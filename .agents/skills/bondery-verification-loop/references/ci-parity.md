@@ -9,7 +9,7 @@ There is **no** root `pnpm run verify` — mirror CI by running the steps below 
 
 | Tier | When | Typical commands |
 |------|------|------------------|
-| **0 — Pre-commit** | Automatic on commit | Husky → lint-staged: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env.ts` staged |
+| **0 — Pre-commit** | Automatic on commit | Lefthook: Biome write on staged files; OpenAPI regen if API/schema paths staged; env example regen if manifest / `scripts/env/**` staged |
 | **1 — Fast local** | After each coherent edit | Changed-file `biome check`, workspace `check:types`, targeted `test:*` |
 | **2 — PR parity** | Before opening PR | Full `verify.yml` command sequence (below) |
 | **3 — Staging** | Matches `main` image builds | `stage-images.yml` (path-filtered Docker builds for api, webapp, website) |

@@ -53,6 +53,12 @@ export type Verification = Prisma.VerificationModel
  */
 export type Jwks = Prisma.JwksModel
 /**
+ * Model Passkey
+ * Better Auth `@better-auth/passkey` storage. Runtime IDs come from BA
+ * `generateId` / the Prisma UUIDv7 extension; `@default(uuid())` is metadata.
+ */
+export type Passkey = Prisma.PasskeyModel
+/**
  * Model Group
  * 
  */

@@ -94,6 +94,7 @@
     "merge_recommendation_id_required",
     "merge_recommendation_not_found",
     "not_found",
+    "oauth_provider_not_configured",
     "onboarding_failed_to_complete_onboarding",
     "onboarding_failed_to_dismiss_getting_started",
     "onboarding_failed_to_update_import_follow_up",

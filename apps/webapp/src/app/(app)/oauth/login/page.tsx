@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { getOAuthProvidersServer } from "@/lib/api/domains/server/oauth-providers";
 import { getLastUsedLoginMethodCookie } from "@/lib/auth/getLastUsedLoginMethodCookie";
 import { OAuthLoginClient } from "./OAuthLoginClient";
 
@@ -16,11 +17,14 @@ import { OAuthLoginClient } from "./OAuthLoginClient";
  * gating on it previously caused a redirect loop with `/oauth/consent`.
  */
 export default async function OAuthLoginPage() {
-  const lastUsedLoginMethod = await getLastUsedLoginMethodCookie();
+  const [lastUsedLoginMethod, oauthProviders] = await Promise.all([
+    getLastUsedLoginMethodCookie(),
+    getOAuthProvidersServer(),
+  ]);
 
   return (
     <Suspense fallback={null}>
-      <OAuthLoginClient lastUsedLoginMethod={lastUsedLoginMethod} />
+      <OAuthLoginClient lastUsedLoginMethod={lastUsedLoginMethod} oauthProviders={oauthProviders} />
     </Suspense>
   );
 }

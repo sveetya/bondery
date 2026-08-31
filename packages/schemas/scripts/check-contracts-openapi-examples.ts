@@ -11,7 +11,7 @@ import {
   RESPONSE_SCHEMA_EXAMPLES,
 } from "#openapi/schema-example-registry.js";
 
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const check = createCheck("check-contracts-openapi-examples");
 

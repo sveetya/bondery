@@ -21,6 +21,7 @@ export const WEBSITE_ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   PRIVACY: "/privacy",
+  SECURITY: "/security",
   TERMS: "/terms",
 };
 
@@ -63,6 +64,7 @@ export const API_ROUTES = {
   ME_SESSION: "/me/session",
   ME_SETTINGS: "/me/settings",
   ME_SETTINGS_GETTING_STARTED_DISMISS: "/me/settings/getting-started-dismiss",
+  OAUTH_PROVIDERS: "/oauth-providers",
   SUBSCRIPTIONS: "/subscriptions",
   SUBSCRIPTIONS_CHECKOUT: "/subscriptions/checkout",
   SUBSCRIPTIONS_PORTAL: "/subscriptions/portal",
@@ -152,4 +154,5 @@ export const WEBAPP_ROUTES = {
   SETTINGS: "/app/settings",
   STATS: "/app/admin/stats",
   UNAVAILABLE: "/app/unavailable",
+  WELL_KNOWN_CHANGE_PASSWORD: "/.well-known/change-password",
 };

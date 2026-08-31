@@ -4,6 +4,7 @@ import {
   fetchSettings,
   prefetchApiKeys,
   prefetchMePerson,
+  prefetchOAuthProviders,
   prefetchSubscription,
   prefetchTagsList,
 } from "@/lib/query/prefetch";
@@ -19,6 +20,7 @@ export async function SettingsLoader() {
     prefetchMePerson(queryClient, "small"),
     prefetchApiKeys(queryClient),
     prefetchSubscription(queryClient),
+    prefetchOAuthProviders(queryClient),
   ]);
 
   return (

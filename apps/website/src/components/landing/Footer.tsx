@@ -93,6 +93,7 @@ export function Footer() {
               links={[
                 { href: WEBSITE_ROUTES.PRIVACY, key: "privacy", title: "Privacy Policy" },
                 { href: WEBSITE_ROUTES.TERMS, key: "terms", title: "Terms of Service" },
+                { href: WEBSITE_ROUTES.SECURITY, key: "security", title: "Security" },
               ]}
               title="Legal"
             />

@@ -127,6 +127,11 @@ export const bonderyTheme = createTheme({
         c: "var(--mantine-color-default-color)",
       },
     },
+    Tooltip: {
+      defaultProps: {
+        multiline: true,
+      },
+    },
   },
   cursorType: "pointer",
   defaultRadius: "md",

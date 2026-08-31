@@ -30,7 +30,7 @@ export function StatsCard({ title, value, tooltip, icon, color = "blue", href }:
             <Text c="dimmed" fw={700} size="xs" tt="uppercase">
               {title}
             </Text>
-            <Tooltip label={tooltip} maw={220} multiline withArrow>
+            <Tooltip label={tooltip} maw={220} withArrow>
               <ActionIcon
                 aria-label={tCommon("a11y.info")}
                 color="gray"

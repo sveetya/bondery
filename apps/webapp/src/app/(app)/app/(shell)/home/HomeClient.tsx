@@ -306,7 +306,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
               <Link href={WEBAPP_ROUTES.INTERACTIONS} style={{ textDecoration: "none" }}>
                 <Title order={2}>{t("TimelinePreviewTitle")}</Title>
               </Link>
-              <Tooltip label={t("TimelinePreviewTooltip")} maw={240} multiline withArrow>
+              <Tooltip label={t("TimelinePreviewTooltip")} maw={240} withArrow>
                 <ActionIconLink
                   ariaLabel={t("TimelinePreviewTooltip")}
                   color="gray"
@@ -343,7 +343,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
             <Stack gap="md">
               <Group align="center" gap={4}>
                 <Title order={2}>{t("UpcomingRemindersTitle")}</Title>
-                <Tooltip label={t("UpcomingRemindersTooltip")} maw={240} multiline withArrow>
+                <Tooltip label={t("UpcomingRemindersTooltip")} maw={240} withArrow>
                   <ActionIconLink
                     ariaLabel={t("UpcomingRemindersTooltip")}
                     color="gray"
@@ -390,7 +390,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
                 >
                   <Title order={2}>{t("RecentlyAddedTitle")}</Title>
                 </Link>
-                <Tooltip label={t("RecentlyAddedTooltip")} maw={240} multiline withArrow>
+                <Tooltip label={t("RecentlyAddedTooltip")} maw={240} withArrow>
                   <ActionIconLink
                     ariaLabel={t("RecentlyAddedTooltip")}
                     color="gray"
@@ -435,7 +435,7 @@ export function HomeClient({ initialSettings }: { initialSettings?: Record<strin
                 >
                   <Title order={2}>{t("RecentlyInteractedTitle")}</Title>
                 </Link>
-                <Tooltip label={t("RecentlyInteractedTooltip")} maw={240} multiline withArrow>
+                <Tooltip label={t("RecentlyInteractedTooltip")} maw={240} withArrow>
                   <ActionIconLink
                     ariaLabel={t("RecentlyInteractedTooltip")}
                     color="gray"

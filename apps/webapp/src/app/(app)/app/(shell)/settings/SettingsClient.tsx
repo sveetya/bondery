@@ -13,6 +13,7 @@ import { useSettingsQuery } from "@/lib/query/hooks/useSettings";
 import { invalidateSubscription } from "@/lib/query/invalidation";
 import { isPageLoadFailure } from "@/lib/query/pageLoadFailure";
 import { ApiKeysSection } from "./components/cards/ApiKeysSection";
+import { AppsCard } from "./components/cards/AppsCard";
 import { DataManagementCard } from "./components/cards/DataManagementCard";
 import { PreferencesCard } from "./components/cards/PreferencesCard";
 import { ProfileCard } from "./components/cards/ProfileCard";
@@ -54,6 +55,7 @@ export function SettingsClient() {
       {data ? (
         <Stack gap="xl">
           <SupportCard />
+          <AppsCard />
           <ProfileCard />
           <ApiKeysSection apiBaseUrl={apiBaseUrl} />
           <SubscriptionCard />

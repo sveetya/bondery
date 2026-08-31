@@ -1,4 +1,4 @@
-import { killDevPort } from "../../../scripts/kill-dev-port.mjs";
+import { killDevPort } from "../../../scripts/dev/kill-dev-port.mjs";
 import { ensureWslgDisplay } from "../scripts/ensure-wslg-display.mjs";
 
 const E2E_PORTS = [26631, 26632];

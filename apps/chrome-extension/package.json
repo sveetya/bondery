@@ -41,7 +41,7 @@
     "build:firefox": "pnpm exec wxt build -b firefox",
     "check:env": "tsx scripts/check-env.ts",
     "check:extension-patterns": "tsx scripts/check-extension-patterns.ts",
-    "check:types": "node ../../scripts/tsc-native.mjs --noEmit",
+    "check:types": "node ../../scripts/dev/tsc-native.mjs --noEmit",
     "dev": "pnpm exec wxt",
     "dev:firefox": "pnpm exec wxt -b firefox",
     "generate-icons": "tsx scripts/generate-icons.ts",

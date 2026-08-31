@@ -232,6 +232,8 @@ export type CommonCatalog = {
       group_not_found: string;
       group_remove_members_invalid_body: string;
       import: string;
+      import_bondery_failed: string;
+      import_bondery_invalid: string;
       import_failed: string;
       import_instagram_failed: string;
       import_linkedin_failed: string;
@@ -256,6 +258,7 @@ export type CommonCatalog = {
       merge_recommendation_id_required: string;
       merge_recommendation_not_found: string;
       not_found: string;
+      oauth_provider_not_configured: string;
       onboarding: string;
       onboarding_failed_to_complete_onboarding: string;
       onboarding_failed_to_dismiss_getting_started: string;
@@ -294,19 +297,28 @@ export type CommonCatalog = {
       validation_error: string;
       webhook: string;
       webhook_not_configured: string;
-      import_bondery_failed: string;
-      import_bondery_invalid: string;
     };
     apiTemporarilyUnavailable: string;
     apiUnreachable: string;
     auth: {
+      AUTHENTICATION_FAILED: string;
+      CHALLENGE_NOT_FOUND: string;
       CREDENTIAL_ACCOUNT_NOT_FOUND: string;
       EMAIL_NOT_VERIFIED: string;
+      FAILED_TO_UPDATE_PASSKEY: string;
+      FAILED_TO_VERIFY_REGISTRATION: string;
       INVALID_EMAIL_OR_PASSWORD: string;
       INVALID_PASSWORD: string;
+      PASSKEY_LIMIT_REACHED: string;
+      PASSKEY_NOT_FOUND: string;
+      PREVIOUSLY_REGISTERED: string;
       SESSION_EXPIRED: string;
+      SESSION_NOT_FRESH: string;
+      SESSION_REQUIRED: string;
       SOCIAL_ACCOUNT_ALREADY_LINKED: string;
+      UNABLE_TO_CREATE_SESSION: string;
       USER_NOT_FOUND: string;
+      YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY: string;
     };
     connection: string;
     requestFailed: string;
@@ -1198,16 +1210,26 @@ export type LoginPageCatalog = {
     PlugInApps: string;
   };
   ContinueWith: string;
+  ContinueWithPasskey: string;
   Description: string;
   FormTitle: string;
   LastUsed: string;
   LogoAriaLabel: string;
+  NoPasskeyFound: string;
+  PasskeySignInFailed: string;
+  PasskeysUnavailable: string;
+  PasskeyTimedOut: string;
   PrivacyPolicy: string;
   Providers: {
     GitHub: string;
     LinkedIn: string;
   };
+  ProvidersUnavailable: string;
+  ProviderUnavailable: string;
   SignIn: string;
+  SignInOnThisPhone: string;
+  SmallViewportDesktopNote: string;
+  SmallViewportNewHere: string;
   TermsAgreement: string;
   TermsOfService: string;
   TermsText: string;
@@ -1961,6 +1983,10 @@ export type SettingsPageCatalog = {
     TestSnippetWindows: string;
     Title: string;
   };
+  Apps: {
+    Description: string;
+    Title: string;
+  };
   DataManagement: {
     AccountDeleted: string;
     BonderyImport: {
@@ -2259,6 +2285,7 @@ export type SettingsPageCatalog = {
     MustHaveOneMethod: string;
     NotConnected: string;
     NotInstalled: string;
+    ProviderUnavailable: string;
     PwaInstallModal: {
       Close: string;
       InstallButton: string;
@@ -2322,8 +2349,6 @@ export type SettingsPageCatalog = {
   };
   Profile: {
     AttachProfilePhoto: string;
-    BonderyApplications: string;
-    BonderyApplicationsDescription: string;
     Cancel: string;
     ConfirmPhoto: string;
     ConnectedAccounts: string;
@@ -2343,6 +2368,25 @@ export type SettingsPageCatalog = {
     MiddleNames: string;
     NameUpdateError: string;
     NameUpdateSuccess: string;
+    Passkeys: {
+      Add: string;
+      CreateErrorDescription: string;
+      CreateErrorTitle: string;
+      DeleteAriaLabel: string;
+      DeleteMessage: string;
+      DeleteTitle: string;
+      Description: string;
+      EmptyTitle: string;
+      FallbackName: string;
+      LastUsed: string;
+      LessThanMinuteAgo: string;
+      LimitReached: string;
+      NameField: string;
+      NameTemplate: string;
+      NeverUsed: string;
+      Title: string;
+      UnsupportedTooltip: string;
+    };
     PhotoUpdateError: string;
     PhotoUpdateSuccess: string;
     PleaseWait: string;

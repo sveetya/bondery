@@ -11,7 +11,7 @@ import {
 } from "next-validate-link";
 import { glob } from "tinyglobby";
 
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const report = createCheck("check-docs-mdx");
 

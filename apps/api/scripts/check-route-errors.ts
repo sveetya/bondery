@@ -9,7 +9,7 @@ import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { API_ERROR_CODES, isApiErrorCode } from "@bondery/schemas/errors";
 
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const check = createCheck("check-route-errors");
 
