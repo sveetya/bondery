@@ -132,8 +132,8 @@
     "test:webapp:sync": "pnpm --filter webapp run test:sync",
     "test:webapp:theme": "pnpm --filter webapp run test:theme",
     "tsc-native": "node scripts/dev/tsc-native.mjs",
-    "update:aaguid-catalog": "node --import tsx scripts/updater/refresh-aaguid-catalog.ts",
-    "turbo:clean": "turbo daemon clean"
+    "turbo:clean": "turbo daemon clean",
+    "update:aaguid-catalog": "node --import tsx scripts/updater/refresh-aaguid-catalog.ts"
   },
   "version": "1.8.4"
 }

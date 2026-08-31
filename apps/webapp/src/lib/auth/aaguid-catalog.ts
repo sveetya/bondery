@@ -115,7 +115,7 @@ export function lookupBetterAuthAuthenticatorName(aaguid: unknown): string | nul
   if (!key) {
     return null;
   }
-  const name = betterAuthAuthenticatorNames[key];
+  const name = Reflect.get(betterAuthAuthenticatorNames, key);
   return typeof name === "string" && name.length > 0 ? name : null;
 }
 

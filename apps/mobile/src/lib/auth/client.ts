@@ -7,7 +7,11 @@ import { API_URL, HAS_MOBILE_CONFIG } from "../config";
 
 const webStorage = {
   getItem: (key: string) => localStorage.getItem(key),
+  getItemAsync: async (key: string) => localStorage.getItem(key),
   setItem: (key: string, value: string) => {
+    localStorage.setItem(key, value);
+  },
+  setItemAsync: async (key: string, value: string) => {
     localStorage.setItem(key, value);
   },
 };
