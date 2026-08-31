@@ -180,7 +180,7 @@ export type DeployExample = {
 /** Same shape as `DeployExample` — ops marketing stack (`deploy/ops/.env.example`). */
 export type OpsExample = DeployExample;
 
-/** Infisical → Dokploy sync payload (`sync-infisical-to-dokploy.mjs`). */
+/** Infisical → Dokploy sync payload (`deploy/scripts/sync-infisical-to-dokploy.mjs`). */
 export type DokploySync = {
   /** Dokploy compose stacks that receive this key on sync */
   targets: readonly DokploySyncTarget[];
@@ -417,6 +417,22 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     requiredIn: ["development", "production"],
     secret: false,
     targets: [t("api"), t("webapp"), t("website"), t("mobile")],
+  },
+  {
+    canonical: "BONDERY_PUBLIC_WEBAUTHN_RP_ID",
+    deployExample: {
+      commented: true,
+      group: "Better Auth",
+      include: true,
+      value: "",
+    },
+    description:
+      "Optional WebAuthn rpID override for self-host DNS that does not match the cookie parent domain. Do not set for hosted Bondery. Never an IP.",
+    exampleValue: "",
+    group: "Public URLs",
+    requiredIn: [],
+    secret: false,
+    targets: [t("api")],
   },
   {
     canonical: "BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS",

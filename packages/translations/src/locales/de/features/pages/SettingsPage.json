@@ -41,6 +41,10 @@
     "TestSnippetWindows": "Windows",
     "Title": "API keys"
   },
+  "Apps": {
+    "Description": "Verwalte mit deinem Konto verbundene Bondery-Apps.",
+    "Title": "Apps"
+  },
   "DataManagement": {
     "AccountDeleted": "Konto gelöscht",
     "BonderyImport": {
@@ -336,9 +340,10 @@
     "LinkedButCannotUnlink": "Verknüpft, kann aber nicht getrennt werden, da es der einzige Anbieter ist",
     "LinkedIn": "LinkedIn",
     "LinkingAccount": "Konto wird verknüpft...",
-    "MustHaveOneMethod": "Du musst mindestens eine Anmeldemethode haben",
+    "MustHaveOneMethod": "Behalte mindestens ein verbundenes Konto (GitHub oder LinkedIn), damit du dich anmelden kannst, wenn du deine Passkeys verlierst.",
     "NotConnected": "Nicht verbunden",
     "NotInstalled": "Nicht installiert",
+    "ProviderUnavailable": "{provider} wurde nicht korrekt als OAuth-Anbieter konfiguriert. Hinterlege gültige OAuth-Zugangsdaten und starte den API-Server neu.",
     "PwaInstallModal": {
       "Close": "Schließen",
       "InstallButton": "Desktop-App installieren",
@@ -402,8 +407,6 @@
   },
   "Profile": {
     "AttachProfilePhoto": "Nur Bilddateien sind erlaubt, und die Datei darf 5 MB nicht überschreiten",
-    "BonderyApplications": "Bondery-Anwendungen",
-    "BonderyApplicationsDescription": "Verwalte mit deinem Konto verbundene Bondery-Apps.",
     "Cancel": "Abbrechen",
     "ConfirmPhoto": "Ja, Profilfoto ändern",
     "ConnectedAccounts": "Verknüpfte Konten",
@@ -423,6 +426,25 @@
     "MiddleNames": "Zweitnamen",
     "NameUpdateError": "Name konnte nicht aktualisiert werden",
     "NameUpdateSuccess": "Name erfolgreich aktualisiert",
+    "Passkeys": {
+      "Add": "Passkey hinzufügen",
+      "CreateErrorDescription": "Bitte versuche es erneut.",
+      "CreateErrorTitle": "Passkey konnte nicht hinzugefügt werden",
+      "DeleteAriaLabel": "{name} löschen",
+      "DeleteMessage": "Mit diesem Passkey kannst du dich nicht mehr anmelden. Du kannst jederzeit einen neuen hinzufügen.",
+      "DeleteTitle": "{name} löschen?",
+      "Description": "Melde dich mit Passkeys an (etwa Fingerabdruck, Gesicht oder einem Sicherheitsschlüssel dieses Geräts).",
+      "EmptyTitle": "Noch keine Passkeys",
+      "FallbackName": "Passkey",
+      "LastUsed": "Zuletzt verwendet {time}",
+      "LessThanMinuteAgo": "Vor weniger als einer Minute",
+      "LimitReached": "Du hast die maximale Anzahl an Passkeys erreicht. Lösche einen ungenutzten Passkey, um einen neuen hinzuzufügen.",
+      "NameField": "Passkey-Name",
+      "NameTemplate": "{browser} auf {os}",
+      "NeverUsed": "Nie verwendet",
+      "Title": "Passkeys",
+      "UnsupportedTooltip": "Passkeys sind in diesem Browser nicht verfügbar."
+    },
     "PhotoUpdateError": "Foto konnte nicht hochgeladen werden",
     "PhotoUpdateSuccess": "Profilfoto erfolgreich aktualisiert",
     "PleaseWait": "Bitte warten",

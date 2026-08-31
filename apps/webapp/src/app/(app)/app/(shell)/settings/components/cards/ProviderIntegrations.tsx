@@ -1,12 +1,14 @@
 "use client";
 
 import { getUserFacingError } from "@bondery/helpers/api";
+import { isOAuthProviderEnabled } from "@bondery/helpers/auth/oauth-providers";
 import {
   errorNotificationTemplate,
   loadingNotificationTemplate,
   ModalTitle,
   successNotificationTemplate,
 } from "@bondery/mantine-next";
+import type { OAuthProviderId, OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { Group, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
@@ -28,6 +30,10 @@ import { openChromeExtensionModal } from "../modals/openChromeExtensionModal";
 import { openPwaInstallModal } from "../modals/openPwaInstallModal";
 import { IntegrationCard } from "./IntegrationCard";
 
+function providerKeyFor(provider: OAuthProviderId): string {
+  return INTEGRATION_PROVIDERS.find((item) => item.provider === provider)?.providerKey ?? provider;
+}
+
 interface UserIdentity {
   id: string;
   identity_id: string;
@@ -37,6 +43,8 @@ interface UserIdentity {
 
 interface ProviderIntegrationsProps {
   description?: string;
+  hideTitle?: boolean;
+  oauthProviders?: OAuthProvidersBitmap | null;
   providers: string[];
   showExtensionProvider?: boolean;
   showOAuthProviders?: boolean;
@@ -48,9 +56,11 @@ interface ProviderIntegrationsProps {
 export function ProviderIntegrations({
   providers: initialProviders,
   userIdentities,
+  oauthProviders = null,
   showOAuthProviders = true,
   showExtensionProvider = true,
   showPWAProvider = true,
+  hideTitle = false,
   title,
   description,
 }: ProviderIntegrationsProps) {
@@ -149,7 +159,10 @@ export function ProviderIntegrations({
 
   const confirmUnlinkProvider = async (provider: "github" | "linkedin") => {
     try {
-      const targetIdentity = userIdentities.find((identity) => identity.provider === provider);
+      const targetIdentity = userIdentities.find(
+        (identity) =>
+          identity.provider === provider || identity.provider === providerKeyFor(provider),
+      );
 
       if (!targetIdentity) {
         throw new Error(`${provider} identity not found`);
@@ -167,7 +180,7 @@ export function ProviderIntegrations({
         throw new Error(error.message);
       }
 
-      setProviders((prev) => prev.filter((p) => p !== provider));
+      setProviders((prev) => prev.filter((p) => p !== provider && p !== providerKeyFor(provider)));
 
       notifications.show(
         successNotificationTemplate({
@@ -188,10 +201,12 @@ export function ProviderIntegrations({
   return (
     <Stack gap="md">
       <div>
-        <Text fw={500} mb={4} size="sm">
-          {title || t("ConnectedAccounts")}
-        </Text>
-        <Text c="dimmed" size="xs">
+        {hideTitle ? null : (
+          <Text fw={500} mb={4} size="sm">
+            {title || t("ConnectedAccounts")}
+          </Text>
+        )}
+        <Text c="dimmed" mb={hideTitle ? 0 : undefined} size="xs">
           {description || t("ConnectedAccountsDescription")}
         </Text>
       </div>
@@ -199,17 +214,25 @@ export function ProviderIntegrations({
         {showOAuthProviders
           ? INTEGRATION_PROVIDERS.map(({ provider, providerKey, iconColor }) => {
               const icon = provider === "github" ? IconBrandGithub : IconBrandLinkedin;
-              const isConnected = providers.includes(providerKey);
-              const isDisabled = providers.length === 1 && isConnected;
+              const displayName =
+                provider === "github" ? tIntegration("GitHub") : tIntegration("LinkedIn");
+              const isConnected = providers.includes(provider) || providers.includes(providerKey);
+              const lastProviderCannotUnlink = isConnected && providers.length === 1;
+              const canLink = isOAuthProviderEnabled(oauthProviders, provider);
+              const cannotLink = !isConnected && !canLink;
+              const isDisabled = lastProviderCannotUnlink || cannotLink;
+              const disabledDescription = lastProviderCannotUnlink
+                ? tIntegration("LinkedButCannotUnlink")
+                : cannotLink
+                  ? tIntegration("ProviderUnavailable", { provider: displayName })
+                  : undefined;
 
               return (
                 <IntegrationCard
                   badgeLabel={
                     isConnected ? tIntegration("Connected") : tIntegration("NotConnected")
                   }
-                  displayName={
-                    provider === "github" ? tIntegration("GitHub") : tIntegration("LinkedIn")
-                  }
+                  displayName={displayName}
                   icon={icon}
                   iconColor={iconColor}
                   isConnected={isConnected}
@@ -220,28 +243,17 @@ export function ProviderIntegrations({
                       return;
                     }
                     if (isConnected) {
-                      handleUnlinkClick(provider as "github" | "linkedin");
+                      handleUnlinkClick(provider);
                     } else {
-                      linkProvider(provider as "github" | "linkedin");
+                      linkProvider(provider);
                     }
                   }}
                   provider={provider}
                   tooltip={
-                    isDisabled
-                      ? tIntegration("LinkedButCannotUnlink")
-                      : isConnected
-                        ? tIntegration("ClickToUnlink", {
-                            provider:
-                              provider === "github"
-                                ? tIntegration("GitHub")
-                                : tIntegration("LinkedIn"),
-                          })
-                        : tIntegration("ClickToLink", {
-                            provider:
-                              provider === "github"
-                                ? tIntegration("GitHub")
-                                : tIntegration("LinkedIn"),
-                          })
+                    disabledDescription ??
+                    (isConnected
+                      ? tIntegration("ClickToUnlink", { provider: displayName })
+                      : tIntegration("ClickToLink", { provider: displayName }))
                   }
                 />
               );

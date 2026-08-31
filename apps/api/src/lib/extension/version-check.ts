@@ -9,7 +9,12 @@
  * use Bearer and bypass extension version enforcement.
  */
 
-import { CHROME_EXTENSION_URL, isVersionBelow, MIN_EXTENSION_VERSION } from "@bondery/helpers";
+import {
+  API_ROUTES,
+  CHROME_EXTENSION_URL,
+  isVersionBelow,
+  MIN_EXTENSION_VERSION,
+} from "@bondery/helpers";
 import {
   BETTER_AUTH_BASE_PATH,
   betterAuthAuthorizationServerMetadataPath,
@@ -25,7 +30,11 @@ function websiteBaseUrl(): string {
 
 function isPublicInfraPath(url: string): boolean {
   const path = url.split("?")[0] ?? url;
-  return path.startsWith("/health/") || path === "/extension/manifest";
+  return (
+    path.startsWith("/health/") ||
+    path === "/extension/manifest" ||
+    path === API_ROUTES.OAUTH_PROVIDERS
+  );
 }
 
 function isPublicAuthPath(url: string): boolean {

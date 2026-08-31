@@ -46,7 +46,7 @@ jobs:
       - uses: ./.github/actions/shared/derive-public-urls
 
       - name: Verify extension CI env
-        run: node scripts/check-ci-infisical.mjs extension
+        run: node .github/scripts/check-ci-infisical.mjs extension
 
       - uses: ./.github/actions/shared/setup-pnpm
 
@@ -86,7 +86,7 @@ jobs:
             exit 1
           fi
 
-          node scripts/write-chrome-signing-key.mjs "$PRIVATE_KEY_PATH"
+          node apps/chrome-extension/scripts/write-chrome-signing-key.mjs "$PRIVATE_KEY_PATH"
           openssl pkcs8 -topk8 -nocrypt -in "$PRIVATE_KEY_PATH" -out "$PKCS8_PATH"
           openssl pkey -in "$PKCS8_PATH" -pubout -out "$PUBLIC_KEY_PATH"
           node -e "const fs=require('fs'); const {createPrivateKey}=require('crypto'); createPrivateKey(fs.readFileSync(process.argv[1]));" "$PKCS8_PATH"

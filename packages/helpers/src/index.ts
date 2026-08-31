@@ -80,6 +80,7 @@ export {
 } from "#phone/index.js";
 export type { ParsedInstagramName, ParseInstagramUsernameInput } from "#platform/index.js";
 export { extractLinkedinId, linkedinCompanyUrl, parseInstagramUsername } from "#platform/index.js";
+export { BONDERY_PGP_PUBLIC_KEY, buildSecurityTxt } from "#security/index.js";
 export type {
   AnalyzeSocialFieldInputOptions,
   AnalyzeSocialFieldInputResult,

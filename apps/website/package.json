@@ -57,12 +57,12 @@
     "build": "next build",
     "check:docs:mdx": "tsx scripts/check-docs-mdx.ts",
     "check:env": "tsx scripts/check-env.ts",
-    "check:types": "node ../../scripts/tsc-native.mjs --noEmit",
+    "check:types": "node ../../scripts/dev/tsc-native.mjs --noEmit",
     "dev": "next dev --port 26630",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "generate:api-docs": "tsx scripts/generate-api-docs.ts",
     "prebuild": "cross-env NODE_ENV=production pnpm run generate-icons && pnpm run generate:api-docs",
-    "predev": "node ../../scripts/kill-website-dev.mjs && cross-env NODE_ENV=development pnpm run generate-icons && pnpm run generate:api-docs",
+    "predev": "node ../../scripts/dev/kill-website-dev.mjs && cross-env NODE_ENV=development pnpm run generate-icons && pnpm run generate:api-docs",
     "start": "next start"
   },
   "version": "1.8.4"

@@ -3,17 +3,20 @@
 import { getAuthUserFacingError } from "@bondery/helpers/api";
 import { WEBAPP_ROUTES } from "@bondery/helpers/globals/paths";
 import { errorNotificationTemplate } from "@bondery/mantine-next";
+import type { OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SocialLoginCard } from "@/app/(app)/login/components/SocialLoginCard";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
+import { notifyPasskeyLoginError } from "@/lib/auth/notify-passkey-login-error";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
 
 type OAuthLoginClientProps = {
   lastUsedLoginMethod: string | null;
+  oauthProviders: OAuthProvidersBitmap | null;
 };
 
 /**
@@ -21,7 +24,7 @@ type OAuthLoginClientProps = {
  * independent of the webapp's own session. Always shows the sign-in buttons;
  * never redirects based on any pre-existing webapp state.
  */
-export function OAuthLoginClient({ lastUsedLoginMethod }: OAuthLoginClientProps) {
+export function OAuthLoginClient({ lastUsedLoginMethod, oauthProviders }: OAuthLoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
   const [loading, setLoading] = useState(false);
@@ -86,10 +89,37 @@ export function OAuthLoginClient({ lastUsedLoginMethod }: OAuthLoginClientProps)
     }
   };
 
+  const handlePasskeyLogin = async () => {
+    try {
+      setLoading(true);
+      await setLocalePreferencesCookie();
+
+      const fallbackUrl = `${webappUrl.replace(/\/$/, "")}${WEBAPP_ROUTES.HOME}`;
+      const { data, error } = await authClient.signIn.passkey();
+
+      if (error) {
+        notifyPasskeyLoginError(error, t);
+        return;
+      }
+
+      const redirectUrl =
+        data && typeof data === "object" && "url" in data && typeof data.url === "string"
+          ? data.url
+          : fallbackUrl;
+      window.location.assign(redirectUrl);
+    } catch (err) {
+      notifyPasskeyLoginError(err, t);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <SocialLoginCard
       lastUsedLoginMethod={lastUsedLoginMethod}
       loading={loading}
+      oauthProviders={oauthProviders}
+      onPasskeyClick={() => void handlePasskeyLogin()}
       onProviderClick={handleOAuthLogin}
       websiteUrl={websiteUrl}
     />

@@ -44,6 +44,8 @@ export const settingsKeys = {
   apiKeys: () => [...settingsKeys.all, "api-keys"] as const,
   me: () => [...settingsKeys.all, "me"] as const,
   mePerson: (avatarPreset = "small") => [...settingsKeys.all, "me-person", avatarPreset] as const,
+  oauthProviders: () => [...settingsKeys.all, "oauth-providers"] as const,
+  passkeys: () => [...settingsKeys.all, "passkeys"] as const,
   subscription: () => [...settingsKeys.all, "subscription"] as const,
 };
 

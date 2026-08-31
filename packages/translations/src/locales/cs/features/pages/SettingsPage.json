@@ -41,6 +41,10 @@
     "TestSnippetWindows": "Windows",
     "Title": "API klíče"
   },
+  "Apps": {
+    "Description": "Spravujte aplikace Bondery propojené s vaším účtem.",
+    "Title": "Aplikace"
+  },
   "DataManagement": {
     "AccountDeleted": "Účet smazán",
     "BonderyImport": {
@@ -344,9 +348,10 @@
     "LinkedButCannotUnlink": "Propojeno, ale nelze odpojit, protože je to jediný poskytovatel",
     "LinkedIn": "LinkedIn",
     "LinkingAccount": "Propojování účtu...",
-    "MustHaveOneMethod": "Musíte mít alespoň jednu metodu ověření",
+    "MustHaveOneMethod": "Ponechte alespoň jeden propojený účet (GitHub nebo LinkedIn), abyste se mohli přihlásit, když přístupové klíče ztratíte.",
     "NotConnected": "Nepřipojeno",
     "NotInstalled": "Není nainstalováno",
+    "ProviderUnavailable": "{provider} nebyl správně nastaven jako OAuth poskytovatel. Zadejte platné OAuth údaje a restartujte API server.",
     "PwaInstallModal": {
       "Close": "Zavřít",
       "InstallButton": "Nainstalovat desktopovou aplikaci",
@@ -410,8 +415,6 @@
   },
   "Profile": {
     "AttachProfilePhoto": "Připojte svou profilovou fotku, soubor nesmí přesáhnout 5MB",
-    "BonderyApplications": "Bondery aplikace",
-    "BonderyApplicationsDescription": "Spravujte aplikace Bondery propojené s vaším účtem.",
     "Cancel": "Ne, zrušit",
     "ConfirmPhoto": "Ano, změnit profilovou fotku",
     "ConnectedAccounts": "Připojené účty",
@@ -431,6 +434,25 @@
     "MiddleNames": "Prostřední jména",
     "NameUpdateError": "Aktualizace jména selhala",
     "NameUpdateSuccess": "Jméno úspěšně aktualizováno",
+    "Passkeys": {
+      "Add": "Přidat přístupový klíč",
+      "CreateErrorDescription": "Zkuste to prosím znovu.",
+      "CreateErrorTitle": "Přístupový klíč se nepodařilo přidat",
+      "DeleteAriaLabel": "Smazat {name}",
+      "DeleteMessage": "Tímto přístupovým klíčem se už nepřihlásíte. Nový můžete přidat kdykoli.",
+      "DeleteTitle": "Smazat {name}?",
+      "Description": "Přihlaste se přístupovými klíči (třeba otiskem prstu, obličejem nebo bezpečnostním klíčem tohoto zařízení).",
+      "EmptyTitle": "Zatím žádné přístupové klíče",
+      "FallbackName": "Přístupový klíč",
+      "LastUsed": "Naposledy použito {time}",
+      "LessThanMinuteAgo": "Před méně než minutou",
+      "LimitReached": "Dosáhli jste maximálního počtu přístupových klíčů. Smažte nepoužívaný přístupový klíč, abyste mohli přidat nový.",
+      "NameField": "Název přístupového klíče",
+      "NameTemplate": "{browser} na {os}",
+      "NeverUsed": "Nikdy nepoužito",
+      "Title": "Přístupové klíče",
+      "UnsupportedTooltip": "Přístupové klíče v tomto prohlížeči nejsou k dispozici."
+    },
     "PhotoUpdateError": "Nahrání fotky selhalo",
     "PhotoUpdateSuccess": "Profilová fotka úspěšně aktualizována",
     "PleaseWait": "Prosím čekejte",

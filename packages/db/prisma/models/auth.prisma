@@ -17,6 +17,7 @@ model User {
 
   sessions Session[]
   accounts Account[]
+  passkeys Passkey[]
 
   // App-domain relations (FK preserved from the Supabase migration: user_id -> user.id)
   userSettings              UserSettings?
@@ -119,4 +120,25 @@ model Jwks {
   crv        String?
 
   @@map("jwks")
+}
+
+/// Better Auth `@better-auth/passkey` storage. Runtime IDs come from BA
+/// `generateId` / the Prisma UUIDv7 extension; `@default(uuid())` is metadata.
+model Passkey {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String?
+  publicKey    String    @map("public_key")
+  userId       String    @map("user_id") @db.Uuid
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String    @unique @map("credential_id")
+  counter      Int
+  deviceType   String    @map("device_type")
+  backedUp     Boolean   @map("backed_up")
+  transports   String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  lastUsedAt   DateTime? @map("last_used_at")
+  aaguid       String?
+
+  @@index([userId])
+  @@map("passkey")
 }

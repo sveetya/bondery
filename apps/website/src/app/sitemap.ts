@@ -46,6 +46,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
       url: `${WEBSITE_URL}${WEBSITE_ROUTES.TERMS}`,
     },
+    {
+      changeFrequency: "yearly",
+      lastModified: now,
+      priority: 0.5,
+      url: `${WEBSITE_URL}${WEBSITE_ROUTES.SECURITY}`,
+    },
     ...blogCategoryEntries,
     ...blogPostEntries,
   ];

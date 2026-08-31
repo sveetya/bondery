@@ -1436,6 +1436,136 @@ paths:
                       ok: true
                   status: ok
                   timestamp: 2026-01-15T12:00:00.000Z
+  /oauth-providers:
+    get:
+      tags:
+        - Auth
+      description: Public snapshot of which social sign-in providers are configured on this API process. Booleans only — no
+        client ids, secrets, or reasons. The bitmap is computed at API boot from OAuth credentials; restart the API
+        after changing them. Unauthenticated. Cached by clients for up to 60 seconds.
+      responses:
+        "200":
+          description: Configured social OAuth providers
+          content:
+            application/json:
+              example:
+                oauthProviders:
+                  github: true
+                  linkedin: true
+              schema:
+                type: object
+                properties:
+                  oauthProviders:
+                    type: object
+                    properties:
+                      github:
+                        type: boolean
+                      linkedin:
+                        type: boolean
+                    required:
+                      - github
+                      - linkedin
+                    additionalProperties: false
+                required:
+                  - oauthProviders
+                additionalProperties: false
+                example:
+                  oauthProviders:
+                    github: true
+                    linkedin: true
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              example:
+                error:
+                  code: validation_error
+                  doc_url: https://usebondery.com/docs/api/errors/validation_error
+                  message: body.email Invalid input
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: invalid_request_error
+                  param: body.email
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              example:
+                error:
+                  code: auth_required
+                  doc_url: https://usebondery.com/docs/api/errors/auth_required
+                  message: Unauthorized - Please log in
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authentication_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              example:
+                error:
+                  code: admin_required
+                  doc_url: https://usebondery.com/docs/api/errors/admin_required
+                  message: Forbidden
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: authorization_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Resource not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: contact_not_found
+                  doc_url: https://usebondery.com/docs/api/errors/contact_not_found
+                  message: Contact not found
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: not_found_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              example:
+                error:
+                  code: rate_limit_exceeded
+                  doc_url: https://usebondery.com/docs/api/errors/rate_limit_exceeded
+                  message: Rate limit exceeded. Retry in 42 seconds.
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: rate_limit_error
+                  retry_after: 42
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                error:
+                  code: internal_server_error
+                  doc_url: https://usebondery.com/docs/api/errors/internal_server_error
+                  message: Internal Server Error
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: api_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "503":
+          description: Service unavailable
+          content:
+            application/json:
+              example:
+                error:
+                  code: service_unavailable
+                  doc_url: https://usebondery.com/docs/api/errors/service_unavailable
+                  message: Service unavailable
+                  request_id: 00000000-0000-0000-0000-000000000000
+                  type: service_unavailable_error
+              schema:
+                $ref: "#/components/schemas/ApiError"
   /contacts:
     get:
       tags:
@@ -21909,6 +22039,10 @@ tags:
       minute, rate limited to five requests per minute per client; returns 503 when critical dependencies are
       unavailable.
     name: Health
+  - description: Public authentication metadata. `GET /oauth-providers` reports which social identity providers are
+      configured on this API process (booleans only). Social sign-in and account linking still go through Better Auth at
+      `/auth/*`.
+    name: Auth
   - description: Contact management operations
     name: Contacts
   - description: Group management operations

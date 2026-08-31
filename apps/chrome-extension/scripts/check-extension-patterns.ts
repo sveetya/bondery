@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const report = createCheck("check-extension-patterns");
 

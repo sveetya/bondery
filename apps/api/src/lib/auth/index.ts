@@ -18,9 +18,11 @@ import { apiKey } from "@better-auth/api-key";
 import { expo } from "@better-auth/expo";
 import { i18n } from "@better-auth/i18n";
 import { oauthProvider } from "@better-auth/oauth-provider";
+import { passkey } from "@better-auth/passkey";
 import { prisma } from "@bondery/db";
 import { PLATFORM_ADMIN_ROLE, PLATFORM_USER_ROLE } from "@bondery/helpers/auth/platform-admin";
 import { resolveCookieDomain } from "@bondery/helpers/auth/resolve-cookie-domain";
+import { resolveWebAuthnRp } from "@bondery/helpers/auth/resolve-webauthn-rp";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import { generateId } from "@bondery/helpers/ids";
 import { API_KEY_PREFIX, API_KEY_START_DISPLAY_LENGTH } from "@bondery/schemas";
@@ -35,6 +37,8 @@ import { jwt } from "better-auth/plugins/jwt";
 import { resolveRuntimeTrustedOrigins } from "../platform/trusted-origins.js";
 import { buildAuthTranslations } from "./build-auth-translations.js";
 import { isPlatformAdmin } from "./is-platform-admin.js";
+import { oauthSocialProviders } from "./oauth-provider-config.js";
+import { passkeyLimit } from "./passkey-limit.js";
 import { platformAdminAc, platformAdminRoles } from "./platform-admin-access.js";
 import { provisionNewUser } from "./provision-new-user.js";
 import { resolveAuthLocale } from "./resolve-auth-locale.js";
@@ -43,6 +47,7 @@ import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
 import { resolveSignupMethodFromProviderId } from "./resolve-signup-method.js";
 import { createBetterAuthSecondaryStorage } from "./secondary-storage.js";
 import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
+import { touchPasskeyLastUsed } from "./touch-passkey-last-used.js";
 
 export { isPlatformAdmin };
 
@@ -116,6 +121,33 @@ function resolveUseSecureCookies(): boolean {
 
 const crossSubdomainCookieDomain = resolveCookieDomain(process.env.BONDERY_PUBLIC_WEBAPP_URL);
 
+const webAuthnRp = resolveWebAuthnRp({
+  rpIdOverride: process.env.BONDERY_PUBLIC_WEBAUTHN_RP_ID,
+  webappUrl: process.env.BONDERY_PUBLIC_WEBAPP_URL,
+});
+
+/**
+ * Always register the plugin so Better Auth infers passkey + OAuth/API-key
+ * endpoints. IP webapp hosts cannot be a WebAuthn rpID; fall back to localhost
+ * so boot succeeds and ceremonies fail closed on origin mismatch.
+ */
+const webAuthnRpConfig = webAuthnRp.ok
+  ? { origin: webAuthnRp.origin, rpID: webAuthnRp.rpID }
+  : { origin: "http://localhost", rpID: "localhost" };
+
+/**
+ * Better Auth 1.7.1 `mergeSchema` only remaps existing field names. Assign so
+ * adapter `transformOutput` keeps `lastUsedAt` on `listUserPasskeys`.
+ */
+function withPasskeyLastUsedAtField(
+  plugin: ReturnType<typeof passkey>,
+): ReturnType<typeof passkey> {
+  Object.assign(plugin.schema.passkey.fields, {
+    lastUsedAt: { required: false, type: "date" },
+  });
+  return plugin;
+}
+
 export const auth = betterAuth({
   account: {
     // AES-256-GCM for GitHub/LinkedIn tokens in `Account`. Better Auth
@@ -125,6 +157,12 @@ export const auth = betterAuth({
     // App code must not read Account.accessToken/refreshToken/idToken via
     // Prisma — use auth.api.getAccessToken if a plaintext provider token is needed.
     encryptOAuthTokens: true,
+    // Prisma `Account.providerAccountId` (`account_id`). Better Auth 1.7.1 still
+    // queries the logical field `accountId`; without this map, GitHub/LinkedIn
+    // callback hits PrismaClientValidationError.
+    fields: {
+      accountId: "providerAccountId",
+    },
   },
 
   advanced: {
@@ -289,6 +327,22 @@ export const auth = betterAuth({
         shouldStore: true,
       },
     }),
+    withPasskeyLastUsedAtField(
+      passkey({
+        authentication: {
+          afterVerification: async ({ clientData }) => {
+            await touchPasskeyLastUsed(clientData);
+          },
+        },
+        origin: webAuthnRpConfig.origin,
+        registration: {
+          requireSession: true,
+        },
+        rpID: webAuthnRpConfig.rpID,
+        rpName: "Bondery",
+      }),
+    ),
+    passkeyLimit(),
     lastLoginMethod({ storeInDatabase: false }),
   ],
   secondaryStorage: createBetterAuthSecondaryStorage(),
@@ -302,17 +356,9 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // refresh cookie once per day of activity
   },
 
-  socialProviders: {
-    github: {
-      clientId: process.env.BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID ?? "",
-      clientSecret: process.env.BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET ?? "",
-    },
-    // LinkedIn OIDC (`openid`, `profile`, `email` scopes).
-    linkedin: {
-      clientId: process.env.BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_ID ?? "",
-      clientSecret: process.env.BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET ?? "",
-    },
-  },
+  // Only include IdPs that have both client id and secret at boot.
+  // LinkedIn uses Better Auth's OIDC provider (`openid`, `profile`, `email`).
+  socialProviders: oauthSocialProviders,
   trustedOrigins: resolveRuntimeTrustedOrigins(),
 });
 

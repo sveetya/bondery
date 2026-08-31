@@ -24,7 +24,8 @@ pnpm exec biome ci .
 |---------------|----------|
 | Any TS/JS across monorepo | `pnpm run check:types` (or scoped `-w` only if change is isolated) |
 | Package import patterns | `pnpm run check:package-imports` |
-| `packages/helpers/src/env/**`, `.env.example`, turbo env | `pnpm run env -- --check` |
+| `packages/helpers/src/env/**`, `scripts/env/**`, `.env.example`, turbo env | `pnpm run env -- --check` |
+| `scripts/updater/**` | `pnpm run update:aaguid-catalog` (run every file in that folder) |
 | `docs/**` (non-website) | `pnpm run check-docs` |
 | `apps/website/**` MDX/docs | `pnpm run check-docs` |
 | `apps/api/**` routes/schemas, `packages/schemas/**` | `pnpm run check:openapi`, `pnpm run check:contracts` |

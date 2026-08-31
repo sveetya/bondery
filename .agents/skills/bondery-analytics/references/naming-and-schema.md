@@ -86,6 +86,7 @@ Use consistent categories so events group in PostHog:
 | `feedback` | NPS, product feedback |
 | `signup_flow` | Registration, activation (growth) |
 | `account_settings` | Settings, preferences |
+| `auth` | Sign-in and session lifecycle |
 | `navigation` | Page views, shell navigation |
 | `billing` | Subscription, checkout (server-preferred) |
 

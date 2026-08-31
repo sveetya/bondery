@@ -709,6 +709,24 @@
     "./locale/supported-locales.json": {
       "default": "./dist/locale/supported-locales.json"
     },
+    "./oauth-providers": {
+      "default": "./dist/oauth-providers/index.js",
+      "import": "./dist/oauth-providers/index.js",
+      "node": "./dist/oauth-providers/index.js",
+      "types": "./src/oauth-providers/index.ts"
+    },
+    "./oauth-providers/schema": {
+      "default": "./dist/oauth-providers/schema.js",
+      "import": "./dist/oauth-providers/schema.js",
+      "node": "./dist/oauth-providers/schema.js",
+      "types": "./src/oauth-providers/schema.ts"
+    },
+    "./oauth-providers/types": {
+      "default": "./dist/oauth-providers/types.js",
+      "import": "./dist/oauth-providers/types.js",
+      "node": "./dist/oauth-providers/types.js",
+      "types": "./src/oauth-providers/types.ts"
+    },
     "./openapi/document-opts": {
       "default": "./dist/openapi/document-opts.js",
       "import": "./dist/openapi/document-opts.js",
@@ -1018,7 +1036,7 @@
   "name": "@bondery/schemas",
   "private": true,
   "scripts": {
-    "build": "rimraf dist tsconfig.tsbuildinfo && tsc && node scripts/copy-locale-json.mjs && node ../../scripts/rewrite-package-hash-imports-in-dist.mjs schemas",
+    "build": "rimraf dist tsconfig.tsbuildinfo && tsc && node scripts/copy-locale-json.mjs && node ../../scripts/pkg/rewrite-package-hash-imports-in-dist.mjs schemas",
     "check:contracts": "pnpm run check:contracts:no-internal-deps && pnpm run check:contracts:no-init-cycles && pnpm run check:contracts:no-zod-infer-exports && pnpm run build && pnpm run check:contracts:assertions && pnpm run check:contracts:openapi-examples",
     "check:contracts:assertions": "pnpm exec tsx ./src/contracts.assertions.ts",
     "check:contracts:no-init-cycles": "node scripts/check-contracts-no-init-cycles.mjs",

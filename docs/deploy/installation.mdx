@@ -53,9 +53,12 @@ Requires Docker Compose **v2.38+** (`pre_start` support). Check with `docker com
 
 ```bash
 curl -sf https://api.example.com/health/ready
+curl -sf https://api.example.com/oauth-providers
 curl -sf https://app.example.com/health/ready
 curl -sf https://app.example.com/api/health/ready
 ```
+
+GitHub and LinkedIn sign-in are optional. Leave both `BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID` / `_SECRET` (or the LinkedIn pair) empty to keep that method unavailable. After you set **both** values, restart the API — the public bitmap is frozen at boot. Removing a provider locks out people who only sign in with it.
 
 Manually test: OAuth login, API key auth, avatar upload, and a reminder if you use scheduled jobs.
 

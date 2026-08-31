@@ -1,3 +1,4 @@
+import { isApiErrorCode } from "@bondery/schemas/errors";
 import { isApiError } from "./ApiError.js";
 import {
   getBetterAuthUserMessage,
@@ -15,7 +16,14 @@ export function getAuthUserFacingError(error: unknown, t: ApiErrorTranslateFn): 
   }
 
   if (isBetterAuthClientError(error)) {
-    return getBetterAuthUserMessage(error.code, t);
+    const { code } = error;
+    if (isApiErrorCode(code)) {
+      return t(`errors.api.${code}`, {
+        defaultValue: t("errors.unknown"),
+      });
+    }
+
+    return getBetterAuthUserMessage(code, t);
   }
 
   return getUserFacingError(error, t);

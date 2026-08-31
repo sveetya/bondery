@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { applyPostHogConsentState, captureEvent, posthog } from "@/lib/analytics/client";
 import { createWebappAuthClient } from "@/lib/auth/client";
+import { resolveAnalyticsLoginMethod } from "@/lib/auth/last-login-method";
 import { useSettingsQuery } from "@/lib/query/hooks/useSettings";
 
 const SESSION_CREATE_KEY = "bondery:auth:session_create_fired";
@@ -38,7 +39,11 @@ export function ProductAnalyticsShellSync() {
       }
 
       if (typeof window !== "undefined" && !sessionStorage.getItem(SESSION_CREATE_KEY)) {
-        captureEvent("auth:session_create");
+        const loginMethod = resolveAnalyticsLoginMethod(authClient.getLastUsedLoginMethod());
+        captureEvent(
+          "auth:session_create",
+          loginMethod ? { login_method: loginMethod } : undefined,
+        );
         sessionStorage.setItem(SESSION_CREATE_KEY, "1");
       }
     })();

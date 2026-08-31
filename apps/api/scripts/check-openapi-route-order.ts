@@ -13,7 +13,7 @@ import {
   OPENAPI_TAG_ORDER,
 } from "@bondery/schemas/openapi/route-order";
 import { parse } from "yaml";
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const check = createCheck("check-openapi-route-order");
 

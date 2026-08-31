@@ -1,0 +1,31 @@
+---
+title: oauth_provider_not_configured
+description: OAuth Provider Not Configured
+---
+
+## When this happens
+
+The client asked Better Auth to start social sign-in or account linking for a provider that this API process does not have credentials for.
+
+## What your integration should do
+
+Call `GET /oauth-providers` and disable login/link for providers whose boolean is `false`. Do not retry the same provider until the API has been restarted with both OAuth env vars set.
+
+## What end users should see
+
+Translate with `common.errors.api.oauth_provider_not_configured`. Never surface the raw API `message`.
+
+## Response fields
+
+| Property | Value |
+|----------|-------|
+| **Type** | `invalid_request_error` |
+| **HTTP status** | 400 |
+| **code** | `oauth_provider_not_configured` |
+| **doc_url** | `/docs/api/errors/oauth_provider_not_configured` |
+
+The API `message` field is for developers debugging in logs. Product UI must key off `code` (and `details` for validation).
+
+## Source references
+
+- `apps/api/src/lib/auth/routes.ts`

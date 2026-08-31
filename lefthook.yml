@@ -5,15 +5,9 @@ pre-commit:
       glob:
         - "package.json"
         - "packages/helpers/src/env/manifest.ts"
-        - "scripts/env.ts"
-        - "scripts/env-manifest.ts"
-        - "scripts/env-deploy-example.ts"
-        - "scripts/env-ops-example.ts"
-        - "scripts/env-plausible-example.ts"
-        - "scripts/generate-env-examples.mjs"
-        - "scripts/env-sync.mjs"
-        - "scripts/sync-version.mjs"
-        - "scripts/check-versions.mjs"
+        - "scripts/env/**"
+        - "scripts/pkg/sync-version.mjs"
+        - "scripts/check/check-versions.mjs"
       run: pnpm run env:sync -- --stage
     openapi:
       glob:
@@ -22,4 +16,4 @@ pre-commit:
       run: pnpm --filter api run generate:openapi
     biome:
       glob: "*"
-      run: node scripts/run-pre-commit-biome.mjs
+      run: node scripts/check/run-pre-commit-biome.mjs

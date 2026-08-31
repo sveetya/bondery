@@ -33,4 +33,4 @@ runs:
         if [ "$REDEPLOY" = "true" ]; then
           args+=(--redeploy)
         fi
-        node scripts/sync-infisical-to-dokploy.mjs "${args[@]}"
+        node deploy/scripts/sync-infisical-to-dokploy.mjs "${args[@]}"

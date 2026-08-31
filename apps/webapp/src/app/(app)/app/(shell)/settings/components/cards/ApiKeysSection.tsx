@@ -2,18 +2,7 @@
 
 import { DescribedSelect, errorNotificationTemplate, ModalTitle } from "@bondery/mantine-next";
 import { API_KEY_LIMITS, type ApiKeyCreated, type ApiKeyListItem } from "@bondery/schemas";
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Card,
-  CardSection,
-  Group,
-  Stack,
-  Text,
-  ThemeIcon,
-  Tooltip,
-} from "@mantine/core";
+import { Button, CardSection, Stack, Text, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconKey, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -28,6 +17,7 @@ import {
 } from "@/lib/query/hooks/useApiKeys";
 import { useApiKeyPermissionOptions } from "../../hooks/useApiKeyPermissionOptions";
 import { openApiKeyModal } from "../modals/openApiKeyModal";
+import { SettingsCredentialCard } from "./SettingsCredentialCard";
 import { SettingsSection } from "./SettingsSection";
 
 interface ApiKeysSectionProps {
@@ -43,7 +33,6 @@ interface ApiKeyRowProps {
   permissionOptions: ReturnType<typeof useApiKeyPermissionOptions>;
 }
 
-const LAST_USED_COLUMN_WIDTH = 180;
 const KEY_PREFIX_COLUMN_WIDTH = 160;
 const PERMISSION_SELECT_WIDTH = 172;
 
@@ -93,63 +82,46 @@ function ApiKeyRow({
   }, [apiKey.id, label, onLabelUpdated, t, updateMutation]);
 
   return (
-    <Card padding="sm" radius="md" withBorder>
-      <Group align="center" gap="sm" wrap="nowrap">
-        <ThemeIcon color="gray" radius="md" size="lg" variant="light">
-          <IconKey size={18} stroke={1.5} />
-        </ThemeIcon>
-
-        <Box style={{ flex: 1, minWidth: 120 }}>
-          <InlineEditableInput
-            aria-label={t("LabelField")}
-            isSaving={isSaving}
-            maxLength={API_KEY_LIMITS.labelMaxLength}
-            onBlur={() => void saveLabel()}
-            onChange={setLabel}
-            size="sm"
-            style={{ width: "100%" }}
-            value={label}
-          />
-        </Box>
-
-        <DescribedSelect
-          aria-label={t("PermissionField")}
-          data={permissionOptions}
-          disabled
-          miw={PERMISSION_SELECT_WIDTH}
-          onChange={() => {}}
-          style={{ flexShrink: 0 }}
-          value={apiKey.permission}
-          w={PERMISSION_SELECT_WIDTH}
-        />
-
-        <Text
-          c="dimmed"
-          ff="monospace"
-          size="xs"
-          style={{ flexShrink: 0 }}
-          truncate
-          w={KEY_PREFIX_COLUMN_WIDTH}
-        >
-          {apiKey.keyPrefix}
-        </Text>
-
-        <Text c="dimmed" size="xs" style={{ flexShrink: 0 }} truncate w={LAST_USED_COLUMN_WIDTH}>
-          {lastUsedLabel}
-        </Text>
-
-        <ActionIcon
-          aria-label={deleteAriaLabel}
-          color="red"
-          onClick={onDelete}
+    <SettingsCredentialCard
+      deleteAriaLabel={deleteAriaLabel}
+      icon={<IconKey size={18} stroke={1.5} />}
+      label={
+        <InlineEditableInput
+          aria-label={t("LabelField")}
+          isSaving={isSaving}
+          maxLength={API_KEY_LIMITS.labelMaxLength}
+          onBlur={() => void saveLabel()}
+          onChange={setLabel}
           size="sm"
-          style={{ flexShrink: 0 }}
-          variant="subtle"
-        >
-          <IconTrash size={16} />
-        </ActionIcon>
-      </Group>
-    </Card>
+          style={{ width: "100%" }}
+          value={label}
+        />
+      }
+      lastUsedLabel={lastUsedLabel}
+      onDelete={onDelete}
+    >
+      <DescribedSelect
+        aria-label={t("PermissionField")}
+        data={permissionOptions}
+        disabled
+        miw={PERMISSION_SELECT_WIDTH}
+        onChange={() => {}}
+        style={{ flexShrink: 0 }}
+        value={apiKey.permission}
+        w={PERMISSION_SELECT_WIDTH}
+      />
+
+      <Text
+        c="dimmed"
+        ff="monospace"
+        size="xs"
+        style={{ flexShrink: 0 }}
+        truncate
+        w={KEY_PREFIX_COLUMN_WIDTH}
+      >
+        {apiKey.keyPrefix}
+      </Text>
+    </SettingsCredentialCard>
   );
 }
 

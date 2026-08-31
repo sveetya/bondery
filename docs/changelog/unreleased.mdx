@@ -5,10 +5,26 @@ hidden: true
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Webapp: Sign in with a passkey from Settings and the login screen (up to 5 passkeys per account). Passkeys are a second authenticator alongside GitHub or LinkedIn — keep at least one of those connected for recovery. Login marks the last method you used; Settings shows authenticator names and last used.
+- Webapp: Settings → Apps is for LinkedIn and GitHub connections. Profile holds your contact card, email, sign-in methods, and passkeys.
+- Webapp, mobile, and self-host: GitHub and LinkedIn login/link disable when that provider isn’t configured on the API. Operators leave both OAuth env vars empty to keep a method off, then restart after setting them; `GET /oauth-providers` reports which are on. Removing a provider locks out people who only use it.
+- Webapp: Password managers that open `/.well-known/change-password` go to Settings (sign in if needed).
+- Self-host: Passkeys add a `passkey` table (picked up by the usual migrate). WebAuthn rpID follows the public webapp host; set `BONDERY_PUBLIC_WEBAUTHN_RP_ID` only when that host is not a valid rpID.
+
 ### 🐛 Fixed
 
 - Deploy: every Compose service publishes a unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` Docker DNS alias. Production and beta can share `dokploy-network` without colliding on `api`, `webapp`, or `seaweedfs-s3`. Webapp SSR uses `${prefix}-api`; the API uses `${prefix}-storage` for S3.
 - API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.
+
+### 🔄 Changed
+
+- Contributors: Root tooling scripts live under `scripts/env`, `scripts/check`, `scripts/dev`, `scripts/pkg`, `scripts/ops`, and `scripts/updater`. Chrome signing, CI Infisical checks, and Infisical→Dokploy sync sit with their owners (`apps/chrome-extension/scripts`, `.github/scripts`, `deploy/scripts`).
+
+### 🔒 Security
+
+- Website: Public security contact at `/security` (footer Legal), `/.well-known/security.txt`, and a PGP public key for encrypted reports. The webapp `security.txt` redirects to the marketing site. Root `SECURITY.md` points at usebondery.com/security.
 
 ### 🤖 CI
 

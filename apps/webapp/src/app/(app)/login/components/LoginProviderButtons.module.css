@@ -1,0 +1,7 @@
+.brandButton:disabled:not([data-loading]),
+.brandButton[data-disabled]:not([data-loading]) {
+  background: var(--login-brand-button-bg);
+  border-color: transparent;
+  color: var(--mantine-color-white);
+  opacity: 0.55;
+}

@@ -1,10 +1,16 @@
-import { WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
+import {
+  areAllOAuthProvidersDisabled,
+  isOAuthProviderEnabled,
+  parseOAuthProvidersResponse,
+} from "@bondery/helpers/auth/oauth-providers";
+import { API_ROUTES, WEBSITE_ROUTES } from "@bondery/helpers/globals/paths";
+import type { OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { IconBrandGithub, IconBrandLinkedin } from "@tabler/icons-react-native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { useLoginPageTranslations, useMobileAuthTranslations } from "@/lib/i18n/generated/hooks";
 import { authClient } from "../../src/lib/auth/client";
-import { WEBSITE_URL } from "../../src/lib/config";
+import { API_URL, MOBILE_OPACITY, WEBSITE_URL } from "../../src/lib/config";
 import { preloadMobileNamespaces } from "../../src/lib/i18n/preloadMobileNamespaces";
 import { OAUTH_PROVIDER_COLORS } from "../../src/theme/colors";
 import { MOBILE_TYPOGRAPHY } from "../../src/theme/tokens";
@@ -38,18 +44,57 @@ const PROVIDERS: Array<{
   },
 ];
 
+async function fetchOAuthProvidersBitmap(): Promise<OAuthProvidersBitmap | null> {
+  if (!API_URL) {
+    return null;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}${API_ROUTES.OAUTH_PROVIDERS}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) {
+      return null;
+    }
+    return parseOAuthProvidersResponse(await response.json());
+  } catch {
+    return null;
+  }
+}
+
 export default function LoginScreen() {
   const colors = useMobileThemeColors();
   const tLoginPage = useLoginPageTranslations();
   const tMobileAuth = useMobileAuthTranslations();
   const [loadingProvider, setLoadingProvider] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [oauthProviders, setOAuthProviders] = useState<OAuthProvidersBitmap | null>(null);
 
   useEffect(() => {
     void preloadMobileNamespaces(["mobile.auth"]);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    void fetchOAuthProvidersBitmap().then((bitmap) => {
+      if (!cancelled) {
+        setOAuthProviders(bitmap);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const allOAuthDisabled = areAllOAuthProvidersDisabled(oauthProviders);
+
   const startOAuth = async (provider: Provider) => {
+    if (!isOAuthProviderEnabled(oauthProviders, provider)) {
+      return;
+    }
+
     if (!authClient) {
       setError(tMobileAuth("MissingConfig"));
       return;
@@ -84,37 +129,57 @@ export default function LoginScreen() {
           {tLoginPage("Description")}
         </Text>
 
+        {allOAuthDisabled ? (
+          <Text style={[styles.unavailableText, { color: colors.textMuted }]}>
+            {tLoginPage("ProvidersUnavailable")}
+          </Text>
+        ) : null}
+
         <View style={styles.providers}>
           {PROVIDERS.map(
             ({ provider, labelKey, Icon, backgroundColor, pressedBackgroundColor, textColor }) => {
               const isLoading = loadingProvider === provider;
+              const enabled = isOAuthProviderEnabled(oauthProviders, provider);
+              const unavailableLabel = tLoginPage("ProviderUnavailable", {
+                provider: tLoginPage(labelKey),
+              });
 
               return (
-                <Pressable
-                  disabled={Boolean(loadingProvider)}
-                  key={provider}
-                  onPress={() => startOAuth(provider)}
-                  style={({ pressed }) => [
-                    styles.providerButton,
-                    {
-                      backgroundColor: pressed ? pressedBackgroundColor : backgroundColor,
-                    },
-                    Boolean(loadingProvider) && styles.providerButtonDisabled,
-                  ]}
-                >
-                  <View style={styles.providerContent}>
-                    <View style={styles.providerIconSection}>
-                      {isLoading ? (
-                        <ActivityIndicator color={textColor} size="small" />
-                      ) : (
-                        <Icon color={textColor} size={18} />
-                      )}
+                <View key={provider}>
+                  <Pressable
+                    accessibilityHint={enabled ? undefined : unavailableLabel}
+                    accessibilityRole="button"
+                    accessibilityState={{ disabled: !enabled || Boolean(loadingProvider) }}
+                    disabled={!enabled || Boolean(loadingProvider)}
+                    onPress={() => startOAuth(provider)}
+                    style={({ pressed }) => [
+                      styles.providerButton,
+                      {
+                        backgroundColor: pressed ? pressedBackgroundColor : backgroundColor,
+                        opacity: enabled ? 1 : MOBILE_OPACITY.disabled,
+                      },
+                      Boolean(loadingProvider) && enabled && styles.providerButtonDisabled,
+                    ]}
+                  >
+                    <View style={styles.providerContent}>
+                      <View style={styles.providerIconSection}>
+                        {isLoading ? (
+                          <ActivityIndicator color={textColor} size="small" />
+                        ) : (
+                          <Icon color={textColor} size={18} />
+                        )}
+                      </View>
+                      <Text style={[styles.providerText, { color: textColor }]}>
+                        {tLoginPage("ContinueWith").replace("{provider}", tLoginPage(labelKey))}
+                      </Text>
                     </View>
-                    <Text style={[styles.providerText, { color: textColor }]}>
-                      {tLoginPage("ContinueWith").replace("{provider}", tLoginPage(labelKey))}
+                  </Pressable>
+                  {!enabled && !allOAuthDisabled ? (
+                    <Text style={[styles.unavailableText, { color: colors.textMuted }]}>
+                      {unavailableLabel}
                     </Text>
-                  </View>
-                </Pressable>
+                  ) : null}
+                </View>
               );
             },
           )}
@@ -204,6 +269,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   termsText: {
+    fontSize: 12,
+    lineHeight: 18,
+    textAlign: "center",
+  },
+  unavailableText: {
     fontSize: 12,
     lineHeight: 18,
     textAlign: "center",

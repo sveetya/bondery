@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import localeCatalog from "@bondery/schemas/locale/supported-locales.json" with { type: "json" };
 
-import { createCheck } from "../../../scripts/check-report.mjs";
+import { createCheck } from "../../../scripts/check/check-report.mjs";
 
 const check = createCheck("check-i18n-structure");
 

@@ -46,6 +46,11 @@ export const API_KEY_LIMITS = {
   maxPerUser: 5,
 } as const;
 
+export const PASSKEY_LIMITS = {
+  maxPerUser: 5,
+  nameMaxLength: 100,
+} as const;
+
 export const API_KEY_PREFIX = "bondery_key_" as const;
 
 /** Secret chars shown in list UI after the prefix (`bondery_key_abc…`). */

@@ -122,6 +122,7 @@ Repo checks:
 | Supabase client bump | `pnpm run generate-types` (needs `pnpm --filter apps/supabase-db run start`) |
 | Env renames | `.env.*.example` per app |
 | Extension API break | `packages/helpers/src/globals/paths.ts` (`MIN_EXTENSION_VERSION`) |
+| `@better-auth/passkey` or any vendored catalog | Run every script in `scripts/updater/` (`pnpm run update:aaguid-catalog` today) |
 
 ---
 
@@ -132,6 +133,7 @@ Repo checks:
 3. Lint: `pnpm run lint` (from repo root; Biome format with write)
 4. Regenerate artifacts if needed (OpenAPI, Supabase types)
 5. Update `packages/translations` (`src/locales/{en,cs,de}/**`) when UI copy changes
+6. Run every script in `scripts/updater/` (snapshot/catalog refreshers). Today that is `pnpm run update:aaguid-catalog` — required after `@better-auth/passkey`, and whenever the community AAGUID list should be refreshed. Review the JSON diff; do not commit an empty `{}` wipe (see `docs/adr/0006-passkeys.mdx`).
 
 One ecosystem per commit:
 

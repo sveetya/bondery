@@ -36,7 +36,7 @@ export { fetchKeepInTouch, prefetchKeepInTouch } from "./keepInTouch";
 export { prefetchMePerson } from "./mePerson";
 export { fetchMergeRecommendations, prefetchMergeRecommendations } from "./mergeRecommendations";
 export { prefetchUpcomingReminders } from "./reminders";
-export { fetchSettings, prefetchSettings } from "./settings";
+export { fetchSettings, prefetchOAuthProviders, prefetchSettings } from "./settings";
 export { fetchAdminStatsDashboard, prefetchAdminStatsDashboard } from "./stats";
 export { prefetchSubscription } from "./subscription";
 export { prefetchTagDetail, prefetchTagMembers, prefetchTagsList } from "./tags";

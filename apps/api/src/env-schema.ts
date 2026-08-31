@@ -116,6 +116,10 @@ export const envSchema = {
     BONDERY_PUBLIC_WEBAPP_URL: {
       type: "string",
     },
+    BONDERY_PUBLIC_WEBAUTHN_RP_ID: {
+      default: "",
+      type: "string",
+    },
     BONDERY_PUBLIC_WEBSITE_URL: {
       type: "string",
     },
@@ -141,6 +145,7 @@ declare module "fastify" {
     config: {
       LOG_LEVEL: string;
       BONDERY_PUBLIC_WEBAPP_URL: string;
+      BONDERY_PUBLIC_WEBAUTHN_RP_ID: string;
       BONDERY_PUBLIC_WEBSITE_URL: string;
       BONDERY_PUBLIC_API_URL: string;
       BONDERY_PUBLIC_EXTRA_ALLOWED_ORIGINS: string;

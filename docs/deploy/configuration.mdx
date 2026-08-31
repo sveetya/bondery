@@ -45,7 +45,7 @@ Compose derives public `https://…` URLs and Traefik `Host()` rules. Do not set
 
 Auth runs on the API (`/auth/*`). The API is its own OAuth issuer (`baseURL` = `BONDERY_PUBLIC_API_URL`). Webapp, mobile, and the Chrome extension are independent OAuth 2.1 + PKCE clients.
 
-1. Set `BONDERY_PRIVATE_AUTH_GITHUB_*` and `BONDERY_PRIVATE_AUTH_LINKEDIN_*`.
+1. GitHub and LinkedIn OAuth apps are optional. Set **both** `BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_ID` and `BONDERY_PRIVATE_AUTH_GITHUB_CLIENT_SECRET` (and/or the LinkedIn pair) to enable that method. Empty or half-set pairs stay unavailable until you set both and restart the API. Check `GET /oauth-providers`. Removing a provider locks out people who only use it.
 2. In GitHub / LinkedIn developer settings, callback URL:
 
    `https://<BONDERY_INFRA_API_DOMAIN>/auth/callback/github` (or `/linkedin`)

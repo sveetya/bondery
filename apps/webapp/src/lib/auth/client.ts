@@ -1,4 +1,5 @@
 import { oauthProviderClient } from "@better-auth/oauth-provider/client";
+import { passkeyClient } from "@better-auth/passkey/client";
 import { resolveCookieDomain } from "@bondery/helpers/auth/resolve-cookie-domain";
 import { BETTER_AUTH_BASE_PATH } from "@bondery/helpers/globals/paths";
 import type { WebappRuntimeConfig } from "@bondery/schemas";
@@ -33,6 +34,7 @@ export function createWebappAuthClient(config?: WebappRuntimeConfig) {
     },
     plugins: [
       oauthProviderClient(),
+      passkeyClient(),
       lastLoginMethodClient(cookieDomain ? { domain: cookieDomain } : {}),
     ],
   });
