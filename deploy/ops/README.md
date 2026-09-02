@@ -16,8 +16,8 @@ Two Compose apps, same file:
 
 | Stack | Hostname | Image pin (Dokploy UI) | Dokploy branch |
 |-------|----------|------------------------|----------------|
-| Production | `usebondery.com` | omit / `:production` | `release` |
-| Beta | `beta.usebondery.com` | `BONDERY_INFRA_WEBSITE_IMAGE_TAG=beta` (not synced) | `main` |
+| Production | `usebondery.com` | `BONDERY_INFRA_WEBSITE_IMAGE_TAG=production` (Infisical production → `website` sync; omit for compose default `:production`) | `release` |
+| Beta | `beta.usebondery.com` | `BONDERY_INFRA_WEBSITE_IMAGE_TAG=beta` (Infisical staging → `website-beta` sync) | `main` |
 
 **Hard gate:** Redeploy production with this prefixed compose **before** creating the second app. Same Traefik router names on one Traefik overwrite production HTTPS routes.
 
@@ -31,7 +31,7 @@ Two Compose apps, same file:
 
 Host CI and production images pin Node 26 (`.nvmrc` / `node:26-slim`). Dependencies use pnpm 11.18.0. Release `smoke` validates the production container runtime.
 
-There are **no** `website-X.Y.Z` release tags. Pin `BONDERY_INFRA_WEBSITE_IMAGE_TAG` to a semver or `:sha-<short>` for rollback; omit for floating `:production`. Beta image pin stays `BONDERY_INFRA_WEBSITE_IMAGE_TAG=beta` in the Dokploy UI.
+There are **no** `website-X.Y.Z` release tags. Pin `BONDERY_INFRA_WEBSITE_IMAGE_TAG` to a semver or `:sha-<short>` for rollback. Infisical production: `production` (or omit for floating `:production`). Infisical staging: `beta`. Both sync to their Dokploy website apps.
 
 ## Quick start (Dokploy)
 
@@ -80,9 +80,9 @@ Domain hostnames (and `BONDERY_INFRA_TRAEFIK_PREFIX` when set) can be synced fro
 
 Dokploy API creds and optional redeploy webhooks are stored in Infisical (not GitHub secrets).
 
-**Not synced** (keep in Dokploy UI): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_INFRA_WEBSITE_IMAGE_TAG`.
+**Not synced** (keep in Dokploy UI): `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`. `BONDERY_INFRA_WEBSITE_IMAGE_TAG` syncs from Infisical (`production` or omit in production, `beta` in staging).
 
-Staging Infisical (beta app secrets): `BONDERY_INFRA_WEBSITE_DOMAIN=beta.usebondery.com`, `BONDERY_INFRA_WEBAPP_DOMAIN=app.beta.usebondery.com`, `BONDERY_INFRA_TRAEFIK_PREFIX=bondery-beta`.
+Staging Infisical (beta app secrets): `BONDERY_INFRA_WEBSITE_DOMAIN=beta.usebondery.com`, `BONDERY_INFRA_WEBAPP_DOMAIN=app.beta.usebondery.com`, `BONDERY_INFRA_TRAEFIK_PREFIX=bondery-beta`, `BONDERY_INFRA_WEBSITE_IMAGE_TAG=beta`.
 
 Plausible: one CE. Register the beta marketing hostname as a second site — do not clone the Plausible stack.
 

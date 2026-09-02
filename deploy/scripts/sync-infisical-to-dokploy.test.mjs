@@ -114,6 +114,22 @@ describe("sync-infisical-to-dokploy", () => {
     ]);
   });
 
+  it("website payload includes IMAGE_TAG when set", () => {
+    const env = {
+      ...websiteEnv,
+      BONDERY_INFRA_WEBSITE_IMAGE_TAG: "production",
+    };
+
+    const { uploadKeys } = buildUploadPayload(env, "website");
+
+    assert.deepEqual(uploadKeys, [
+      "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
+      "BONDERY_INFRA_WEBAPP_DOMAIN",
+      "BONDERY_INFRA_WEBSITE_DOMAIN",
+      "BONDERY_INFRA_WEBSITE_IMAGE_TAG",
+    ]);
+  });
+
   it("plausible payload includes plausible secrets only", () => {
     const { uploadKeys } = buildUploadPayload(plausibleEnv, "plausible");
 
@@ -216,10 +232,17 @@ describe("sync-infisical-to-dokploy", () => {
     assert.equal(config.target, "website-beta");
   });
 
-  it("website-beta upload payload matches website keys", () => {
-    const { uploadKeys: websiteKeys } = buildUploadPayload(websiteEnv, "website");
-    const { uploadKeys: betaKeys } = buildUploadPayload(websiteEnv, "website-beta");
+  it("website-beta upload payload matches website keys including image tag when set", () => {
+    const betaEnv = {
+      ...websiteEnv,
+      BONDERY_INFRA_TRAEFIK_PREFIX: "bondery-beta",
+      BONDERY_INFRA_WEBSITE_IMAGE_TAG: "beta",
+    };
+    const { uploadKeys: betaKeys } = buildUploadPayload(betaEnv, "website-beta");
+    const { uploadKeys: websiteKeys } = buildUploadPayload(betaEnv, "website");
+
     assert.deepEqual(betaKeys, websiteKeys);
+    assert.ok(betaKeys.includes("BONDERY_INFRA_WEBSITE_IMAGE_TAG"));
   });
 
   it("getDokploySyncWebhookBranch uses main for website-beta", () => {

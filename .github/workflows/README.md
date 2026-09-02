@@ -198,7 +198,7 @@ Dokploy connection creds and compose ids live in Infisical **production** — in
 
 | Target | Keys |
 |--------|------|
-| `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, plus `BONDERY_INFRA_TRAEFIK_PREFIX` when set |
+| `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, plus `BONDERY_INFRA_TRAEFIK_PREFIX` and `BONDERY_INFRA_WEBSITE_IMAGE_TAG` when set |
 | `website-beta` | Same upload keys as `website`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
 | `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`; image pin stays in the Dokploy UI). `BONDERY_INFRA_TRAEFIK_PREFIX` syncs from Infisical (`bondery` in production, `bondery-beta` in staging). |
 | `services-beta` | Same upload keys as `services`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
@@ -209,6 +209,6 @@ Dokploy connection creds and compose ids live in Infisical **production** — in
 1. Identity `f8b9e69d-bc32-4066-ad99-8ad6ecff2d21` — **read** on **production** (in addition to staging).
 2. OIDC subject covers `sync-dokploy-env.yml`.
 3. First run with `dry_run: true` per target — verify upload keys (no `BONDERY_OPS_*` connection keys).
-4. `dry_run: false` — backup Dokploy env before first live sync; SHA / version / image tag stay in Dokploy UI.
+4. `dry_run: false` — backup Dokploy env before first live sync; SHA / version stay in Dokploy UI. Website image tag syncs from Infisical.
 
 Release and deploy workflows read Dokploy webhook URLs from **production Infisical** (OIDC).
