@@ -2,6 +2,8 @@
 
 A Chrome extension built with **React** and **TypeScript** to enhance the Bondery experience.
 
+Agents: read [`.agents/skills/bondery-chrome-extension/SKILL.md`](../../.agents/skills/bondery-chrome-extension/SKILL.md) before changing this app.
+
 ## Local development
 
 Run from this folder:

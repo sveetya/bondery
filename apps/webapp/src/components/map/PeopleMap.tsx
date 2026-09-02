@@ -33,6 +33,7 @@ interface PeopleMapProps {
   disableChipNavigation?: boolean;
   focus?: PeopleMapFocus | null;
   height?: number;
+  hideZoomControls?: boolean;
   markers: PeopleMapMarker[];
   onBoundsChange?: (bounds: MapBounds) => void;
   onVisibleMarkerIdsChange?: (markerIds: string[]) => void;
@@ -52,6 +53,7 @@ export function PeopleMap({
   height = 360,
   scrollWheelZoom = true,
   focus,
+  hideZoomControls = false,
   onVisibleMarkerIdsChange,
   onBoundsChange,
   disableAutoFit = false,
@@ -64,6 +66,7 @@ export function PeopleMap({
       disableChipNavigation={disableChipNavigation}
       focus={focus}
       height={height}
+      hideZoomControls={hideZoomControls}
       markers={markers}
       onBoundsChange={onBoundsChange}
       onVisibleMarkerIdsChange={onVisibleMarkerIdsChange}

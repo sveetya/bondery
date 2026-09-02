@@ -46,7 +46,7 @@ metadata:
 | CI triggers, Docker channels, promote semantics | [`.github/workflows/README.md`](../../../.github/workflows/README.md) |
 | Execute file edits and commits | Cursor implementer agent |
 | Watch `release-*` / `deploy-website` CI | Cursor babysit skill |
-| Extension local dev / OAuth | [`apps/chrome-extension/README.md`](../../../apps/chrome-extension/README.md) |
+| Extension local dev / OAuth / listing graphics | [`bondery-chrome-extension`](../bondery-chrome-extension/SKILL.md); [`apps/chrome-extension/README.md`](../../../apps/chrome-extension/README.md); [OAuth workflow](../../workflows/CHROME-EXTENSION-OAUTH.md) |
 | Release blog post | [`.agents/workflows/blog/BLOG-POST.md`](../../workflows/blog/BLOG-POST.md) |
 
 ## Decision tree

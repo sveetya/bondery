@@ -35,7 +35,9 @@ Keep hotfixes small. Avoid bundling Chrome Web Store listing or permission chang
 
 ## Local development
 
-OAuth setup, unpacked extension loading, and simulating `MIN_EXTENSION_VERSION`: [`apps/chrome-extension/README.md`](../../../../apps/chrome-extension/README.md).
+OAuth setup, unpacked extension loading, and simulating `MIN_EXTENSION_VERSION`: [`bondery-chrome-extension`](../../bondery-chrome-extension/SKILL.md) → [local-dev.md](../../bondery-chrome-extension/references/local-dev.md); human README: [`apps/chrome-extension/README.md`](../../../../apps/chrome-extension/README.md).
+
+Listing screenshots (1280×800 store-shots generator): [store-listing.md](../../bondery-chrome-extension/references/store-listing.md). This file still owns CWS wait/reject sequencing.
 
 ## Extension checklist
 

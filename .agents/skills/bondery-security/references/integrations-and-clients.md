@@ -54,6 +54,8 @@ CORS is **not** authorization — it controls browser cross-origin access only.
 
 ## Chrome extension boundaries
 
+Implementation (WXT entrypoints, interceptors, enrich tab): [bondery-chrome-extension host-integrations](../../bondery-chrome-extension/references/host-integrations.md). This section is the threat model.
+
 ### Architecture rules (enforced by CI)
 
 `apps/chrome-extension/scripts/check-extension-patterns.ts`:
