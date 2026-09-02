@@ -8,7 +8,10 @@ settings:
 overrides:
   '@better-auth/core': 1.7.1
   '@react-email/ui': 6.9.1
+  '@types/node': 26.1.2
+  '@vitejs/plugin-react': 6.0.5
   react-email: 6.9.1
+  tsx: 4.23.1
   '@tiptap/core': 3.29.2
   '@tiptap/extension-bubble-menu': 3.29.2
   '@tiptap/extension-color': 3.29.2
@@ -151,7 +154,7 @@ importers:
         specifier: 6.9.1
         version: 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
+        specifier: 6.0.5
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       adm-zip:
         specifier: ^0.6.0
@@ -227,7 +230,7 @@ importers:
         specifier: ^0.5.8
         version: 0.5.8
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       '@types/nodemailer':
         specifier: ^8.0.1
@@ -239,7 +242,7 @@ importers:
         specifier: ^13.1.3
         version: 13.1.3
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       typescript:
         specifier: ^7.0.2
@@ -312,10 +315,10 @@ importers:
         specifier: ^0.2.2
         version: 0.2.2
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
+        specifier: 6.0.5
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@wxt-dev/module-react':
         specifier: ^1.2.2
@@ -330,7 +333,7 @@ importers:
         specifier: ^0.35.3
         version: 0.35.3(@types/node@26.1.2)
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       web-ext:
         specifier: ^9.2.0
@@ -541,7 +544,7 @@ importers:
         specifier: ^0.18.0
         version: 0.18.0
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       typescript:
         specifier: ^7.0.2
@@ -560,7 +563,7 @@ importers:
         version: 1.7.1(@better-auth/core@1.7.1(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.5)(kysely@0.29.4)(nanostores@1.4.2))(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-auth@1.7.1(@prisma/client@7.9.1(prisma@7.9.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(magicast@0.5.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(typescript@7.0.2))(mysql2@3.15.3)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(pg@8.22.0)(prisma@7.9.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(magicast@0.5.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(better-call@1.4.0(zod@4.4.3))(nanostores@1.4.2)
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../../packages/helpers
@@ -779,7 +782,7 @@ importers:
         specifier: ^1.5.6
         version: 1.5.6
       '@types/node':
-        specifier: ^26
+        specifier: 26.1.2
         version: 26.1.2
       '@types/react':
         specifier: ^19
@@ -803,7 +806,7 @@ importers:
         specifier: ^4.3.3
         version: 4.3.3
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       typescript:
         specifier: ^7.0.2
@@ -813,7 +816,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../../packages/helpers
@@ -909,7 +912,7 @@ importers:
         specifier: ^2.0.14
         version: 2.0.14
       '@types/node':
-        specifier: ^26
+        specifier: 26.1.2
         version: 26.1.2
       '@types/react':
         specifier: ^19
@@ -945,7 +948,7 @@ importers:
         specifier: ^0.2.15
         version: 0.2.17
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       typescript:
         specifier: ^7.0.2
@@ -960,7 +963,7 @@ importers:
         specifier: 2.4.0
         version: 2.4.0(preact@10.29.7)(react@19.2.8)
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
+        specifier: 6.0.5
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi:
         specifier: ^5.7.0
@@ -985,7 +988,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       '@types/react':
         specifier: ^19
@@ -997,7 +1000,7 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
       typescript:
         specifier: ^7.0.2
@@ -1021,10 +1024,10 @@ importers:
         specifier: 6.9.1
         version: 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
+        specifier: 6.0.5
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       dotenv:
         specifier: ^17.2.3
@@ -1054,7 +1057,7 @@ importers:
         specifier: ^17.0.11
         version: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
     devDependencies:
       '@bondery/typescript-config':
@@ -1077,7 +1080,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../helpers
@@ -1086,13 +1089,13 @@ importers:
         version: 2.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-email/ui':
         specifier: 6.9.1
-        version: 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
-        specifier: ^26.1.2
-        version: 26.4.0
+        specifier: 26.1.2
+        version: 26.1.2
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
-        version: 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))
+        specifier: 6.0.5
+        version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
     devDependencies:
       '@bondery/typescript-config':
         specifier: workspace:*
@@ -1113,8 +1116,8 @@ importers:
         specifier: ^6.1.3
         version: 6.1.3
       tsx:
-        specifier: ^4.23.1
-        version: 4.23.13
+        specifier: 4.23.1
+        version: 4.23.1
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
@@ -1157,7 +1160,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../helpers
@@ -1194,7 +1197,7 @@ importers:
         version: 3.46.0(react@19.2.8)
       next:
         specifier: 16.3.1
-        version: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -1238,10 +1241,10 @@ importers:
         specifier: 6.9.1
         version: 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       '@vitejs/plugin-react':
-        specifier: ^6.0.4
+        specifier: 6.0.5
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi:
         specifier: ^5.7.0
@@ -1259,7 +1262,7 @@ importers:
         specifier: ^17.0.11
         version: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
       tsx:
-        specifier: ^4.23.1
+        specifier: 4.23.1
         version: 4.23.1
     devDependencies:
       '@bondery/typescript-config':
@@ -1290,7 +1293,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
-        specifier: ^26.1.2
+        specifier: 26.1.2
         version: 26.1.2
       rimraf:
         specifier: ^6.1.3
@@ -3057,7 +3060,7 @@ packages:
     resolution: {integrity: sha512-b6xmA/VlTe0ZgDQHDui+Nav470u7u49nRd8/iuhOcQPO9Ch7lGuogydhi2VOmNlZ+zXcM8IcPuNSwQcdJaF/kw==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3066,7 +3069,7 @@ packages:
     resolution: {integrity: sha512-eb8DBZcz/2qHWQda4rk2JiQk5h9QV/cVHi1yjt0f69WFZMRFn0sJTye3EAP8icut8UDMjQPsaH5KbcOogefrFQ==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3075,7 +3078,7 @@ packages:
     resolution: {integrity: sha512-Qd6GJT1yVyrZZCfN8W2qKF5ApmqryXRhRKCuip8h01x2w/esJQ2XIYc6f9abMIHgKQdBfFTSOdbHRLAhuM09UA==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3084,7 +3087,7 @@ packages:
     resolution: {integrity: sha512-ZRVd/oD+sYsUd5zVm0NflqEzlqfYCyHNsqkHl2oWXEUHs12tCbcSFi+wVFEvD8+LGRaMUsVrE7qeo6lSG/S1Vg==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3093,7 +3096,7 @@ packages:
     resolution: {integrity: sha512-YmQpenjbFSHAK3sOd44puHh3V1KXXr+JiNpUztoSQ4drLh2rTVzTap/YtlAVu/5xavifIlBfNEzJ/neZJ1a/1g==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3102,7 +3105,7 @@ packages:
     resolution: {integrity: sha512-6thf5I8q7lZwzGLAxPaaGEREEkZ3nyePPDQ1oyobblxmEE8mqTLguScP7pDjUTAibiyb4hfXl+qjUEJ+di/aNA==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3115,7 +3118,7 @@ packages:
     resolution: {integrity: sha512-9K/DDBSQpOyZSkt6sOVP9Vo0TR7atX2kuILsUu0x3wVcVbe97lJwIJKMLdMw25tDYuXl/qp6erT0Xs1rfmcfZg==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3124,7 +3127,7 @@ packages:
     resolution: {integrity: sha512-XF4IXAbPnGPgw0wsbC/i2tPcyfdZgDpUlhsqU0SfT4IRIGWha6Xm9VRgN5yYxJq+jnyXlfXI/nQ3ulfk0iEICA==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3133,7 +3136,7 @@ packages:
     resolution: {integrity: sha512-3XBfF7DAsp5qeDsvN5Rd1HmbNokVvEQoUM0QLrRcybC9nX96w3Pbmu7qUsb3IT3J3jBvs2+mTXaKHOUsgHMLzg==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3142,7 +3145,7 @@ packages:
     resolution: {integrity: sha512-IYR/3C/paEVVQYQvdDlFZVjRCJVYHHON0XXMH91KO9GSxs0TdKYWlUdvfQl2EfAHDxUaN3IBffkE/BDTh5nJ6g==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3151,7 +3154,7 @@ packages:
     resolution: {integrity: sha512-QqdTqQddL3qPX/PPrjobpsO25NZ4dWXgTLenrR445L2ptLEYE6Z+PD5c5CNDJNx4ugRgELAIpSIJxZaO2jJ2Og==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3160,7 +3163,7 @@ packages:
     resolution: {integrity: sha512-xJj8QWKRSrfKoBIITLZK61dD3zwo0Rz11fgDImku30/Oe81zMdIdGgrLY2h6RkJ+KZ/GhNYIRMKnH/62qBTA5g==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3169,7 +3172,7 @@ packages:
     resolution: {integrity: sha512-FlDndEUww8m7BfukO2nJa25vhD+H5jxxCv4oGioKqzyWz3nPHhhw4LKdYRSlXuAx7DsdWia7iyaBPKKS95Evfw==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -3178,7 +3181,7 @@ packages:
     resolution: {integrity: sha512-t28inv14nMQ1PhKpsJPY+kEs/c00qzeCOS2gTNRyTjG5d6qsVA2fItxW4hkvGZ5lvanGLdtCzVIx5dwdRpN1+g==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -5499,9 +5502,6 @@ packages:
   '@types/node@26.1.2':
     resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
 
-  '@types/node@26.4.0':
-    resolution: {integrity: sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ==}
-
   '@types/nodemailer@8.0.1':
     resolution: {integrity: sha512-PxpaInm8V1JQDd4j0ds5HfvWQk8JupS1C0Picb96QJsrrRDjBH+DlK7L4ZdNSqNULhiZRQHc40nLVShaGxXAMw==}
 
@@ -5723,22 +5723,6 @@ packages:
       '@rolldown/plugin-babel':
         optional: true
       babel-plugin-react-compiler:
-        optional: true
-
-  '@vitejs/plugin-react@6.1.1':
-    resolution: {integrity: sha512-yxLaQV9gkhS8ezJqCM6+ndU7mDY6gqAg75NQ+0IjwEI8IYOmQCgkRwHKVSfWXW076DsqMo0Dk+0FK1U+M5RgFw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    peerDependencies:
-      '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
-      babel-plugin-react-compiler: ^1.0.0
-      oxc-transform-react: ^0.145.0
-      vite: ^8.0.0
-    peerDependenciesMeta:
-      '@rolldown/plugin-babel':
-        optional: true
-      babel-plugin-react-compiler:
-        optional: true
-      oxc-transform-react:
         optional: true
 
   '@vvo/tzdb@6.198.0':
@@ -8286,7 +8270,7 @@ packages:
     resolution: {integrity: sha512-VsSx1JneSNp3ld1veMTLe+UDcUD8Tw2/jjOthhkX3/IX2q+xHhVELifeb/hsb1fBw31pabEPNUf/xUOyb+KZjA==}
     engines: {node: '>=23.5.0 || ^22.13.0 || ^20.17.0'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -11018,7 +11002,7 @@ packages:
     resolution: {integrity: sha512-LVJ+tcSYeqOSnXr3i+Kz2tZ7y0crLLdP2uwD/4wccrmEVyn0g/Heo0pF7as7rxS/sOjJzrb1lxgZY0Y0Dx1pSA==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@types/node': '>=18'
+      '@types/node': 26.1.2
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -11212,11 +11196,6 @@ packages:
 
   tsx@4.23.1:
     resolution: {integrity: sha512-GQHnkIfxyx1wYCOS/wonik5MVRZU9hi1TEZmzGZSCJB1y9YgoZ8H6itNE/u4suE+yLmOzuE4E5S4TZ/ZX2wcWQ==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-
-  tsx@4.23.13:
-    resolution: {integrity: sha512-BL5MGkRln6aDYhb0xbQlEAGw743BaZYWdbWtdJOBriYJboKgUUYCadFp2/FpBBZquBC/ezNBn7wMMPx7FDZUDw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -11501,7 +11480,7 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
+      '@types/node': 26.1.2
       '@vitejs/devtools': ^0.4.0
       esbuild: ^0.27.0 || ^0.28.0
       jiti: '>=1.21.0'
@@ -11511,7 +11490,7 @@ packages:
       stylus: '>=0.54.8'
       sugarss: ^5.0.0
       terser: ^5.16.0
-      tsx: ^4.8.1
+      tsx: 4.23.1
       yaml: ^2.4.2
     peerDependenciesMeta:
       '@types/node':
@@ -12766,7 +12745,7 @@ snapshots:
     dependencies:
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
       i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
@@ -12788,7 +12767,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - preact
       - react-native
       - sass
@@ -12798,53 +12776,17 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
-      i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
+      i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      sharp: 0.35.3(@types/node@26.4.0)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@fastify/swagger'
-      - '@fastify/swagger-ui'
-      - '@opentelemetry/api'
-      - '@playwright/test'
-      - '@rolldown/plugin-babel'
-      - '@swc/helpers'
-      - '@types/node'
-      - babel-plugin-macros
-      - babel-plugin-react-compiler
-      - bufferutil
-      - fastify
-      - i18next
-      - oxc-transform-react
-      - preact
-      - react-native
-      - sass
-      - supports-color
-      - typescript
-      - utf-8-validate
-      - vite
-      - zod
-
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
-    dependencies:
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
-      i18next-cli: 1.67.3(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
-      react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
       sharp: 0.35.3(@types/node@26.1.2)
     transitivePeerDependencies:
       - '@babel/core'
@@ -12860,7 +12802,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - preact
       - react-native
       - sass
@@ -12870,18 +12811,18 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
-      i18next-cli: 1.67.3(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
+      i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      sharp: 0.35.3(@types/node@26.4.0)
+      sharp: 0.35.3(@types/node@26.1.2)
     transitivePeerDependencies:
       - '@babel/core'
       - '@fastify/swagger'
@@ -12896,7 +12837,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - preact
       - react-native
       - sass
@@ -12908,12 +12848,12 @@ snapshots:
 
   '@bondery/emails@file:packages/emails(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
-      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@react-email/render': 2.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@types/node': 26.4.0
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@types/node': 26.1.2
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     transitivePeerDependencies:
@@ -12929,7 +12869,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - preact
       - react-native
       - sass
@@ -12959,7 +12898,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -12987,7 +12925,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -13015,7 +12952,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -13053,7 +12989,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - preact
       - react-native
       - sass
@@ -13071,15 +13006,15 @@ snapshots:
   '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@bondery/schemas': file:packages/schemas
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@types/node': 26.4.0
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@types/node': 26.1.2
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      tsx: 4.23.13
+      tsx: 4.23.1
     transitivePeerDependencies:
       - '@babel/core'
       - '@fastify/swagger'
@@ -13092,7 +13027,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -13104,15 +13038,15 @@ snapshots:
   '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@bondery/schemas': file:packages/schemas
-      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@types/node': 26.4.0
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@types/node': 26.1.2
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      tsx: 4.23.13
+      tsx: 4.23.1
     transitivePeerDependencies:
       - '@babel/core'
       - '@fastify/swagger'
@@ -13125,7 +13059,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -13137,15 +13070,15 @@ snapshots:
   '@bondery/translations@file:packages/translations(supports-color@8.1.1)(typescript@7.0.2)(zod@4.4.3)':
     dependencies:
       '@bondery/schemas': file:packages/schemas
-      '@react-email/ui': 6.9.1(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@types/node': 26.4.0
-      '@vitejs/plugin-react': 6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))
+      '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@types/node': 26.1.2
+      '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      tsx: 4.23.13
+      tsx: 4.23.1
     transitivePeerDependencies:
       - '@babel/core'
       - '@fastify/swagger'
@@ -13158,7 +13091,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -13183,7 +13115,6 @@ snapshots:
       - bufferutil
       - fastify
       - i18next
-      - oxc-transform-react
       - react-native
       - sass
       - supports-color
@@ -14354,28 +14285,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/checkbox@5.2.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/ansi': 2.0.7
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/figures': 2.0.7
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/confirm@6.1.1(@types/node@26.1.2)':
     dependencies:
       '@inquirer/core': 11.2.1(@types/node@26.1.2)
       '@inquirer/type': 4.0.7(@types/node@26.1.2)
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/confirm@6.1.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/core@11.2.1(@types/node@26.1.2)':
     dependencies:
@@ -14389,18 +14304,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/core@11.2.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/ansi': 2.0.7
-      '@inquirer/figures': 2.0.7
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-      cli-width: 4.1.0
-      fast-wrap-ansi: 0.2.2
-      mute-stream: 3.0.0
-      signal-exit: 4.1.0
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/editor@5.2.2(@types/node@26.1.2)':
     dependencies:
       '@inquirer/core': 11.2.1(@types/node@26.1.2)
@@ -14409,14 +14312,6 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/editor@5.2.2(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/external-editor': 3.0.3(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/expand@5.1.1(@types/node@26.1.2)':
     dependencies:
       '@inquirer/core': 11.2.1(@types/node@26.1.2)
@@ -14424,26 +14319,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/expand@5.1.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/external-editor@3.0.3(@types/node@26.1.2)':
     dependencies:
       chardet: 2.2.0
       iconv-lite: 0.7.3
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/external-editor@3.0.3(@types/node@26.4.0)':
-    dependencies:
-      chardet: 2.2.0
-      iconv-lite: 0.7.3
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/figures@2.0.7': {}
 
@@ -14454,26 +14335,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/input@5.1.2(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/number@4.1.1(@types/node@26.1.2)':
     dependencies:
       '@inquirer/core': 11.2.1(@types/node@26.1.2)
       '@inquirer/type': 4.0.7(@types/node@26.1.2)
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/number@4.1.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/password@5.1.1(@types/node@26.1.2)':
     dependencies:
@@ -14482,14 +14349,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@26.1.2)
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/password@5.1.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/ansi': 2.0.7
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/prompts@8.5.2(@types/node@26.1.2)':
     dependencies:
@@ -14506,34 +14365,12 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/prompts@8.5.2(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/checkbox': 5.2.1(@types/node@26.4.0)
-      '@inquirer/confirm': 6.1.1(@types/node@26.4.0)
-      '@inquirer/editor': 5.2.2(@types/node@26.4.0)
-      '@inquirer/expand': 5.1.1(@types/node@26.4.0)
-      '@inquirer/input': 5.1.2(@types/node@26.4.0)
-      '@inquirer/number': 4.1.1(@types/node@26.4.0)
-      '@inquirer/password': 5.1.1(@types/node@26.4.0)
-      '@inquirer/rawlist': 5.3.1(@types/node@26.4.0)
-      '@inquirer/search': 4.2.1(@types/node@26.4.0)
-      '@inquirer/select': 5.2.1(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/rawlist@5.3.1(@types/node@26.1.2)':
     dependencies:
       '@inquirer/core': 11.2.1(@types/node@26.1.2)
       '@inquirer/type': 4.0.7(@types/node@26.1.2)
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/rawlist@5.3.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/search@4.2.1(@types/node@26.1.2)':
     dependencies:
@@ -14542,14 +14379,6 @@ snapshots:
       '@inquirer/type': 4.0.7(@types/node@26.1.2)
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/search@4.2.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/figures': 2.0.7
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@inquirer/select@5.2.1(@types/node@26.1.2)':
     dependencies:
@@ -14560,22 +14389,9 @@ snapshots:
     optionalDependencies:
       '@types/node': 26.1.2
 
-  '@inquirer/select@5.2.1(@types/node@26.4.0)':
-    dependencies:
-      '@inquirer/ansi': 2.0.7
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/figures': 2.0.7
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-    optionalDependencies:
-      '@types/node': 26.4.0
-
   '@inquirer/type@4.0.7(@types/node@26.1.2)':
     optionalDependencies:
       '@types/node': 26.1.2
-
-  '@inquirer/type@4.0.7(@types/node@26.4.0)':
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   '@ioredis/commands@2.0.0': {}
 
@@ -14601,7 +14417,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -15877,36 +15693,6 @@ snapshots:
     dependencies:
       esbuild: 0.28.1
       next: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@opentelemetry/api'
-      - '@playwright/test'
-      - '@types/node'
-      - babel-plugin-macros
-      - babel-plugin-react-compiler
-      - react
-      - react-dom
-      - sass
-
-  '@react-email/ui@6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
-    dependencies:
-      esbuild: 0.28.1
-      next: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@opentelemetry/api'
-      - '@playwright/test'
-      - '@types/node'
-      - babel-plugin-macros
-      - babel-plugin-react-compiler
-      - react
-      - react-dom
-      - sass
-
-  '@react-email/ui@6.9.1(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
-    dependencies:
-      esbuild: 0.28.1
-      next: 16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - '@babel/core'
       - '@opentelemetry/api'
@@ -17367,7 +17153,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.2.0
       '@types/keyv': 3.1.4
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       '@types/responselike': 1.0.3
 
   '@types/chrome@0.2.2':
@@ -17377,7 +17163,7 @@ snapshots:
 
   '@types/cors@2.8.19':
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
 
   '@types/d3-array@3.0.3': {}
 
@@ -17565,7 +17351,7 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
 
   '@types/leaflet.markercluster@1.5.6':
     dependencies:
@@ -17588,10 +17374,6 @@ snapshots:
   '@types/ms@2.1.0': {}
 
   '@types/node@26.1.2':
-    dependencies:
-      undici-types: 8.3.0
-
-  '@types/node@26.4.0':
     dependencies:
       undici-types: 8.3.0
 
@@ -17642,7 +17424,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -17655,7 +17437,7 @@ snapshots:
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -17808,20 +17590,6 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
-    optionalDependencies:
-      babel-plugin-react-compiler: 1.0.0
-
-  '@vitejs/plugin-react@6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
-    dependencies:
-      '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0)
-    optionalDependencies:
-      babel-plugin-react-compiler: 1.0.0
-
-  '@vitejs/plugin-react@6.1.1(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0))':
-    dependencies:
-      '@rolldown/pluginutils': 1.0.1
-      vite: 8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0)
     optionalDependencies:
       babel-plugin-react-compiler: 1.0.0
 
@@ -18493,7 +18261,7 @@ snapshots:
 
   chrome-launcher@0.15.2(supports-color@8.1.1):
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2(supports-color@8.1.1)
@@ -18502,7 +18270,7 @@ snapshots:
 
   chrome-launcher@1.2.0(supports-color@8.1.1):
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 2.0.2(supports-color@8.1.1)
@@ -18511,7 +18279,7 @@ snapshots:
 
   chromium-edge-launcher@0.3.0(supports-color@8.1.1):
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2(supports-color@8.1.1)
@@ -19211,7 +18979,7 @@ snapshots:
   engine.io@6.6.9(supports-color@8.1.1):
     dependencies:
       '@types/cors': 2.8.19
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       '@types/ws': 8.18.1
       accepts: 1.3.8
       base64id: 2.0.0
@@ -20818,84 +20586,6 @@ snapshots:
       - react-native
       - typescript
 
-  i18next-cli@1.67.3(@swc/helpers@0.5.23)(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2):
-    dependencies:
-      '@croct/json5-parser': 0.2.2
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
-      chokidar: 5.0.0
-      commander: 14.0.3
-      execa: 9.6.1
-      glob: 13.0.6
-      i18next: 26.3.6(typescript@7.0.2)
-      i18next-resources-for-ts: 2.1.0(@swc/helpers@0.5.23)
-      inquirer: 14.0.2(@types/node@26.4.0)
-      jiti: 2.7.0
-      jsonc-parser: 3.3.1
-      magic-string: 0.30.21
-      minimatch: 10.2.6
-      ora: 9.4.1
-      react: 19.2.8
-      react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      yaml: 2.9.0
-    transitivePeerDependencies:
-      - '@swc/helpers'
-      - '@types/node'
-      - react-dom
-      - react-native
-      - typescript
-
-  i18next-cli@1.67.3(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2):
-    dependencies:
-      '@croct/json5-parser': 0.2.2
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
-      chokidar: 5.0.0
-      commander: 14.0.3
-      execa: 9.6.1
-      glob: 13.0.6
-      i18next: 26.3.6(typescript@7.0.2)
-      i18next-resources-for-ts: 2.1.0(@swc/helpers@0.5.23)
-      inquirer: 14.0.2(@types/node@26.1.2)
-      jiti: 2.7.0
-      jsonc-parser: 3.3.1
-      magic-string: 0.30.21
-      minimatch: 10.2.6
-      ora: 9.4.1
-      react: 19.2.8
-      react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      yaml: 2.9.0
-    transitivePeerDependencies:
-      - '@swc/helpers'
-      - '@types/node'
-      - react-dom
-      - react-native
-      - typescript
-
-  i18next-cli@1.67.3(@types/node@26.4.0)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2):
-    dependencies:
-      '@croct/json5-parser': 0.2.2
-      '@swc/core': 1.15.47(@swc/helpers@0.5.23)
-      chokidar: 5.0.0
-      commander: 14.0.3
-      execa: 9.6.1
-      glob: 13.0.6
-      i18next: 26.3.6(typescript@7.0.2)
-      i18next-resources-for-ts: 2.1.0(@swc/helpers@0.5.23)
-      inquirer: 14.0.2(@types/node@26.4.0)
-      jiti: 2.7.0
-      jsonc-parser: 3.3.1
-      magic-string: 0.30.21
-      minimatch: 10.2.6
-      ora: 9.4.1
-      react: 19.2.8
-      react-i18next: 17.0.11(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(typescript@7.0.2)
-      yaml: 2.9.0
-    transitivePeerDependencies:
-      - '@swc/helpers'
-      - '@types/node'
-      - react-dom
-      - react-native
-      - typescript
-
   i18next-resources-for-ts@2.1.0(@swc/helpers@0.5.23):
     dependencies:
       '@babel/runtime': 7.29.7
@@ -20980,17 +20670,6 @@ snapshots:
       run-async: 4.0.6
     optionalDependencies:
       '@types/node': 26.1.2
-
-  inquirer@14.0.2(@types/node@26.4.0):
-    dependencies:
-      '@inquirer/ansi': 2.0.7
-      '@inquirer/core': 11.2.1(@types/node@26.4.0)
-      '@inquirer/prompts': 8.5.2(@types/node@26.4.0)
-      '@inquirer/type': 4.0.7(@types/node@26.4.0)
-      mute-stream: 3.0.0
-      run-async: 4.0.6
-    optionalDependencies:
-      '@types/node': 26.4.0
 
   internmap@2.0.3: {}
 
@@ -21118,7 +20797,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -21135,7 +20814,7 @@ snapshots:
 
   jest-worker@29.7.0:
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.1.2
       jest-util: 29.7.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -22358,32 +22037,6 @@ snapshots:
       '@next/swc-win32-x64-msvc': 16.3.1
       babel-plugin-react-compiler: 1.0.0
       sharp: 0.35.3(@types/node@26.1.2)
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@types/node'
-      - babel-plugin-macros
-
-  next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.4.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
-    dependencies:
-      '@next/env': 16.3.1
-      '@swc/helpers': 0.5.23
-      baseline-browser-mapping: 2.11.7
-      caniuse-lite: 1.0.30001806
-      postcss: 8.5.25
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      styled-jsx: 5.1.6(@babel/core@7.29.7(supports-color@8.1.1))(react@19.2.8)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.1
-      '@next/swc-darwin-x64': 16.3.1
-      '@next/swc-linux-arm64-gnu': 16.3.1
-      '@next/swc-linux-arm64-musl': 16.3.1
-      '@next/swc-linux-x64-gnu': 16.3.1
-      '@next/swc-linux-x64-musl': 16.3.1
-      '@next/swc-win32-arm64-msvc': 16.3.1
-      '@next/swc-win32-x64-msvc': 16.3.1
-      babel-plugin-react-compiler: 1.0.0
-      sharp: 0.35.3(@types/node@26.4.0)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -24042,39 +23695,6 @@ snapshots:
       '@img/sharp-win32-x64': 0.35.3
       '@types/node': 26.1.2
 
-  sharp@0.35.3(@types/node@26.4.0):
-    dependencies:
-      '@img/colour': 1.1.0
-      detect-libc: 2.1.2
-      semver: 7.8.5
-    optionalDependencies:
-      '@img/sharp-darwin-arm64': 0.35.3
-      '@img/sharp-darwin-x64': 0.35.3
-      '@img/sharp-freebsd-wasm32': 0.35.3
-      '@img/sharp-libvips-darwin-arm64': 1.3.2
-      '@img/sharp-libvips-darwin-x64': 1.3.2
-      '@img/sharp-libvips-linux-arm': 1.3.2
-      '@img/sharp-libvips-linux-arm64': 1.3.2
-      '@img/sharp-libvips-linux-ppc64': 1.3.2
-      '@img/sharp-libvips-linux-riscv64': 1.3.2
-      '@img/sharp-libvips-linux-s390x': 1.3.2
-      '@img/sharp-libvips-linux-x64': 1.3.2
-      '@img/sharp-libvips-linuxmusl-arm64': 1.3.2
-      '@img/sharp-libvips-linuxmusl-x64': 1.3.2
-      '@img/sharp-linux-arm': 0.35.3
-      '@img/sharp-linux-arm64': 0.35.3
-      '@img/sharp-linux-ppc64': 0.35.3
-      '@img/sharp-linux-riscv64': 0.35.3
-      '@img/sharp-linux-s390x': 0.35.3
-      '@img/sharp-linux-x64': 0.35.3
-      '@img/sharp-linuxmusl-arm64': 0.35.3
-      '@img/sharp-linuxmusl-x64': 0.35.3
-      '@img/sharp-webcontainers-wasm32': 0.35.3
-      '@img/sharp-win32-arm64': 0.35.3
-      '@img/sharp-win32-ia32': 0.35.3
-      '@img/sharp-win32-x64': 0.35.3
-      '@types/node': 26.4.0
-
   shebang-command@2.0.0:
     dependencies:
       shebang-regex: 3.0.0
@@ -24492,12 +24112,6 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
-  tsx@4.23.13:
-    dependencies:
-      esbuild: 0.28.1
-    optionalDependencies:
-      fsevents: 2.3.3
-
   tsyringe@4.10.0:
     dependencies:
       tslib: 1.14.1
@@ -24826,23 +24440,6 @@ snapshots:
       sugarss: 5.0.1(postcss@8.5.25)
       terser: 5.49.0
       tsx: 4.23.1
-      yaml: 2.9.0
-
-  vite@8.2.0(@types/node@26.4.0)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.13)(yaml@2.9.0):
-    dependencies:
-      lightningcss: 1.33.0
-      picomatch: 4.0.5
-      postcss: 8.5.25
-      rolldown: 1.2.1
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 26.4.0
-      esbuild: 0.28.1
-      fsevents: 2.3.3
-      jiti: 2.7.0
-      sugarss: 5.0.1(postcss@8.5.25)
-      terser: 5.49.0
-      tsx: 4.23.13
       yaml: 2.9.0
 
   vlq@1.0.1: {}
