@@ -31,6 +31,7 @@ interface PeopleMapClientProps {
   disableChipNavigation?: boolean;
   focus?: PeopleMapFocus | null;
   height?: number;
+  hideZoomControls?: boolean;
   markers: PeopleMapMarker[];
   onBoundsChange?: (bounds: MapBounds) => void;
   onVisibleMarkerIdsChange?: (markerIds: string[]) => void;
@@ -45,6 +46,7 @@ export function PeopleMapClient({
   height = 360,
   scrollWheelZoom = true,
   focus,
+  hideZoomControls = false,
   onVisibleMarkerIdsChange,
   onBoundsChange,
   disableAutoFit = false,
@@ -119,7 +121,7 @@ export function PeopleMapClient({
         zoomControl={false}
       >
         <AttributionControl prefix={false} />
-        <MapZoomControls />
+        {hideZoomControls ? null : <MapZoomControls />}
         <MapFocusController defaultZoom={zoom} focus={focus} />
         <FitMarkersController defaultZoom={zoom} disabled={disableAutoFit} markers={markers} />
         <VisibleMarkersController

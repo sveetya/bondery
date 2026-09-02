@@ -13,7 +13,9 @@ This mirrors how Stripe SDKs work: a thin HTTP client (`StripeClient`) plus opti
 | **Webapp (browser)** | Client component | `clientApiFetch` / `clientApiJson` / `clientApiJsonOrNull` | Same-origin `/api/*` (BFF) | BFF injects Bearer |
 | **Webapp (server)** | RSC, loaders, route handlers | `serverApiFetch` / `serverApiJson` / `serverApiJsonOrNull` | `API_URL` + path | `resolveServerSession()` → Bearer |
 | **Mobile** | React Native | `apiRequest()` via `mobileFetch()` | `EXPO_PUBLIC_API_URL` + path | Supabase session Bearer |
-| **Chrome extension** | Service worker / popup | `authenticatedFetch()` | `config.apiUrl` + path | OAuth access token + `X-Bondery-Extension-Version` |
+| **Chrome extension** | Service worker | `authenticatedFetch()` | `config.apiUrl` + path | OAuth access token + `X-Bondery-Extension-Version` |
+
+Chrome extension transport, import policy, and 401/426 client handling live in [bondery-chrome-extension](../../bondery-chrome-extension/references/architecture.md) — this table is the HTTP contract only.
 
 **Webapp BFF:** Browser calls `/api/contacts`; Next.js route handler validates the session and proxies to Fastify with Bearer. The browser never calls `API_URL` for authenticated resources.
 

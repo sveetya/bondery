@@ -1,0 +1,57 @@
+---
+title: "ADR 0007: Chrome Web Store listing compositions"
+hidden: true
+---
+
+# ADR 0007: Chrome Web Store listing compositions
+
+**Status:** Accepted  
+**Date:** 2026-09-02
+
+## Context
+
+Chrome Web Store listing screenshots are 1280×800, 24-bit PNG, no alpha. They are marketing for Store wanderers, not in-app help. Live LinkedIn/Instagram capture would pull official logos, CDN photos, and logged-out extension chrome we must not ship. The extension package cannot be imported into the webapp. Copy is English-only Store marketing, not product UI — wiring it through `packages/translations` would force cs/de strings for a surface users never see in-app.
+
+CWS has five screenshot slots; we use all five.
+
+## Decision
+
+1. **Compose in the webapp** under `apps/webapp/src/app/(app)/dev/store-shots/`, inside the `(app)` group (i18n + Mantine) but **outside** `/app` so the auth gate does not redirect. Production `layout.tsx` calls `notFound()` when `NODE_ENV === "production"` and sets `robots: { index: false, follow: false }`.
+2. **Do not import `apps/chrome-extension`.** Listing shots do not mount extension popup chrome.
+3. **Mount real product chrome** where it already exists: `PersonCard`, `PersonChip`, `InteractionsList` / `ActivityCard`, `TagPill`, `GroupCard`, and `PeopleMap`. Use Mantine-only marketing cards where app components are too settings-specific. Do not mount `ContactIdentitySection`, `ContactNotesSection`, `LoggedOutView`, `ContactSocialIcons`, StatsCard, or fake KPIs.
+4. **Hardcoded EN** in `_lib/copy.ts`. i18next lint ignores `apps/webapp/src/app/(app)/dev/store-shots/**` (same rationale as the website). Product strings inside mounted components stay on existing i18n. Store-shots layout preloads `web.interactions`, `web.groups`, and `web.map` and wraps a nested `LocaleProvider` so those namespaces are present on first paint.
+5. **Repository sample fixtures** use the names from `packages/tests/sample-data/bondery` and avatar copies under `apps/webapp/public/dev/store-shots/` (so `tsc` and docker prune do not import JPEGs from `packages/tests`); no remote avatar/CDN dependency. LinkedIn and Instagram appear as Tabler brand icons (`IconBrandLinkedin`, `IconBrandInstagram`) plus nominative labels.
+6. **Playwright generator** (`e2e/store-shots.playwright.config.mjs` + `e2e/store-shots.spec.ts`) writes gitignored `tmp/cws-shots/*.png`. Viewport 1280×800, `deviceScaleFactor: 1`, clip `[data-store-shot]`. Dedicated script `pnpm --filter webapp run store-shots` (pins Playwright via `pnpm dlx`, not a webapp dependency — Next's optional Playwright peer would break docker prune). Do **not** use `scripts/run-playwright.mjs` (that probes API 26631). `E2E_REUSE_SERVER=1` may reuse webapp on 26632; otherwise start webapp only. Not part of CI login E2E.
+7. **No CWS upload automation** and do not commit the PNGs. Manual upload after visual QA.
+
+Opaque canvas background uses brand gradient stops (`OG_GRADIENT_FROM` / `OG_GRADIENT_TO`), not the light OG wash.
+
+Shot order:
+
+1. Open-source — headline only; six real `PersonCard` components plus GitHub, EU hosting, and Docker self-host trust points using local brand SVGs.
+2. Save a profile — LinkedIn and Instagram sources flowing into Bondery.
+3. Remember — three stacked interactions via `InteractionsList`, including a five-person group call.
+4. Stay organized — real `TagPill` components, an AI text-search prompt, three light `GroupCard` components, and `PeopleMap` in separate rows.
+5. Every surface — Web app, mobile apps, API, and MCP as simple `ThemeIcon` columns with labels (MCP is a surface label, not a claim that an MCP server is live).
+
+## Alternatives
+
+| Alternative | Why not |
+|---|---|
+| Screenshot live LinkedIn/Instagram + extension | Official logos, third-party photos, `LoggedOutView`, legal/trademark risk |
+| Import extension UI into the webapp | Cross-app dependency, WXT/browser APIs, wrong package boundary |
+| Takumi/OG pipeline (1200×630) | Wrong size; CWS is 1280×800 |
+| Commit generated PNGs | Binary drift; regenerate from compositions instead |
+| Chrome Web Store upload API | Out of scope; listing graphics are uploaded by a human |
+
+## Consequences
+
+- Maintainers run `pnpm --filter webapp run store-shots` (or `pnpm run store-shots` from `apps/webapp`) and inspect `tmp/cws-shots/` before uploading. Root `pnpm run … -w webapp` is turbo, not a workspace filter.
+- Compositions can drift from the live product; Phase 2 may extract shared presentational pieces if that cost shows up.
+- The `/dev/store-shots` tree is compiled into the webapp but 404s in production. It must never move under `/app`.
+- i18n lint will fail if the ignore glob is removed while hardcoded EN remains.
+
+## Related
+
+- [`apps/webapp/src/app/(app)/dev/store-shots/`](../../apps/webapp/src/app/(app)/dev/store-shots/)
+- [`apps/webapp/e2e/store-shots.playwright.config.mjs`](../../apps/webapp/e2e/store-shots.playwright.config.mjs)

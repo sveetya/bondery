@@ -107,6 +107,7 @@
     "predev": "node ../../scripts/dev/kill-webapp-dev.mjs && cross-env NODE_ENV=development pnpm run generate-icons",
     "smoke-ssr": "node scripts/smoke-ssr-boot.mjs",
     "start": "next start",
+    "store-shots": "pnpm dlx --package @playwright/test@1.62.1 playwright test -c e2e/store-shots.playwright.config.mjs",
     "test:auth": "tsx --test src/lib/auth/*.test.ts",
     "test:availability": "tsx --test src/lib/api/availabilityStore.test.ts src/lib/api/applyTransportErrorPolicy.test.ts src/lib/api/health.test.ts src/lib/api/resolveServerApiUrl.test.ts",
     "test:merge": "tsx --test src/lib/merge/orientMergePair.test.ts",

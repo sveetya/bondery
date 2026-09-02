@@ -25,6 +25,7 @@ metadata:
 - **Test pyramid:** unit and integration tests carry most coverage; E2E covers critical user paths only
 - **Webapp E2E lives in** `apps/webapp/e2e/` with config at `e2e/playwright.config.mjs`
 - **E2E URLs use `127.0.0.1`**, not `localhost` — ports `26631` (API) and `26632` (webapp)
+- The store-shots Playwright generator produces Chrome Web Store marketing PNGs, not client E2E — see `bondery-chrome-extension` [store-listing.md](../bondery-chrome-extension/references/store-listing.md)
 - **Prefer `data-testid` locators** (`page.getByTestId(...)`) over brittle CSS selectors
 - **No `waitForTimeout`** — wait for URL, response, or locator state
 - **GitHub OAuth:** Playwright cannot reuse your daily browser session — use `test:e2e:auth-setup` for `storageState`

@@ -43,7 +43,9 @@ Focus on: app launch, offline read of synced data, submit mutation while offline
 
 ## Chrome extension (planned)
 
-Playwright Chromium with extension loaded. Test: popup opens, content script injects on allowed origin. Keep separate from webapp E2E ports.
+Playwright Chromium with extension loaded. Test: popup opens, content script injects on allowed origin. Keep separate from webapp E2E ports. Functional extension Playwright remains TBD.
+
+Store-shots (`apps/webapp/e2e/store-shots.spec.ts`) is a listing-PNG generator under the webapp. It uses `localhost`, not `127.0.0.1`, so PeopleMap hydrates. Do not fold it into webapp login E2E. Generator runbook: [store-listing.md](../../bondery-chrome-extension/references/store-listing.md).
 
 ## API (integration, not E2E)
 

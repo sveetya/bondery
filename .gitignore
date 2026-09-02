@@ -67,6 +67,9 @@ docs/api/api-reference/_generated/
 # Temporary backup of local env files (manual migration / testing)
 .tmp-env-backup/
 
+# Local scratch (CWS listing PNG export, etc.)
+/tmp/
+
 #ngrok
 ngrok.yml
 ngrok1.yml
