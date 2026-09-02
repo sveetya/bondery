@@ -1,7 +1,7 @@
 name: Sync Dokploy env
 
 # Manual Infisical -> Dokploy compose env sync (website, services, or plausible stack).
-# Beta product stack: deployment=beta fetches staging app secrets + production ops keys.
+# Beta fetches staging app secrets + production ops keys; website and services both supported.
 
 on:
   workflow_dispatch:
@@ -49,8 +49,8 @@ jobs:
 
       - name: Validate deployment and target
         run: |
-          if [ "${{ inputs.deployment }}" = "beta" ] && [ "${{ inputs.target }}" != "services" ]; then
-            echo "sync-dokploy-env: deployment=beta only supports target=services (product stack)"
+          if [ "${{ inputs.deployment }}" = "beta" ] && [ "${{ inputs.target }}" = "plausible" ]; then
+            echo "sync-dokploy-env: deployment=beta does not support target=plausible (no beta Plausible)"
             exit 1
           fi
 
@@ -77,7 +77,9 @@ jobs:
       - name: Resolve Dokploy sync target
         id: sync-target
         run: |
-          if [ "${{ inputs.deployment }}" = "beta" ]; then
+          if [ "${{ inputs.deployment }}" = "beta" ] && [ "${{ inputs.target }}" = "website" ]; then
+            echo "target=website-beta" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.deployment }}" = "beta" ] && [ "${{ inputs.target }}" = "services" ]; then
             echo "target=services-beta" >> "$GITHUB_OUTPUT"
           else
             echo "target=${{ inputs.target }}" >> "$GITHUB_OUTPUT"

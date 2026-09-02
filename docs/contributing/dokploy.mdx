@@ -89,7 +89,14 @@ Leave Dokploy **Isolated Deployments** off. Production and beta share `dokploy-n
 | Image | `ghcr.io/usebondery/website:${BONDERY_INFRA_WEBSITE_IMAGE_TAG:-production}` (floating `:production` when unset) |
 | Domain | `BONDERY_INFRA_WEBSITE_DOMAIN` Traefik label → port `26630` |
 
-**CI:** Path-filtered PRs and pushes to `main` run `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) (pruned production `next build`). Push to `release` runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) (Docker build-push → smoke → optional Dokploy webhook from Infisical production); image tags `:production` + `:sha-<short>`. Infisical key `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` triggers redeploy (`refs/heads/release`).
+Two Compose apps share this file and `dokploy-network`. Traefik router names and the Docker DNS alias are unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-website` (`bondery` vs `bondery-beta`). Leave Dokploy **Isolated Deployments** off.
+
+| Stack | Hostname | Image pin | Dokploy branch |
+|-------|----------|-----------|----------------|
+| Production | `usebondery.com` | `:production` | `release` |
+| Beta | `beta.usebondery.com` | `BONDERY_INFRA_WEBSITE_IMAGE_TAG=beta` (Dokploy UI) | `main` |
+
+**CI:** Path-filtered PRs and pushes to `main` run `website-build` in [`.github/workflows/verify.yml`](../../.github/workflows/verify.yml) (pruned production `next build`). [`stage-images.yml`](../../.github/workflows/stage-images.yml) on `main` tags website `:beta` + `:sha-<short>` and notifies the staging website webhook. Push to `release` runs [`.github/workflows/deploy-website.yml`](../../.github/workflows/deploy-website.yml) (Docker build-push → smoke → optional Dokploy webhook from Infisical production); image tags `:production` + `:sha-<short>`. Production CD stays on `deploy-website.yml`. Infisical key `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` triggers production redeploy (`refs/heads/release`).
 
 ```bash
 BONDERY_INFRA_WEBAPP_DOMAIN=app.usebondery.com

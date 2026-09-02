@@ -69,6 +69,7 @@ export default async function RootLayout({
     <html className={lexend.variable} lang="en" suppressHydrationWarning>
       <head>
         <ColorSchemeScript defaultColorScheme="auto" nonce={nonce} />
+        <link href={`${WEBSITE_URL.replace(/\/+$/, "")}/.well-known/ard.json`} rel="ard" />
       </head>
       <body>
         <JsonLd data={buildOrganizationSchema()} id="schema-organization" nonce={nonce} />

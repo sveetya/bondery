@@ -186,7 +186,12 @@ export type DokploySync = {
   targets: readonly DokploySyncTarget[];
 };
 
-export type DokploySyncTarget = "website" | "plausible" | "services" | "services-beta";
+export type DokploySyncTarget =
+  | "website"
+  | "website-beta"
+  | "plausible"
+  | "services"
+  | "services-beta";
 
 /** Same shape as `DeployExample` — Plausible CE stack (`deploy/plausible/.env.example`). */
 export type PlausibleExample = DeployExample;
@@ -1154,8 +1159,10 @@ export const ENV_MANIFEST: EnvVarDef[] = [
     },
     description:
       "Traefik router and service name prefix. Defaults to bondery in Compose. Infisical staging: bondery-beta. Infisical production: bondery or omit. Same names on one Traefik steal production HTTPS routes.",
+    dokploySync: { targets: ["website"] },
     exampleValue: "bondery",
     group: "Infra",
+    opsExample: { group: "Public hostnames", include: true, value: "bondery" },
     requiredIn: [],
     secret: false,
     targets: [],
@@ -1258,6 +1265,8 @@ export const OPS_DOKPLOY_SYNC_CONFIG_KEYS = [
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK",
 ] as const;
 
 /** Keys never synced to deploy/bondery Dokploy compose (derived in compose or Dokploy UI). */
@@ -1291,6 +1300,12 @@ export const DOKPLOY_SYNC_TARGETS = {
     webhookKey: "BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK",
     webhookPathSentinels: ["deploy/ops"],
   },
+  "website-beta": {
+    composeIdKey: "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_COMPOSE_ID",
+    webhookBranch: "main",
+    webhookKey: "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK",
+    webhookPathSentinels: ["deploy/ops"],
+  },
 } as const satisfies Record<
   DokploySyncTarget,
   {
@@ -1301,9 +1316,15 @@ export const DOKPLOY_SYNC_TARGETS = {
   }
 >;
 
-/** Map Dokploy sync target to manifest payload target (services-beta uses services keys). */
+/** Map Dokploy sync target to manifest payload target (beta stacks reuse production key sets). */
 export function resolveDokploySyncPayloadTarget(target: DokploySyncTarget): DokploySyncTarget {
-  return target === "services-beta" ? "services" : target;
+  if (target === "services-beta") {
+    return "services";
+  }
+  if (target === "website-beta") {
+    return "website";
+  }
+  return target;
 }
 
 /** Git ref branch for Dokploy deploy webhook payload (default release). */
@@ -1324,6 +1345,8 @@ export const OPS_ENV_VARS = [
   "BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK",
   "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID",
   "BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK",
+  "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_COMPOSE_ID",
+  "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK",
   "BONDERY_OPS_CHROME_PUBLISHER_ID",
   "PRIVATE_CHROME_SERVICE_ACCOUNT_KEY_JSON",
   "PRIVATE_CHROME_PRIVATE_SIGNING_KEY",

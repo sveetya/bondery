@@ -1,4 +1,4 @@
-# Bondery ops stack (production only): marketing website.
+# Bondery ops stack: marketing website (production + beta).
 # Not for self-hosters — product stack is deploy/bondery (api + webapp + redis).
 #
 # Prerequisite (Traefik / Dokploy): docker network create dokploy-network
@@ -6,6 +6,9 @@
 #
 # Image tag defaults to floating :production (release-branch CD). Pin via
 # BONDERY_INFRA_WEBSITE_IMAGE_TAG for reproducible deploys / rollback.
+#
+# Traefik router names and the Docker DNS alias come from
+# BONDERY_INFRA_TRAEFIK_PREFIX so production and beta can share dokploy-network.
 
 services:
   website:
@@ -32,13 +35,15 @@ services:
     pull_policy: always
     labels:
       - traefik.enable=true
-      - traefik.http.routers.bondery-website.rule=Host(`${BONDERY_INFRA_WEBSITE_DOMAIN:?BONDERY_INFRA_WEBSITE_DOMAIN must be set}`)
-      - traefik.http.routers.bondery-website.entrypoints=websecure
-      - traefik.http.routers.bondery-website.tls.certResolver=letsencrypt
-      - traefik.http.routers.bondery-website.service=bondery-website
-      - traefik.http.services.bondery-website.loadbalancer.server.port=26630
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website.rule=Host(`${BONDERY_INFRA_WEBSITE_DOMAIN:?BONDERY_INFRA_WEBSITE_DOMAIN must be set}`)"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website.entrypoints=websecure"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website.service=${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website"
+      - "traefik.http.services.${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website.loadbalancer.server.port=26630"
     networks:
-      - dokploy-network
+      dokploy-network:
+        aliases:
+          - ${BONDERY_INFRA_TRAEFIK_PREFIX:-bondery}-website
     restart: unless-stopped
 
 networks:

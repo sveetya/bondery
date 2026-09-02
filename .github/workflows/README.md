@@ -8,7 +8,7 @@ GitHub requires workflow files to live directly in `.github/workflows/` (no subf
 verify.yml                 PR checks only (contract + path-filtered website-build)
 
 stage/
-  images.yml               -> stage-images.yml    main -> api/webapp :beta + :sha; website :sha
+  images.yml               -> stage-images.yml    main -> api/webapp/website :beta + :sha
 
 deploy/
   website.yml              -> deploy-website.yml  release -> promote :sha or build -> :production
@@ -63,7 +63,8 @@ Display names use ASCII hyphens (for example `Stage - Webapp`) because GitHub re
 |---------------|----------|-------------|
 | `BONDERY_OPS_DOKPLOY_WEBSITE_DEPLOY_WEBHOOK` | `deploy-website.yml` (after smoke) | `deploy/ops` marketing website |
 | `BONDERY_OPS_DOKPLOY_SERVICES_DEPLOY_WEBHOOK` | `release.yml` | `deploy/bondery` product stack |
-| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | not wired yet (`stage-images` later) | `bondery-beta` product stack |
+| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | `stage-images.yml` (branch `main`) | `bondery-beta` product stack |
+| `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK` | `stage-images.yml` (branch `main`) | `bondery-beta` marketing website |
 
 Workflows fetch production secrets with `infisical-production-secrets`. Empty webhook skips redeploy (manual Dokploy).
 
@@ -85,12 +86,11 @@ Docker builds also use GHA layer cache (`cache-from: type=gha`). Builder stages 
 
 | Channel | Git trigger | Docker tags |
 |---------|-------------|-------------|
-| Stage (api/webapp) | `main` | `:beta`, `:sha-<short>` |
-| Stage (website) | `main` | `:sha-<short>` only |
+| Stage (api/webapp/website) | `main` | `:beta`, `:sha-<short>` |
 | Release (api/webapp) | `vX.Y.Z` (unified) | Promote `:sha-<short>` → `:X.Y.Z`; `:production` after smoke |
 | Deploy (website) | push to `release` | Promote `:sha-<short>` → `:production` when image exists on main; else build |
 
-`:sha-<short>` is the **immutable artifact** built on `main`. `:beta` is a floating integration pointer for api/webapp only.
+`:sha-<short>` is the **immutable artifact** built on `main`. `:beta` is a floating integration pointer for api, webapp, and website.
 
 Release workflows support `retry-promote` dispatch on `release.yml` with optional `force_rebuild` when `:sha` is missing (CI recovery only).
 
@@ -166,10 +166,10 @@ Manual workflow: upload manifest `dokploySync` keys to a Dokploy compose app via
 
 | Input | Role |
 |-------|------|
-| `deployment` | `production` — Infisical production only. `beta` — staging app secrets + production ops keys (product stack only). |
-| `target` | `website` (`deploy/ops`), `services` (`deploy/bondery`), or `plausible` (`deploy/plausible`). With `deployment=beta`, only `services` is allowed (syncs to beta compose via `services-beta`). |
+| `deployment` | `production` — Infisical production only. `beta` — staging app secrets + production ops keys (website and services). |
+| `target` | `website` (`deploy/ops`), `services` (`deploy/bondery`), or `plausible` (`deploy/plausible`). With `deployment=beta`, `website` maps to `website-beta` and `services` maps to `services-beta`. Plausible is production-only. |
 | `dry_run` | Log env names to runner console instead of uploading to Dokploy API. |
-| `redeploy` | POST Dokploy deploy webhook after save (`refs/heads/release` for production stacks; `refs/heads/main` for beta product stack). |
+| `redeploy` | POST Dokploy deploy webhook after save (`refs/heads/release` for production stacks; `refs/heads/main` for beta website and product stacks). |
 
 **Infisical fetch by deployment:**
 
@@ -178,7 +178,7 @@ Manual workflow: upload manifest `dokploySync` keys to a Dokploy compose app via
 | `production` | production | production |
 | `beta` | staging (after production fetch + ops snapshot restore) | production |
 
-Dokploy connection creds and compose ids live in Infisical **production** — including `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID` and `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` for the beta stack.
+Dokploy connection creds and compose ids live in Infisical **production** — including `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_*` and `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_*` for the beta stacks.
 
 | Infisical key (production) | Role |
 |----------------------------|------|
@@ -190,13 +190,16 @@ Dokploy connection creds and compose ids live in Infisical **production** — in
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_COMPOSE_ID` | Plausible stack compose id |
 | `BONDERY_OPS_DOKPLOY_PLAUSIBLE_DEPLOY_WEBHOOK` | Optional redeploy for **plausible** when `redeploy: true` |
 | `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_COMPOSE_ID` | Beta product stack compose id (`bondery-beta`) |
-| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | Optional redeploy for **beta** (`deployment=beta`, `redeploy=true`) or when `stage-images` fires later; payload `refs/heads/main` |
+| `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK` | Optional redeploy for **beta** (`deployment=beta`, `redeploy=true`) or when `stage-images` fires; payload `refs/heads/main` |
+| `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_COMPOSE_ID` | Beta marketing website compose id |
+| `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK` | Optional redeploy for **beta website** (`deployment=beta` `target=website`, `redeploy=true`) or when `stage-images` fires; payload `refs/heads/main` |
 
 **Uploaded keys by target:**
 
 | Target | Keys |
 |--------|------|
-| `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN` |
+| `website` | `BONDERY_INFRA_WEBAPP_DOMAIN`, `BONDERY_INFRA_WEBSITE_DOMAIN`, `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, plus `BONDERY_INFRA_TRAEFIK_PREFIX` when set |
+| `website-beta` | Same upload keys as `website`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
 | `services` | All `deploy/bondery/.env.example` manifest keys except `BONDERY_INFRA_GIT_SHA`, `BONDERY_INFRA_VERSION`, `BONDERY_PRIVATE_S3_ENDPOINT`, `BONDERY_PUBLIC_STORAGE_URL` (compose derives storage URL from `BONDERY_INFRA_STORAGE_DOMAIN`; image pin stays in the Dokploy UI). `BONDERY_INFRA_TRAEFIK_PREFIX` syncs from Infisical (`bondery` in production, `bondery-beta` in staging). |
 | `services-beta` | Same upload keys as `services`; compose id / webhook from `BONDERY_OPS_DOKPLOY_STAGING_SERVICES_*` in production Infisical; app secret values from Infisical **staging** when `deployment=beta` |
 | `plausible` | `BONDERY_INFRA_PLAUSIBLE_DOMAIN`, `BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE`, `BONDERY_PRIVATE_PLAUSIBLE_TOTP_VAULT_KEY`, `BONDERY_PRIVATE_PLAUSIBLE_POSTGRES_PASSWORD`, `BONDERY_INFRA_PLAUSIBLE_DISABLE_REGISTRATION` (optional) |
