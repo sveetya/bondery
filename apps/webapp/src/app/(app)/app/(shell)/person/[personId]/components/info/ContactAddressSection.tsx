@@ -270,7 +270,7 @@ export function ContactAddressSection({ contact, isSaving, onSave }: ContactAddr
             <Card p="sm" radius="md" shadow="none" withBorder>
               <Stack gap="xs">
                 <Group align="center" gap="xs" wrap="nowrap">
-                  <Tooltip label={t("AddAddressAction")} withArrow>
+                  <Tooltip label={t("AddAddressAction")}>
                     <ActionIcon
                       aria-label={t("AddAddressAction")}
                       color="green"

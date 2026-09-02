@@ -111,12 +111,7 @@ export function ContactActionMenu({
           {tEnrich("MenuLabel")}
         </MenuItem>
         {!myselfMode && (
-          <Tooltip
-            disabled={!contact.myself}
-            label={tActions("CannotMergeMyself")}
-            maw={220}
-            withArrow
-          >
+          <Tooltip disabled={!contact.myself} label={tActions("CannotMergeMyself")}>
             <div>
               <MenuItem
                 disabled={!!contact.myself}
@@ -129,12 +124,7 @@ export function ContactActionMenu({
           </Tooltip>
         )}
         {!myselfMode && (
-          <Tooltip
-            disabled={!contact.myself}
-            label={tActions("CannotDeleteMyself")}
-            maw={220}
-            withArrow
-          >
+          <Tooltip disabled={!contact.myself} label={tActions("CannotDeleteMyself")}>
             <div>
               <MenuItem
                 color="red"

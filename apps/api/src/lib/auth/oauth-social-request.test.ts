@@ -7,8 +7,8 @@ import {
   resolveUnconfiguredSocialOAuthProvider,
 } from "./oauth-social-request.js";
 
-const allOff = { github: false, linkedin: false };
-const allOn = { github: true, linkedin: true };
+const allOff = { email: true, github: false, linkedin: false };
+const allOn = { email: true, github: true, linkedin: true };
 
 describe("isSocialOAuthMutationPath", () => {
   it("matches Better Auth sign-in and link POSTs", () => {

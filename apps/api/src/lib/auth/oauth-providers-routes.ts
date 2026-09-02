@@ -6,9 +6,9 @@ import { withOkResponse } from "../platform/openapi/responses.js";
 import { oauthProviders } from "./oauth-provider-config.js";
 
 const DESCRIPTION =
-  "Public snapshot of which social sign-in providers are configured on this API process. " +
-  "Booleans only — no client ids, secrets, or reasons. " +
-  "The bitmap is computed at API boot from OAuth credentials; restart the API after changing them. " +
+  "Public snapshot of which sign-in providers are configured on this API process. " +
+  "Booleans only — no client ids, secrets, SMTP credentials, or reasons. " +
+  "The bitmap is computed at API boot from OAuth credentials and SMTP env vars; restart the API after changing them. " +
   "Unauthenticated. Cached by clients for up to 60 seconds.";
 
 export function registerOAuthProvidersRoutes(fastify: AppFastifyInstance): void {

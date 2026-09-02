@@ -3,6 +3,7 @@
  *
  * Mounted at /auth/* (see routes.ts). Handles:
  *  - GitHub + LinkedIn social sign-in (webapp, mobile)
+ *  - Passwordless sign-in email (`magicLink` plugin; hashed Redis tokens)
  *  - Bearer sessions for mobile/API clients (`bearer` plugin)
  *  - JWT/JWKS issuance for services that need a verifiable access token
  *  - Acting as its own OAuth 2.1 / OIDC provider (`oauth-provider` plugin) for
@@ -11,7 +12,8 @@
  *
  * `databaseHooks.user.create.after` seeds `user_settings` + the "myself" `people` row,
  * then sends a welcome email (idempotent via `user_settings.welcome_email_sent_at`).
- * `databaseHooks.account.create.after` captures `signup_flow:user_create` with OAuth provider.
+ * Magic-link signup captures `signup_flow:user_create` from that hook (`signup_method: email`)
+ * because it does not create an `Account` row. Social signup still uses `account.create.after`.
  */
 
 import { apiKey } from "@better-auth/api-key";
@@ -29,7 +31,7 @@ import { API_KEY_PREFIX, API_KEY_START_DISPLAY_LENGTH } from "@bondery/schemas";
 import { DEFAULT_LOCALE } from "@bondery/schemas/locale/supported-locale";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
-import { lastLoginMethod } from "better-auth/plugins";
+import { lastLoginMethod, magicLink } from "better-auth/plugins";
 import type { AccessControl } from "better-auth/plugins/access";
 import { admin } from "better-auth/plugins/admin";
 import { bearer } from "better-auth/plugins/bearer";
@@ -37,6 +39,8 @@ import { jwt } from "better-auth/plugins/jwt";
 import { resolveRuntimeTrustedOrigins } from "../platform/trusted-origins.js";
 import { buildAuthTranslations } from "./build-auth-translations.js";
 import { isPlatformAdmin } from "./is-platform-admin.js";
+import { MAGIC_LINK_BA_RATE_LIMIT, MAGIC_LINK_EXPIRES_IN_SECONDS } from "./magic-link-constants.js";
+import { resolveNewUserDisplayName } from "./new-user-name.js";
 import { oauthSocialProviders } from "./oauth-provider-config.js";
 import { passkeyLimit } from "./passkey-limit.js";
 import { platformAdminAc, platformAdminRoles } from "./platform-admin-access.js";
@@ -44,8 +48,13 @@ import { provisionNewUser } from "./provision-new-user.js";
 import { resolveAuthLocale } from "./resolve-auth-locale.js";
 import { resolveProvisionLocaleFromContext } from "./resolve-provision-locale.js";
 import { resolveBetterAuthSecrets } from "./resolve-secrets.js";
-import { resolveSignupMethodFromProviderId } from "./resolve-signup-method.js";
+import {
+  isMagicLinkSignupContext,
+  resolveSignupMethodFromProviderId,
+  SIGNUP_METHOD,
+} from "./resolve-signup-method.js";
 import { createBetterAuthSecondaryStorage } from "./secondary-storage.js";
+import { sendMagicLink } from "./send-magic-link.js";
 import { runUserDeleteAfter, runUserDeleteBefore } from "./teardown-user.js";
 import { touchPasskeyLastUsed } from "./touch-passkey-last-used.js";
 
@@ -221,6 +230,7 @@ export const auth = betterAuth({
         after: async (user, ctx) => {
           const locale = resolveProvisionLocaleFromContext(ctx ?? undefined);
           await provisionNewUser({
+            email: user.email,
             locale,
             name: user.name,
             userId: user.id,
@@ -238,6 +248,31 @@ export const auth = betterAuth({
             .catch(() => {
               // sendWelcomeEmailIfNeeded logs failures internally
             });
+
+          if (isMagicLinkSignupContext(ctx)) {
+            void import("../../services/analytics/posthog-capture.js")
+              .then(({ captureProductEvent }) =>
+                captureProductEvent(
+                  { user: { email: user.email, id: user.id } },
+                  "signup_flow:user_create",
+                  { signup_method: SIGNUP_METHOD.email },
+                ),
+              )
+              .catch(() => {
+                // captureProductEvent is best-effort during signup
+              });
+          }
+        },
+        before: async (user) => {
+          const name = resolveNewUserDisplayName({
+            email: user.email,
+            name: user.name,
+          });
+          if (!name || name === user.name) {
+            return;
+          }
+
+          return { data: { name } };
         },
       },
       delete: {
@@ -343,8 +378,22 @@ export const auth = betterAuth({
       }),
     ),
     passkeyLimit(),
-    lastLoginMethod({ storeInDatabase: false }),
+    magicLink({
+      disableSignUp: false,
+      expiresIn: MAGIC_LINK_EXPIRES_IN_SECONDS,
+      rateLimit: MAGIC_LINK_BA_RATE_LIMIT,
+      sendMagicLink,
+      storeToken: "hashed",
+    }),
+    lastLoginMethod({
+      // Better Auth 1.7.1 already maps `/magic-link/verify` → `"magic-link"`.
+      storeInDatabase: false,
+    }),
   ],
+  rateLimit: {
+    enabled: true,
+    storage: "secondary-storage",
+  },
   secondaryStorage: createBetterAuthSecondaryStorage(),
   secrets: betterAuthSecrets,
 

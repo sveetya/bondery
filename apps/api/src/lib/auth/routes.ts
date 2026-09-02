@@ -36,6 +36,7 @@ import { resolveRuntimeTrustedOrigins, withCorsHeaders } from "../platform/trust
 import { auth, resolveBetterAuthIssuerUrl } from "./index.js";
 import { oauthProviders } from "./oauth-provider-config.js";
 import { resolveUnconfiguredSocialOAuthProvider } from "./oauth-social-request.js";
+import { isMagicLinkVerifyPath } from "./redact-auth-query.js";
 
 const AUTH_ALLOWED_ORIGINS = resolveRuntimeTrustedOrigins();
 
@@ -108,7 +109,21 @@ function serializeFastifyBody(body: unknown, contentType: string | undefined): s
   return JSON.stringify(body);
 }
 
+function applyResolvedClientIp(request: FastifyRequest): void {
+  const ip = request.ip;
+  if (!ip) {
+    return;
+  }
+
+  // Fastify `trustProxy` already resolved the client. Better Auth rate limits
+  // from `x-forwarded-for` and ignores multi-hop chains unless trustedProxies
+  // is set — pass the single resolved address.
+  request.headers["x-forwarded-for"] = ip;
+  request.raw.headers["x-forwarded-for"] = ip;
+}
+
 function toFetchRequest(request: FastifyRequest): Request {
+  applyResolvedClientIp(request);
   const { method } = request;
 
   // Build the Fetch Request directly from Fastify's parsed body. better-call's
@@ -142,7 +157,17 @@ async function sendFetchResponse(
   // which would throw "reply already sent" — but hijacking also skips
   // @fastify/cors headers added earlier in the hook chain.
   reply.hijack();
-  await setResponse(reply.raw, withCorsHeaders(request, response, AUTH_ALLOWED_ORIGINS));
+  let outbound = withCorsHeaders(request, response, AUTH_ALLOWED_ORIGINS);
+  if (isMagicLinkVerifyPath(request.url)) {
+    const headers = new Headers(outbound.headers);
+    headers.set("Referrer-Policy", "no-referrer");
+    outbound = new Response(outbound.body, {
+      headers,
+      status: outbound.status,
+      statusText: outbound.statusText,
+    });
+  }
+  await setResponse(reply.raw, outbound);
 }
 
 export async function registerAuthRoutes(fastify: FastifyInstance): Promise<void> {

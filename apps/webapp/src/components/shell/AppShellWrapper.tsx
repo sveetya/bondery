@@ -92,7 +92,6 @@ export function AppShellWrapper({
           </Group>
         }
         position="right"
-        withArrow
       >
         <ActionIcon
           aria-label={collapsed ? t("ExpandSidebar") : t("CollapseSidebar")}

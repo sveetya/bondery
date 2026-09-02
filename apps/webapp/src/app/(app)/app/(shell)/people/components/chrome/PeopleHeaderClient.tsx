@@ -39,7 +39,6 @@ export function PeopleHeaderClient() {
               <Kbd keys={parseShortcutKeys(HOTKEYS.ADD_PERSON)} size="xs" />
             </Group>
           }
-          withArrow
         >
           <Button
             leftSection={<IconUserPlus size={16} />}

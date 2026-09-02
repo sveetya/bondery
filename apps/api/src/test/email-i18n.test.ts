@@ -27,11 +27,12 @@ describe("email-i18n", () => {
     assert.equal(result, "Hello Alex, ends Jan 1");
   });
 
-  it("reads and interpolates bundle strings", () => {
-    const bundle = loadEmailNamespace("en", "TrialEndingEmail");
-    const greeting = readCopyString(bundle, "greetingWithName", { userName: "Sam" });
+  it("reads and interpolates EmailChrome help copy", () => {
+    const bundle = loadEmailNamespace("en", "EmailChrome");
+    const help = readCopyString(bundle, "help");
 
-    assert.match(greeting, /Sam/);
+    assert.match(help, /\{\{support\}\}/);
+    assert.match(help, /\{\{documentation\}\}/);
   });
 
   it("formats dates per locale", () => {

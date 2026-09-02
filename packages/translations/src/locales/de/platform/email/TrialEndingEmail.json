@@ -1,11 +1,9 @@
 {
-  "body": "Ihre Bondery Premium-Testphase endet am {{endDate}}. Danach verlängert sich Ihr Abonnement automatisch, sofern Sie es nicht in den Kontoeinstellungen kündigen.",
+  "body": "Danach verlängert sich Ihr Abonnement automatisch, sofern Sie es nicht kündigen.",
+  "cta": "Abonnement verwalten",
   "endDateFallback": "bald",
-  "greeting": "Hallo,",
-  "greetingWithName": "Hallo {{userName}},",
-  "heading": "Ihre Premium-Testphase endet bald",
-  "manageBilling": "Öffnen Sie Bondery und gehen Sie zu Einstellungen → Abonnement, um die Abrechnung zu verwalten oder vor der Verlängerung zu kündigen.",
-  "preview": "Ihre Premium-Testphase endet bald",
+  "heading": "Ihre Premium-Testphase endet am {{endDate}}",
+  "preview": "Ihr Abonnement verlängert sich, wenn Sie nicht kündigen",
   "subject": "Ihre Bondery Premium-Testphase endet bald",
   "whyReceiving": "Sie erhalten diese E-Mail, weil Sie eine Bondery Premium-Testphase haben."
 }

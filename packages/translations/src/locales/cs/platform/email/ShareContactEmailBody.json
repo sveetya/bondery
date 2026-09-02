@@ -1,6 +1,6 @@
 {
-  "defaultMessage": "Sdílel vám tento kontakt přes Bondery.",
-  "heading": "Kontakt s vámi sdílen",
+  "description": "{{senderName}} s vámi sdílel tento kontakt",
+  "footerNotes": "Odesláno přes Bondery. Odpovězte na tento e-mail, abyste se spojili s {{senderName}}.",
   "importantDateLine": "{{label}}: {{date}} ({{type}})",
   "labels": {
     "address": "Adresa",
@@ -16,7 +16,7 @@
     "website": "Web",
     "whatsapp": "WhatsApp"
   },
-  "noHeadline": "Bez popisu",
-  "preview": "{{senderName}} s vámi sdílel kontakt • {{contactName}}",
+  "previewFallback": "Telefon, e-mail a další údaje uvnitř",
+  "replyCta": "Odpovědět {{senderName}}",
   "subject": "{{senderName}} s vámi sdílel kontakt • {{contactName}}"
 }

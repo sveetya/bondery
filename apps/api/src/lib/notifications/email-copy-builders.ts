@@ -1,6 +1,7 @@
 import type {
   AccountDeletedEmailCopy,
   FeedbackEmailCopy,
+  MagicLinkEmailCopy,
   ReminderDigestEmailCopy,
   ShareContactEmailCopy,
   TrialEndingEmailCopy,
@@ -76,10 +77,8 @@ function readDateTypes(bundle: Record<string, unknown>): ReminderDigestEmailCopy
 export function buildTrialEndingCopy(bundle: Record<string, unknown>): TrialEndingEmailCopy {
   return {
     body: readCopyString(bundle, "body"),
-    greeting: readCopyString(bundle, "greeting"),
-    greetingWithName: readCopyString(bundle, "greetingWithName"),
+    cta: readCopyString(bundle, "cta"),
     heading: readCopyString(bundle, "heading"),
-    manageBilling: readCopyString(bundle, "manageBilling"),
     preview: readCopyString(bundle, "preview"),
     whyReceiving: readCopyString(bundle, "whyReceiving"),
   };
@@ -89,11 +88,20 @@ export function buildAccountDeletedCopy(bundle: Record<string, unknown>): Accoun
   return {
     body: readCopyString(bundle, "body"),
     feedback: readCopyString(bundle, "feedback"),
-    greeting: readCopyString(bundle, "greeting"),
-    greetingWithName: readCopyString(bundle, "greetingWithName"),
     heading: readCopyString(bundle, "heading"),
     preview: readCopyString(bundle, "preview"),
     thanks: readCopyString(bundle, "thanks"),
+  };
+}
+
+export function buildMagicLinkCopy(bundle: Record<string, unknown>): MagicLinkEmailCopy {
+  return {
+    body: readCopyString(bundle, "body"),
+    cta: readCopyString(bundle, "cta"),
+    heading: readCopyString(bundle, "heading"),
+    ignore: readCopyString(bundle, "ignore"),
+    preview: readCopyString(bundle, "preview"),
+    whyReceiving: readCopyString(bundle, "whyReceiving"),
   };
 }
 
@@ -101,8 +109,6 @@ export function buildWelcomeCopy(bundle: Record<string, unknown>): WelcomeEmailC
   return {
     body: readCopyString(bundle, "body"),
     getStarted: readCopyString(bundle, "getStarted"),
-    greeting: readCopyString(bundle, "greeting"),
-    greetingWithName: readCopyString(bundle, "greetingWithName"),
     heading: readCopyString(bundle, "heading"),
     preview: readCopyString(bundle, "preview"),
     whyReceiving: readCopyString(bundle, "whyReceiving"),
@@ -111,6 +117,7 @@ export function buildWelcomeCopy(bundle: Record<string, unknown>): WelcomeEmailC
 
 export function buildFeedbackCopy(bundle: Record<string, unknown>): FeedbackEmailCopy {
   return {
+    description: readCopyString(bundle, "description"),
     generalFeedbackHeading: readCopyString(bundle, "generalFeedbackHeading"),
     heading: readCopyString(bundle, "heading"),
     notProvided: readCopyString(bundle, "notProvided"),
@@ -118,6 +125,7 @@ export function buildFeedbackCopy(bundle: Record<string, unknown>): FeedbackEmai
     npsScoreLabel: readCopyString(bundle, "npsScoreLabel"),
     npsScoreValue: readCopyString(bundle, "npsScoreValue"),
     preview: readCopyString(bundle, "preview"),
+    replyCta: readCopyString(bundle, "replyCta"),
     submittedAt: readCopyString(bundle, "submittedAt"),
     userEmailLabel: readCopyString(bundle, "userEmailLabel"),
     userIdLabel: readCopyString(bundle, "userIdLabel"),
@@ -126,24 +134,27 @@ export function buildFeedbackCopy(bundle: Record<string, unknown>): FeedbackEmai
 
 export function buildReminderDigestCopy(bundle: Record<string, unknown>): ReminderDigestEmailCopy {
   return {
+    cta: readCopyString(bundle, "cta"),
     dateTypes: readDateTypes(bundle),
     dayMany: readCopyString(bundle, "dayMany"),
     dayOne: readCopyString(bundle, "dayOne"),
-    heading: readCopyString(bundle, "heading"),
-    introMany: readCopyString(bundle, "introMany"),
-    introOne: readCopyString(bundle, "introOne"),
+    description: readCopyString(bundle, "description"),
+    headingMany: readCopyString(bundle, "headingMany"),
+    headingOne: readCopyString(bundle, "headingOne"),
     preview: readCopyString(bundle, "preview"),
+    previewMore: readCopyString(bundle, "previewMore"),
     reminderLine: readCopyString(bundle, "reminderLine"),
+    whyReceiving: readCopyString(bundle, "whyReceiving"),
   };
 }
 
 export function buildShareContactCopy(bundle: Record<string, unknown>): ShareContactEmailCopy {
   return {
-    defaultMessage: readCopyString(bundle, "defaultMessage"),
-    heading: readCopyString(bundle, "heading"),
+    description: readCopyString(bundle, "description"),
+    footerNotes: readCopyString(bundle, "footerNotes"),
     importantDateLine: readCopyString(bundle, "importantDateLine"),
     labels: readNestedLabels(bundle, "labels"),
-    noHeadline: readCopyString(bundle, "noHeadline"),
-    preview: readCopyString(bundle, "preview"),
+    previewFallback: readCopyString(bundle, "previewFallback"),
+    replyCta: readCopyString(bundle, "replyCta"),
   };
 }

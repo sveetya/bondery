@@ -40,7 +40,7 @@ describe("resolveOAuthProviderSnapshot", () => {
       BONDERY_PRIVATE_AUTH_LINKEDIN_CLIENT_SECRET: "li-secret",
     });
 
-    assert.deepEqual(snapshot.oauthProviders, { github: true, linkedin: false });
+    assert.deepEqual(snapshot.oauthProviders, { email: false, github: true, linkedin: false });
     assert.deepEqual(snapshot.incomplete, { github: false, linkedin: true });
     assert.deepEqual(snapshot.socialProviders, {
       github: { clientId: "gh-id", clientSecret: "gh-secret" },

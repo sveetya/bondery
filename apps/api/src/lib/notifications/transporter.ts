@@ -28,6 +28,8 @@ export type RenderedEmailOptions = {
   to: string;
   subject: string;
   html: string;
+  /** Plaintext sibling of `html` (`multipart/alternative`). */
+  text: string;
   cc?: string;
   replyTo?: string;
 };
@@ -56,7 +58,7 @@ let configuredEmailConfig: EmailConfig | null = null;
 let transporter: Transporter | null = null;
 let emailReadiness: EmailReadiness | null = null;
 
-function classifySmtpVerifyError(error: unknown): string {
+export function classifySmtpError(error: unknown): string {
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
     const code = "code" in error ? String(error.code).toLowerCase() : "";
@@ -156,7 +158,7 @@ async function runEmailVerify(): Promise<EmailReadiness> {
   } catch (error) {
     emailReadiness = {
       configured: true,
-      error: classifySmtpVerifyError(error),
+      error: classifySmtpError(error),
       latencyMs: Date.now() - started,
       ok: false,
       verifiedAt: new Date().toISOString(),
@@ -209,12 +211,12 @@ export function emailConfigFromEnv(env: {
   };
 }
 
-export function emailConfigFromProcessEnv(): EmailConfig | null {
-  const host = process.env.BONDERY_PRIVATE_EMAIL_HOST;
-  const user = process.env.BONDERY_PRIVATE_EMAIL_USER;
-  const pass = process.env.BONDERY_PRIVATE_EMAIL_PASS;
-  const fromAddress = process.env.BONDERY_PRIVATE_EMAIL_ADDRESS;
-  const replyToAddress = process.env.BONDERY_PRIVATE_EMAIL_REPLY_TO;
+export function emailConfigFromNodeEnv(env: NodeJS.ProcessEnv = process.env): EmailConfig | null {
+  const host = env.BONDERY_PRIVATE_EMAIL_HOST;
+  const user = env.BONDERY_PRIVATE_EMAIL_USER;
+  const pass = env.BONDERY_PRIVATE_EMAIL_PASS;
+  const fromAddress = env.BONDERY_PRIVATE_EMAIL_ADDRESS;
+  const replyToAddress = env.BONDERY_PRIVATE_EMAIL_REPLY_TO;
   if (!host || !user || !pass || !fromAddress || !replyToAddress) {
     return null;
   }
@@ -222,10 +224,14 @@ export function emailConfigFromProcessEnv(): EmailConfig | null {
     fromAddress,
     host,
     pass,
-    port: Number(process.env.BONDERY_PRIVATE_EMAIL_PORT ?? 587),
+    port: Number(env.BONDERY_PRIVATE_EMAIL_PORT ?? 587),
     replyToAddress,
     user,
   };
+}
+
+export function emailConfigFromProcessEnv(): EmailConfig | null {
+  return emailConfigFromNodeEnv(process.env);
 }
 
 function ensureEmailConfig(): EmailConfig {
@@ -295,6 +301,13 @@ export async function initEmailTransport(log?: FastifyBaseLogger): Promise<Email
       verifiedAt: new Date().toISOString(),
     };
     return emailReadiness;
+  }
+
+  const fromAddress = getEmailConfig()?.fromAddress;
+  if (fromAddress?.toLowerCase().endsWith("@example.com")) {
+    log?.error(
+      "BONDERY_PRIVATE_EMAIL_ADDRESS is a placeholder (@example.com); SMTP will reject MAIL FROM. Set it to the SMTP mailbox in Infisical and run pnpm run env:pull.",
+    );
   }
 
   const readiness = await runEmailVerify();

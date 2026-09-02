@@ -51,7 +51,7 @@ export function CopyButton({
   }
 
   return (
-    <Tooltip label={copied ? copiedLabel : copyLabel} withArrow>
+    <Tooltip label={copied ? copiedLabel : copyLabel}>
       <ActionIcon
         aria-label={copied ? copiedLabel : copyLabel}
         color={copied ? "green" : "gray"}

@@ -79,7 +79,7 @@ Policy scripts run inside `check:types` — see `apps/api/package.json`.
 
 | Trigger | Commands |
 |---------|----------|
-| Template change | `pnpm run compile -w @bondery/emails` |
+| Template change | `pnpm --filter @bondery/emails run compile` and `pnpm --filter @bondery/emails run test` |
 | Preview (manual) | `pnpm run dev:emails` |
 
 When `apps/api/src/services/notifications/**` or `apps/api/src/lib/notifications/**` change, also run API typecheck. See [bondery-emails](../../bondery-emails/SKILL.md).

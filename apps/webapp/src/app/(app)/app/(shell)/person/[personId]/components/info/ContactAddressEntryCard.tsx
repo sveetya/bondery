@@ -178,7 +178,6 @@ export function ContactAddressEntryCard({
               <Tooltip
                 disabled={Boolean(entry.value)}
                 label={t("DisabledReasonEmptyAddress")}
-                withArrow
                 withinPortal
               >
                 <span>
@@ -202,7 +201,6 @@ export function ContactAddressEntryCard({
               <Tooltip
                 disabled={hasValidCoordinates(entry.latitude, entry.longitude)}
                 label={t("DisabledReasonNoCoordinates")}
-                withArrow
                 withinPortal
               >
                 <span>
@@ -288,7 +286,6 @@ export function ContactAddressEntryCard({
                   <Tooltip
                     disabled={hasValidCoordinates(entry.latitude, entry.longitude)}
                     label={t("DisabledReasonNoCoordinates")}
-                    withArrow
                     withinPortal
                   >
                     <span>
@@ -354,7 +351,6 @@ export function ContactAddressEntryCard({
                   <Tooltip
                     disabled={Boolean(entry.value)}
                     label={t("DisabledReasonEmptyAddress")}
-                    withArrow
                     withinPortal
                   >
                     <span>

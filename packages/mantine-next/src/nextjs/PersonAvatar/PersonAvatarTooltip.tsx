@@ -36,7 +36,7 @@ export function PersonAvatarTooltip({ person, children }: PersonAvatarTooltipPro
           padding: 0,
         },
       }}
-      withArrow
+      w="auto"
     >
       {children}
     </Tooltip>

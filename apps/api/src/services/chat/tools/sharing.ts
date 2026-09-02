@@ -1,3 +1,4 @@
+import { emailAddressSchema } from "@bondery/schemas";
 import { tool } from "ai";
 import { z } from "zod";
 import type { DomainContext } from "../../../domains/_shared/context.js";
@@ -44,7 +45,7 @@ export function createSharingTools(ctx: DomainContext) {
           .describe("Optional personal message to include in the email"),
         personId: z.string().describe("The UUID of the contact to share"),
         recipientEmails: z
-          .array(z.string().email())
+          .array(emailAddressSchema)
           .min(1)
           .max(10)
           .describe("Email addresses to send the contact to"),

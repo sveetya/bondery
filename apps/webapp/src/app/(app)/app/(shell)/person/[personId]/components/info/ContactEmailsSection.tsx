@@ -254,7 +254,7 @@ export function ContactEmailsSection({
       {!isEmailLimitReached ? (
         <Card p="sm" radius="md" withBorder>
           <Group align="center" gap="xs" wrap="nowrap">
-            <Tooltip label={text.addEmail} withArrow>
+            <Tooltip label={text.addEmail}>
               <ActionIcon
                 aria-label={text.addEmail}
                 color="green"

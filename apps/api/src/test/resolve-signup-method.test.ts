@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { resolveSignupMethodFromProviderId } from "../lib/auth/resolve-signup-method.js";
+import {
+  isMagicLinkSignupContext,
+  resolveSignupMethodFromProviderId,
+} from "../lib/auth/resolve-signup-method.js";
 
 describe("resolveSignupMethodFromProviderId", () => {
   it("maps Better Auth social provider ids", () => {
@@ -16,5 +19,11 @@ describe("resolveSignupMethodFromProviderId", () => {
   it("maps credential to email and unknown providers to unknown", () => {
     assert.equal(resolveSignupMethodFromProviderId("credential"), "email");
     assert.equal(resolveSignupMethodFromProviderId("google"), "unknown");
+  });
+
+  it("detects magic-link verify as the signup context", () => {
+    assert.equal(isMagicLinkSignupContext({ path: "/magic-link/verify" }), true);
+    assert.equal(isMagicLinkSignupContext({ path: "/callback/github" }), false);
+    assert.equal(isMagicLinkSignupContext(undefined), false);
   });
 });

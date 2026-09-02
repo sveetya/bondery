@@ -4,10 +4,10 @@
 
 | Layer | Package / path | Role |
 |-------|----------------|------|
-| Templates | `packages/emails` (`@bondery/emails`) | React Email + Tailwind; presentation-only `copy` props |
+| Templates | `packages/emails` (`@bondery/emails`) | React Email; files under `src/templates/{account,billing,internal,notifications}/` |
 | Copy | `packages/translations` (`platform/email/*`) | en / cs / de namespaces loaded in API |
 | i18n | `apps/api/src/lib/notifications/email-i18n.ts` | Locale resolution + `loadNamespace` + interpolation |
-| Render | `apps/api` | `@react-email/render` at send time |
+| Render | `apps/api` | `renderEmailParts` — `@react-email/render` `render` + [`toPlainText`](https://react.email/docs/utilities/render#4-convert-to-plain-text) |
 | Transport | `apps/api/src/lib/notifications/transporter.ts` | Nodemailer → Plunk SMTP (production) |
 | Triggers | `apps/api/src/services/notifications/`, `services/contacts/share.ts`, `lib/jobs/` | Routes, webhooks, pg-boss |
 
@@ -15,9 +15,9 @@
 packages/translations (platform/email)
         ↓ loadNamespace + interpolateCopy
 apps/api notification service
-        ↓ render(Template({ copy, ...data }))
+        ↓ renderEmailParts(Template({ copy, ...data }))  →  { html, text }
         ↓ initEmailTransport() on onReady
-        ↓ sendRenderedEmail() → getEmailTransporter()
+        ↓ sendRenderedEmail() → getEmailTransporter()  (multipart/alternative)
 Plunk SMTP (BONDERY_PRIVATE_EMAIL_*)
 ```
 
@@ -52,7 +52,8 @@ Preview in `@bondery/emails` uses English defaults from `packages/emails/src/fix
 
 ## Known gaps
 
-1. **No plain-text multipart** — HTML only today.
+1. **No bounce/complaint webhook → suppression list** — Plunk can emit bounce and spam-complaint events. We do not ingest those webhooks or keep an in-app suppression list, so we can keep mailing addresses that already bounced or marked us as spam. Provider-side handling exists; product-side list hygiene does not. See [deliverability.md](./deliverability.md).
+2. **Outlook SVG logo** — header logotype is inline SVG; Word/Outlook often drops it.
 
 ## Health check
 

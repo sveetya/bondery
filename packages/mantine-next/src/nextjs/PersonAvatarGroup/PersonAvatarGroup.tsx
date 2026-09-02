@@ -67,7 +67,6 @@ export function PersonAvatarGroup({
       <Tooltip
         key="overflow"
         label={moreTooltipTemplate.replace("{count}", String(item.remainingCount))}
-        withArrow
       >
         <Avatar color="gray" radius="xl" size={size} style={{ cursor: "default" }}>
           +{item.remainingCount}

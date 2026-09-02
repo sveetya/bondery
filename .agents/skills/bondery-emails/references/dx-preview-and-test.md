@@ -11,8 +11,8 @@ pnpm run dev:emails
 ```
 
 - **Port:** 26639 (`packages/schemas/src/constants/dev-ports.ts` → `EMAIL_PREVIEW`)
-- **Tool:** React Email CLI (`email dev --dir ./src`)
-- Opens browser UI to browse all templates in `packages/emails/src/templates/`
+- **Tool:** React Email CLI (`email dev --dir ./src/templates`)
+- Opens browser UI to browse templates under `packages/emails/src/templates/{account,billing,internal,notifications}/`
 
 Preview **before** opening a PR for any template change.
 
@@ -29,16 +29,16 @@ After preview, spot-check in real clients:
 1. **Gmail** (web + mobile app)
 2. **Apple Mail** (iOS)
 
-Check: subject, preview snippet, single-column layout, button/link tap targets, footer logo.
+Check: subject, **preview snippet (≤90 chars)**, single-column layout, button/link tap targets, header logo, footer help; digest “Manage these notifications”; **no** legal HQ on transactional templates.
 
-## Automated testing (gap)
+## Automated testing
 
-There are **no email-specific tests** today. Recommended when adding coverage:
+API coverage lives next to senders (for example `apps/api/src/test/magic-link-email.test.ts`, `email-i18n.test.ts`, `email-transporter.test.ts`). When adding an email, extend those rather than inventing a second test stack.
 
 | Level | What to test |
 |-------|----------------|
-| Unit smoke | `render(YourEmail(props))` does not throw; optional HTML snapshot |
-| Integration | Mock `sendRenderedEmail`; assert called with expected `to`/`subject` |
+| Unit smoke | `renderEmailParts(YourEmail(props))` does not throw; HTML has `<Preview>`; `text` has body/CTA URL; optional HTML snapshot |
+| Integration | Mock `sendRenderedEmail`; assert called with expected `to`/`subject`/`from` **and** `text` |
 | E2E | Do **not** assert real inbox delivery unless you have a test mailbox |
 
 API tests stub email env in `apps/api/src/test/load-test-env.ts` with dummy `BONDERY_PRIVATE_EMAIL_*`.
@@ -53,7 +53,7 @@ When changing email code:
 
 | Changed paths | Checks |
 |---------------|--------|
-| `packages/emails/**` | `pnpm run compile -w @bondery/emails` |
+| `packages/emails/**` | `pnpm --filter @bondery/emails run compile` and `pnpm --filter @bondery/emails run test` |
 | `apps/api/src/services/notifications/**` | API typecheck/lint per [bondery-verification-loop](../../bondery-verification-loop/SKILL.md) |
 
 ## Related docs

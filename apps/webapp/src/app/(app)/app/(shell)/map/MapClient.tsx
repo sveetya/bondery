@@ -482,7 +482,7 @@ export function MapClient({ view }: MapClientProps) {
                     >
                       {type}
                     </Badge>
-                    <Tooltip label={addr} withArrow>
+                    <Tooltip label={addr}>
                       <Text lineClamp={1} size="sm">
                         {addr}
                       </Text>

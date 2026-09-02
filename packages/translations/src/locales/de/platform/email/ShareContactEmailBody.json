@@ -1,6 +1,6 @@
 {
-  "defaultMessage": "Hat diesen Kontakt über Bondery mit Ihnen geteilt.",
-  "heading": "Kontakt mit Ihnen geteilt",
+  "description": "{{senderName}} hat diesen Kontakt mit Ihnen geteilt",
+  "footerNotes": "Gesendet mit Bondery. Antworten Sie auf diese E-Mail, um {{senderName}} zu erreichen.",
   "importantDateLine": "{{label}}: {{date}} ({{type}})",
   "labels": {
     "address": "Adresse",
@@ -16,7 +16,7 @@
     "website": "Website",
     "whatsapp": "WhatsApp"
   },
-  "noHeadline": "Keine Überschrift",
-  "preview": "{{senderName}} hat einen Kontakt mit Ihnen geteilt • {{contactName}}",
+  "previewFallback": "Telefon, E-Mail und weitere Details im Inneren",
+  "replyCta": "Antworten an {{senderName}}",
   "subject": "{{senderName}} hat einen Kontakt mit Ihnen geteilt • {{contactName}}"
 }

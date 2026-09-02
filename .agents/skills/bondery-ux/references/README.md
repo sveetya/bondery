@@ -46,7 +46,7 @@ Also see [mobile/forms.md](./mobile/forms.md) (technical RHF patterns for mobile
 | [keyboard-shortcuts.md](./desktop/keyboard-shortcuts.md) | `Kbd` display, `parseShortcutKeys` |
 | [modals.md](./desktop/modals.md) | Web modals, loading jobs, `ModalFooter`, blocking dismiss |
 | [create-more.md](./desktop/create-more.md) | Repeatable create modals, Create more switch |
-| [tooltips.md](./desktop/tooltips.md) | Mantine Tooltip: theme `multiline`, always set `maw` |
+| [tooltips.md](./desktop/tooltips.md) | Mantine Tooltip: theme `multiline`, `withArrow`, `w: 300` |
 
 ## Product
 

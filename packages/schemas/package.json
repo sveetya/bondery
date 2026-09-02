@@ -859,6 +859,30 @@
       "node": "./dist/primitives/color/types.js",
       "types": "./src/primitives/color/types.ts"
     },
+    "./primitives/email": {
+      "default": "./dist/primitives/email/index.js",
+      "import": "./dist/primitives/email/index.js",
+      "node": "./dist/primitives/email/index.js",
+      "types": "./src/primitives/email/index.ts"
+    },
+    "./primitives/email/contract": {
+      "default": "./dist/primitives/email/contract.js",
+      "import": "./dist/primitives/email/contract.js",
+      "node": "./dist/primitives/email/contract.js",
+      "types": "./src/primitives/email/contract.ts"
+    },
+    "./primitives/email/schema": {
+      "default": "./dist/primitives/email/schema.js",
+      "import": "./dist/primitives/email/schema.js",
+      "node": "./dist/primitives/email/schema.js",
+      "types": "./src/primitives/email/schema.ts"
+    },
+    "./primitives/email/types": {
+      "default": "./dist/primitives/email/types.js",
+      "import": "./dist/primitives/email/types.js",
+      "node": "./dist/primitives/email/types.js",
+      "types": "./src/primitives/email/types.ts"
+    },
     "./runtime-config": {
       "default": "./dist/runtime-config.js",
       "import": "./dist/runtime-config.js",

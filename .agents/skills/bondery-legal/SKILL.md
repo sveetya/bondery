@@ -4,8 +4,9 @@ description: >
   Bondery legal disclosure hygiene — subprocessor registry, policy-claims reconciliation,
   data-flow triggers, legal-entity identity, and escalation boundaries. Use when adding
   third-party vendors/SDKs, new data collection, analytics, AI tools, retention/deletion,
-  editing Privacy/Terms, or looking up Sveetech / Bondery company identifiers
-  (VAT, EUID, DUNS, registered address).
+  editing Privacy/Terms, looking up Sveetech / Bondery company identifiers
+  (VAT, EUID, DUNS, registered address), or classifying product email as
+  transactional vs marketing (unsubscribe, postal address).
 metadata:
   version: "1.0.0"
   namespace: bondery
@@ -23,6 +24,7 @@ metadata:
 - Touching analytics opt-out, cookie behavior, or `DO_NOT_TRACK`
 - Editing `apps/website/src/components/legal/Privacy.tsx` or `Terms.tsx`
 - Looking up or changing Sveetech / Bondery legal identity (VAT, EUID, DUNS, address)
+- Classifying product email as transactional vs marketing (unsubscribe, postal address in the footer)
 - Reviewing a PR that touches any of the above
 
 Do **not** activate for routine UI refactors, API contract work, or technical security enforcement — use `bondery-api`, `bondery-ux`, or `bondery-security` instead.
@@ -71,6 +73,7 @@ No `docs/legal/` folder. Legal copy is English-only React components on the webs
 | Task | Read |
 |------|------|
 | Company identity (name, address, VAT, EUID, DUNS) | [references/legal-entity.md](references/legal-entity.md) |
+| Product email (transactional vs marketing, unsubscribe, postal address) | [references/emails.md](references/emails.md) and [bondery-emails](../bondery-emails/SKILL.md) |
 | Vendor / subprocessor list (code-grounded) | [references/subprocessor-registry.md](references/subprocessor-registry.md) |
 | Policy claim vs. code status | [references/policy-claims-inventory.md](references/policy-claims-inventory.md) |
 | Trigger → action workflow | [references/data-flow-workflow.md](references/data-flow-workflow.md) |
@@ -80,10 +83,11 @@ No `docs/legal/` folder. Legal copy is English-only React components on the webs
 
 Full index: [references/README.md](references/README.md).
 
-Cross-skill owners: technical enforcement → `bondery-security`; API contracts → `bondery-api`; UI/copy display → `bondery-ux`.
+Cross-skill owners: technical enforcement → `bondery-security`; API contracts → `bondery-api`; UI/copy display → `bondery-ux`; product email chrome → `bondery-emails`.
 
 ## Legal checklist (before merge)
 
+- [ ] New product email classified transactional vs marketing ([emails.md](references/emails.md)) — legal HQ only on marketing; “Manage these notifications” only on configurable product mail (digest)
 - [ ] Change classified: vendor / data category / retention / consent / policy copy
 - [ ] Subprocessor registry checked — new vendor added or `policy-sync` status updated in same PR
 - [ ] Policy claims inventory checked — no silent contradiction with `Privacy.tsx` / `Terms.tsx`

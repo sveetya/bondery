@@ -71,7 +71,6 @@ export function ProfileCard() {
               <HelpButton
                 ariaLabel={t("EmailInfoAriaLabel")}
                 label={t("EmailDisabledTooltip")}
-                tooltipMaxWidth={360}
                 variant="subtle"
               />
             </Group>

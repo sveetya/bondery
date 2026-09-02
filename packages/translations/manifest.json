@@ -68,6 +68,10 @@
       "path": "common.json",
       "platforms": ["web", "mobile", "website", "extension"]
     },
+    "EmailChrome": {
+      "path": "platform/email/EmailChrome.json",
+      "platforms": ["email"]
+    },
     "EnrichFromLinkedIn": {
       "path": "features/sections/EnrichFromLinkedIn.json",
       "platforms": ["web", "mobile"]
@@ -139,6 +143,10 @@
     "LoginPage": {
       "path": "features/pages/LoginPage.json",
       "platforms": ["web", "mobile"]
+    },
+    "MagicLinkEmail": {
+      "path": "platform/email/MagicLinkEmail.json",
+      "platforms": ["email"]
     },
     "MapCommon": {
       "path": "features/sections/MapCommon.json",

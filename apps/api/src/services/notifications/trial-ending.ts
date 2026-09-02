@@ -1,13 +1,15 @@
 import { TrialEndingEmail } from "@bondery/emails";
-import { render } from "@react-email/render";
 import type { FastifyBaseLogger } from "fastify";
+import { appSettingsUrl, emailDocumentProps } from "../../lib/notifications/email-chrome.js";
 import { buildTrialEndingCopy } from "../../lib/notifications/email-copy-builders.js";
+import { formatEmailFrom } from "../../lib/notifications/email-from.js";
 import {
   formatEmailDate,
   loadEmailNamespace,
   readCopyString,
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
+import { renderEmailParts } from "../../lib/notifications/render-email.js";
 import {
   isEmailConfigured,
   requireEmailConfig,
@@ -37,21 +39,24 @@ export async function sendTrialEndingEmail(
   const formattedEndDate = input.trialEndsAt
     ? formatEmailDate(input.trialEndsAt, lng)
     : readCopyString(bundle, "endDateFallback");
+  const subject = readCopyString(bundle, "subject");
 
-  const html = await render(
+  const { html, text } = await renderEmailParts(
     TrialEndingEmail({
+      ...emailDocumentProps(lng, subject),
       copy,
       formattedEndDate,
-      userName: input.userName ?? undefined,
+      settingsUrl: appSettingsUrl(),
     }),
   );
 
   await sendRenderedEmail(
     {
-      from: `Robot from Bondery <${config.fromAddress}>`,
+      from: formatEmailFrom(config.fromAddress),
       html,
       replyTo: config.replyToAddress,
-      subject: readCopyString(bundle, "subject"),
+      subject,
+      text,
       to: input.email,
     },
     log,

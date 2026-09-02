@@ -104,7 +104,7 @@ export function ImportantDateRowCard({
                   : disabledTypeHint;
 
             return (
-              <Tooltip label={disabledHint} withArrow>
+              <Tooltip label={disabledHint}>
                 <span>{option.label}</span>
               </Tooltip>
             );

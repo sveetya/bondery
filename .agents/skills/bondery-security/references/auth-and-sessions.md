@@ -7,7 +7,10 @@ Authentication and session patterns across API and clients.
 Config: `apps/api/src/lib/auth/index.ts`
 
 - Social providers: GitHub, LinkedIn OIDC
+- Passwordless sign-in email: Better Auth `magicLink` plugin (`disableSignUp: false`, `storeToken: "hashed"`, 15-minute expiry). Tokens live in Redis secondary storage (`bondery:auth:verification:<hashed-token>`), not Postgres. A Redis index `bondery:magic-link:prev:<email-hash>` deletes the previous verification on resend. Per-email cap: 3 sends / 15 minutes (`bondery:magic-link:send:<email-hash>`).
+- New-user name: OAuth copies the IdP display name onto `User.name` at create (GitHub `name` or `login`, LinkedIn OIDC `name`). Magic-link verify often creates the user with an empty name; `databaseHooks.user.create.before` then sets `User.name` to the email local-part with no case change. `user.create.after` splits that string once onto the myself `people` row (`firstName` / `lastName`) and does not update an existing myself row.
 - Session: 30-day expiry, daily refresh; dual-write Postgres + Redis (`secondaryStorage`, `storeSessionInDatabase: true`, key prefix `bondery:auth:`). Redis miss falls back to Postgres — see `docs/adr/0001-better-auth-redis-secondary-storage.mdx`.
+- Magic-link verify sets the **API-domain Better Auth session only**. The webapp still needs the OAuth BFF cookie (`bondery_webapp_session`) — `/login` callbacks go to `/auth/start`; `/oauth/login` callbacks go to `/oauth/consent` with the current search. Dual-session is still required after verify.
 - `account.encryptOAuthTokens: true` — IdP tokens in `Account` encrypted at rest (AES-256-GCM via Better Auth secret). Do not read those columns via Prisma; use `auth.api.getAccessToken` when a plaintext provider token is required.
 - OAuth 2.1 / OIDC provider with PKCE required
 - Canonical resource: `BONDERY_PUBLIC_API_URL` with scope `api:access`

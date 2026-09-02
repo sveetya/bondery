@@ -1440,9 +1440,9 @@ paths:
     get:
       tags:
         - Auth
-      description: Public snapshot of which social sign-in providers are configured on this API process. Booleans only — no
-        client ids, secrets, or reasons. The bitmap is computed at API boot from OAuth credentials; restart the API
-        after changing them. Unauthenticated. Cached by clients for up to 60 seconds.
+      description: Public snapshot of which sign-in providers are configured on this API process. Booleans only — no client
+        ids, secrets, SMTP credentials, or reasons. The bitmap is computed at API boot from OAuth credentials and SMTP
+        env vars; restart the API after changing them. Unauthenticated. Cached by clients for up to 60 seconds.
       responses:
         "200":
           description: Configured social OAuth providers
@@ -1450,6 +1450,7 @@ paths:
             application/json:
               example:
                 oauthProviders:
+                  email: true
                   github: true
                   linkedin: true
               schema:
@@ -1458,11 +1459,14 @@ paths:
                   oauthProviders:
                     type: object
                     properties:
+                      email:
+                        type: boolean
                       github:
                         type: boolean
                       linkedin:
                         type: boolean
                     required:
+                      - email
                       - github
                       - linkedin
                     additionalProperties: false
@@ -1471,6 +1475,7 @@ paths:
                 additionalProperties: false
                 example:
                   oauthProviders:
+                    email: true
                     github: true
                     linkedin: true
         "400":
@@ -14368,12 +14373,12 @@ paths:
                       - notes
                       - importantDates
                 sendCopy:
+                  default: true
                   type: boolean
               required:
                 - personId
                 - recipientEmails
                 - selectedFields
-                - sendCopy
             example:
               message: Sharing Ada's contact card.
               personId: 550e8400-e29b-41d4-a716-446655440000
@@ -22039,9 +22044,9 @@ tags:
       minute, rate limited to five requests per minute per client; returns 503 when critical dependencies are
       unavailable.
     name: Health
-  - description: Public authentication metadata. `GET /oauth-providers` reports which social identity providers are
-      configured on this API process (booleans only). Social sign-in and account linking still go through Better Auth at
-      `/auth/*`.
+  - description: Public authentication metadata. `GET /oauth-providers` reports which sign-in providers are configured on
+      this API process (GitHub, LinkedIn, email/magic-link — booleans only). Social sign-in and account linking still go
+      through Better Auth at `/auth/*`.
     name: Auth
   - description: Contact management operations
     name: Contacts

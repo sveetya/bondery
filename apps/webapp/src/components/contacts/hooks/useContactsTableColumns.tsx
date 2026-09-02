@@ -56,7 +56,7 @@ export function useContactsTableColumns({
             case "headline": {
               const headlineValue = contact.headline || "-";
               return (
-                <Tooltip label={headlineValue} withArrow>
+                <Tooltip label={headlineValue}>
                   <Text lineClamp={1} size="sm">
                     {headlineValue}
                   </Text>
@@ -72,7 +72,7 @@ export function useContactsTableColumns({
                 ? abbreviateLocationCountry(contact.location)
                 : "-";
               return (
-                <Tooltip label={locationValue} withArrow>
+                <Tooltip label={locationValue}>
                   <Text lineClamp={1} size="sm">
                     {shortLocation}
                   </Text>
@@ -94,7 +94,7 @@ export function useContactsTableColumns({
               const phoneDisplay = formatPhoneForDisplay(preferred.prefix || "", preferred.value);
               const otherPhoneCount = phones.length - 1;
               return (
-                <Tooltip label={phoneDisplay} withArrow>
+                <Tooltip label={phoneDisplay}>
                   <Stack gap={0}>
                     <Text lineClamp={1} size="sm">
                       {phoneDisplay || "-"}
@@ -116,7 +116,7 @@ export function useContactsTableColumns({
               }
               const otherEmailCount = emails.length - 1;
               return (
-                <Tooltip label={preferred.value} withArrow>
+                <Tooltip label={preferred.value}>
                   <Stack gap={0}>
                     <Text lineClamp={1} size="sm">
                       {preferred.value || "-"}

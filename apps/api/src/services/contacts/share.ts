@@ -1,16 +1,18 @@
 import { ShareContactEmail } from "@bondery/emails";
 import type { ShareableField } from "@bondery/schemas";
-import { render } from "@react-email/render";
 import type { DomainContext } from "../../domains/_shared/context.js";
 import { domainDb } from "../../domains/_shared/domain-db.js";
 import { attachContactExtras, type FullContactExtras } from "../../lib/contacts/enrichment.js";
 import { contactDetailSelect, mapContactDetailRecord } from "../../lib/data/prisma-mappers.js";
+import { emailDocumentProps } from "../../lib/notifications/email-chrome.js";
 import { buildShareContactCopy } from "../../lib/notifications/email-copy-builders.js";
+import { formatEmailFrom } from "../../lib/notifications/email-from.js";
 import {
   loadEmailNamespace,
   readCopyString,
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
+import { renderEmailParts } from "../../lib/notifications/render-email.js";
 import {
   isEmailConfigured,
   requireEmailConfig,
@@ -296,9 +298,16 @@ export async function shareContact(
 
   const config = requireEmailConfig();
 
-  let emailHtml: string;
+  let html: string;
+  let text: string;
   try {
-    emailHtml = await render(ShareContactEmail({ ...emailProps, copy }));
+    ({ html, text } = await renderEmailParts(
+      ShareContactEmail({
+        ...emailDocumentProps(lng, subject),
+        ...emailProps,
+        copy,
+      }),
+    ));
   } catch {
     throw internal("contact_share_email_render_failed");
   }
@@ -306,10 +315,11 @@ export async function shareContact(
   try {
     await sendRenderedEmail({
       cc: user.email,
-      from: `Bondery <${config.fromAddress}>`,
-      html: emailHtml,
+      from: formatEmailFrom(config.fromAddress),
+      html,
       replyTo: user.email,
       subject,
+      text,
       to: recipientEmails.join(", "),
     });
   } catch {

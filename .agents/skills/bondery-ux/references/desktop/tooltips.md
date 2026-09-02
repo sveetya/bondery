@@ -2,26 +2,26 @@
 
 Mantine `Tooltip` on **webapp and website** only. Mobile does not use this component.
 
-## Theme default
+## Theme defaults
 
-`bonderyTheme` in `packages/mantine-next/src/theme.ts` sets `Tooltip.defaultProps.multiline: true`. Do **not** pass `multiline` (or `multiline={true}`) at the call site — the theme already enables wrapping.
+`bonderyTheme` in `packages/mantine-next/src/theme.ts` sets:
 
-## Always set `maw`
+- `multiline: true`
+- `withArrow: true`
+- `w: 300`
 
-Always set **`maw`** on `<Tooltip>` so a longer cs/de translation wraps instead of a single very wide line. Without a max width, even with `multiline`, the tooltip grows as wide as the longest unwrapped line.
-
-See [Mantine multiline tooltips](https://mantine.dev/core/tooltip/#multiline). Do not set a default `maw` in the theme — widths differ by copy.
+Do **not** pass `multiline`, `withArrow`, or `w` at the call site unless you need a different value.
 
 ```tsx
-<Tooltip label={t("...")} maw={240} withArrow>
+<Tooltip label={t("...")}>
 ```
 
-`HelpButton` already defaults `tooltipMaxWidth` (`maw`) to 320. Callers can override.
+Override `w` when the default 300px is wrong — for example `PersonAvatarTooltip` (`w="auto"`) because the label is a `PersonCard`, not wrapping text.
 
-Do **not** bulk-add `maw` to every existing Tooltip that lacks a width when touching unrelated code. New and edited tooltips must set it.
+`HelpButton` uses the theme width. Pass `tooltipMaxWidth` only to override `w`.
 
 ## Checklist
 
-- [ ] No `multiline` prop on `<Tooltip>` — theme default applies
-- [ ] `maw` set so longer locales wrap
-- [ ] `HelpButton` uses `tooltipMaxWidth` for `maw` rather than a local `multiline` prop
+- [ ] No `multiline`, `withArrow`, or `w` on `<Tooltip>` unless overriding the theme
+- [ ] Person-card / custom-label tooltips set `w="auto"` (or another explicit width)
+- [ ] `HelpButton` does not pass `withArrow`; `tooltipMaxWidth` only when the default 300px is too narrow

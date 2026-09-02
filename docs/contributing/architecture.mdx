@@ -214,7 +214,7 @@ Shared pure utilities, `API_ROUTES`, global URL constants, and platform helpers 
 
 ### `packages/emails`
 
-React Email templates rendered and sent by the API.
+React Email templates rendered and sent by the API. Files live in `src/templates/{account,billing,internal,notifications}/` and share `EmailWrapper` / `EmailBody` chrome. Import from `@bondery/emails`. Details: [`.agents/skills/bondery-emails`](../../.agents/skills/bondery-emails/SKILL.md).
 
 **Local dev:** port `26639` · `pnpm run dev:emails` → [http://localhost:26639](http://localhost:26639). Runs alongside the Chrome extension dev server (`26633`) without a port conflict.
 

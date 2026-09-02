@@ -60,7 +60,7 @@ export const swaggerOpenApiConfig = {
     },
     {
       description:
-        "Public authentication metadata. `GET /oauth-providers` reports which social identity providers are configured on this API process (booleans only). Social sign-in and account linking still go through Better Auth at `/auth/*`.",
+        "Public authentication metadata. `GET /oauth-providers` reports which sign-in providers are configured on this API process (GitHub, LinkedIn, email/magic-link — booleans only). Social sign-in and account linking still go through Better Auth at `/auth/*`.",
       name: "Auth",
     },
     { description: "Contact management operations", name: "Contacts" },
