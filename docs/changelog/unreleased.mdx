@@ -17,6 +17,9 @@ hidden: true
 
 ### 🐛 Fixed
 
+- Website: `/.well-known/ard.json` now includes required `specVersion`, `host`, and per-entry `version` (Bondery release from the website image; `specVersion` stays `1.0` per the ARD manifest schema).
+- Website: Unknown URLs return the 404 page instead of a 500 caused by rendering Mantine without `MantineProvider`.
+- Ops: Infisical → Dokploy syncs `BONDERY_INFRA_WEBSITE_IMAGE_TAG` to website (`production`) and website-beta (`beta`).
 - Deploy: every Compose service publishes a unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` Docker DNS alias. Production and beta can share `dokploy-network` without colliding on `api`, `webapp`, or `seaweedfs-s3`. Webapp SSR uses `${prefix}-api`; the API uses `${prefix}-storage` for S3.
 - Ops: website Traefik router names and the Docker DNS alias interpolate `BONDERY_INFRA_TRAEFIK_PREFIX` so production and beta marketing sites can share `dokploy-network`.
 - API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.

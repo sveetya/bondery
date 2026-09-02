@@ -95,7 +95,7 @@ export function buildUploadPayload(env, target) {
         .filter(([, value]) => value !== undefined)
         .map(([k, v]) => [k, v]),
     ),
-    payloadTarget,
+    target,
   );
 
   if (missingRequired.length > 0) {

@@ -799,7 +799,9 @@ export const ENV_MANIFEST: EnvVarDef[] = [
   },
   {
     canonical: "BONDERY_INFRA_WEBSITE_IMAGE_TAG",
-    description: "Website container image tag (omit for floating production channel).",
+    description:
+      "Website container image tag. Infisical production: production (or omit for compose default :production). Infisical staging: beta. Synced to website and website-beta Dokploy apps.",
+    dokploySync: { targets: ["website"] },
     exampleValue: "",
     group: "Infra",
     opsExample: {
@@ -1364,7 +1366,14 @@ export type DokploySyncRow = { key: string; value: string };
 
 /** Whether a manifest entry is uploaded for the given Dokploy sync target. */
 export function entrySyncsToDokployTarget(entry: EnvVarDef, target: DokploySyncTarget): boolean {
-  if (entry.dokploySync?.targets.includes(target)) {
+  const syncTargets = entry.dokploySync?.targets;
+  if (syncTargets?.includes(target)) {
+    return true;
+  }
+
+  const inheritedTarget =
+    target === "website-beta" ? "website" : target === "services-beta" ? "services" : null;
+  if (inheritedTarget && syncTargets?.includes(inheritedTarget)) {
     return true;
   }
 

@@ -1,7 +1,11 @@
+import { WEBAPP_NAME } from "@bondery/helpers";
+import { readBuildMetadata } from "@bondery/helpers/infra/build-metadata";
 import { WEBSITE_URL } from "@/lib/config";
+import websitePackage from "../../../../package.json" with { type: "json" };
 import catalog from "./manifest.json";
 
-const ARD_CONTEXT = "https://agenticresourcediscovery.org/context/v1" as const;
+/** ARD manifest schema version (not the Bondery app version). */
+const ARD_SPEC_VERSION = "1.0" as const;
 
 type ArdCatalogSourceEntry = {
   description: string;
@@ -18,8 +22,7 @@ type ArdCatalogManifest = {
   updatedAt: string;
 };
 
-type ArdEntry = {
-  "@context": typeof ARD_CONTEXT;
+type ArdManifestEntry = {
   description: string;
   displayName: string;
   identifier: string;
@@ -28,18 +31,23 @@ type ArdEntry = {
   type: string;
   updatedAt: string;
   url: string;
+  version: string;
 };
 
 const manifest: ArdCatalogManifest = catalog;
+
+function catalogVersion(): string {
+  return readBuildMetadata().version ?? websitePackage.version;
+}
 
 export const dynamic = "force-dynamic";
 
 export function GET() {
   const origin = WEBSITE_URL.replace(/\/+$/, "");
   const publisherHost = new URL(WEBSITE_URL).hostname;
+  const version = catalogVersion();
 
-  const entries: ArdEntry[] = manifest.entries.map((entry) => ({
-    "@context": ARD_CONTEXT,
+  const entries: ArdManifestEntry[] = manifest.entries.map((entry) => ({
     description: entry.description,
     displayName: entry.displayName,
     identifier: `urn:air:${publisherHost}:${entry.kind}`,
@@ -48,10 +56,19 @@ export function GET() {
     type: entry.type,
     updatedAt: manifest.updatedAt,
     url: `${origin}${entry.path}`,
+    version,
   }));
 
   return Response.json(
-    { entries },
+    {
+      entries,
+      host: {
+        displayName: WEBAPP_NAME,
+        documentationUrl: `${origin}/docs`,
+        identifier: `did:web:${publisherHost}`,
+      },
+      specVersion: ARD_SPEC_VERSION,
+    },
     {
       headers: {
         "Cache-Control": "max-age=86400",
