@@ -185,6 +185,7 @@
       "CHALLENGE_NOT_FOUND": "Passkey-Anmeldung konnte nicht abgeschlossen werden. Versuch es erneut.",
       "CREDENTIAL_ACCOUNT_NOT_FOUND": "Für dieses Konto wurde keine Passwort-Anmeldung gefunden.",
       "EMAIL_NOT_VERIFIED": "Bitte bestätige deine E-Mail, bevor du dich anmeldest.",
+      "EMAIL_SEND_FAILED": "Die Anmelde-E-Mail konnte nicht gesendet werden. Versuch es in ein paar Minuten erneut.",
       "FAILED_TO_CREATE_SESSION": "Die Sitzung konnte nicht gestartet werden. Fordere einen neuen Anmeldelink an.",
       "FAILED_TO_CREATE_USER": "Dein Konto konnte nicht erstellt werden. Versuch es erneut oder fahr mit GitHub oder LinkedIn fort.",
       "FAILED_TO_UPDATE_PASSKEY": "Dieser Passkey konnte nicht aktualisiert werden. Versuch es erneut.",
@@ -203,7 +204,6 @@
       "SOCIAL_ACCOUNT_ALREADY_LINKED": "Dieses Social-Media-Konto ist bereits mit einem anderen Benutzer verknüpft.",
       "TOKEN_EXPIRED": "Dieser Anmeldelink ist abgelaufen. Fordere einen neuen an.",
       "TOO_MANY_REQUESTS": "Zu viele Anmelde-E-Mails. Versuch es in ein paar Minuten erneut.",
-      "EMAIL_SEND_FAILED": "Die Anmelde-E-Mail konnte nicht gesendet werden. Versuch es in ein paar Minuten erneut.",
       "UNABLE_TO_CREATE_SESSION": "Nach der Passkey-Anmeldung konnte keine Sitzung gestartet werden. Versuch es erneut.",
       "USER_NOT_FOUND": "Benutzer nicht gefunden.",
       "YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY": "Dieser Passkey konnte nicht hinzugefügt werden. Versuch es erneut."

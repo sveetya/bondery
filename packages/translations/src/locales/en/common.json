@@ -185,6 +185,7 @@
       "CHALLENGE_NOT_FOUND": "Couldn’t complete passkey sign-in. Try again.",
       "CREDENTIAL_ACCOUNT_NOT_FOUND": "No password sign-in found for this account.",
       "EMAIL_NOT_VERIFIED": "Please verify your email before signing in.",
+      "EMAIL_SEND_FAILED": "Couldn’t send a sign-in email. Try again in a few minutes.",
       "FAILED_TO_CREATE_SESSION": "Couldn’t start a session. Request a new sign-in link.",
       "FAILED_TO_CREATE_USER": "Couldn’t create your account. Try again, or continue with GitHub or LinkedIn.",
       "FAILED_TO_UPDATE_PASSKEY": "Couldn’t update this passkey. Try again.",
@@ -203,7 +204,6 @@
       "SOCIAL_ACCOUNT_ALREADY_LINKED": "This social account is already linked to another user.",
       "TOKEN_EXPIRED": "This sign-in link has expired. Request a new one.",
       "TOO_MANY_REQUESTS": "Too many sign-in emails. Try again in a few minutes.",
-      "EMAIL_SEND_FAILED": "Couldn’t send a sign-in email. Try again in a few minutes.",
       "UNABLE_TO_CREATE_SESSION": "Couldn’t start a session after passkey sign-in. Try again.",
       "USER_NOT_FOUND": "User not found.",
       "YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY": "Couldn’t add this passkey. Try again."

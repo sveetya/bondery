@@ -14373,12 +14373,12 @@ paths:
                       - notes
                       - importantDates
                 sendCopy:
+                  default: true
                   type: boolean
               required:
                 - personId
                 - recipientEmails
                 - selectedFields
-                - sendCopy
             example:
               message: Sharing Ada's contact card.
               personId: 550e8400-e29b-41d4-a716-446655440000
@@ -22044,9 +22044,9 @@ tags:
       minute, rate limited to five requests per minute per client; returns 503 when critical dependencies are
       unavailable.
     name: Health
-  - description: Public authentication metadata. `GET /oauth-providers` reports which social identity providers are
-      configured on this API process (booleans only). Social sign-in and account linking still go through Better Auth at
-      `/auth/*`.
+  - description: Public authentication metadata. `GET /oauth-providers` reports which sign-in providers are configured on
+      this API process (GitHub, LinkedIn, email/magic-link — booleans only). Social sign-in and account linking still go
+      through Better Auth at `/auth/*`.
     name: Auth
   - description: Contact management operations
     name: Contacts
