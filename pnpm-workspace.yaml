@@ -16,6 +16,8 @@ syncInjectedDepsAfterScripts:
 
 overrides:
   "@better-auth/core": "1.7.1"
+  "@react-email/ui": "6.9.1"
+  react-email: "6.9.1"
   "@tiptap/core": "3.29.2"
   "@tiptap/extension-bubble-menu": "3.29.2"
   "@tiptap/extension-color": "3.29.2"
