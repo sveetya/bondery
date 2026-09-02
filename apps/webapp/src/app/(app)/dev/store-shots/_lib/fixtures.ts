@@ -4,23 +4,12 @@ import type {
   GroupWithCount,
   InteractionParticipant,
 } from "@bondery/schemas";
-import billAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-2a6f-747f-9971-8d05fb465777.jpg";
-import timAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-2fc8-728b-a417-0e171d3a4529.jpg";
-import steveAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-23b1-727e-bd0b-e30edda99894.jpg";
-import margaretAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-26b6-71df-97bc-79150869a6c0.jpg";
-import katherineAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-40a2-70c1-8820-fec892f6f28e.jpg";
-import hedyAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-43bd-70bf-b678-1673878f566f.jpg";
-import jeffAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-58f4-7567-afbb-3c1869e200a6.jpg";
-import adaAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-202a-71ec-bf4b-8b611c9e64eb.jpg";
-import vintAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-336d-74fd-bbc2-2d62b9698ed4.jpg";
-import larryAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-551d-700c-91aa-1087d4d77e3a.jpg";
-import alanAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-2220-758f-94fb-4e1a73f30d58.jpg";
-import graceAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-2521-766e-ab8d-085f2dd423aa.jpg";
-import radiaAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-3644-725b-b0ec-cc80e698509a.jpg";
-import sergeyAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-5676-705d-9579-85b5c52fdcec.jpg";
-import reshmaAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-8462-734d-b091-973badd33e49.jpg";
-import limorAvatar from "@/../../../packages/tests/sample-data/bondery/export-files/avatars/01a03e59-8705-72d4-af68-f58bcca40b93.jpg";
 import type { PeopleMapMarker } from "@/components/map/PeopleMap";
+
+/** Public copies of `packages/tests` sample avatars — tsc and docker prune cannot import those JPEGs. */
+function sampleAvatar(id: string): string {
+  return `/dev/store-shots/${id}.jpg`;
+}
 
 /** PersonCard/PersonChip identity used by listing shots. */
 export type StoreShotPerson = ContactPreview & {
@@ -36,7 +25,7 @@ const FIXTURE_STAMP = "2026-06-01T08:00:00.000Z";
  * Repository sample contacts and their bundled sample avatars.
  */
 export const ADA_LOVELACE: StoreShotPerson = {
-  avatar: adaAvatar.src,
+  avatar: sampleAvatar("01a03e59-202a-71ec-bf4b-8b611c9e64eb"),
   firstName: "Ada",
   headline: "Mathematician",
   id: "01a03e59-202a-71ec-bf4b-8b611c9e64eb",
@@ -46,7 +35,7 @@ export const ADA_LOVELACE: StoreShotPerson = {
 };
 
 export const ALAN_TURING: StoreShotPerson = {
-  avatar: alanAvatar.src,
+  avatar: sampleAvatar("01a03e59-2220-758f-94fb-4e1a73f30d58"),
   firstName: "Alan",
   headline: "Computer scientist",
   id: "01a03e59-2220-758f-94fb-4e1a73f30d58",
@@ -56,7 +45,7 @@ export const ALAN_TURING: StoreShotPerson = {
 };
 
 export const GRACE_HOPPER: StoreShotPerson = {
-  avatar: graceAvatar.src,
+  avatar: sampleAvatar("01a03e59-2521-766e-ab8d-085f2dd423aa"),
   firstName: "Grace",
   headline: "Rear Admiral, US Navy",
   id: "01a03e59-2521-766e-ab8d-085f2dd423aa",
@@ -66,7 +55,7 @@ export const GRACE_HOPPER: StoreShotPerson = {
 };
 
 export const MARGARET_HAMILTON: StoreShotPerson = {
-  avatar: margaretAvatar.src,
+  avatar: sampleAvatar("01a03e59-26b6-71df-97bc-79150869a6c0"),
   firstName: "Margaret",
   headline: "Software engineer, Apollo",
   id: "01a03e59-26b6-71df-97bc-79150869a6c0",
@@ -76,7 +65,7 @@ export const MARGARET_HAMILTON: StoreShotPerson = {
 };
 
 export const KATHERINE_JOHNSON: StoreShotPerson = {
-  avatar: katherineAvatar.src,
+  avatar: sampleAvatar("01a03e59-40a2-70c1-8820-fec892f6f28e"),
   firstName: "Katherine",
   headline: "Mathematician, NASA",
   id: "01a03e59-40a2-70c1-8820-fec892f6f28e",
@@ -86,7 +75,7 @@ export const KATHERINE_JOHNSON: StoreShotPerson = {
 };
 
 export const HEDY_LAMARR: StoreShotPerson = {
-  avatar: hedyAvatar.src,
+  avatar: sampleAvatar("01a03e59-43bd-70bf-b678-1673878f566f"),
   firstName: "Hedy",
   headline: "Inventor and actor",
   id: "01a03e59-43bd-70bf-b678-1673878f566f",
@@ -96,7 +85,7 @@ export const HEDY_LAMARR: StoreShotPerson = {
 };
 
 const STEVE_JOBS: StoreShotPerson = {
-  avatar: steveAvatar.src,
+  avatar: sampleAvatar("01a03e59-23b1-727e-bd0b-e30edda99894"),
   firstName: "Steve",
   headline: "Co-founder, Apple",
   id: "01a03e59-23b1-727e-bd0b-e30edda99894",
@@ -106,7 +95,7 @@ const STEVE_JOBS: StoreShotPerson = {
 };
 
 const BILL_GATES: StoreShotPerson = {
-  avatar: billAvatar.src,
+  avatar: sampleAvatar("01a03e59-2a6f-747f-9971-8d05fb465777"),
   firstName: "Bill",
   headline: "Co-founder, Microsoft",
   id: "01a03e59-2a6f-747f-9971-8d05fb465777",
@@ -116,7 +105,7 @@ const BILL_GATES: StoreShotPerson = {
 };
 
 const LARRY_PAGE: StoreShotPerson = {
-  avatar: larryAvatar.src,
+  avatar: sampleAvatar("01a03e59-551d-700c-91aa-1087d4d77e3a"),
   firstName: "Larry",
   headline: "Co-founder, Google",
   id: "01a03e59-551d-700c-91aa-1087d4d77e3a",
@@ -126,7 +115,7 @@ const LARRY_PAGE: StoreShotPerson = {
 };
 
 const SERGEY_BRIN: StoreShotPerson = {
-  avatar: sergeyAvatar.src,
+  avatar: sampleAvatar("01a03e59-5676-705d-9579-85b5c52fdcec"),
   firstName: "Sergey",
   headline: "Co-founder, Google",
   id: "01a03e59-5676-705d-9579-85b5c52fdcec",
@@ -136,7 +125,7 @@ const SERGEY_BRIN: StoreShotPerson = {
 };
 
 const JEFF_BEZOS: StoreShotPerson = {
-  avatar: jeffAvatar.src,
+  avatar: sampleAvatar("01a03e59-58f4-7567-afbb-3c1869e200a6"),
   firstName: "Jeff",
   headline: "Founder, Amazon",
   id: "01a03e59-58f4-7567-afbb-3c1869e200a6",
@@ -146,7 +135,7 @@ const JEFF_BEZOS: StoreShotPerson = {
 };
 
 const RESHMA_SAUJANI: StoreShotPerson = {
-  avatar: reshmaAvatar.src,
+  avatar: sampleAvatar("01a03e59-8462-734d-b091-973badd33e49"),
   firstName: "Reshma",
   headline: "Founder, Girls Who Code",
   id: "01a03e59-8462-734d-b091-973badd33e49",
@@ -156,7 +145,7 @@ const RESHMA_SAUJANI: StoreShotPerson = {
 };
 
 const LIMOR_FRIED: StoreShotPerson = {
-  avatar: limorAvatar.src,
+  avatar: sampleAvatar("01a03e59-8705-72d4-af68-f58bcca40b93"),
   firstName: "Limor",
   headline: "Founder, Adafruit",
   id: "01a03e59-8705-72d4-af68-f58bcca40b93",
@@ -166,7 +155,7 @@ const LIMOR_FRIED: StoreShotPerson = {
 };
 
 const TIM_BERNERS_LEE: StoreShotPerson = {
-  avatar: timAvatar.src,
+  avatar: sampleAvatar("01a03e59-2fc8-728b-a417-0e171d3a4529"),
   firstName: "Tim",
   headline: "Inventor of the World Wide Web",
   id: "01a03e59-2fc8-728b-a417-0e171d3a4529",
@@ -176,7 +165,7 @@ const TIM_BERNERS_LEE: StoreShotPerson = {
 };
 
 const VINT_CERF: StoreShotPerson = {
-  avatar: vintAvatar.src,
+  avatar: sampleAvatar("01a03e59-336d-74fd-bbc2-2d62b9698ed4"),
   firstName: "Vint",
   headline: "Internet pioneer",
   id: "01a03e59-336d-74fd-bbc2-2d62b9698ed4",
@@ -186,7 +175,7 @@ const VINT_CERF: StoreShotPerson = {
 };
 
 const RADIA_PERLMAN: StoreShotPerson = {
-  avatar: radiaAvatar.src,
+  avatar: sampleAvatar("01a03e59-3644-725b-b0ec-cc80e698509a"),
   firstName: "Radia",
   headline: "Network engineer",
   id: "01a03e59-3644-725b-b0ec-cc80e698509a",
