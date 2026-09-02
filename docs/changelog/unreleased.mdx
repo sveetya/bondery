@@ -7,10 +7,11 @@ hidden: true
 
 ### ✨ Added
 
-- Webapp: Sign in with a passkey from Settings and the login screen (up to 5 passkeys per account). Passkeys are a second authenticator alongside GitHub or LinkedIn — keep at least one of those connected for recovery. Login marks the last method you used; Settings shows authenticator names and last used.
+- Webapp: Sign in or create an account with a sign-in link emailed to you (no password). Open the link on this device. Passkeys and GitHub or LinkedIn stay on the same screen.
+- Webapp: Sign in with a passkey from Settings and the login screen (up to 5 passkeys per account). Passkeys are a second authenticator alongside email, GitHub, or LinkedIn — keep at least one of those connected for recovery. Login marks the last method you used; Settings shows authenticator names and last used.
 - Webapp: Settings → Apps is for LinkedIn and GitHub connections. Profile holds your contact card, email, sign-in methods, and passkeys.
 - Webapp, mobile, and self-host: GitHub and LinkedIn login/link disable when that provider isn’t configured on the API. Operators leave both OAuth env vars empty to keep a method off, then restart after setting them; `GET /oauth-providers` reports which are on. Removing a provider locks out people who only use it.
-- Webapp: Password managers that open `/.well-known/change-password` go to Settings (sign in if needed).
+- Webapp: Password managers can autofill the login email. Opening `/.well-known/change-password` still takes you to Settings (sign in if needed).
 - Self-host: Passkeys add a `passkey` table (picked up by the usual migrate). WebAuthn rpID follows the public webapp host; set `BONDERY_PUBLIC_WEBAUTHN_RP_ID` only when that host is not a valid rpID.
 
 ### 🐛 Fixed
@@ -20,6 +21,8 @@ hidden: true
 
 ### 🔄 Changed
 
+- Email: Product mail uses a consistent layout — From “Robot from Bondery”, centered logo, full-width buttons, help footer, and inbox preview text. Every send includes a plaintext alternative. Reminder emails link to manage notifications. Transactional mail does not show the legal company name or address. Shared-contact cards show the person and headline only; the sender stays in the intro line.
+- Webapp, website: Hover tooltips wrap long copy and show an arrow.
 - Contributors: Root tooling scripts live under `scripts/env`, `scripts/check`, `scripts/dev`, `scripts/pkg`, `scripts/ops`, and `scripts/updater`. Chrome signing, CI Infisical checks, and Infisical→Dokploy sync sit with their owners (`apps/chrome-extension/scripts`, `.github/scripts`, `deploy/scripts`).
 
 ### 🔒 Security

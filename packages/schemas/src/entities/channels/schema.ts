@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CONTACT_LIMITS } from "#constants/index.js";
 import { channelTypeSchema } from "#primitives/channel/schema.js";
+import { emailAddressSchema } from "#primitives/email/schema.js";
 import type {
   EmailEntry,
   EmailEntryInput,
@@ -67,9 +68,7 @@ export const phoneEntrySchema = phoneEntryInputSchema.transform((value) => ({
 /** Single email row before PATCH /api/contacts/:id emails array. */
 export const emailEntryInputSchema = z.object({
   ...emailEntryOptionalPreferredSchema.shape,
-  value: emailEntryOptionalPreferredSchema.shape.value.email({
-    error: "Enter a valid email address",
-  }),
+  value: emailAddressSchema,
 });
 
 export const emailEntrySchema = emailEntryInputSchema.transform((value) => ({
@@ -96,13 +95,7 @@ export const shareContactEmailSchema = z.object({
     .transform((value) => value || undefined)
     .optional(),
   recipients: z
-    .array(
-      z
-        .string()
-        .trim()
-        .email({ error: "Enter a valid email address" })
-        .transform((value) => value.toLowerCase()),
-    )
+    .array(emailAddressSchema)
     .min(1, { error: "At least one recipient is required" })
     .max(SHARE_CONTACT_EMAIL_MAX_RECIPIENTS, {
       error: `Maximum of ${SHARE_CONTACT_EMAIL_MAX_RECIPIENTS} recipients allowed`,

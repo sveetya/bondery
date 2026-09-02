@@ -35,7 +35,7 @@ export function IntegrationCard({
   const showBadge = Boolean(badgeLabel) || isLinkable;
 
   return (
-    <Tooltip disabled={!tooltip} label={tooltip} withArrow>
+    <Tooltip disabled={!tooltip} label={tooltip}>
       <Box display="inline-block">
         <Checkbox.Card
           checked={isChecked}

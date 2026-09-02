@@ -1,18 +1,60 @@
 import { BRAND_PRIMARY_COLOR } from "@bondery/branding";
 import { BonderyLogotypeBlack } from "@bondery/branding/react";
-import type * as React from "react";
-import { Container, Font, Head, Html, Preview, pixelBasedPreset, Tailwind } from "react-email";
+import { formatLegalAddressLine, LEGAL_ENTITY, WEBSITE_ROUTES } from "@bondery/helpers";
+import type { ReactNode } from "react";
+import {
+  Body,
+  Container,
+  Font,
+  Head,
+  Html,
+  Link,
+  Preview,
+  pixelBasedPreset,
+  Section,
+  Tailwind,
+  Text,
+} from "react-email";
+import {
+  clipEmailPreview,
+  DEFAULT_WEBSITE_URL,
+  defaultEmailChromeCopy,
+  type EmailChromeCopy,
+  type EmailDocumentProps,
+} from "#shared/chrome.js";
+import { chromeLinkStyle, EMAIL_PAGE_BG, footerTextStyle } from "#shared/email-styles.js";
+import { interpolateNamedLinks } from "#shared/interpolate-named-links.js";
 
-export const EmailWrapper = ({
+function joinUrl(origin: string, path: string): string {
+  return `${origin.replace(/\/+$/, "")}${path}`;
+}
+
+export function EmailWrapper({
   children,
+  chrome = defaultEmailChromeCopy,
+  dir = "ltr",
+  lang = "en",
+  manageNotificationsUrl,
   preview,
-}: {
-  children: React.ReactNode;
+  showHelp = true,
+  showLegalEntity = false,
+  title,
+  websiteUrl = DEFAULT_WEBSITE_URL,
+}: EmailDocumentProps & {
+  children: ReactNode;
   preview: string;
-}) => {
+}) {
+  const origin = websiteUrl.replace(/\/+$/, "");
+  const supportHref = joinUrl(origin, WEBSITE_ROUTES.CONTACT);
+  const docsHref = joinUrl(origin, WEBSITE_ROUTES.DOCS);
+  const clippedPreview = clipEmailPreview(preview);
+  const documentTitle = title?.trim() || clippedPreview;
+  const legalAddress = formatLegalAddressLine();
+
   return (
-    <Html>
+    <Html dir={dir} lang={lang}>
       <Head>
+        <title>{documentTitle}</title>
         <Font
           fallbackFontFamily={"sans-serif"}
           fontFamily="Lexend"
@@ -24,7 +66,7 @@ export const EmailWrapper = ({
           }}
         />
       </Head>
-      <Preview>{preview}</Preview>
+      <Preview useTitleTag={false}>{clippedPreview}</Preview>
       <Tailwind
         config={{
           presets: [pixelBasedPreset],
@@ -37,11 +79,84 @@ export const EmailWrapper = ({
           },
         }}
       >
-        {children}
-        <Container className="mx-auto mt-24 mb-16 text-center">
-          <BonderyLogotypeBlack height={48} width={160} />
-        </Container>
+        <Body style={{ backgroundColor: EMAIL_PAGE_BG, margin: 0, padding: 0 }}>
+          <Container
+            className="mx-auto max-w-[600px] px-9"
+            style={{
+              backgroundColor: EMAIL_PAGE_BG,
+            }}
+          >
+            <Section className="mb-9 mt-9 text-center">
+              <Link
+                href={origin}
+                style={{ display: "inline-block", textDecoration: "none" }}
+                title={chrome.logoAlt}
+              >
+                <BonderyLogotypeBlack aria-hidden height={48} width={160} />
+              </Link>
+            </Section>
+
+            {children}
+
+            <EmailFooter
+              chrome={chrome}
+              docsHref={docsHref}
+              manageNotificationsUrl={manageNotificationsUrl}
+              showHelp={showHelp}
+              supportHref={supportHref}
+            />
+
+            {showLegalEntity ? (
+              <>
+                <Text style={{ ...footerTextStyle, margin: "16px 0 0" }}>
+                  {LEGAL_ENTITY.legalName}
+                </Text>
+                <Text style={{ ...footerTextStyle, margin: 0 }}>{legalAddress}</Text>
+              </>
+            ) : null}
+          </Container>
+        </Body>
       </Tailwind>
     </Html>
   );
-};
+}
+
+function EmailFooter({
+  chrome,
+  docsHref,
+  manageNotificationsUrl,
+  showHelp,
+  supportHref,
+}: {
+  chrome: EmailChromeCopy;
+  docsHref: string;
+  manageNotificationsUrl?: string;
+  showHelp: boolean;
+  supportHref: string;
+}) {
+  return (
+    <Section style={{ borderTop: "1px solid #e5e7eb", marginTop: "32px", paddingTop: "16px" }}>
+      {showHelp ? (
+        <Text style={footerTextStyle}>
+          {interpolateNamedLinks(
+            chrome.help,
+            {
+              documentation: { href: docsHref, label: chrome.documentation },
+              support: { href: supportHref, label: chrome.support },
+            },
+            chromeLinkStyle,
+          )}
+        </Text>
+      ) : (
+        <Text style={footerTextStyle}>{chrome.internalNote}</Text>
+      )}
+      {manageNotificationsUrl ? (
+        <Text style={footerTextStyle}>
+          <Link href={manageNotificationsUrl} style={chromeLinkStyle}>
+            {chrome.manageNotifications}
+          </Link>
+        </Text>
+      ) : null}
+    </Section>
+  );
+}

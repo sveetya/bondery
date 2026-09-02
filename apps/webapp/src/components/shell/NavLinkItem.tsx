@@ -154,7 +154,7 @@ export function NavLinkItem({
     );
 
     return (
-      <Tooltip label={tooltipLabel} position="right" withArrow>
+      <Tooltip label={tooltipLabel} position="right">
         {item}
       </Tooltip>
     );

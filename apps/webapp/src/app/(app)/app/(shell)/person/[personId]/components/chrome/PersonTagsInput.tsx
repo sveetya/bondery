@@ -311,7 +311,7 @@ export function PersonTagsInput({ personId }: PersonTagsInputProps) {
                     style={{ background: "transparent", padding: 0 }}
                     value={`__applied__${exactAppliedMatch.id}`}
                   >
-                    <Tooltip label={t("TagAlreadyAppliedTooltip")} withArrow>
+                    <Tooltip label={t("TagAlreadyAppliedTooltip")}>
                       <Box
                         className="tags-input-option-pill"
                         style={{

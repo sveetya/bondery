@@ -8,11 +8,12 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
+import { buildLoginMagicLinkUrls } from "@/lib/auth/magic-link-urls";
 import { notifyPasskeyLoginError } from "@/lib/auth/notify-passkey-login-error";
 import { RETURN_INTENT_PARAM } from "@/lib/auth/returnIntent";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
-import { SocialLoginCard } from "./components/SocialLoginCard";
+import { type LoginBusyAction, SocialLoginCard } from "./components/SocialLoginCard";
 
 type LoginClientProps = {
   lastUsedLoginMethod: string | null;
@@ -22,17 +23,21 @@ type LoginClientProps = {
 export function LoginClient({ lastUsedLoginMethod, oauthProviders }: LoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
-  const [loading, setLoading] = useState(false);
+  const [busyAction, setBusyAction] = useState<LoginBusyAction>(null);
   const runtimeConfig = useWebappRuntimeConfig();
   const authClient = useMemo(() => createWebappAuthClient(runtimeConfig), [runtimeConfig]);
   const searchParams = useSearchParams();
   const { websiteUrl } = runtimeConfig;
 
   const redirectParam = searchParams.get(RETURN_INTENT_PARAM);
+  const magicLinkUrls = buildLoginMagicLinkUrls(
+    typeof window === "undefined" ? runtimeConfig.webappUrl : window.location.origin,
+    redirectParam,
+  );
 
   const handleOAuthLogin = async (provider: "github" | "linkedin") => {
     try {
-      setLoading(true);
+      setBusyAction(provider);
       await setLocalePreferencesCookie();
 
       // Establish the API's native Better Auth session via social sign-in
@@ -71,13 +76,13 @@ export function LoginClient({ lastUsedLoginMethod, oauthProviders }: LoginClient
         }),
       );
     } finally {
-      setLoading(false);
+      setBusyAction(null);
     }
   };
 
   const handlePasskeyLogin = async () => {
     try {
-      setLoading(true);
+      setBusyAction("passkey");
       await setLocalePreferencesCookie();
 
       const callbackURL =
@@ -102,21 +107,60 @@ export function LoginClient({ lastUsedLoginMethod, oauthProviders }: LoginClient
     } catch (err) {
       notifyPasskeyLoginError(err, t);
     } finally {
-      setLoading(false);
+      setBusyAction(null);
+    }
+  };
+
+  const handleEmailSubmit = async (email: string): Promise<boolean> => {
+    try {
+      setBusyAction("email");
+      await setLocalePreferencesCookie();
+
+      const { error } = await authClient.signIn.magicLink({
+        callbackURL: magicLinkUrls.callbackURL,
+        email,
+        errorCallbackURL: magicLinkUrls.errorCallbackURL,
+      });
+
+      if (error) {
+        notifications.show(
+          errorNotificationTemplate({
+            description: getAuthUserFacingError(error, tCommon),
+            title: t("AuthenticationError"),
+          }),
+        );
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      notifications.show(
+        errorNotificationTemplate({
+          description: getAuthUserFacingError(err, tCommon),
+          title: t("UnexpectedError"),
+        }),
+      );
+      return false;
+    } finally {
+      setBusyAction(null);
     }
   };
 
   return (
     <SocialLoginCard
+      authClient={authClient}
+      busyAction={busyAction}
+      continueUrl={magicLinkUrls.callbackURL}
       getPasskeyTestId="login-passkey"
       getProviderTestId={(providerKey) =>
         providerKey === "github" ? "login-github" : `login-${providerKey}`
       }
       lastUsedLoginMethod={lastUsedLoginMethod}
-      loading={loading}
       oauthProviders={oauthProviders}
+      onEmailSubmit={handleEmailSubmit}
       onPasskeyClick={() => void handlePasskeyLogin()}
       onProviderClick={handleOAuthLogin}
+      surface="webapp"
       websiteUrl={websiteUrl}
     />
   );

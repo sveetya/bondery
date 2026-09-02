@@ -79,13 +79,12 @@ Optional for local dev when you need shared team secrets (SMTP, GitHub OAuth, Ma
 
 ```bash
 # one-time
-cp .infisical.json.example .infisical.json   # set projectId, domain, defaultEnvironment
 infisical login
 
 pnpm run env:pull
 ```
 
-[`.infisical.json`](../../.infisical.json.example) (gitignored — copy from example) links the repo to your Infisical project. It contains **no secrets** (only project id, EU/US domain, environment slug, and optional `secretsPath`). Use the **environment slug** from Infisical project settings: `development` (local `env:pull`), `staging` (release smoke), or `production` (Dokploy ops sync).
+[`.infisical.json`](../../.infisical.json) is committed. It contains **no secrets** — only the Infisical project id, EU domain, and environment slug. Use `development` for local `env:pull`, `staging` for release smoke, and `production` for Dokploy ops sync. Forks can copy [`.infisical.json.example`](../../.infisical.json.example) and set a different `projectId`.
 
 ### Stripe CLI (local webhooks)
 

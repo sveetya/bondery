@@ -304,7 +304,6 @@ export function InteractionsClient() {
                   <Kbd keys={parseShortcutKeys(HOTKEYS.LOG_INTERACTION)} size="xs" />
                 </Group>
               }
-              withArrow
             >
               <Button
                 leftSection={<IconCalendarPlus size={16} />}

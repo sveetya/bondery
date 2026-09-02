@@ -8,6 +8,7 @@ export const oauthProviderIdSchema = z.enum([
 
 export const oauthProvidersBitmapSchema = z
   .object({
+    email: z.boolean(),
     github: z.boolean(),
     linkedin: z.boolean(),
   })
@@ -21,6 +22,7 @@ export const oauthProvidersResponseSchema = z
   .meta({
     example: {
       oauthProviders: {
+        email: true,
         github: true,
         linkedin: true,
       },

@@ -1,4 +1,5 @@
 {
+  "cta": "Otevřít připomínky",
   "dateTypes": {
     "anniversary": "Výročí",
     "birthday": "Narozeniny",
@@ -8,10 +9,12 @@
   },
   "dayMany": "{{count}} dní",
   "dayOne": "1 den",
-  "heading": "Připomínky Bondery na {{headingDate}}",
-  "introMany": "Máte {{count}} připomínek:",
-  "introOne": "Máte 1 připomínku:",
-  "preview": "Máte {{count}} připomínek na {{targetDate}}",
+  "description": "Na {{headingDate}}. Otevřete osobu pro podrobnosti nebo pošlete vzkaz.",
+  "headingMany": "{{count}} připomínek se blíží",
+  "headingOne": "1 připomínka se blíží",
+  "preview": "{{firstPersonName}} — {{firstTypeLabel}} za {{firstRemainingLabel}}",
+  "previewMore": "{{firstPersonName}} — {{firstTypeLabel}} za {{firstRemainingLabel}} a ještě {{remainingCount}}",
   "reminderLine": "{{emoji}} {{typeLabel}} se blíží za {{remainingLabel}} dne {{dateLabel}}.",
-  "subject": "Připomínky Bondery na {{targetDate}}"
+  "subject": "Připomínky Bondery na {{targetDate}}",
+  "whyReceiving": "Tento e-mail dostáváte, protože máte zapnuté připomínky na tato data."
 }

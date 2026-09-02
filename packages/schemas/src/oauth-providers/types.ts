@@ -1,6 +1,7 @@
 export type OAuthProviderId = "github" | "linkedin";
 
 export type OAuthProvidersBitmap = {
+  email: boolean;
   github: boolean;
   linkedin: boolean;
 };

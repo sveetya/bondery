@@ -1,10 +1,8 @@
 {
   "body": "Tímto potvrzujeme, že váš účet Bondery a související data v našich systémech byly smazány.",
   "feedback": "Pokud máte zpětnou vazbu k Bondery nebo k tomu, proč jste odešli, můžete odpovědět na tento e-mail. Každou zprávu čteme.",
-  "greeting": "Ahoj,",
-  "greetingWithName": "Ahoj {{userName}},",
   "heading": "Váš účet Bondery byl smazán",
-  "preview": "Váš účet Bondery a data byly smazány",
+  "preview": "Potvrzení smazání. Odpovězte, pokud máte zpětnou vazbu.",
   "subject": "Váš účet Bondery byl smazán",
-  "thanks": "Děkujeme, že jste vyzkoušeli Bondery."
+  "thanks": "Děkujeme, že jste vyzkoušeli Bondery. 💜"
 }

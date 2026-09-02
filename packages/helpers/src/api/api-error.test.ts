@@ -218,6 +218,28 @@ describe("getAuthUserFacingError", () => {
     assert.equal(message, "Session expired.");
   });
 
+  it("maps EMAIL_SEND_FAILED to auth copy", () => {
+    const message = getAuthUserFacingError(
+      { code: "EMAIL_SEND_FAILED" },
+      mockT({
+        "errors.auth.EMAIL_SEND_FAILED": "Couldn’t send a sign-in email.",
+      }),
+    );
+
+    assert.equal(message, "Couldn’t send a sign-in email.");
+  });
+
+  it("maps Better Auth 429 status without code to TOO_MANY_REQUESTS", () => {
+    const message = getAuthUserFacingError(
+      { status: 429 },
+      mockT({
+        "errors.auth.TOO_MANY_REQUESTS": "Too many sign-in emails.",
+      }),
+    );
+
+    assert.equal(message, "Too many sign-in emails.");
+  });
+
   it("maps catalog codes from Better Auth client wrappers", () => {
     const message = getAuthUserFacingError(
       { code: "bad_request" },

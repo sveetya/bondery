@@ -23,7 +23,7 @@ export function CategorySwitcher({ activeCategory }: CategorySwitcherProps) {
         {BLOG_CATEGORIES.map((cat) => {
           const Icon = CATEGORY_ICONS[cat];
           return (
-            <Tooltip key={cat} label={CATEGORY_TOOLTIPS[cat]} withArrow>
+            <Tooltip key={cat} label={CATEGORY_TOOLTIPS[cat]}>
               <Tabs.Tab
                 leftSection={Icon ? <Icon size={16} /> : undefined}
                 renderRoot={(props) => <Link href={`/blog/${cat}`} {...props} />}

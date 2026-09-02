@@ -20,7 +20,7 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 | `enrichment:batch_end` | `total_enriched` | client | Batch complete |
 | `enrichment:contact_update` | `source: "linkedin"` | client | Single LinkedIn enrich |
 | `feedback:nps_submit` | `score`, `has_general_feedback`, `has_reason` | client | After API success |
-| `signup_flow:user_create` | `signup_method`: `github` \| `linkedin` \| `email` \| `unknown` | **server** | First OAuth account on signup (`account.create` hook) |
+| `signup_flow:user_create` | `signup_method`: `github` \| `linkedin` \| `email` \| `unknown` | **server** | First OAuth account (`account.create`) or magic-link signup (`user.create` when verify created the user — no `Account` row) |
 | `signup_flow:onboarding_complete` | — | **server** | First onboarding completion |
 | `signup_flow:activation_complete` | `activation_type` | **server** | One-shot per milestone |
 | `account_settings:account_delete` | — | **server** | Before account teardown |
@@ -39,7 +39,7 @@ Living list of product analytics events. **Canonical names** use PostHog `catego
 | `account_settings:passkey_cancel` | — | client | Settings: OS sheet dismissed |
 | `account_settings:passkey_update` | — | client | Settings: passkey renamed |
 | `account_settings:passkey_delete` | — | client | Settings: passkey removed |
-| `auth:session_create` | `login_method`: `passkey` \| `oauth_github` \| `oauth_linkedin` (optional) | client | Once per browser tab session |
+| `auth:session_create` | `login_method`: `passkey` \| `oauth_github` \| `oauth_linkedin` \| `email` (optional) | client | Once per browser tab session |
 | `auth:session_end` | — | client | On logout / session end |
 | `auth:passkey_fail` | — | client | Login passkey ceremony failed (not cancel) |
 | `auth:passkey_cancel` | — | client | Login OS sheet dismissed |

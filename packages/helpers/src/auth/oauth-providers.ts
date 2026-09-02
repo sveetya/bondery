@@ -31,6 +31,14 @@ export function isOAuthProviderEnabled(
   return bitmap?.[provider] !== false;
 }
 
+/**
+ * Only an explicit `{ email: false }` disables magic-link sign-in. Null, missing,
+ * or a network failure must leave the button enabled (fail-open).
+ */
+export function isEmailSignInEnabled(bitmap: OAuthProvidersBitmap | null | undefined): boolean {
+  return bitmap?.email !== false;
+}
+
 export function areAllOAuthProvidersDisabled(
   bitmap: OAuthProvidersBitmap | null | undefined,
 ): boolean {

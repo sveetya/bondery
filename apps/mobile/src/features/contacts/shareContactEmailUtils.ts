@@ -1,11 +1,10 @@
-import { z } from "zod";
+import { emailAddressSchema } from "@bondery/schemas";
 
 export const MAX_SHARE_RECIPIENTS = 10;
 export const MAX_SHARE_MESSAGE_LENGTH = 2000;
 export const MESSAGE_LENGTH_COUNTER_THRESHOLD = 1800;
 
 const RECIPIENT_SPLIT_REGEX = /[\s,;]+/;
-const recipientEmailSchema = z.string().trim().email();
 
 export function parseRecipientTokens(text: string): string[] {
   return text
@@ -15,7 +14,7 @@ export function parseRecipientTokens(text: string): string[] {
 }
 
 export function isValidRecipientEmail(email: string): boolean {
-  return recipientEmailSchema.safeParse(email).success;
+  return emailAddressSchema.safeParse(email).success;
 }
 
 export type ProcessRecipientInputResult =

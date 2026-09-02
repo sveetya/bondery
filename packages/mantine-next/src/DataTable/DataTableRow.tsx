@@ -58,7 +58,7 @@ function DataTableRowComponent<TRow>({
       {showSelection ? (
         <TableTd>
           {isNonSelectable ? (
-            <Tooltip label={nonSelectableTooltip} withArrow>
+            <Tooltip label={nonSelectableTooltip}>
               <span>
                 <Checkbox
                   aria-label={rowSelectionAriaLabel}
@@ -115,7 +115,7 @@ function DataTableRowComponent<TRow>({
                 );
                 if (isDisabled && action.disabledTooltip) {
                   return (
-                    <Tooltip key={action.key} label={action.disabledTooltip} maw={220} withArrow>
+                    <Tooltip key={action.key} label={action.disabledTooltip}>
                       <div>{item}</div>
                     </Tooltip>
                   );

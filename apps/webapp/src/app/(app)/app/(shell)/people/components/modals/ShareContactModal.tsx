@@ -11,13 +11,14 @@ import {
   type Contact,
   type ContactAddressEntry,
   type EmailEntry,
+  emailAddressSchema,
   type ImportantDate,
   type PhoneEntry,
   type ShareableField,
   shareContactEmailSchema,
 } from "@bondery/schemas";
 import { Checkbox, SimpleGrid, Stack, TagsInput, Text, Textarea, Tooltip } from "@mantine/core";
-import { schemaResolver, useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { notifications } from "@mantine/notifications";
 import { IconSend2, IconShare } from "@tabler/icons-react";
@@ -50,6 +51,36 @@ const shareContactFormSchema = z.object({
   message: shareContactEmailSchema.shape.message,
   recipientEmails: shareContactEmailSchema.shape.recipients,
 });
+
+function recipientEmailsFieldError(
+  value: string[],
+  messages: {
+    invalidEmail: string;
+    invalidEmails: string;
+    maxRecipients: string;
+    noRecipients: string;
+  },
+): string | null {
+  const parsed = shareContactEmailSchema.shape.recipients.safeParse(value);
+  if (parsed.success) {
+    return null;
+  }
+  if (value.length === 0) {
+    return messages.noRecipients;
+  }
+
+  const hasInvalid = value.some((email) => !emailAddressSchema.safeParse(email).success);
+  if (hasInvalid) {
+    return value.length === 1 ? messages.invalidEmail : messages.invalidEmails;
+  }
+
+  const unique = new Set(value.map((email) => email.trim().toLowerCase()));
+  if (unique.size !== value.length) {
+    return messages.invalidEmails;
+  }
+
+  return messages.maxRecipients;
+}
 
 interface OpenShareContactModalParams {
   contact: Contact;
@@ -202,8 +233,23 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
       recipientEmails: [] as string[],
     },
     mode: "controlled",
-    validate: schemaResolver(shareContactFormSchema, { sync: true }),
+    validate: {
+      message: (value) => {
+        const parsed = shareContactEmailSchema.shape.message.safeParse(value);
+        return parsed.success ? null : (parsed.error.issues[0]?.message ?? true);
+      },
+      recipientEmails: (value) =>
+        recipientEmailsFieldError(value, {
+          invalidEmail: tShare("InvalidEmailError"),
+          invalidEmails: tShare("InvalidEmailsError"),
+          maxRecipients: tShare("MaxRecipientsError"),
+          noRecipients: tShare("NoRecipientsError"),
+        }),
+    },
+    validateInputOnBlur: true,
+    validateInputOnChange: ["recipientEmails"],
   });
+  const canSubmit = shareContactFormSchema.safeParse(form.values).success;
 
   const availableFields = ALL_FIELDS.filter(
     (field) => REQUIRED_FIELDS.includes(field) || hasFieldData(contact, field),
@@ -216,6 +262,9 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
     }
     if (availableFields.includes("location")) {
       initial.add("location");
+    }
+    if (availableFields.includes("emails")) {
+      initial.add("emails");
     }
     return initial;
   });
@@ -237,14 +286,21 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
   };
 
   const handleSubmit = async (values: typeof form.values) => {
+    const parsed = shareContactFormSchema.safeParse(values);
+    if (!parsed.success) {
+      form.validate();
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       await shareContactMutation.mutateAsync({
-        message: values.message || undefined,
+        message: parsed.data.message,
         personId: contact.id,
-        recipientEmails: values.recipientEmails,
+        recipientEmails: parsed.data.recipientEmails,
         selectedFields: Array.from(new Set([...selectedFields, ...REQUIRED_FIELDS])),
+        sendCopy: true,
       });
 
       notifications.show(
@@ -272,7 +328,7 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
     <ModalScrollLayout
       footer={
         <ModalFooter
-          actionDisabled={isSubmitting}
+          actionDisabled={isSubmitting || !canSubmit}
           actionLabel={
             isSubmitting
               ? tShare("SendingButton")
@@ -292,30 +348,27 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
     >
       <Stack gap="md">
         <TagsInput
+          {...form.getInputProps("recipientEmails")}
           clearable
           data-autofocus
           disabled={isBlocking}
-          error={form.errors.recipientEmails}
           label={tShare("RecipientsLabel")}
-          onChange={(values) => form.setFieldValue("recipientEmails", values)}
           placeholder={
             form.values.recipientEmails.length > 0 ? "" : tShare("RecipientsPlaceholder")
           }
           required
           splitChars={[",", " "]}
-          value={form.values.recipientEmails}
         />
 
         <Textarea
+          {...form.getInputProps("message")}
           disabled={isBlocking}
           label={tShare("MessageLabel")}
-          onChange={(e) => form.setFieldValue("message", e.currentTarget.value)}
           placeholder={tShare("MessagePlaceholder")}
           rows={3}
-          value={form.values.message}
         />
 
-        <Tooltip label={tShare("SendCopyTooltip")} withArrow>
+        <Tooltip label={tShare("SendCopyTooltip")}>
           <Checkbox checked disabled label={tShare("SendCopyCheckbox")} onChange={() => {}} />
         </Tooltip>
 
@@ -336,7 +389,6 @@ function ShareContactModalContent({ contact, modalId }: { contact: Contact; moda
                     ? tShare("AvatarRequiredTooltip")
                     : tShare("RequiredFieldTooltip")
                 }
-                withArrow
               >
                 <div>
                   <SelectableCard

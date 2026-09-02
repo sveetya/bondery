@@ -25,3 +25,8 @@ const PROVIDER_TO_SIGNUP_METHOD: Record<string, SignupMethod> = {
 export function resolveSignupMethodFromProviderId(providerId: string): SignupMethod {
   return PROVIDER_TO_SIGNUP_METHOD[providerId] ?? SIGNUP_METHOD.unknown;
 }
+
+/** True when Better Auth is creating a user from GET `/magic-link/verify`. */
+export function isMagicLinkSignupContext(ctx: { path?: string } | null | undefined): boolean {
+  return Boolean(ctx?.path?.startsWith("/magic-link/verify"));
+}

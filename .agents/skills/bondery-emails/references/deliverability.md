@@ -36,7 +36,11 @@ For vendor-neutral deliverability guidance (subdomains, DMARC details, testing):
 
 ## Bounces and complaints
 
-Today: handled by Plunk/SMTP provider; no in-app bounce webhook ingestion. Document as future work if migrating to Resend API or adding suppression lists.
+Plunk (the ESP) can POST bounce and complaint events. **Bondery does not consume those webhooks** and does not keep a product suppression list. We still send to any address the trigger path asks for.
+
+That is list-hygiene debt: hard bounces and spam complaints should stop future sends immediately, or mailbox providers punish the domain. Provider dashboards may suppress some traffic; the API does not.
+
+Follow-up (not in this package): ingest Plunk bounce/complaint webhooks, store suppressed addresses, and check that list in `sendRenderedEmail` before SMTP.
 
 ## TLS
 

@@ -73,7 +73,7 @@ export function SocialPopoverButton({
           onMouseLeave={() => onScheduleClose(field)}
           style={{ display: "inline-flex" }}
         >
-          <Tooltip label={tooltipLabel} withArrow>
+          <Tooltip label={tooltipLabel}>
             <ActionIconLink
               ariaLabel={ariaLabel}
               color={color}

@@ -66,7 +66,7 @@ For API contracts (pagination `hasMore`, transport, sync), see the `bondery-api`
 - [ ] Platform-appropriate pattern (mobile sheet vs desktop modal)
 - [ ] Paginated tables use server `hasMore` for load-more — not client-derived pagination
 - [ ] Keyboard shortcuts use `Kbd` + `parseShortcutKeys` from `@bondery/mantine-next`
-- [ ] Mantine Tooltip (webapp/website): do not pass `multiline`; always set `maw` so longer locales wrap — see [tooltips.md](references/desktop/tooltips.md)
+- [ ] Mantine Tooltip (webapp/website): do not pass `multiline`, `withArrow`, or `w` unless overriding theme defaults — see [tooltips.md](references/desktop/tooltips.md)
 - [ ] Destructive actions have confirmation per [destructive-actions.md](references/common/destructive-actions.md)
 - [ ] Repetitive create modals: Create more switch per create-more.md (or explicit `repeatable: false`)
 - [ ] Create more ON shows a success toast even when the OFF path navigates and skips one

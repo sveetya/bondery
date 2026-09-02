@@ -1,8 +1,14 @@
 import { Prisma, prisma } from "@bondery/db";
 import { ReminderDigestEmail } from "@bondery/emails";
 import type { ReminderDigestRequest, ReminderDigestUser } from "@bondery/schemas";
-import { render } from "@react-email/render";
+import type { SupportedLocale } from "@bondery/schemas/locale/supported-locale";
+import {
+  appSettingsUrl,
+  emailDocumentProps,
+  resolveAppOrigin,
+} from "../../lib/notifications/email-chrome.js";
 import { buildReminderDigestCopy } from "../../lib/notifications/email-copy-builders.js";
+import { formatEmailFrom } from "../../lib/notifications/email-from.js";
 import {
   formatEmailDateFromIso,
   getPreloadedCopy,
@@ -11,6 +17,7 @@ import {
   readCopyString,
   resolveEmailLocalesForUsers,
 } from "../../lib/notifications/email-i18n.js";
+import { renderEmailParts } from "../../lib/notifications/render-email.js";
 import {
   isEmailConfigured,
   requireEmailConfig,
@@ -113,16 +120,20 @@ export async function sendOneUserDigest(
 
   const config = requireEmailConfig();
   const userTargetDate = user.targetDate ?? ctx.defaultTargetDate;
-  const lng = ctx.localeByUserId.get(user.userId) ?? "en";
+  const lng = (ctx.localeByUserId.get(user.userId) ?? "en") as SupportedLocale;
   const bundle = getPreloadedCopy(ctx.namespaceCache, lng);
   const copy = buildReminderDigestCopy(bundle);
   const formattedHeadingDate = formatEmailDateFromIso(userTargetDate, lng, "long");
+  const subject = readCopyString(bundle, "subject", { targetDate: userTargetDate });
 
   try {
-    const emailHtml = await render(
+    const { html, text } = await renderEmailParts(
       ReminderDigestEmail({
+        ...emailDocumentProps(lng, subject),
+        appOrigin: resolveAppOrigin(),
         copy,
         formattedHeadingDate,
+        manageNotificationsUrl: appSettingsUrl(),
         reminders: user.reminders.map((reminder) => {
           const type = reminder.type;
           const typeLabel = copy.dateTypes[type];
@@ -150,13 +161,12 @@ export async function sendOneUserDigest(
       }),
     );
 
-    const subject = readCopyString(bundle, "subject", { targetDate: userTargetDate });
-
     await sendRenderedEmail({
-      from: `Robot from Bondery <${config.fromAddress}>`,
-      html: emailHtml,
+      from: formatEmailFrom(config.fromAddress),
+      html,
       replyTo: config.replyToAddress,
       subject,
+      text,
       to: user.email,
     });
 

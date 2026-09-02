@@ -33,6 +33,7 @@ export {
   geocodeSuggestionDisplayKey,
   geocodeSuggestionDisplayLabel,
 } from "#geocode/index.js";
+export type { LegalEntity } from "#globals/index.js";
 export {
   API_ROUTES,
   BETTER_AUTH_BASE_PATH,
@@ -40,10 +41,12 @@ export {
   betterAuthPath,
   CHANGELOG_URL,
   CHROME_EXTENSION_URL,
+  formatLegalAddressLine,
   formatMetadataTitle,
   GITHUB_REPO_URL,
   HELP_DOCS_URL,
   IMPORTANT_DATE_TYPE_META,
+  LEGAL_ENTITY,
   METADATA_TITLE_DIVIDER,
   MIN_EXTENSION_VERSION,
   PUBLIC_ROADMAP_PLANE_URL,

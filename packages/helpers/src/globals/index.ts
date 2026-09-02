@@ -1,3 +1,5 @@
+export type { LegalEntity } from "#globals/company.js";
+export { formatLegalAddressLine, LEGAL_ENTITY } from "#globals/company.js";
 export { IMPORTANT_DATE_TYPE_META } from "#globals/important-dates.js";
 export {
   API_ROUTES,

@@ -279,6 +279,12 @@
       "node": "./dist/globals/index.js",
       "types": "./src/globals/index.ts"
     },
+    "./globals/company": {
+      "default": "./dist/globals/company.js",
+      "import": "./dist/globals/company.js",
+      "node": "./dist/globals/company.js",
+      "types": "./src/globals/company.ts"
+    },
     "./globals/important-dates": {
       "default": "./dist/globals/important-dates.js",
       "import": "./dist/globals/important-dates.js",

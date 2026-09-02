@@ -1,4 +1,5 @@
 {
+  "cta": "Open reminders",
   "dateTypes": {
     "anniversary": "Anniversary",
     "birthday": "Birthday",
@@ -8,10 +9,12 @@
   },
   "dayMany": "{{count}} days",
   "dayOne": "1 day",
-  "heading": "Bondery reminders for {{headingDate}}",
-  "introMany": "You have {{count}} reminders:",
-  "introOne": "You have 1 reminder:",
-  "preview": "You have {{count}} reminder(s) for {{targetDate}}",
+  "description": "For {{headingDate}}. Open a person to see details or send a note.",
+  "headingMany": "{{count}} reminders coming up",
+  "headingOne": "1 reminder coming up",
+  "preview": "{{firstPersonName}}'s {{firstTypeLabel}} in {{firstRemainingLabel}}",
+  "previewMore": "{{firstPersonName}}'s {{firstTypeLabel}} in {{firstRemainingLabel}} and {{remainingCount}} more",
   "reminderLine": "{{emoji}} {{typeLabel}} is coming up in {{remainingLabel}} on {{dateLabel}}.",
-  "subject": "Bondery reminders for {{targetDate}}"
+  "subject": "Bondery reminders for {{targetDate}}",
+  "whyReceiving": "You're receiving this because you turned on reminders for these dates."
 }

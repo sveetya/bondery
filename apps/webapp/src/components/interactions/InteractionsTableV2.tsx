@@ -206,7 +206,7 @@ export function InteractionsTableV2({
         case "title": {
           const titleValue = activity.title || "-";
           return (
-            <Tooltip label={titleValue} withArrow>
+            <Tooltip label={titleValue}>
               <Text fw={600} lineClamp={1} size="sm">
                 {titleValue}
               </Text>
@@ -258,7 +258,7 @@ export function InteractionsTableV2({
         case "notes": {
           const descriptionValue = activity.description || "-";
           return (
-            <Tooltip label={descriptionValue} withArrow>
+            <Tooltip label={descriptionValue}>
               <Text lineClamp={1} maw={480} size="sm">
                 {descriptionValue}
               </Text>

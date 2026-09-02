@@ -1,4 +1,5 @@
 {
+  "cta": "Erinnerungen öffnen",
   "dateTypes": {
     "anniversary": "Jahrestag",
     "birthday": "Geburtstag",
@@ -8,10 +9,12 @@
   },
   "dayMany": "{{count}} Tage",
   "dayOne": "1 Tag",
-  "heading": "Bondery-Erinnerungen für {{headingDate}}",
-  "introMany": "Sie haben {{count}} Erinnerungen:",
-  "introOne": "Sie haben 1 Erinnerung:",
-  "preview": "Sie haben {{count}} Erinnerung(en) für {{targetDate}}",
+  "description": "Für {{headingDate}}. Öffnen Sie eine Person für Details oder senden Sie eine Nachricht.",
+  "headingMany": "{{count}} Erinnerungen stehen an",
+  "headingOne": "1 Erinnerung steht an",
+  "preview": "{{firstPersonName}}s {{firstTypeLabel}} in {{firstRemainingLabel}}",
+  "previewMore": "{{firstPersonName}}s {{firstTypeLabel}} in {{firstRemainingLabel}} und {{remainingCount}} weitere",
   "reminderLine": "{{emoji}} {{typeLabel}} steht in {{remainingLabel}} am {{dateLabel}} an.",
-  "subject": "Bondery-Erinnerungen für {{targetDate}}"
+  "subject": "Bondery-Erinnerungen für {{targetDate}}",
+  "whyReceiving": "Sie erhalten diese E-Mail, weil Sie Erinnerungen für diese Daten aktiviert haben."
 }

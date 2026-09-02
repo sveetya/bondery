@@ -72,9 +72,10 @@ describe("oauth providers HTTP", () => {
     assert.equal(response.statusCode, 200);
     assert.equal(response.headers["cache-control"], "public, max-age=60");
     const body = response.json() as {
-      oauthProviders: { github: boolean; linkedin: boolean };
+      oauthProviders: { email: boolean; github: boolean; linkedin: boolean };
     };
     assert.deepEqual(body.oauthProviders, oauthProviders);
+    assert.equal(typeof body.oauthProviders.email, "boolean");
     assert.equal(typeof body.oauthProviders.github, "boolean");
     assert.equal(typeof body.oauthProviders.linkedin, "boolean");
     await app.close();

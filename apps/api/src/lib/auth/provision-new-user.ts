@@ -12,30 +12,20 @@ import {
   DEFAULT_LOCALE,
   type SupportedLocale,
 } from "@bondery/schemas/locale/supported-locale";
-
-function splitDisplayName(name: string | null | undefined): {
-  firstName: string;
-  lastName: string | null;
-} {
-  const trimmed = name?.trim() ?? "";
-  if (!trimmed) {
-    return { firstName: "", lastName: null };
-  }
-
-  const [firstName, ...rest] = trimmed.split(/\s+/);
-  const lastName = rest.join(" ").trim();
-  return { firstName, lastName: lastName || null };
-}
+import { resolveNewUserDisplayName, splitDisplayName } from "./new-user-name.js";
 
 export async function provisionNewUser(params: {
-  userId: string;
-  name?: string | null;
+  email?: string | null;
   locale?: SupportedLocale;
+  name?: string | null;
+  userId: string;
 }): Promise<{ settingsCreated: boolean }> {
-  const { userId, name } = params;
+  const { userId } = params;
   const locale = coerceSupportedLocale(params.locale ?? DEFAULT_LOCALE) as DbSupportedLocale;
   const now = new Date();
-  const { firstName, lastName } = splitDisplayName(name);
+  const { firstName, lastName } = splitDisplayName(
+    resolveNewUserDisplayName({ email: params.email, name: params.name }),
+  );
 
   const [settings, myself] = await Promise.all([
     prisma.userSettings.findUnique({

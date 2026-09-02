@@ -32,7 +32,7 @@ Declared in `apps/api/src/env-schema.ts`, `.env.local.example`, `deploy/bondery/
 | `isEmailConfigured()` | Check SMTP env before send |
 | `getEmailConfig()` | Cached config (`fromAddress`, etc.) after first send |
 | `getEmailTransporter()` | Lazy singleton pool (internal; prefer `sendRenderedEmail`) |
-| `sendRenderedEmail(options, log?)` | Send HTML via shared pool; logs and rethrows on failure |
+| `sendRenderedEmail(options, log?)` | Send HTML + plaintext (`multipart/alternative`) via the shared pool; logs and rethrows on failure |
 | `shutdownEmailTransporter()` | Close pool on app shutdown (`build-server.ts` `onClose`) |
 | `emailTransportOptions(config)` | Port-aware TLS + pool options (unit tests) |
 
@@ -55,13 +55,24 @@ Declared in `apps/api/src/env-schema.ts`, `.env.local.example`, `deploy/bondery/
 
 ## From / replyTo / CC conventions
 
+The SMTP **address** is always `BONDERY_PRIVATE_EMAIL_ADDRESS` (e.g. `robot@usebondery.com`). That is env (secret/deploy). The **display name** is one product constant in `apps/api/src/lib/notifications/email-from.ts` — **not env**:
+
+```typescript
+export const EMAIL_FROM_DISPLAY_NAME = `Robot from ${LEGAL_ENTITY.brandName}`;
+// "Robot from Bondery"
+```
+
+Call `formatEmailFrom(config.fromAddress)` for **every** product email (sign-in, welcome, share, digest, trial, account deleted, feedback). Do not invent per-email From names. Do not add `BONDERY_PRIVATE_EMAIL_FROM_NAME`. White-label (self-host operator name + logo + legal entity) is a product feature, not a single SMTP env var.
+
 | Email type | From | Reply-To | CC |
 |------------|------|----------|-----|
-| Automated product (trial, digest, account deleted) | `Robot from Bondery <address>` | From address (where set) | — |
-| User-initiated share | `Bondery <address>` | Sender's email | Sender's email |
-| Internal feedback | `Robot from Bondery <address>` | User email | User email |
+| Automated product (trial, digest, account deleted, welcome, sign-in link) | `formatEmailFrom(address)` | From address (where set) | — |
+| User-initiated share | `formatEmailFrom(address)` | Sender's email | Sender's email |
+| Internal feedback | `formatEmailFrom(address)` | User email | User email |
 
 Avoid `no-reply@` From addresses — use reply-capable addresses; set `replyTo` when the user should be able to respond.
+
+Senders must pass **both** `html` and `text` from `renderEmailParts` ([`toPlainText`](https://react.email/docs/utilities/render#4-convert-to-plain-text)). Nodemailer then sends `multipart/alternative`.
 
 ## Graceful degradation
 

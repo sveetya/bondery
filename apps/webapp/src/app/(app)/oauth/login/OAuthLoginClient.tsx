@@ -7,9 +7,14 @@ import type { OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
 import { notifications } from "@mantine/notifications";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { SocialLoginCard } from "@/app/(app)/login/components/SocialLoginCard";
+import {
+  type LoginBusyAction,
+  SocialLoginCard,
+} from "@/app/(app)/login/components/SocialLoginCard";
 import { createWebappAuthClient } from "@/lib/auth/client";
 import { setLocalePreferencesCookie } from "@/lib/auth/detectLocale";
+import { isMagicLinkVerifyErrorCode } from "@/lib/auth/last-login-method";
+import { buildOAuthLoginMagicLinkUrls } from "@/lib/auth/magic-link-urls";
 import { notifyPasskeyLoginError } from "@/lib/auth/notify-passkey-login-error";
 import { useCommonTranslations, useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { useWebappRuntimeConfig } from "@/lib/platform/runtimeConfig.client";
@@ -27,16 +32,24 @@ type OAuthLoginClientProps = {
 export function OAuthLoginClient({ lastUsedLoginMethod, oauthProviders }: OAuthLoginClientProps) {
   const t = useLoginPageTranslations();
   const tCommon = useCommonTranslations();
-  const [loading, setLoading] = useState(false);
+  const [busyAction, setBusyAction] = useState<LoginBusyAction>(null);
   const runtimeConfig = useWebappRuntimeConfig();
   const authClient = useMemo(() => createWebappAuthClient(runtimeConfig), [runtimeConfig]);
   const searchParams = useSearchParams();
   const { webappUrl, websiteUrl } = runtimeConfig;
   const oauthError = searchParams.get("error");
   const shownOAuthErrorRef = useRef<string | null>(null);
+  const origin = typeof window === "undefined" ? webappUrl : window.location.origin;
+  const search = typeof window === "undefined" ? "" : window.location.search;
+  const magicLinkUrls = buildOAuthLoginMagicLinkUrls(origin, search);
 
   useEffect(() => {
     if (!oauthError || shownOAuthErrorRef.current === oauthError) {
+      return;
+    }
+
+    if (isMagicLinkVerifyErrorCode(oauthError)) {
+      shownOAuthErrorRef.current = oauthError;
       return;
     }
 
@@ -51,7 +64,7 @@ export function OAuthLoginClient({ lastUsedLoginMethod, oauthProviders }: OAuthL
 
   const handleOAuthLogin = async (provider: "github" | "linkedin") => {
     try {
-      setLoading(true);
+      setBusyAction(provider);
 
       await setLocalePreferencesCookie();
 
@@ -85,13 +98,13 @@ export function OAuthLoginClient({ lastUsedLoginMethod, oauthProviders }: OAuthL
         }),
       );
     } finally {
-      setLoading(false);
+      setBusyAction(null);
     }
   };
 
   const handlePasskeyLogin = async () => {
     try {
-      setLoading(true);
+      setBusyAction("passkey");
       await setLocalePreferencesCookie();
 
       const fallbackUrl = `${webappUrl.replace(/\/$/, "")}${WEBAPP_ROUTES.HOME}`;
@@ -110,17 +123,56 @@ export function OAuthLoginClient({ lastUsedLoginMethod, oauthProviders }: OAuthL
     } catch (err) {
       notifyPasskeyLoginError(err, t);
     } finally {
-      setLoading(false);
+      setBusyAction(null);
+    }
+  };
+
+  const handleEmailSubmit = async (email: string): Promise<boolean> => {
+    try {
+      setBusyAction("email");
+      await setLocalePreferencesCookie();
+
+      const { error } = await authClient.signIn.magicLink({
+        callbackURL: magicLinkUrls.callbackURL,
+        email,
+        errorCallbackURL: magicLinkUrls.errorCallbackURL,
+      });
+
+      if (error) {
+        notifications.show(
+          errorNotificationTemplate({
+            description: getAuthUserFacingError(error, tCommon),
+            title: t("AuthenticationError"),
+          }),
+        );
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      notifications.show(
+        errorNotificationTemplate({
+          description: getAuthUserFacingError(err, tCommon),
+          title: t("UnexpectedError"),
+        }),
+      );
+      return false;
+    } finally {
+      setBusyAction(null);
     }
   };
 
   return (
     <SocialLoginCard
+      authClient={authClient}
+      busyAction={busyAction}
+      continueUrl={magicLinkUrls.callbackURL}
       lastUsedLoginMethod={lastUsedLoginMethod}
-      loading={loading}
       oauthProviders={oauthProviders}
+      onEmailSubmit={handleEmailSubmit}
       onPasskeyClick={() => void handlePasskeyLogin()}
       onProviderClick={handleOAuthLogin}
+      surface="oauth"
       websiteUrl={websiteUrl}
     />
   );

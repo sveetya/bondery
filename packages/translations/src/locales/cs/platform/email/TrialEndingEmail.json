@@ -1,11 +1,9 @@
 {
-  "body": "Váš zkušební Premium účet Bondery končí {{endDate}}. Poté se předplatné automaticky obnoví, pokud ho nezrušíte v nastavení účtu.",
+  "body": "Poté se předplatné automaticky obnoví, pokud ho nezrušíte.",
+  "cta": "Spravovat předplatné",
   "endDateFallback": "brzy",
-  "greeting": "Ahoj,",
-  "greetingWithName": "Ahoj {{userName}},",
-  "heading": "Váš zkušební Premium účet brzy končí",
-  "manageBilling": "Otevřete Bondery a přejděte do Nastavení → Předplatné, kde můžete spravovat platby nebo předplatné zrušit.",
-  "preview": "Váš zkušební Premium účet brzy končí",
+  "heading": "Váš zkušební Premium účet končí {{endDate}}",
+  "preview": "Předplatné se obnoví, pokud ho nezrušíte",
   "subject": "Váš zkušební Premium účet Bondery brzy končí",
   "whyReceiving": "Tento e-mail dostáváte, protože máte zkušební Premium účet Bondery."
 }

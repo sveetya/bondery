@@ -3,6 +3,7 @@ import {
   createInteractionInputSchema,
   interactionParticipantSchema,
 } from "#entities/activity/index.js";
+import { emailEntrySchema, shareContactEmailSchema } from "#entities/channels/index.js";
 import { contactPreviewSchema, deleteContactsRequestSchema } from "#entities/contact/index.js";
 import {
   createGroupSchema,
@@ -20,6 +21,7 @@ import { subscriptionStatusSchema } from "#entities/subscription/index.js";
 import { createTagSchema, deleteTagsRequestSchema, updateTagSchema } from "#entities/tag/index.js";
 import { paginationQuerySchema } from "#http/index.js";
 import { EXAMPLE_MERGE_RECOMMENDATION, EXAMPLE_PAGINATION } from "#openapi/fixtures/index.js";
+import { emailAddressSchema, loginEmailFormSchema } from "#primitives/email/index.js";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -205,6 +207,31 @@ function run() {
     importCommit.contacts[0].instagramUsername,
     "ada",
     "instagramImportCommitRequestSchema should parse contacts",
+  );
+
+  const normalizedEmail = emailAddressSchema.parse("  User@Example.COM ");
+  assertEqual(normalizedEmail, "user@example.com", "emailAddressSchema should trim and lowercase");
+
+  const loginEmail = loginEmailFormSchema.parse({ email: "  User@Example.COM " });
+  assertEqual(loginEmail.email, "user@example.com", "loginEmailFormSchema should normalize email");
+
+  const emailEntry = emailEntrySchema.parse({
+    type: "home",
+    value: "  User@Example.COM ",
+  });
+  assertEqual(
+    emailEntry.value,
+    "user@example.com",
+    "emailEntrySchema should use emailAddressSchema",
+  );
+
+  const sharedRecipients = shareContactEmailSchema.parse({
+    recipients: ["  User@Example.COM "],
+  });
+  assertEqual(
+    sharedRecipients.recipients[0],
+    "user@example.com",
+    "shareContactEmailSchema recipients should use emailAddressSchema",
   );
 
   // HTTP pagination query coercion

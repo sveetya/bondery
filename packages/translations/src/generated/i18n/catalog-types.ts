@@ -42,8 +42,6 @@ export type AboutPageCatalog = {
 export type AccountDeletedEmailCatalog = {
   body: string;
   feedback: string;
-  greeting: string;
-  greetingWithName: string;
   heading: string;
   preview: string;
   subject: string;
@@ -305,10 +303,15 @@ export type CommonCatalog = {
       CHALLENGE_NOT_FOUND: string;
       CREDENTIAL_ACCOUNT_NOT_FOUND: string;
       EMAIL_NOT_VERIFIED: string;
+      FAILED_TO_CREATE_SESSION: string;
+      FAILED_TO_CREATE_USER: string;
       FAILED_TO_UPDATE_PASSKEY: string;
       FAILED_TO_VERIFY_REGISTRATION: string;
+      failed_to_create_session: string;
+      failed_to_create_user: string;
       INVALID_EMAIL_OR_PASSWORD: string;
       INVALID_PASSWORD: string;
+      INVALID_TOKEN: string;
       PASSKEY_LIMIT_REACHED: string;
       PASSKEY_NOT_FOUND: string;
       PREVIOUSLY_REGISTERED: string;
@@ -316,6 +319,9 @@ export type CommonCatalog = {
       SESSION_NOT_FRESH: string;
       SESSION_REQUIRED: string;
       SOCIAL_ACCOUNT_ALREADY_LINKED: string;
+      TOKEN_EXPIRED: string;
+      TOO_MANY_REQUESTS: string;
+      EMAIL_SEND_FAILED: string;
       UNABLE_TO_CREATE_SESSION: string;
       USER_NOT_FOUND: string;
       YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY: string;
@@ -578,6 +584,15 @@ export type ContactsTableCatalog = {
   VisibleColumnsSection: string;
 };
 
+export type EmailChromeCatalog = {
+  documentation: string;
+  help: string;
+  internalNote: string;
+  logoAlt: string;
+  manageNotifications: string;
+  support: string;
+};
+
 export type EnrichFromLinkedInCatalog = {
   AllDoneDescriptionMultiple: string;
   AllDoneDescriptionSingle: string;
@@ -686,6 +701,7 @@ export type ExtensionVersionCheckCatalog = {
 };
 
 export type FeedbackEmailCatalog = {
+  description: string;
   generalFeedbackHeading: string;
   heading: string;
   notProvided: string;
@@ -693,6 +709,7 @@ export type FeedbackEmailCatalog = {
   npsScoreLabel: string;
   npsScoreValue: string;
   preview: string;
+  replyCta: string;
   subject: string;
   submittedAt: string;
   userEmailLabel: string;
@@ -1209,13 +1226,23 @@ export type LoginPageCatalog = {
     ImportSocials: string;
     PlugInApps: string;
   };
+  CheckYourEmail: string;
+  CheckYourEmailBody: string;
   ContinueWith: string;
+  ContinueWithEmail: string;
   ContinueWithPasskey: string;
   Description: string;
+  EmailLabel: string;
+  EmailPlaceholder: string;
+  EmailSignInUnavailable: string;
   FormTitle: string;
+  InvalidLinkBody: string;
+  InvalidLinkTitle: string;
   LastUsed: string;
   LogoAriaLabel: string;
   NoPasskeyFound: string;
+  OpenLinkOnThisDeviceOauth: string;
+  Or: string;
   PasskeySignInFailed: string;
   PasskeysUnavailable: string;
   PasskeyTimedOut: string;
@@ -1226,6 +1253,10 @@ export type LoginPageCatalog = {
   };
   ProvidersUnavailable: string;
   ProviderUnavailable: string;
+  RequestNewLink: string;
+  ResendInSeconds: string;
+  ResendSignInLink: string;
+  SendLoginLink: string;
   SignIn: string;
   SignInOnThisPhone: string;
   SmallViewportDesktopNote: string;
@@ -1236,6 +1267,16 @@ export type LoginPageCatalog = {
   Title: string;
   UnexpectedError: string;
   UnexpectedErrorMessage: string;
+};
+
+export type MagicLinkEmailCatalog = {
+  body: string;
+  cta: string;
+  heading: string;
+  ignore: string;
+  preview: string;
+  subject: string;
+  whyReceiving: string;
 };
 
 export type MapCommonCatalog = {
@@ -1923,6 +1964,7 @@ export type PersonTabsCatalog = {
 };
 
 export type ReminderDigestEmailCatalog = {
+  cta: string;
   dateTypes: {
     anniversary: string;
     birthday: string;
@@ -1932,12 +1974,14 @@ export type ReminderDigestEmailCatalog = {
   };
   dayMany: string;
   dayOne: string;
-  heading: string;
-  introMany: string;
-  introOne: string;
+  description: string;
+  headingMany: string;
+  headingOne: string;
   preview: string;
+  previewMore: string;
   reminderLine: string;
   subject: string;
+  whyReceiving: string;
 };
 
 export type SettingsPageCatalog = {
@@ -2447,8 +2491,8 @@ export type SettingsPageCatalog = {
 };
 
 export type ShareContactEmailBodyCatalog = {
-  defaultMessage: string;
-  heading: string;
+  description: string;
+  footerNotes: string;
   importantDateLine: string;
   labels: {
     address: string;
@@ -2464,8 +2508,8 @@ export type ShareContactEmailBodyCatalog = {
     website: string;
     whatsapp: string;
   };
-  noHeadline: string;
-  preview: string;
+  previewFallback: string;
+  replyCta: string;
   subject: string;
 };
 
@@ -2695,11 +2739,9 @@ export type TagsSettingsCatalog = {
 
 export type TrialEndingEmailCatalog = {
   body: string;
+  cta: string;
   endDateFallback: string;
-  greeting: string;
-  greetingWithName: string;
   heading: string;
-  manageBilling: string;
   preview: string;
   subject: string;
   whyReceiving: string;
@@ -2761,8 +2803,6 @@ export type ValidationCatalog = {
 export type WelcomeEmailCatalog = {
   body: string;
   getStarted: string;
-  greeting: string;
-  greetingWithName: string;
   heading: string;
   preview: string;
   subject: string;
@@ -2786,6 +2826,7 @@ export interface Catalog {
   "ContactPhotoUpload": ContactPhotoUploadCatalog;
   "ContactPreferenceSection": ContactPreferenceSectionCatalog;
   "ContactsTable": ContactsTableCatalog;
+  "EmailChrome": EmailChromeCatalog;
   "EnrichFromLinkedIn": EnrichFromLinkedInCatalog;
   "EnrichRecommendationCard": EnrichRecommendationCardCatalog;
   "ExtensionPopup": ExtensionPopupCatalog;
@@ -2803,6 +2844,7 @@ export interface Catalog {
   "Languages": LanguagesCatalog;
   "LinkedInData": LinkedInDataCatalog;
   "LoginPage": LoginPageCatalog;
+  "MagicLinkEmail": MagicLinkEmailCatalog;
   "MapCommon": MapCommonCatalog;
   "MapPage": MapPageCatalog;
   "MergeWithModal": MergeWithModalCatalog;

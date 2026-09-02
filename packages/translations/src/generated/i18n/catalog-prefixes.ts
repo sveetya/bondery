@@ -30,6 +30,8 @@ export type ContactPreferenceSectionPrefix = never;
 
 export type ContactsTablePrefix = never;
 
+export type EmailChromePrefix = never;
+
 export type EnrichFromLinkedInPrefix = never;
 
 export type EnrichRecommendationCardPrefix = never;
@@ -69,6 +71,8 @@ export type LanguagesPrefix = never;
 export type LinkedInDataPrefix = never;
 
 export type LoginPagePrefix = "Benefits" | "Providers";
+
+export type MagicLinkEmailPrefix = never;
 
 export type MapCommonPrefix = never;
 
@@ -162,6 +166,7 @@ export interface NamespacePrefixes {
   "ContactPhotoUpload": ContactPhotoUploadPrefix;
   "ContactPreferenceSection": ContactPreferenceSectionPrefix;
   "ContactsTable": ContactsTablePrefix;
+  "EmailChrome": EmailChromePrefix;
   "EnrichFromLinkedIn": EnrichFromLinkedInPrefix;
   "EnrichRecommendationCard": EnrichRecommendationCardPrefix;
   "ExtensionPopup": ExtensionPopupPrefix;
@@ -182,6 +187,7 @@ export interface NamespacePrefixes {
   "Languages": LanguagesPrefix;
   "LinkedInData": LinkedInDataPrefix;
   "LoginPage": LoginPagePrefix;
+  "MagicLinkEmail": MagicLinkEmailPrefix;
   "MapCommon": MapCommonPrefix;
   "MapPage": MapPagePrefix;
   "MergeWithModal": MergeWithModalPrefix;

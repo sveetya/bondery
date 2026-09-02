@@ -9,7 +9,11 @@ import type { OAuthProviderId, OAuthProvidersBitmap } from "@bondery/schemas/oau
 import { Stack, Text, Tooltip } from "@mantine/core";
 import { IconBrandGithubFilled, IconBrandLinkedin, IconFingerprint } from "@tabler/icons-react";
 import type { ComponentType, CSSProperties } from "react";
-import { isLastUsedOAuthProvider, isLastUsedPasskey } from "@/lib/auth/last-login-method";
+import {
+  isLastUsedMagicLink,
+  isLastUsedOAuthProvider,
+  isLastUsedPasskey,
+} from "@/lib/auth/last-login-method";
 import { useLoginPageTranslations } from "@/lib/i18n/generated/hooks";
 import { INTEGRATION_PROVIDERS } from "@/lib/platform/config";
 import classes from "./LoginProviderButtons.module.css";
@@ -19,11 +23,13 @@ const PROVIDER_ICONS: Record<string, ComponentType<{ size?: number }>> = {
   linkedin: IconBrandLinkedin,
 };
 
+export type LoginBusyAction = OAuthProviderId | "email" | "passkey" | null;
+
 type LoginProviderButtonsProps = {
+  busyAction: LoginBusyAction;
   getPasskeyTestId?: string;
   getProviderTestId?: (providerKey: string) => string | undefined;
   lastUsedLoginMethod: string | null;
-  loading: boolean;
   oauthProviders: OAuthProvidersBitmap | null;
   onPasskeyClick: () => void;
   onProviderClick: (provider: OAuthProviderId) => void;
@@ -32,10 +38,10 @@ type LoginProviderButtonsProps = {
 };
 
 export function LoginProviderButtons({
+  busyAction,
   getPasskeyTestId,
   getProviderTestId,
   lastUsedLoginMethod,
-  loading,
   oauthProviders,
   onPasskeyClick,
   onProviderClick,
@@ -43,7 +49,9 @@ export function LoginProviderButtons({
   showPasskey,
 }: LoginProviderButtonsProps) {
   const t = useLoginPageTranslations();
-  const passkeyIsLastUsed = showPasskey && isLastUsedPasskey(lastUsedLoginMethod);
+  const magicLinkIsLastUsed = isLastUsedMagicLink(lastUsedLoginMethod);
+  const passkeyIsLastUsed =
+    showPasskey && isLastUsedPasskey(lastUsedLoginMethod) && !magicLinkIsLastUsed;
   const allOAuthDisabled = showOAuth && areAllOAuthProvidersDisabled(oauthProviders);
 
   return (
@@ -62,11 +70,13 @@ export function LoginProviderButtons({
             const isLastUsed =
               enabled &&
               !passkeyIsLastUsed &&
+              !magicLinkIsLastUsed &&
               isLastUsedOAuthProvider(lastUsedLoginMethod, providerId);
             const unavailableLabel = t("ProviderUnavailable", {
               provider: provider.displayName,
             });
 
+            const isThisLoading = enabled && busyAction === providerId;
             const button = (
               <CornerLabeledButton
                 autoContrast
@@ -75,10 +85,10 @@ export function LoginProviderButtons({
                 cornerLabel={isLastUsed ? t("LastUsed") : undefined}
                 cornerLabelTestId="login-last-used-badge"
                 data-testid={getProviderTestId?.(provider.providerKey)}
-                disabled={!enabled}
+                disabled={!enabled || (busyAction !== null && !isThisLoading)}
                 fullWidth
                 leftSection={<IconComponent size={20} />}
-                loading={loading}
+                loading={isThisLoading}
                 onClick={() => {
                   if (!enabled) {
                     return;
@@ -102,7 +112,7 @@ export function LoginProviderButtons({
             }
 
             return (
-              <Tooltip key={providerId} label={unavailableLabel} maw={360}>
+              <Tooltip key={providerId} label={unavailableLabel}>
                 <span style={{ display: "block", width: "100%" }}>{button}</span>
               </Tooltip>
             );
@@ -111,15 +121,23 @@ export function LoginProviderButtons({
 
       {showPasskey ? (
         <CornerLabeledButton
-          color="branding-primary"
+          autoContrast
+          className={classes.brandButton}
+          color="gray"
           cornerLabel={passkeyIsLastUsed ? t("LastUsed") : undefined}
           cornerLabelTestId="login-last-used-badge"
           data-testid={getPasskeyTestId}
+          disabled={busyAction !== null && busyAction !== "passkey"}
           fullWidth
           leftSection={<IconFingerprint size={20} />}
-          loading={loading}
+          loading={busyAction === "passkey"}
           onClick={onPasskeyClick}
           size="lg"
+          style={
+            {
+              "--login-brand-button-bg": "var(--mantine-color-gray-filled)",
+            } as CSSProperties
+          }
           variant="filled"
         >
           {t("ContinueWithPasskey")}

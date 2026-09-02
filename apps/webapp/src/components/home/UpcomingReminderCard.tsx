@@ -207,7 +207,7 @@ export function UpcomingReminderCard({ reminder, onClick }: UpcomingReminderCard
           style={{ flexShrink: 0, marginLeft: "auto" }}
           wrap="nowrap"
         >
-          <Tooltip label={notificationTooltip} position="left" withArrow>
+          <Tooltip label={notificationTooltip} position="left">
             <Badge
               color={notificationColor}
               leftSection={

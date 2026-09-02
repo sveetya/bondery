@@ -19,10 +19,12 @@ This page covers local bootstrap and troubleshooting. For production secret stor
 | **Public clients** | `apps/mobile`, `apps/chrome-extension` | PKCE only — no client secret (cannot be kept secret in a distributed binary) |
 | **Upstream IdPs** | GitHub, LinkedIn | Configured only on the API; social login callbacks hit the API, not the webapp |
 
+Webapp `/login` and `/oauth/login` also offer a **passwordless sign-in email** (Better Auth `magicLink` plugin — click the emailed link; no OTP, no passwords). First verify can create the user (`disableSignUp: false`). Mobile login is unchanged (GitHub / LinkedIn).
+
 ```
 User → client (webapp / mobile / extension)
      → API /auth/oauth2/authorize
-     → API login (password or GitHub/LinkedIn)
+     → API login (sign-in email, GitHub/LinkedIn, or passkey)
      → redirect with authorization code
      → client exchanges code + PKCE verifier for tokens
      → client calls API with Bearer JWT (or native session on mobile)

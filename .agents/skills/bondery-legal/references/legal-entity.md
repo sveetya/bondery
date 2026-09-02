@@ -4,7 +4,7 @@ Internal registry of the company behind the Bondery product. **Not a public page
 
 Do **not** invent missing identifiers. If a field is unmarked below, ask a human owner.
 
-**Public copy source:** `apps/website/src/data/company.ts` (`LEGAL_ENTITY`). Privacy Policy §2 (Data Controller) and the marketing Organization JSON-LD read from that object. Keep those in sync when a **published** identifier changes. DUNS is internal-only today — do not add it to `company.ts` or Privacy unless a human asks.
+**Public copy source:** `packages/helpers/src/globals/company.ts` (`LEGAL_ENTITY`). The website re-exports it from `apps/website/src/data/company.ts`. Privacy Policy §2 (Data Controller), marketing Organization JSON-LD, and **marketing** email footers (`showLegalEntity`) read from that object. Transactional product mail does not print legal name/address. Keep those in sync when a **published** identifier changes. DUNS is internal-only today — do not add it to `LEGAL_ENTITY` or Privacy unless a human asks.
 
 Hosted-cloud vs self-host controller split: [self-host-vs-cloud.md](./self-host-vs-cloud.md).
 
@@ -51,5 +51,5 @@ Paste into this file when known. Do not guess.
 
 - Use **legal name** (Sveetech s.r.o.) on contracts, invoices, DPA headers, and Privacy controller blocks. Use **brand name** (Bondery) in product UI.
 - Do not copy DUNS into customer-facing pages without a human request.
-- Identifier or address change → update this file **and** `LEGAL_ENTITY` in the same PR if the field is published.
+- Identifier or address change → update this file **and** `LEGAL_ENTITY` in `packages/helpers/src/globals/company.ts` in the same PR if the field is published.
 - Jurisdiction, liability, and Terms language stay [escalation-boundaries.md](./escalation-boundaries.md) — this page is identity facts only.

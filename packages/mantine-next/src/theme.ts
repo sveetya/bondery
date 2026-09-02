@@ -130,6 +130,8 @@ export const bonderyTheme = createTheme({
     Tooltip: {
       defaultProps: {
         multiline: true,
+        w: 300,
+        withArrow: true,
       },
     },
   },

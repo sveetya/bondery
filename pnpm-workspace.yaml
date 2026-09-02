@@ -12,6 +12,7 @@ enableGlobalVirtualStore: true
 injectWorkspacePackages: true
 syncInjectedDepsAfterScripts:
   - build
+  - compile
 
 overrides:
   "@better-auth/core": "1.7.1"

@@ -285,7 +285,7 @@ export function ContactPhonesSection({
       {!isPhoneLimitReached ? (
         <Card p="sm" radius="md" withBorder>
           <Group align="center" gap="xs" wrap="nowrap">
-            <Tooltip label={text.addPhone} withArrow>
+            <Tooltip label={text.addPhone}>
               <ActionIcon
                 aria-label={text.addPhone}
                 color="green"

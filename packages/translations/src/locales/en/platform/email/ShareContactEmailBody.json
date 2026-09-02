@@ -1,6 +1,6 @@
 {
-  "defaultMessage": "Shared this contact with you via Bondery.",
-  "heading": "Contact shared with you",
+  "description": "{{senderName}} shared this contact with you",
+  "footerNotes": "Sent with Bondery. Reply to this email to reach {{senderName}}.",
   "importantDateLine": "{{label}}: {{date}} ({{type}})",
   "labels": {
     "address": "Address",
@@ -16,7 +16,7 @@
     "website": "Website",
     "whatsapp": "WhatsApp"
   },
-  "noHeadline": "No headline",
-  "preview": "{{senderName}} shared a contact with you • {{contactName}}",
+  "previewFallback": "Phone, email, and other details inside",
+  "replyCta": "Reply to {{senderName}}",
   "subject": "{{senderName}} shared a contact with you • {{contactName}}"
 }

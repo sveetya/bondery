@@ -167,7 +167,6 @@ export function NavigationSidebarContent({
           disabled={!collapsed}
           label={t("MyselfGreeting", { name: userName })}
           position="right"
-          withArrow
         >
           <Group
             aria-current={isMyselfActive ? "page" : undefined}

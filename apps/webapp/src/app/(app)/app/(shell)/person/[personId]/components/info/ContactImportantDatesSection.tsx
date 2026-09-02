@@ -329,7 +329,7 @@ export function ContactImportantDatesSection({
             disabled={savingField === "importantDates"}
             hideDeleteIcon
             leftAction={
-              <Tooltip label={t("AddHint")} withArrow>
+              <Tooltip label={t("AddHint")}>
                 <ActionIcon aria-label={t("AddAction")} color="green" variant="light">
                   <IconPlus size={16} />
                 </ActionIcon>

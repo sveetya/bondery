@@ -55,7 +55,7 @@ export const shareContactRequestSchema = z.object({
   personId: contactIdSchema,
   recipientEmails: shareContactEmailSchema.shape.recipients,
   selectedFields: z.array(shareableFieldSchema),
-  sendCopy: z.boolean(),
+  sendCopy: z.boolean().default(true),
 }) satisfies z.ZodType<ShareContactRequest>;
 
 export const feedbackFormSchema = z.object({

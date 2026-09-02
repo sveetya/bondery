@@ -264,7 +264,7 @@ function RelationshipCardRow({
     <Card p="md" radius="md" shadow="none" withBorder>
       <Group align="center" gap="sm" wrap="wrap">
         {mode === "create" ? (
-          <Tooltip label={addActionLabel} withArrow>
+          <Tooltip label={addActionLabel}>
             <ActionIcon aria-label={addActionLabel} color="green" variant="light">
               <IconPlus size={16} />
             </ActionIcon>

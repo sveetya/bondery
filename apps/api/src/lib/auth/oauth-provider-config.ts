@@ -4,6 +4,7 @@
  * Computed once at module init — changing env requires an API restart.
  */
 import type { OAuthProvidersBitmap } from "@bondery/schemas/oauth-providers";
+import { emailConfigFromNodeEnv } from "../notifications/transporter.js";
 import logger from "../platform/logger.js";
 
 export function isOAuthAppConfigured(
@@ -73,6 +74,7 @@ export function resolveOAuthProviderSnapshot(
       linkedin: isOAuthCredentialPairIncomplete(linkedinId, linkedinSecret),
     },
     oauthProviders: {
+      email: emailConfigFromNodeEnv(env) !== null,
       github: Boolean(githubPair),
       linkedin: Boolean(linkedinPair),
     },

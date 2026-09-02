@@ -1,10 +1,8 @@
 {
   "body": "Hiermit bestätigen wir, dass Ihr Bondery-Konto und die zugehörigen Daten in unseren Systemen gelöscht wurden.",
   "feedback": "Wenn Sie Feedback zu Bondery oder zum Grund Ihres Ausstiegs haben, können Sie auf diese E-Mail antworten. Wir lesen jede Nachricht.",
-  "greeting": "Hallo,",
-  "greetingWithName": "Hallo {{userName}},",
   "heading": "Ihr Bondery-Konto wurde gelöscht",
-  "preview": "Ihr Bondery-Konto und Ihre Daten wurden gelöscht",
+  "preview": "Bestätigung der Löschung. Antworten Sie, wenn Sie Feedback haben.",
   "subject": "Ihr Bondery-Konto wurde gelöscht",
-  "thanks": "Vielen Dank, dass Sie Bondery ausprobiert haben."
+  "thanks": "Vielen Dank, dass Sie Bondery ausprobiert haben. 💜"
 }

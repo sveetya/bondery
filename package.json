@@ -42,7 +42,7 @@
     "pnpm": ">=11.18.0"
   },
   "name": "bondery-monorepo",
-  "packageManager": "pnpm@11.18.0",
+  "packageManager": "pnpm@11.25.0",
   "private": true,
   "scripts": {
     "build": "turbo build",

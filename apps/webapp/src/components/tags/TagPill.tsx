@@ -56,7 +56,7 @@ export function TagPill({
       wrap="nowrap"
     >
       {onClick ? (
-        <Tooltip label={tooltipLabel} withArrow>
+        <Tooltip label={tooltipLabel}>
           <UnstyledButton
             onClick={onClick}
             onMouseDown={(event) => {
@@ -96,7 +96,7 @@ export function TagPill({
       )}
 
       {clearable && onRemove ? (
-        <Tooltip label={removeTooltipLabel} withArrow>
+        <Tooltip label={removeTooltipLabel}>
           <UnstyledButton
             aria-label={removeTooltipLabel}
             onClick={(event) => {

@@ -233,7 +233,6 @@ export function DataTable<TRow, TSortKey extends string = string>({
               disabled={!action.disabled || !action.disabledTooltip}
               key={action.key}
               label={action.disabled ? action.disabledTooltip : undefined}
-              withArrow
             >
               <Button
                 color={action.color}

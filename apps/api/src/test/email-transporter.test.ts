@@ -3,6 +3,7 @@ import { afterEach, describe, it } from "node:test";
 
 import { probeSmtp } from "../lib/health/probe-smtp.js";
 import {
+  classifySmtpError,
   emailTransportOptions,
   getEmailTransporter,
   getEmailTransportReadiness,
@@ -185,6 +186,16 @@ describe("email transport readiness", () => {
     assert.equal(readiness.configured, true);
     assert.equal(readiness.ok, false);
     assert.equal(readiness.error, "auth_failed");
+  });
+
+  it("classifySmtpError maps timeout and auth without leaking details", () => {
+    const timeout = new Error("SMTP verify timed out");
+    timeout.name = "AbortError";
+    assert.equal(classifySmtpError(timeout), "timeout");
+
+    const auth = new Error("Invalid login") as Error & { code?: string };
+    auth.code = "EAUTH";
+    assert.equal(classifySmtpError(auth), "auth_failed");
   });
 
   it("verifyEmailTransport reuses recent boot verification for readiness probes", async () => {

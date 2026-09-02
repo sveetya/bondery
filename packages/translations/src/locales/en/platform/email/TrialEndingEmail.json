@@ -1,11 +1,9 @@
 {
-  "body": "Your Bondery Premium trial ends on {{endDate}}. After that, your subscription will renew automatically unless you cancel from your account settings.",
+  "body": "After that, your subscription will renew automatically unless you cancel.",
+  "cta": "Manage subscription",
   "endDateFallback": "soon",
-  "greeting": "Hi there,",
-  "greetingWithName": "Hi {{userName}},",
-  "heading": "Your Premium trial is ending soon",
-  "manageBilling": "Open Bondery and go to Settings → Subscription to manage billing or cancel before renewal.",
-  "preview": "Your Premium trial is ending soon",
+  "heading": "Your Premium trial ends on {{endDate}}",
+  "preview": "Your subscription renews unless you cancel",
   "subject": "Your Bondery Premium trial is ending soon",
   "whyReceiving": "You're receiving this because you have a Bondery Premium trial."
 }

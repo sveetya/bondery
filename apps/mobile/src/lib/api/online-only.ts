@@ -210,6 +210,7 @@ export async function shareContactEmail(input: {
       personId: input.personId,
       recipientEmails: input.recipientEmails,
       selectedFields: ALL_SHAREABLE_FIELDS,
+      sendCopy: true,
     }),
     method: "POST",
   });

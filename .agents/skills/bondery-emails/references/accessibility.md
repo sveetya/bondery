@@ -27,7 +27,9 @@ Apply on every template change:
 
 ## Plain-text part
 
-**Current gap:** sends are HTML-only. Plain-text multipart improves accessibility and deliverability — add when centralizing send in `sendRenderedEmail`.
+Every send is `multipart/alternative`: HTML plus plaintext. API senders call `renderEmailParts` (`render` then [`toPlainText`](https://react.email/docs/utilities/render#4-convert-to-plain-text)).
+
+Use `data-skip-in-text="true"` only on decorative HTML you want omitted from plaintext. Do **not** put it on the header logo. Do not skip the CTA, body copy, or preference/help links.
 
 ## Testing
 

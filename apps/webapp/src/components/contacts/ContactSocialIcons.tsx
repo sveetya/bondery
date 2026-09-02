@@ -125,11 +125,7 @@ export function ContactSocialIcons({ contact }: { contact: Contact }) {
         }
 
         return (
-          <Tooltip
-            key={social.key}
-            label={getSocialActionTooltip(social.key, contact.firstName)}
-            withArrow
-          >
+          <Tooltip key={social.key} label={getSocialActionTooltip(social.key, contact.firstName)}>
             <span>
               <ActionIconLink
                 ariaLabel={social.label}

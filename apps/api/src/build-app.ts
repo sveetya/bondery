@@ -24,6 +24,7 @@ import {
 } from "fastify-zod-openapi";
 import type { OpenAPIV3 } from "openapi-types";
 import { envSchema } from "./env-schema.js";
+import { redactSensitiveAuthQuery } from "./lib/auth/redact-auth-query.js";
 import { registerExtensionVersionCheck } from "./lib/extension/version-check.js";
 import { registerAuthStrategies } from "./lib/platform/auth/strategies.js";
 import { mapErrorToResponse } from "./lib/platform/errors/map-to-response.js";
@@ -33,6 +34,19 @@ import { swaggerOpenApiConfig } from "./openapi/swagger-config.js";
 import { registerAllRoutes } from "./routes/register-all.js";
 
 const require = createRequire(import.meta.url);
+
+function authLogSerializers() {
+  return {
+    req(request: { hostname?: string; ip?: string; method?: string; url?: string }) {
+      return {
+        hostname: request.hostname,
+        method: request.method,
+        remoteAddress: request.ip,
+        url: typeof request.url === "string" ? redactSensitiveAuthQuery(request.url) : request.url,
+      };
+    },
+  };
+}
 
 function getLoggerConfig(env: string) {
   if (env === "test") {
@@ -44,6 +58,7 @@ function getLoggerConfig(env: string) {
       const target = require.resolve("pino-pretty");
       return {
         level: "info",
+        serializers: authLogSerializers(),
         transport: {
           options: {
             colorize: true,
@@ -58,7 +73,7 @@ function getLoggerConfig(env: string) {
     }
   }
 
-  return { level: "info" };
+  return { level: "info", serializers: authLogSerializers() };
 }
 
 export async function buildApp(): Promise<AppFastifyInstance> {

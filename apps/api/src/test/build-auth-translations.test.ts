@@ -7,7 +7,10 @@ describe("buildAuthTranslations", () => {
   it("loads flat Better Auth codes from common.errors.auth", () => {
     const translations = buildAuthTranslations();
 
-    assert.equal(translations.en.INVALID_EMAIL_OR_PASSWORD, "Invalid email or password.");
+    assert.equal(
+      translations.en.INVALID_TOKEN,
+      "This sign-in link isn’t valid. Request a new one.",
+    );
     assert.equal(translations.cs.USER_NOT_FOUND, "Uživatel nebyl nalezen.");
     assert.equal(
       translations.de.SESSION_EXPIRED,

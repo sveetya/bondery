@@ -5,7 +5,7 @@
  *
  * Prerequisites:
  *   - Infisical CLI installed and logged in (`infisical login`)
- *   - `.infisical.json` at repo root (copy from `.infisical.json.example`)
+ *   - `.infisical.json` at repo root (committed; copy from `.infisical.json.example` only for a different project)
  *
  * Which keys are pulled is defined by `syncable: true` on manifest entries.
  */
@@ -85,7 +85,7 @@ function resolveInfisicalExecutable(): { command: string; shell: boolean } {
 function readInfisicalConfig(): InfisicalPullTarget {
   if (!existsSync(INFISICAL_CONFIG)) {
     log.error(`Missing ${INFISICAL_CONFIG}`);
-    log.info("Copy .infisical.json.example → .infisical.json and set your projectId");
+    log.info("Restore .infisical.json from git, or copy .infisical.json.example and set projectId");
     process.exit(1);
   }
 

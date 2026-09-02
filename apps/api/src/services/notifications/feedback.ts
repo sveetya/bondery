@@ -1,12 +1,14 @@
 import { FeedbackEmail } from "@bondery/emails";
-import { render } from "@react-email/render";
 import type { FastifyBaseLogger } from "fastify";
+import { emailDocumentProps } from "../../lib/notifications/email-chrome.js";
 import { buildFeedbackCopy } from "../../lib/notifications/email-copy-builders.js";
+import { formatEmailFrom } from "../../lib/notifications/email-from.js";
 import {
   loadEmailNamespace,
   readCopyString,
   resolveEmailLocale,
 } from "../../lib/notifications/email-i18n.js";
+import { renderEmailParts } from "../../lib/notifications/render-email.js";
 import {
   isEmailConfigured,
   requireEmailConfig,
@@ -38,8 +40,9 @@ export async function sendFeedbackEmail(
   const subject = readCopyString(bundle, "subject");
 
   try {
-    const emailHtml = await render(
+    const { html, text } = await renderEmailParts(
       FeedbackEmail({
+        ...emailDocumentProps(lng, subject),
         copy,
         generalFeedback: input.generalFeedback || undefined,
         npsReason: input.npsReason || undefined,
@@ -53,11 +56,12 @@ export async function sendFeedbackEmail(
     await sendRenderedEmail(
       {
         cc: input.userEmail,
-        from: `Robot from Bondery <${config.fromAddress}>`,
-        html: emailHtml,
+        from: formatEmailFrom(config.fromAddress),
+        html,
         replyTo: input.userEmail,
         subject,
-        to: `Robot from Bondery <${config.fromAddress}>`,
+        text,
+        to: formatEmailFrom(config.fromAddress),
       },
       log,
     );
