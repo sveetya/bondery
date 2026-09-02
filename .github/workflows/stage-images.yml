@@ -144,13 +144,52 @@ jobs:
       dockerignore_file: .dockerignore.website
       image_name: ghcr.io/usebondery/website
       docker_tags: |
+        type=raw,value=beta
         type=sha,prefix=sha-,format=short
       oci_title: Bondery Website
       oci_description: Bondery marketing website (main integration builds)
       oci_documentation: https://github.com/usebondery/bondery/blob/main/docs/deploy/dokploy.md
-      oci_version: sha
+      oci_version: beta
       git_sha: ${{ github.sha }}
       cache_scope: website
       build_args: |
         BONDERY_INFRA_GIT_SHA=${{ github.sha }}
         BONDERY_INFRA_VERSION=${{ needs.resolve_website_version.outputs.version }}
+
+  notify_beta_website:
+    needs: [build_website]
+    if: always() && needs.build_website.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/shared/infisical-production-secrets
+
+      - uses: ./.github/actions/shared/dokploy-deploy-webhook
+        with:
+          webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK }}
+          branch: main
+
+  notify_beta_services:
+    needs: [build_api, build_webapp]
+    if: always() && (needs.build_api.result == 'success' || needs.build_webapp.result == 'success')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/shared/infisical-production-secrets
+
+      - uses: ./.github/actions/shared/dokploy-deploy-webhook
+        with:
+          webhook_url: ${{ env.BONDERY_OPS_DOKPLOY_STAGING_SERVICES_DEPLOY_WEBHOOK }}
+          branch: main

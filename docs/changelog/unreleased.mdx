@@ -7,6 +7,7 @@ hidden: true
 
 ### ✨ Added
 
+- Website: Published `/.well-known/ard.json` so agents can discover docs (`llms.txt`) and the REST OpenAPI spec. The webapp path redirects to the marketing catalog.
 - Webapp: Sign in or create an account with a sign-in link emailed to you (no password). Open the link on this device. Passkeys and GitHub or LinkedIn stay on the same screen.
 - Webapp: Sign in with a passkey from Settings and the login screen (up to 5 passkeys per account). Passkeys are a second authenticator alongside email, GitHub, or LinkedIn — keep at least one of those connected for recovery. Login marks the last method you used; Settings shows authenticator names and last used.
 - Webapp: Settings → Apps is for LinkedIn and GitHub connections. Profile holds your contact card, email, sign-in methods, and passkeys.
@@ -17,6 +18,7 @@ hidden: true
 ### 🐛 Fixed
 
 - Deploy: every Compose service publishes a unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` Docker DNS alias. Production and beta can share `dokploy-network` without colliding on `api`, `webapp`, or `seaweedfs-s3`. Webapp SSR uses `${prefix}-api`; the API uses `${prefix}-storage` for S3.
+- Ops: website Traefik router names and the Docker DNS alias interpolate `BONDERY_INFRA_TRAEFIK_PREFIX` so production and beta marketing sites can share `dokploy-network`.
 - API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.
 
 ### 🔄 Changed
@@ -32,6 +34,8 @@ hidden: true
 ### 🤖 CI
 
 - Ops: Infisical → Dokploy env sync now uploads `BONDERY_INFRA_TRAEFIK_PREFIX`. Set `bondery-beta` in Infisical staging and `bondery` (or omit) in production.
+- Ops: Infisical → Dokploy adds a `website-beta` target (`deployment=beta` + `target=website`).
+- CI: `stage-images` tags website `:beta` and notifies staging website/services Dokploy webhooks (`refs/heads/main`).
 - CI: `website-docker-build`, `api-docker-build`, and `webapp-docker-build` in verify now time out after 30 minutes.
 
 ### Breaking

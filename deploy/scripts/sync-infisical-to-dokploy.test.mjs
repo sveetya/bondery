@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { getDokploySyncWebhookBranch } from "@bondery/helpers/env";
 import {
   buildDeployWebhookPayload,
   buildOpsUploadPayload,
@@ -94,6 +95,23 @@ describe("sync-infisical-to-dokploy", () => {
     ]);
     assert.equal(uploadKeys.includes("BONDERY_OPS_DOKPLOY_API_KEY"), false);
     assert.equal(uploadKeys.includes("BONDERY_PRIVATE_PLAUSIBLE_SECRET_KEY_BASE"), false);
+    assert.equal(uploadKeys.includes("BONDERY_INFRA_TRAEFIK_PREFIX"), false);
+  });
+
+  it("website payload includes TRAEFIK_PREFIX when set", () => {
+    const env = {
+      ...websiteEnv,
+      BONDERY_INFRA_TRAEFIK_PREFIX: "bondery-beta",
+    };
+
+    const { uploadKeys } = buildUploadPayload(env, "website");
+
+    assert.deepEqual(uploadKeys, [
+      "BONDERY_INFRA_PLAUSIBLE_DOMAIN",
+      "BONDERY_INFRA_TRAEFIK_PREFIX",
+      "BONDERY_INFRA_WEBAPP_DOMAIN",
+      "BONDERY_INFRA_WEBSITE_DOMAIN",
+    ]);
   });
 
   it("plausible payload includes plausible secrets only", () => {
@@ -181,6 +199,31 @@ describe("sync-infisical-to-dokploy", () => {
   it("buildDeployWebhookPayload uses main ref for services-beta redeploy", () => {
     const payload = buildDeployWebhookPayload("usebondery/bondery", ["deploy/bondery"], "main");
     assert.equal(payload.ref, "refs/heads/main");
+  });
+
+  it("readDokployConfig resolves website-beta staging compose id", () => {
+    const env = {
+      ...websiteEnv,
+      BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_COMPOSE_ID: "beta-website-compose-id",
+      BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK:
+        "https://dokploy.example.com/beta-website-hook",
+    };
+    delete env.BONDERY_OPS_DOKPLOY_OPS_COMPOSE_ID;
+
+    const config = readDokployConfig(env, "website-beta");
+    assert.equal(config.composeId, "beta-website-compose-id");
+    assert.equal(config.webhookKey, "BONDERY_OPS_DOKPLOY_STAGING_WEBSITE_DEPLOY_WEBHOOK");
+    assert.equal(config.target, "website-beta");
+  });
+
+  it("website-beta upload payload matches website keys", () => {
+    const { uploadKeys: websiteKeys } = buildUploadPayload(websiteEnv, "website");
+    const { uploadKeys: betaKeys } = buildUploadPayload(websiteEnv, "website-beta");
+    assert.deepEqual(betaKeys, websiteKeys);
+  });
+
+  it("getDokploySyncWebhookBranch uses main for website-beta", () => {
+    assert.equal(getDokploySyncWebhookBranch("website-beta"), "main");
   });
 
   it("buildOpsUploadPayload remains an alias for website target", () => {

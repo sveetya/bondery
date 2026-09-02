@@ -2,7 +2,9 @@ import { WEBSITE_ROUTES } from "@bondery/helpers";
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/app/blog/_lib";
 import { BLOG_CATEGORIES } from "@/lib/blog/categories";
+import { isUnpublishedChangelogSlug } from "@/lib/changelog";
 import { WEBSITE_URL } from "@/lib/config";
+import { source } from "@/lib/source";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -20,6 +22,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
     url: `${WEBSITE_URL}/blog/${post.category}/${post.slug}`,
   }));
+
+  const docEntries: MetadataRoute.Sitemap = source
+    .getPages()
+    .filter((page) => !page.data.hidden)
+    .filter((page) => !isUnpublishedChangelogSlug(page.slugs))
+    .map((page) => ({
+      changeFrequency: "weekly" as const,
+      lastModified: page.data.lastModified ? new Date(page.data.lastModified) : now,
+      priority: 0.6,
+      url: `${WEBSITE_URL}${page.url}`,
+    }));
 
   return [
     {
@@ -52,6 +65,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
       url: `${WEBSITE_URL}${WEBSITE_ROUTES.SECURITY}`,
     },
+    ...docEntries,
     ...blogCategoryEntries,
     ...blogPostEntries,
   ];

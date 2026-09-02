@@ -2,6 +2,7 @@
 /**
  * Mechanical checks for deploy/ops/docker-compose.yml:
  * - website must enable Traefik with BONDERY_INFRA_WEBSITE_DOMAIN
+ * - Traefik router names and the dokploy-network alias interpolate BONDERY_INFRA_TRAEFIK_PREFIX
  * - public URLs must be derived from domain vars
  * - Plausible site domain must come from the marketing hostname, host from the CE hostname
  * - must not reference PRIVATE_* / BONDERY_PRIVATE_* or use env_file
@@ -48,6 +49,17 @@ if (website) {
   }
   if (!/traefik\.enable=true/.test(website)) {
     errors.push("website must enable Traefik (traefik.enable=true)");
+  }
+  if (!website.includes("BONDERY_INFRA_TRAEFIK_PREFIX")) {
+    errors.push("website Traefik router names must interpolate BONDERY_INFRA_TRAEFIK_PREFIX");
+  }
+  if (/traefik\.http\.routers\.bondery-website/.test(website)) {
+    errors.push("website Traefik router names must not be hardcoded as bondery-website");
+  }
+  if (!/BONDERY_INFRA_TRAEFIK_PREFIX:-bondery\}-website/.test(website)) {
+    errors.push(
+      "website must publish a unique dokploy-network alias from BONDERY_INFRA_TRAEFIK_PREFIX",
+    );
   }
   if (!/BONDERY_PUBLIC_WEBAPP_URL:\s*https:\/\/\$\{BONDERY_INFRA_WEBAPP_DOMAIN/.test(website)) {
     errors.push(

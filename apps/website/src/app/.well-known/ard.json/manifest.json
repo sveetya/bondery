@@ -1,0 +1,31 @@
+{
+  "entries": [
+    {
+      "description": "Index of Bondery documentation as agent-readable markdown.",
+      "displayName": "Bondery docs (llms.txt)",
+      "kind": "docs:llms-txt",
+      "path": "/llms.txt",
+      "representativeQueries": [
+        "how do I authenticate to the Bondery API",
+        "how do I self-host Bondery",
+        "Bondery contact merge documentation"
+      ],
+      "tags": ["documentation", "llms", "contacts"],
+      "type": "text/plain"
+    },
+    {
+      "description": "OpenAPI 3 description of the Bondery REST API for contacts, groups, tags, and interactions.",
+      "displayName": "Bondery REST API",
+      "kind": "api:openapi",
+      "path": "/openapi.yaml",
+      "representativeQueries": [
+        "create a contact in Bondery via the API",
+        "list interactions for a person",
+        "authenticate with a Bondery API key"
+      ],
+      "tags": ["api", "openapi", "contacts"],
+      "type": "application/yaml"
+    }
+  ],
+  "updatedAt": "2026-09-02"
+}

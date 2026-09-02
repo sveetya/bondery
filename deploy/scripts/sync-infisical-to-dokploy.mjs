@@ -3,11 +3,11 @@
  *
  * Prerequisites: Infisical secrets-action has loaded keys into process.env.
  * Production sync: production Infisical only.
- * Beta (services-beta): workflow fetches production (ops keys) then staging (app secrets),
+ * Beta (services-beta / website-beta): workflow fetches production (ops keys) then staging (app secrets),
  * restores BONDERY_OPS_DOKPLOY_* from production before running this script.
  *
  * Usage:
- *   node deploy/scripts/sync-infisical-to-dokploy.mjs --target website|plausible|services|services-beta [--dry-run] [--redeploy]
+ *   node deploy/scripts/sync-infisical-to-dokploy.mjs --target website|website-beta|plausible|services|services-beta [--dry-run] [--redeploy]
  */
 
 import { pathToFileURL } from "node:url";
@@ -285,7 +285,7 @@ async function main() {
 
   if (!isDokploySyncTarget(args.target)) {
     console.error(
-      "sync-infisical-to-dokploy: --target must be website, plausible, services, or services-beta",
+      "sync-infisical-to-dokploy: --target must be website, website-beta, plausible, services, or services-beta",
     );
     process.exit(1);
   }
