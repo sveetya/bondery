@@ -132,7 +132,7 @@ export const EXAMPLE_KEEP_IN_TOUCH_COUNT_RESPONSE = { overdueCount: 2 };
 
 export const EXAMPLE_EXPORT_SUMMARY_RESPONSE = {
   exportSummary: {
-    bonderyVersion: "1.8.4",
+    bonderyVersion: "1.9.0",
     groups: 0,
     interactions: 0,
     people: 0,
