@@ -210,7 +210,7 @@ jobs:
     with:
       service: api
       version: ${{ needs.validate.outputs.version }}
-      checkout_ref: ${{ needs.validate.outputs.tag }}
+      checkout_ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || needs.validate.outputs.tag }}
       source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
       force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
       use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
@@ -223,7 +223,7 @@ jobs:
     with:
       service: webapp
       version: ${{ needs.validate.outputs.version }}
-      checkout_ref: ${{ needs.validate.outputs.tag }}
+      checkout_ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || needs.validate.outputs.tag }}
       source_tag: sha-${{ needs.resolve_meta.outputs.short_sha }}
       force_rebuild: ${{ github.event_name == 'workflow_dispatch' && inputs.force_rebuild == true }}
       use_production_gate: ${{ needs.detect_changes.outputs.extension == 'true' }}
