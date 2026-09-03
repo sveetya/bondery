@@ -15597,7 +15597,7 @@ paths:
             application/json:
               example:
                 exportSummary:
-                  bonderyVersion: 1.8.4
+                  bonderyVersion: 1.9.0
                   groups: 0
                   interactions: 0
                   people: 0

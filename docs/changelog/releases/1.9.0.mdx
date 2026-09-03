@@ -1,0 +1,50 @@
+---
+title: "1.9.0"
+---
+
+## [1.9.0] - 03.09.2026
+
+### ✨ Added
+
+- Website: Published `/.well-known/ard.json` so agents can discover docs (`llms.txt`) and the REST OpenAPI spec. The webapp path redirects to the marketing catalog.
+- Webapp: Sign in or create an account with a sign-in link emailed to you (no password). Open the link on this device. Passkeys and GitHub or LinkedIn stay on the same screen.
+- Webapp: Sign in with a passkey from Settings and the login screen (up to 5 passkeys per account). Passkeys are a second authenticator alongside email, GitHub, or LinkedIn — keep at least one of those connected for recovery. Login marks the last method you used; Settings shows authenticator names and last used.
+- Webapp: Settings → Apps is for LinkedIn and GitHub connections. Profile holds your contact card, email, sign-in methods, and passkeys.
+- Webapp, mobile, and self-host: GitHub and LinkedIn login/link disable when that provider isn’t configured on the API. Operators leave both OAuth env vars empty to keep a method off, then restart after setting them; `GET /oauth-providers` reports which are on. Removing a provider locks out people who only use it.
+- Webapp: Password managers can autofill the login email. Opening `/.well-known/change-password` still takes you to Settings (sign in if needed).
+- Self-host: Passkeys add a `passkey` table (picked up by the usual migrate). WebAuthn rpID follows the public webapp host; set `BONDERY_PUBLIC_WEBAUTHN_RP_ID` only when that host is not a valid rpID.
+- Contributors: Chrome Web Store listing screenshots are composed from product UI at `/dev/store-shots` and exported locally with Playwright. Upload to the store is still manual; generated PNGs are not committed.
+
+### 🐛 Fixed
+
+- Website: `/.well-known/ard.json` now includes required `specVersion`, `host`, and per-entry `version` (Bondery release from the website image; `specVersion` stays `1.0` per the ARD manifest schema).
+- Website: Unknown URLs return the 404 page instead of a 500 caused by rendering Mantine without `MantineProvider`.
+- Ops: Infisical → Dokploy syncs `BONDERY_INFRA_WEBSITE_IMAGE_TAG` to website (`production`) and website-beta (`beta`).
+- Deploy: every Compose service publishes a unique `${BONDERY_INFRA_TRAEFIK_PREFIX}-*` Docker DNS alias. Production and beta can share `dokploy-network` without colliding on `api`, `webapp`, or `seaweedfs-s3`. Webapp SSR uses `${prefix}-api`; the API uses `${prefix}-storage` for S3.
+- Ops: website Traefik router names and the Docker DNS alias interpolate `BONDERY_INFRA_TRAEFIK_PREFIX` so production and beta marketing sites can share `dokploy-network`.
+- API: Compose S3 healthcheck now requires the gateway to speak S3 (not an empty `/status` 200). Bucket bootstrap creates only when HeadBucket returns 404, so cold `compose up` no longer fails during S3 warmup.
+
+### 🔄 Changed
+
+- Email: Product mail uses a consistent layout — From “Robot from Bondery”, centered logo, full-width buttons, help footer, and inbox preview text. Every send includes a plaintext alternative. Reminder emails link to manage notifications. Transactional mail does not show the legal company name or address. Shared-contact cards show the person and headline only; the sender stays in the intro line.
+- Webapp, website: Hover tooltips wrap long copy and show an arrow.
+- Contributors: Root tooling scripts live under `scripts/env`, `scripts/check`, `scripts/dev`, `scripts/pkg`, `scripts/ops`, and `scripts/updater`. Chrome signing, CI Infisical checks, and Infisical→Dokploy sync sit with their owners (`apps/chrome-extension/scripts`, `.github/scripts`, `deploy/scripts`).
+
+### 🔒 Security
+
+- Website: Public security contact at `/security` (footer Legal), `/.well-known/security.txt`, and a PGP public key for encrypted reports. The webapp `security.txt` redirects to the marketing site. Root `SECURITY.md` points at usebondery.com/security.
+
+### 📝 Documentation
+
+- Contributors: Chrome extension local-dev, host integrations, and listing-graphics guidance lives in the `bondery-chrome-extension` skill.
+
+### 🤖 CI
+
+- Ops: Infisical → Dokploy env sync now uploads `BONDERY_INFRA_TRAEFIK_PREFIX`. Set `bondery-beta` in Infisical staging and `bondery` (or omit) in production.
+- Ops: Infisical → Dokploy adds a `website-beta` target (`deployment=beta` + `target=website`).
+- CI: `stage-images` tags website `:beta` and notifies staging website/services Dokploy webhooks (`refs/heads/main`).
+- CI: `website-docker-build`, `api-docker-build`, and `webapp-docker-build` in verify now time out after 30 minutes.
+
+### Breaking
+
+- **Shared-host Docker DNS:** Production and beta Compose apps on one VM must both run this compose before sharing `dokploy-network`. Internal lookups use `${BONDERY_INFRA_TRAEFIK_PREFIX}-api` and `${prefix}-storage`, not the service names `api` or `seaweedfs-s3`.
