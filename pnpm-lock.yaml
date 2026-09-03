@@ -104,7 +104,7 @@ importers:
         version: link:../../packages/db
       '@bondery/emails':
         specifier: workspace:*
-        version: file:packages/emails(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/emails(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../../packages/helpers
@@ -116,7 +116,7 @@ importers:
         version: link:../../packages/translations
       '@bondery/vcard':
         specifier: workspace:*
-        version: file:packages/vcard(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+        version: file:packages/vcard(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@fastify/auth':
         specifier: ^5.0.4
         version: 5.0.4
@@ -169,11 +169,11 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1
       fastify:
-        specifier: ^5.10.0
-        version: 5.11.0
+        specifier: ^5.12.1
+        version: 5.12.1
       fastify-zod-openapi:
         specifier: ^5.7.0
-        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli:
         specifier: ^1.67.3
         version: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
@@ -258,7 +258,7 @@ importers:
         version: link:../../packages/helpers
       '@bondery/mantine-next':
         specifier: workspace:*
-        version: file:packages/mantine-next(41e1840480c42d66770e75887e9313d1)
+        version: file:packages/mantine-next(e4edca058af3747210872df4cae5c441)
       '@bondery/schemas':
         specifier: workspace:*
         version: link:../../packages/schemas
@@ -285,7 +285,7 @@ importers:
         version: 19.2.3(@types/react@19.2.17)
       fastify-zod-openapi:
         specifier: ^5.7.0
-        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       flag-icons:
         specifier: ^7.5.0
         version: 7.5.0
@@ -563,7 +563,7 @@ importers:
         version: 1.7.1(@better-auth/core@1.7.1(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-call@1.4.0(zod@4.4.3))(jose@6.2.5)(kysely@0.29.4)(nanostores@1.4.2))(@better-auth/utils@0.4.2)(@better-fetch/fetch@1.3.1)(better-auth@1.7.1(@prisma/client@7.9.1(prisma@7.9.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(magicast@0.5.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(typescript@7.0.2))(mysql2@3.15.3)(next@16.3.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(pg@8.22.0)(prisma@7.9.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(magicast@0.5.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(better-call@1.4.0(zod@4.4.3))(nanostores@1.4.2)
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../../packages/helpers
@@ -816,7 +816,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../../packages/helpers
@@ -967,7 +967,7 @@ importers:
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi:
         specifier: ^5.7.0
-        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli:
         specifier: ^1.67.3
         version: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
@@ -1034,7 +1034,7 @@ importers:
         version: 17.4.2
       fastify-zod-openapi:
         specifier: ^5.7.0
-        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli:
         specifier: ^1.67.3
         version: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
@@ -1080,7 +1080,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../helpers
@@ -1160,7 +1160,7 @@ importers:
     dependencies:
       '@bondery/branding':
         specifier: workspace:*
-        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+        version: file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@bondery/helpers':
         specifier: workspace:*
         version: link:../helpers
@@ -1248,7 +1248,7 @@ importers:
         version: 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       fastify-zod-openapi:
         specifier: ^5.7.0
-        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+        version: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       react:
         specifier: ^19.2.8
         version: 19.2.8
@@ -7613,8 +7613,8 @@ packages:
       '@fastify/swagger-ui':
         optional: true
 
-  fastify@5.11.0:
-    resolution: {integrity: sha512-Y/Ecx1yt0hYzrQR+QVLbxaUN8wCX+MQzMevh29r5RRvlOIArmi4+WAXXaGl5Hw5gBr2wduZpZaT3gRCnXoyVgA==}
+  fastify@5.12.1:
+    resolution: {integrity: sha512-FWi+tQvwxR/PeRX7Z2mhfEF5ozJ3jn9asiiclzKXNSzJRHAYcU924aIOKAdHFJ+YIKieh3cqr1IwCOvTr41B3Q==}
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
@@ -12741,12 +12741,12 @@ snapshots:
   '@biomejs/cli-win32-x64@2.5.6':
     optional: true
 
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -12776,12 +12776,12 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -12811,12 +12811,12 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/branding@file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@takumi-rs/helpers': 2.4.0(preact@10.29.7)(react@19.2.8)
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       i18next-cli: 1.67.3(@swc/helpers@0.5.23)(@types/node@26.1.2)(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(typescript@7.0.2)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
@@ -12846,10 +12846,10 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/emails@file:packages/emails(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/emails@file:packages/emails(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-dom@19.2.8(react@19.2.8))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
-      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
-      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@react-email/render': 2.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node': 26.1.2
@@ -12878,10 +12878,10 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/helpers@file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
+  '@bondery/helpers@file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
     dependencies:
       '@bondery/schemas': file:packages/schemas
-      '@bondery/translations': file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+      '@bondery/translations': file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@vvo/tzdb': 6.198.0
       transliteration: 2.6.1
       uuid: 14.0.1
@@ -12905,10 +12905,10 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@bondery/helpers@file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
+  '@bondery/helpers@file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
     dependencies:
       '@bondery/schemas': file:packages/schemas
-      '@bondery/translations': file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+      '@bondery/translations': file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
       '@vvo/tzdb': 6.198.0
       transliteration: 2.6.1
       uuid: 14.0.1
@@ -12959,10 +12959,10 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@bondery/mantine-next@file:packages/mantine-next(41e1840480c42d66770e75887e9313d1)':
+  '@bondery/mantine-next@file:packages/mantine-next(e4edca058af3747210872df4cae5c441)':
     dependencies:
-      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
-      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@bondery/branding': file:packages/branding(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(@swc/helpers@0.5.23)(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(preact@10.29.7)(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(react@19.2.8)(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)
+      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@bondery/schemas': file:packages/schemas
       '@dnd-kit/core': 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dnd-kit/sortable': 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -13003,13 +13003,13 @@ snapshots:
       zod: 4.4.3
       zod-openapi: 6.0.0(zod@4.4.3)
 
-  '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.17)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@bondery/schemas': file:packages/schemas
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node': 26.1.2
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
@@ -13035,13 +13035,13 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
+  '@bondery/translations@file:packages/translations(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))(zod@4.4.3)':
     dependencies:
       '@bondery/schemas': file:packages/schemas
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node': 26.1.2
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
@@ -13073,7 +13073,7 @@ snapshots:
       '@react-email/ui': 6.9.1(@babel/core@7.29.7(supports-color@8.1.1))(@types/node@26.1.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@types/node': 26.1.2
       '@vitejs/plugin-react': 6.0.5(babel-plugin-react-compiler@1.0.0)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
-      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3)
+      fastify-zod-openapi: 5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       react-email: 6.9.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
@@ -13099,9 +13099,9 @@ snapshots:
       - vite
       - zod
 
-  '@bondery/vcard@file:packages/vcard(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
+  '@bondery/vcard@file:packages/vcard(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))':
     dependencies:
-      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.11.0)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
+      '@bondery/helpers': file:packages/helpers(@babel/core@7.29.7(supports-color@8.1.1))(@fastify/swagger@9.8.1(supports-color@8.1.1))(babel-plugin-react-compiler@1.0.0)(fastify@5.12.1)(i18next@26.3.6(typescript@7.0.2))(react-native@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.2(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.8)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@7.0.2)(vite@8.2.0(@types/node@26.1.2)(esbuild@0.28.1)(jiti@2.7.0)(sugarss@5.0.1(postcss@8.5.25))(terser@5.49.0)(tsx@4.23.1)(yaml@2.9.0))
       '@bondery/schemas': file:packages/schemas
     transitivePeerDependencies:
       - '@babel/core'
@@ -19862,18 +19862,18 @@ snapshots:
 
   fastify-plugin@6.0.0: {}
 
-  fastify-zod-openapi@5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.11.0)(zod@4.4.3):
+  fastify-zod-openapi@5.7.0(@fastify/swagger@9.8.1(supports-color@8.1.1))(fastify@5.12.1)(zod@4.4.3):
     dependencies:
       '@fastify/error': 4.2.0
       fast-json-stringify: 7.0.1
-      fastify: 5.11.0
+      fastify: 5.12.1
       fastify-plugin: 5.1.0
       zod: 4.4.3
       zod-openapi: 6.0.0(zod@4.4.3)
     optionalDependencies:
       '@fastify/swagger': 9.8.1(supports-color@8.1.1)
 
-  fastify@5.11.0:
+  fastify@5.12.1:
     dependencies:
       '@fastify/ajv-compiler': 4.0.5
       '@fastify/error': 4.2.0
