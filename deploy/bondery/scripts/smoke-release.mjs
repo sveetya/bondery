@@ -44,6 +44,17 @@ const DEFAULT_IMAGES = {
   webapp: "ghcr.io/usebondery/webapp",
 };
 
+/** Compose interpolates the process environment over `--env-file`. Infisical staging must not win. */
+let smokeImageTag = "";
+
+function subprocessEnv() {
+  return {
+    ...process.env,
+    ...SMOKE_DOMAINS,
+    ...(smokeImageTag ? { BONDERY_INFRA_VERSION: smokeImageTag } : {}),
+  };
+}
+
 function parseArgs() {
   const args = process.argv.slice(2);
   let service;
@@ -89,6 +100,7 @@ function run(command, options = {}) {
     shell: true,
     stdio: "inherit",
     ...options,
+    env: subprocessEnv(),
   });
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
@@ -143,11 +155,13 @@ function dumpComposeDiagnostics() {
   console.error("docker compose failed — collecting diagnostics");
   spawnSync("docker compose --env-file .env.smoke ps -a", {
     cwd: BONDERY_DIR,
+    env: subprocessEnv(),
     shell: true,
     stdio: "inherit",
   });
   spawnSync("docker compose --env-file .env.smoke logs --tail=120", {
     cwd: BONDERY_DIR,
+    env: subprocessEnv(),
     shell: true,
     stdio: "inherit",
   });
@@ -156,6 +170,7 @@ function dumpComposeDiagnostics() {
     "docker compose --env-file .env.smoke run --rm api node apps/api/dist/cli/release-migrate.js",
     {
       cwd: BONDERY_DIR,
+      env: subprocessEnv(),
       shell: true,
       stdio: "inherit",
     },
@@ -165,6 +180,7 @@ function dumpComposeDiagnostics() {
 function runCompose(command) {
   const result = spawnSync(`docker compose --env-file .env.smoke ${command}`, {
     cwd: BONDERY_DIR,
+    env: subprocessEnv(),
     shell: true,
     stdio: "inherit",
   });
@@ -261,6 +277,7 @@ function prepareEnvSmoke() {
 
 /** Pin BONDERY_INFRA_VERSION for paired api/webapp compose images in smoke. */
 function applySmokeVersion(tag) {
+  smokeImageTag = tag;
   const envPath = resolve(BONDERY_DIR, ".env.smoke");
   const lines = readFileSync(envPath, "utf8").split("\n");
   const key = "BONDERY_INFRA_VERSION";
@@ -340,16 +357,20 @@ function smokeWebapp(skipPull) {
     { attempts: 30, intervalSec: 2, label: "webapp" },
   );
 
-  const body = spawnSync("curl -sf http://127.0.0.1:26632/runtime-config.json", {
-    encoding: "utf8",
-    shell: true,
-  });
+  const body = spawnSync(
+    'curl -sf -H "Accept-Encoding: identity" http://127.0.0.1:26632/runtime-config.json',
+    {
+      encoding: "utf8",
+      shell: true,
+    },
+  );
   if (body.status !== 0) {
     console.error("runtime-config.json request failed");
     process.exit(1);
   }
   if (!body.stdout.includes("api.example-smoke.test")) {
     console.error("runtime-config.json missing public API host");
+    console.error(body.stdout);
     process.exit(1);
   }
   if (body.stdout.includes("api:26631")) {
