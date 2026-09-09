@@ -715,8 +715,8 @@ importers:
         specifier: ^1.5.3
         version: 1.5.3(leaflet@1.9.4)
       maplibre-gl:
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^6.4.1
+        version: 6.4.1
       motion:
         specifier: ^12.43.0
         version: 12.43.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -8915,8 +8915,8 @@ packages:
     resolution: {integrity: sha512-1DiZmDHPXMBgMRjeUtHy1q1VYmeJscHxhIAexX9z/zjRMP80+0ETuPfssi8z+kMY4DwUgsKuHqpjxgmeA9gBNA==}
     engines: {node: '>=18'}
 
-  maplibre-gl@6.0.0:
-    resolution: {integrity: sha512-1wBgEhzTZfA+cDpFdt0fM1mJA5mJ90fifORJ7D8JcKLJCvPT/iTx9bNxkP7DqEYde65DJd7gE7h83khwNRqdyg==}
+  maplibre-gl@6.4.1:
+    resolution: {integrity: sha512-KzxQKtfBu/pSz1C+yW1hNS9eyj2h2lC7ufdAi6/SEt177n3oAfDfmUmslRfJdXY7ReAFBcnvwsqmiyoDhtA9GQ==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   markdown-extensions@2.0.0:
@@ -21192,7 +21192,7 @@ snapshots:
 
   many-keys-map@3.0.3: {}
 
-  maplibre-gl@6.0.0:
+  maplibre-gl@6.4.1:
     dependencies:
       '@mapbox/point-geometry': 1.1.0
       '@mapbox/tiny-sdf': 2.2.0
